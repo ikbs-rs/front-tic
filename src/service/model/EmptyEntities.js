@@ -8,14 +8,14 @@ const EmptyEntities =
     "tg": null,
     "begtm": "",
     "endtm": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_agendatp": {
     "id": null,
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_agendatpx": {
     "id": null,
@@ -42,7 +42,7 @@ const EmptyEntities =
     "tp": null,
     "eancode": "",
     "qrcode": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_artcena": {
     "id": null,
@@ -68,7 +68,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_arttpx": {
     "id": null,
@@ -92,14 +92,14 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": null
+    "valid": "1"
   },
   "tic_cenatp": {
     "id": null,
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_cenatpx": {
     "id": null,
@@ -131,7 +131,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_channeleventpar": {
     "id": null,
@@ -153,7 +153,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_condtpx": {
     "id": null,
@@ -169,14 +169,14 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": null
+    "valid": "1"
   },
   "tic_discounttp": {
     "id": null,
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_discounttpx": {
     "id": null,
@@ -271,7 +271,7 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": null
+    "valid": "1"
   },
   "tic_docvrx": {
     "id": null,
@@ -291,7 +291,7 @@ const EmptyEntities =
     "endda": "",
     "begtm": "",
     "endtm": "",
-    "status": null,
+    "status": "1",
     "descript": "",
     "note": ""
   },
@@ -307,7 +307,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_eventatts": {
     "id": null,
@@ -316,7 +316,7 @@ const EmptyEntities =
     "att": null,
     "value": "",
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_eventattx": {
     "id": null,
@@ -339,10 +339,7 @@ const EmptyEntities =
     "site": null,
     "event1": null,
     "event2": null,
-    "begda": "",
-    "datumod2": "",
-    "begtm": "",
-    "endtm": ""
+    "note": ""
   },
   "tic_eventloc": {
     "id": null,
@@ -357,7 +354,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_eventtpx": {
     "id": null,
@@ -396,7 +393,7 @@ const EmptyEntities =
     "text": "",
     "tp": null,
     "limit": null,
-    "valid": null
+    "valid": "1"
   },
   "tic_privilegecond": {
     "id": null,
@@ -433,7 +430,7 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_privilegetpx": {
     "id": null,
@@ -457,7 +454,7 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": null
+    "valid": "1"
   },
   "tic_seatloc": {
     "id": null,

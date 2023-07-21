@@ -8,36 +8,41 @@ import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import './index.css';
-import { TicAgendaService } from "../../service/model/TicAgendaService";
-import TicAgenda from './ticAgenda';
+import { TicEventService } from "../../service/model/TicEventService";
+import TicEvent from './ticEvent';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction"
+import TicEventlinkL from './ticEventlinkL';
+import TicEventattsL from './ticEventattsL';
 
-export default function TicAgendaL(props) {
+export default function TicEventL(props) {
   let i = 0
-  const objName = "tic_agenda"
+  const objName = "tic_event"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicAgenda = EmptyEntities[objName]
+  const emptyTicEvent = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticAgendas, setTicAgendas] = useState([]);
-  const [ticAgenda, setTicAgenda] = useState(emptyTicAgenda);
+  const [ticEvents, setTicEvents] = useState([]);
+  const [ticEvent, setTicEvent] = useState(emptyTicEvent);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [agendaTip, setAgendaTip] = useState('');
+  const [eventTip, setEventTip] = useState('');
+  const [ticEventattsLVisible, setTicEventattsLVisible] = useState(false);
+  const [ticEventlinkLVisible, setTicEventlinkLVisible] = useState(false);
 
+  
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
         if (i<2) {  
-        const ticAgendaService = new TicAgendaService();
-        const data = await ticAgendaService.getLista();
-        setTicAgendas(data);
+        const ticEventService = new TicEventService();
+        const data = await ticEventService.getLista();
+        setTicEvents(data);
         initFilters();
         }
       } catch (error) {
@@ -51,31 +56,39 @@ export default function TicAgendaL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticAgendas = [...ticAgendas];
-    let _ticAgenda = { ...localObj.newObj.obj };
+    let _ticEvents = [...ticEvents];
+    let _ticEvent = { ...localObj.newObj.obj };
 
     //setSubmitted(true);
-    if (localObj.newObj.agendaTip === "CREATE") {
-      _ticAgendas.push(_ticAgenda);
-    } else if (localObj.newObj.agendaTip === "UPDATE") {
+    if (localObj.newObj.eventTip === "CREATE") {
+      _ticEvents.push(_ticEvent);
+    } else if (localObj.newObj.eventTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticAgendas[index] = _ticAgenda;
-    } else if ((localObj.newObj.agendaTip === "DELETE")) {
-      _ticAgendas = ticAgendas.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicAgenda Delete', life: 3000 });
+      _ticEvents[index] = _ticEvent;
+    } else if ((localObj.newObj.eventTip === "DELETE")) {
+      _ticEvents = ticEvents.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEvent Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicAgenda ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEvent ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.agendaTip}`, life: 3000 });
-    setTicAgendas(_ticAgendas);
-    setTicAgenda(emptyTicAgenda);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventTip}`, life: 3000 });
+    setTicEvents(_ticEvents);
+    setTicEvent(emptyTicEvent);
   };
+
+  const handleTicEventlinkLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  }; 
+
+  const handleTicEventattsLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  }; 
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticAgendas.length; i++) {
-      if (ticAgendas[i].id === id) {
+    for (let i = 0; i < ticEvents.length; i++) {
+      if (ticEvents[i].id === id) {
         index = i;
         break;
       }
@@ -85,7 +98,15 @@ export default function TicAgendaL(props) {
   };
 
   const openNew = () => {
-    setTicAgendaDialog(emptyTicAgenda);
+    setTicEventDialog(emptyTicEvent);
+  };
+
+  const openEventlink = () => {
+    setTicEventlinkDialog();
+  };
+
+  const openEventatts = () => {
+    setTicEventattsDialog();
   };
 
   const onRowSelect = (event) => {
@@ -117,7 +138,7 @@ export default function TicAgendaL(props) {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      valid: { value: null, matchMode: FilterMatchMode.EQUALS },
+      status: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
@@ -142,8 +163,17 @@ export default function TicAgendaL(props) {
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Attributes} icon="pi pi-building" onClick={openEventatts} text raised disabled={!ticEvent} />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Agenda} icon="pi pi-shield" onClick={openNew} text raised disabled={!ticEvent} />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} text raised disabled={!ticEvent} />
+        </div>        
         <div className="flex-grow-1" />
-        <b>{translations[selectedLanguage].AgendaList}</b>
+        <b>{translations[selectedLanguage].EventsList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -167,23 +197,27 @@ export default function TicAgendaL(props) {
     );
   };
 
+  const formatDateColumn = (rowData, field) => {
+    return DateFunction.formatDate(rowData[field]);
+  };
+
   const formatTimeColumn = (rowData, field) => {
     return DateFunction.convertTimeToDisplayFormat (rowData[field]);
   };
 
-  const validBodyTemplate = (rowData) => {
-    const valid = rowData.valid == 1?true:false
+  const statusBodyTemplate = (rowData) => {
+    const status = rowData.status == 1?true:false
     return (
       <i
         className={classNames("pi", {
-          "text-green-500 pi-check-circle": valid,
-          "text-red-500 pi-times-circle": !valid
+          "text-green-500 pi-check-circle": status,
+          "text-red-500 pi-times-circle": !status
         })}
       ></i>
     );
   };
 
-  const validFilterTemplate = (options) => {
+  const statusFilterTemplate = (options) => {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
@@ -199,11 +233,23 @@ export default function TicAgendaL(props) {
   };
 
   // <--- Dialog
-  const setTicAgendaDialog = (ticAgenda) => {
+  const setTicEventDialog = (ticEvent) => {
     setVisible(true)
-    setAgendaTip("CREATE")
-    setTicAgenda({ ...ticAgenda });
+    setEventTip("CREATE")
+    setTicEvent({ ...ticEvent });
   }
+
+  const setTicEventlinkDialog = () => {
+    setShowMyComponent(true);
+    setTicEventlinkLVisible(true);
+
+  }  
+
+  const setTicEventattsDialog = () => {
+    setShowMyComponent(true);
+    setTicEventattsLVisible(true);
+
+  } 
   //  Dialog --->
 
   const header = renderHeader();
@@ -218,8 +264,8 @@ export default function TicAgendaL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicAgendaDialog(rowData)
-            setAgendaTip("UPDATE")
+            setTicEventDialog(rowData)
+            setEventTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -234,9 +280,9 @@ export default function TicAgendaL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticAgenda}
+        selection={ticEvent}
         loading={loading}
-        value={ticAgendas}
+        value={ticEvents}
         header={header}
         showGridlines
         removableSort
@@ -251,7 +297,7 @@ export default function TicAgendaL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicAgenda(e.value)}
+        onSelectionChange={(e) => setTicEvent(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
@@ -267,14 +313,14 @@ export default function TicAgendaL(props) {
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "15%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="text"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "25%" }}
+          style={{ width: "20%" }}
         ></Column>
         <Column
           field="ntp"
@@ -282,13 +328,29 @@ export default function TicAgendaL(props) {
           sortable
           filter
           style={{ width: "20%" }}
-        ></Column>        
+        ></Column> 
+        <Column
+          field="begda"
+          header={translations[selectedLanguage].Begda}
+          sortable
+          filter
+          style={{ width: "10%" }}
+          body={(rowData) => formatDateColumn(rowData, "begda")}
+        ></Column>
+        <Column
+          field="endda"
+          header={translations[selectedLanguage].Endda}
+          sortable
+          filter
+          style={{ width: "7%" }}
+          body={(rowData) => formatDateColumn(rowData, "endda")}
+        ></Column>               
         <Column
           field="begtm"
           header={translations[selectedLanguage].BegTM}
           sortable
           filter
-          style={{ width: "10%" }}
+          style={{ width: "7%" }}
           body={(rowData) => formatTimeColumn(rowData, "begtm")}
         ></Column> 
         <Column
@@ -300,20 +362,20 @@ export default function TicAgendaL(props) {
           body={(rowData) => formatTimeColumn(rowData, "endtm")}
         ></Column>                
         <Column
-          field="valid"
-          filterField="valid"
+          field="status"
+          filterField="status"
           dataType="numeric"
-          header={translations[selectedLanguage].Valid}
+          header={translations[selectedLanguage].Status}
           sortable
           filter
-          filterElement={validFilterTemplate}
+          filterElement={statusFilterTemplate}
           style={{ width: "10%" }}
           bodyClassName="text-center"
-          body={validBodyTemplate}
+          body={statusBodyTemplate}
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Agenda}
+        header={translations[selectedLanguage].Event}
         visible={visible}
         style={{ width: '50%' }}
         onHide={() => {
@@ -322,16 +384,56 @@ export default function TicAgendaL(props) {
         }}
       >
         {showMyComponent && (
-          <TicAgenda
+          <TicEvent
             parameter={"inputTextValue"}
-            ticAgenda={ticAgenda}
+            ticEvent={ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            agendaTip={agendaTip}
+            eventTip={eventTip}
           />
         )}
       </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].EventlinkLista}
+        visible={ticEventlinkLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventlinkLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicEventlinkL
+            parameter={"inputTextValue"}
+            ticEvent={ticEvent}
+            handleTicEventlinkLDialogClose={handleTicEventlinkLDialogClose}
+            setTicEventlinkLVisible={setTicEventlinkLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>     
+      <Dialog
+        header={translations[selectedLanguage].EventAttsList}
+        visible={ticEventattsLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventattsLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicEventattsL
+            parameter={"inputTextValue"}
+            ticEvent={ticEvent}
+            handleTicEventattsLDialogClose={handleTicEventattsLDialogClose}
+            setTicEventattsLVisible={setTicEventattsLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>         
     </div>
   );
 }

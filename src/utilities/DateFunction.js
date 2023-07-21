@@ -99,15 +99,24 @@ function formatDateToDBFormat(maskedDate) {
 
 // Convert time from database format (HHmm) to display format (HH:mm)
 const convertTimeToDisplayFormat = (time) => {
-  const hours = time.substr(0, 2);
-  const minutes = time.substr(2, 2);
-  return `${hours}:${minutes}`;
+  if (time.length === 4 && /^\d+$/.test(time)) {
+    const hours = time.substr(0, 2);
+    const minutes = time.substr(2, 2);
+    return `${hours}:${minutes}`;
+  } else {
+    return time; // Return the original input if the format is incorrect
+  }
 };
+
 
 // Convert time from display format (HH:mm) to database format (HHmm)
 const convertTimeToDBFormat = (time) => {
   const [hours, minutes] = time.split(":");
-  return `${hours}${minutes}`;
+  if (hours !== undefined && minutes !== undefined) {
+    return `${hours}${minutes}`;
+  } else {
+    return time; // Return the original input if the format is incorrect
+  }
 };
 
 

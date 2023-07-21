@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicAgendaService } from "../../service/model/TicAgendaService";
+import { TicEventService } from "../../service/model/TicEventService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -12,32 +12,35 @@ import DateFunction from "../../utilities/DateFunction"
 import InputMask from 'react-input-mask';
 import env from "../../configs/env"
 import axios from 'axios';
+import { Calendar } from "primereact/calendar";
 import Token from "../../utilities/Token";
 
-const TicAgenda = (props) => {
+const TicEvent = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [ticAgenda, setTicAgenda] = useState(props.ticAgenda);
+    const [ticEvent, setTicEvent] = useState(props.ticEvent);
     const [submitted, setSubmitted] = useState(false);
     const [ddTpItem, setDdTpItem] = useState(null);
     const [ddTpItems, setDdTpItems] = useState(null);
+    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.begda||DateFunction.currDate())));
+    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.endda||DateFunction.currDate())))
 
     const toast = useRef(null);
     const items = [
-        { name: `${translations[selectedLanguage].Yes}`, code: '1' },
-        { name: `${translations[selectedLanguage].No}`, code: '0' }
+        { name: `${translations[selectedLanguage].Active}`, code: '1' },
+        { name: `${translations[selectedLanguage].Inactive}`, code: '0' }
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.ticAgenda.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticEvent.status));
     }, []);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const url = `${env.TIC_BACK_URL}/tic/x/agendatp/?sl=${selectedLanguage}`;
+                const url = `${env.TIC_BACK_URL}/tic/x/eventtp/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
@@ -47,7 +50,7 @@ const TicAgenda = (props) => {
                 const data = response.data.items;
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTpItems(dataDD);
-                setDdTpItem(dataDD.find((item) => item.code === props.ticAgenda.tg) || null);
+                setDdTpItem(dataDD.find((item) => item.code === props.ticEvent.tp) || null);
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -72,12 +75,14 @@ const TicAgenda = (props) => {
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            ticAgenda.begtm = DateFunction.convertTimeToDBFormat(ticAgenda.begtm)
-            ticAgenda.endtm = DateFunction.convertTimeToDBFormat(ticAgenda.endtm)
-            const ticAgendaService = new TicAgendaService();
-            const data = await ticAgendaService.postTicAgenda(ticAgenda);
-            ticAgenda.id = data
-            props.handleDialogClose({ obj: ticAgenda, agendaTip: props.agendaTip });
+            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const ticEventService = new TicEventService();
+            const data = await ticEventService.postTicEvent(ticEvent);
+            ticEvent.id = data
+            props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -92,13 +97,13 @@ const TicAgenda = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            console.log("Preeeeeeee", ticAgenda.begtm)
-            ticAgenda.begtm = DateFunction.convertTimeToDBFormat(ticAgenda.begtm)
-            ticAgenda.endtm = DateFunction.convertTimeToDBFormat(ticAgenda.endtm)
-            console.log("Posleeeeeeeeee", ticAgenda.begtm)
-            const ticAgendaService = new TicAgendaService();
-            await ticAgendaService.putTicAgenda(ticAgenda);
-            props.handleDialogClose({ obj: ticAgenda, agendaTip: props.agendaTip });
+            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const ticEventService = new TicEventService();
+            await ticEventService.putTicEvent(ticEvent);
+            props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -117,9 +122,9 @@ const TicAgenda = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticAgendaService = new TicAgendaService();
-            await ticAgendaService.deleteTicAgenda(ticAgenda);
-            props.handleDialogClose({ obj: ticAgenda, agendaTip: 'DELETE' });
+            const ticEventService = new TicEventService();
+            await ticEventService.deleteTicEvent(ticEvent);
+            props.handleDialogClose({ obj: ticEvent, eventTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
@@ -135,23 +140,38 @@ const TicAgenda = (props) => {
     const onInputChange = (e, type, name) => {
         let val = ''
         if (type === "options") {
-            if (name == "tg") {
+            if (name == "tp") {
                 setDdTpItem(e.value);
-                ticAgenda.ctp = e.value.code
-                ticAgenda.ntp = e.value.name
+                ticEvent.ctp = e.value.code
+                ticEvent.ntp = e.value.name
             } else {
                 setDropdownItem(e.value);
             }
             val = (e.target && e.target.value && e.target.value.code) || '';
+        } else if (type === "Calendar") {
+            const dateVal = DateFunction.dateGetValue(e.value)
+            val = (e.target && e.target.value) || '';
+            switch (name) {
+                case "begda":
+                    setBegda(e.value)
+                    ticEvent.begda = DateFunction.formatDateToDBFormat(dateVal)
+                    break;
+                case "endda":
+                    setEndda(e.value)
+                    ticEvent.endda = DateFunction.formatDateToDBFormat(dateVal)
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
         } else {
             val = (e.target && e.target.value) || '';
         }
 
-        let _ticAgenda = { ...ticAgenda };
-        _ticAgenda[`${name}`] = val;
-        if (name === `textx`) _ticAgenda[`text`] = val
+        let _ticEvent = { ...ticEvent };
+        _ticEvent[`${name}`] = val;
+        if (name === `textx`) _ticEvent[`text`] = val
 
-        setTicAgenda(_ticAgenda);
+        setTicEvent(_ticEvent);
     };
 
     const hideDeleteDialog = () => {
@@ -167,73 +187,107 @@ const TicAgenda = (props) => {
                         <div className="field col-12 md:col-7">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={ticAgenda.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticEvent.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.code })}
                             />
-                            {submitted && !ticAgenda.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
                                 id="textx"
-                                value={ticAgenda.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                value={ticEvent.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.textx })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.textx })}
                             />
-                            {submitted && !ticAgenda.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-12">
+                            <label htmlFor="descript">{translations[selectedLanguage].Descript}</label>
+                            <InputText
+                                id="descript"
+                                value={ticEvent.descript} onChange={(e) => onInputChange(e, "text", 'descript')}
+                                required
+                            />
+                        </div>                        
                         <div className="field col-12 md:col-9">
-                            <label htmlFor="tg">{translations[selectedLanguage].AgendaTp} *</label>
-                            <Dropdown id="tg"
+                            <label htmlFor="tp">{translations[selectedLanguage].EventTp} *</label>
+                            <Dropdown id="tp"
                                 value={ddTpItem}
                                 options={ddTpItems}
-                                onChange={(e) => onInputChange(e, "options", 'tg')}
+                                onChange={(e) => onInputChange(e, "options", 'tp')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.tg })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.tp })}
                             />
-                            {submitted && !ticAgenda.tg && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
+                            <Calendar
+                                value={begda}
+                                onChange={(e) => onInputChange(e, "Calendar", 'begda', this)}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
+
+                        </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="roenddal">{translations[selectedLanguage].Endda} *</label>
+                            <Calendar
+                                value={endda}
+                                onChange={(e) => onInputChange(e, "Calendar", 'endda')}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
+                        </div>
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
                             <InputText
                                 id="begtm"
                                 mask="99:99"
                                 maskChar="0" // This will replace unfilled characters with '0'
                                 placeholder="HH:mm"
-                                value={DateFunction.convertTimeToDisplayFormat(ticAgenda.begtm)} onChange={(e) => onInputChange(e, "text", 'begtm')}
+                                value={DateFunction.convertTimeToDisplayFormat(ticEvent.begtm)} onChange={(e) => onInputChange(e, "text", 'begtm')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.begtm })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.begtm })}
                             />
-                            {submitted && !ticAgenda.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="endtm">{translations[selectedLanguage].EndTM}</label>
                             <InputText
                                 id="endtm"
                                 mask="99:99"
                                 maskChar="0" // This will replace unfilled characters with '0'
                                 placeholder="HH:mm"
-                                value={DateFunction.convertTimeToDisplayFormat(ticAgenda.endtm)} onChange={(e) => onInputChange(e, "text", 'endtm')}
+                                value={DateFunction.convertTimeToDisplayFormat(ticEvent.endtm)} onChange={(e) => onInputChange(e, "text", 'endtm')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.endtm })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.endtm })}
                             />
-                            {submitted && !ticAgenda.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-12">
+                            <label htmlFor="note">{translations[selectedLanguage].Note}</label>
+                            <InputText
+                                id="note"
+                                value={ticEvent.note} onChange={(e) => onInputChange(e, "text", 'note')}
+                            />
+                        </div>                        
                         <div className="field col-12 md:col-5">
-                            <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
-                            <Dropdown id="valid"
+                            <label htmlFor="status">{translations[selectedLanguage].Status}</label>
+                            <Dropdown id="status"
                                 value={dropdownItem}
                                 options={dropdownItems}
-                                onChange={(e) => onInputChange(e, "options", 'valid')}
+                                onChange={(e) => onInputChange(e, "options", 'status')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticAgenda.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.status })}
                             />
-                            {submitted && !ticAgenda.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEvent.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
 
@@ -249,7 +303,7 @@ const TicAgenda = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.agendaTip === 'CREATE') ? (
+                            {(props.eventTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -258,7 +312,7 @@ const TicAgenda = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.agendaTip !== 'CREATE') ? (
+                            {(props.eventTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -267,7 +321,7 @@ const TicAgenda = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.agendaTip !== 'CREATE') ? (
+                            {(props.eventTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -283,7 +337,7 @@ const TicAgenda = (props) => {
             <DeleteDialog
                 visible={deleteDialogVisible}
                 inAction="delete"
-                item={ticAgenda.text}
+                item={ticEvent.text}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -291,4 +345,4 @@ const TicAgenda = (props) => {
     );
 };
 
-export default TicAgenda;
+export default TicEvent;

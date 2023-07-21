@@ -17,7 +17,7 @@ import Agenda from './components/model/ticAgendaL';
 import DbParameter from './components/model/admDbParameterL';
 import Message from './components/model/admMessageL';
 import DbmsErr from './components/model/admDbmsErrL';
-import IconsDemo from './utilities/IconsDemo';
+import Event from './components/model/ticEventL';
 import EmptyPage from './pages/EmptyPage';
 
 import PrimeReact from 'primereact/api';
@@ -122,7 +122,7 @@ const App = () => {
                     label: translations[selectedLanguage].Event_processing,
                     icon: 'pi pi-prime',
                     items: [
-                        { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/dbparameter' },
+                        { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
                         { label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
                         { label: translations[selectedLanguage].Procurement, icon: 'pi pi-fw pi-clone', to: '/message' }
                     ]
@@ -469,7 +469,7 @@ const App = () => {
                         <Route path="/dbparameter" element={<DbParameter />} />
                         <Route path="/message" element={<Message />} />
                         <Route path="/dbmserr" element={<DbmsErr />} />
-                        <Route path="/icons" element={<IconsDemo />} />
+                        <Route path="/event" element={<Event />} />
                         
                         <Route path="/eventtp" element={<EventTP />} />
                         <Route path="/eventatt" element={<EventAtt />} />

@@ -2,10 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicAgendaService {
+export class TicEventService {
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/agenda/_v/lista/?stm=tic_agenda_v&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_event_v&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -13,7 +13,6 @@ export class TicAgendaService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log("KKKKKKK", url, response)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -21,9 +20,9 @@ export class TicAgendaService {
     }
   }
 
-  async getTicAgendas() {
+  async getTicEvents() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/agenda/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -38,9 +37,9 @@ export class TicAgendaService {
     }
   }
 
-  async getTicAgenda(objId) {
+  async getTicEvent(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/agenda/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/event/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -56,7 +55,7 @@ export class TicAgendaService {
   }
 
 
-  async postTicAgenda(newObj) {
+  async postTicEvent(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -64,7 +63,7 @@ export class TicAgendaService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/agenda/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -81,7 +80,7 @@ export class TicAgendaService {
 
   }
 
-  async putTicAgenda(newObj) {
+  async putTicEvent(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -89,7 +88,7 @@ export class TicAgendaService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/agenda/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -106,9 +105,9 @@ export class TicAgendaService {
 
   }
 
-  async deleteTicAgenda(newObj) {
+  async deleteTicEvent(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/x/agenda/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token
