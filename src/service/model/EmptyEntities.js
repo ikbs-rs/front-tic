@@ -38,8 +38,10 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "event": null,
     "tp": null,
+    "um": null,
+    "tgp": null,
+    "event": null,
     "eancode": "",
     "qrcode": "",
     "valid": "1"

@@ -30,7 +30,7 @@ export default function TicEventattsL(props) {
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventattsTip, setEventlinkTip] = useState('');
+  const [eventattsTip, setEventattsTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventattsLVisible(false);
@@ -161,7 +161,7 @@ export default function TicEventattsL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventlinkList}</b>
+        <b>{translations[selectedLanguage].EventattsList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -192,7 +192,7 @@ export default function TicEventattsL(props) {
   // <--- Dialog
   const setTicEventattsDialog = (ticEventatts) => {
     setVisible(true)
-    setEventlinkTip("CREATE")
+    setEventattsTip("CREATE")
     setTicEventatts({ ...ticEventatts });
   }
   //  Dialog --->
@@ -210,7 +210,7 @@ export default function TicEventattsL(props) {
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
             setTicEventattsDialog(rowData)
-            setEventlinkTip("UPDATE")
+            setEventattsTip("UPDATE")
           }}
           text
           raised ></Button>

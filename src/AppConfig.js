@@ -45,7 +45,7 @@ const AppConfig = (props) => {
     const onTopbarColorChange = (topbarColor, logo) => {
         props.onTopbarColorChange(topbarColor);
         const topbarLogoLink = document.getElementById('topbar-logo');
-        topbarLogoLink.src = 'assets/layout/images/' + logo + '.svg';
+        //topbarLogoLink.src = 'assets/layout/images/' + logo + '.svg';
     };
 
     const onThemeChange = (theme) => {
