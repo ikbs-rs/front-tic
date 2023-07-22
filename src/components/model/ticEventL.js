@@ -16,6 +16,8 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction"
 import TicEventlinkL from './ticEventlinkL';
 import TicEventattsL from './ticEventattsL';
+import TicEventagendaL from './ticEventagendaL';
+import TicEventlocL from './ticEventlocL';
 
 export default function TicEventL(props) {
   let i = 0
@@ -33,6 +35,8 @@ export default function TicEventL(props) {
   const [eventTip, setEventTip] = useState('');
   const [ticEventattsLVisible, setTicEventattsLVisible] = useState(false);
   const [ticEventlinkLVisible, setTicEventlinkLVisible] = useState(false);
+  const [ticEventagendaLVisible, setTicEventagendaLVisible] = useState(false);
+  const [ticEventlocLVisible, setTicEventlocLVisible] = useState(false);
 
   
   useEffect(() => {
@@ -84,6 +88,14 @@ export default function TicEventL(props) {
     const localObj = { newObj };
   }; 
 
+  const handleTicEventagendaLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  }; 
+
+  const handleTicEventlocLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  }; 
+
   const findIndexById = (id) => {
     let index = -1;
 
@@ -107,6 +119,14 @@ export default function TicEventL(props) {
 
   const openEventatts = () => {
     setTicEventattsDialog();
+  };
+
+  const openEventagenda = () => {
+    setTicEventagendaDialog();
+  };
+
+  const openEventloc = () => {
+    setTicEventlocDialog();
   };
 
   const onRowSelect = (event) => {
@@ -164,14 +184,17 @@ export default function TicEventL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Attributes} icon="pi pi-building" onClick={openEventatts} text raised disabled={!ticEvent} />
+          <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={openEventatts} text raised disabled={!ticEvent} />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Agenda} icon="pi pi-shield" onClick={openNew} text raised disabled={!ticEvent} />
+          <Button label={translations[selectedLanguage].Agenda} icon="pi pi-shield" onClick={openEventagenda} text raised disabled={!ticEvent} />
         </div>
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} text raised disabled={!ticEvent} />
-        </div>        
+        </div>    
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Objects} icon="pi pi-building" onClick={openEventloc} text raised disabled={!ticEvent} />
+        </div>             
         <div className="flex-grow-1" />
         <b>{translations[selectedLanguage].EventsList}</b>
         <div className="flex-grow-1"></div>
@@ -250,6 +273,18 @@ export default function TicEventL(props) {
     setTicEventattsLVisible(true);
 
   } 
+
+  const setTicEventagendaDialog = () => {
+    setShowMyComponent(true);
+    setTicEventagendaLVisible(true);
+
+  } 
+
+  const setTicEventlocDialog = () => {
+    setShowMyComponent(true);
+    setTicEventlocLVisible(true);
+
+  }   
   //  Dialog --->
 
   const header = renderHeader();
@@ -433,7 +468,47 @@ export default function TicEventL(props) {
             lookUp={false}
           />
         )}
-      </Dialog>         
+      </Dialog>    
+      <Dialog
+        header={translations[selectedLanguage].EventagendaList}
+        visible={ticEventagendaLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventagendaLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicEventagendaL
+            parameter={"inputTextValue"}
+            ticEvent={ticEvent}
+            handleTicEventagendaLDialogClose={handleTicEventagendaLDialogClose}
+            setTicEventagendaLVisible={setTicEventagendaLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>   
+      <Dialog
+        header={translations[selectedLanguage].EventlocList}
+        visible={ticEventlocLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventlocLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicEventlocL
+            parameter={"inputTextValue"}
+            ticEvent={ticEvent}
+            handleTicEventlocLDialogClose={handleTicEventlocLDialogClose}
+            setTicEventlocLVisible={setTicEventlocLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>                
     </div>
   );
 }

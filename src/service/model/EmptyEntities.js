@@ -347,7 +347,7 @@ const EmptyEntities =
     "event": null,
     "loc": null,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_eventtp": {
     "id": null,

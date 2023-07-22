@@ -12,8 +12,9 @@ import DateFunction from "../../utilities/DateFunction"
 import InputMask from 'react-input-mask';
 import env from "../../configs/env"
 import axios from 'axios';
-import { Calendar } from "primereact/calendar";
 import Token from "../../utilities/Token";
+import { Calendar } from "primereact/calendar";
+
 
 const TicEvent = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en'

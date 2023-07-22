@@ -99,7 +99,7 @@ function formatDateToDBFormat(maskedDate) {
 
 // Convert time from database format (HHmm) to display format (HH:mm)
 const convertTimeToDisplayFormat = (time) => {
-  if (time.length === 4 && /^\d+$/.test(time)) {
+  if (time && time.length === 4 && /^\d+$/.test(time)) {
     const hours = time.substr(0, 2);
     const minutes = time.substr(2, 2);
     return `${hours}:${minutes}`;
