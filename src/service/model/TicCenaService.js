@@ -2,11 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class AdmUserPermissService {
-
-  async getAdmUserPermissRoll(objId) {
+export class TicCenaService {
+  async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.ADM_BACK_URL}/adm/userpermiss/getallouter/usr/${objId}/?sl=${selectedLanguage}&outer=adm_roll`;
+    const url = `${env.TIC_BACK_URL}/tic/x/cena/_v/lista/?stm=tic_cena_v&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -14,6 +13,7 @@ export class AdmUserPermissService {
 
     try {
       const response = await axios.get(url, { headers });
+      console.log("KKKKKKK", url, response)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -21,45 +21,50 @@ export class AdmUserPermissService {
     }
   }
 
-  async getAdmUserpermissUser(rollObjID) {
-    const url = `${env.ADM_BACK_URL}/adm/userpermiss_vu/getall/roll/${rollObjID}`;
+  async getTicCenas() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/cena/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
+
     try {
       const response = await axios.get(url, { headers });
-      return response.data.item;
+      return response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async getAdmUserPermissAllByItem(userObj) {
-    const url = `${env.ADM_BACK_URL}/adm/userpermiss_vr/getall/usr/${userObj.id}`;
+  async getTicCena(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/cena/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
+
     try {
-      console.log(url)
       const response = await axios.get(url, { headers });
-      return response.data.item;
+      return response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async postAdmUserPermiss(newObj) {
+
+  async postTicCena(newObj) {
     try {
-      if (newObj.roll === null || newObj.usr === null) {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.ADM_BACK_URL}/adm/userpermiss`;
+      const url = `${env.TIC_BACK_URL}/tic/x/cena/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -67,6 +72,7 @@ export class AdmUserPermissService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
+      //console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -75,22 +81,23 @@ export class AdmUserPermissService {
 
   }
 
-  async putAdmUserPermiss(newObj) {
+  async putTicCena(newObj) {
     try {
-      if (newObj.roll === null || newObj.usr === null) {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.ADM_BACK_URL}/adm/userpermiss`;
+      const url = `${env.TIC_BACK_URL}/tic/x/cena/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-
       const response = await axios.put(url, jsonObj, { headers });
+      //console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -99,14 +106,14 @@ export class AdmUserPermissService {
 
   }
 
-  async deleteAdmUserPermiss(newObj) {
-    const url = `${env.ADM_BACK_URL}/adm/userpermiss/${newObj.id}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      'Authorization': tokenLocal.token
-    };
-
+  async deleteTicCena(newObj) {
     try {
+      const url = `${env.TIC_BACK_URL}/tic/x/cena/${newObj.id}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Authorization': tokenLocal.token
+      };
+
       const response = await axios.delete(url, { headers });
       return response.data.items;
     } catch (error) {

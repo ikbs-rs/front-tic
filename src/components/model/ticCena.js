@@ -1,21 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { AdmUserGrpService } from "../../service/model/AdmUserGrpService";
+import { TicCenaService } from "../../service/model/TicCenaService";
+import { TicCenatpService } from "../../service/model/TicCenatpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
+import { Dropdown } from 'primereact/dropdown';
 
-const AdmUserGrp = (props) => {
-    const selectedLanguage = localStorage.getItem('sl')||'en'
+const TicCena = (props) => {
+
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [ticCena, setTicCena] = useState(props.ticCena);
+    const [submitted, setSubmitted] = useState(false);
+    const [ddTicCenatpItem, setDdTicCenatpItem] = useState(null);
+    const [ddTicCenatpItems, setDdTicCenatpItems] = useState(null);
+    const [ticCenatpItem, setTicCenatpItem] = useState(null);
+    const [ticCenatpItems, setTicCenatpItems] = useState(null);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [admUserGrp, setAdmUserGrp] = useState(props.admUserGrp);
-    const [submitted, setSubmitted] = useState(false);
+
+    const calendarRef = useRef(null);
 
     const toast = useRef(null);
     const items = [
@@ -24,13 +32,39 @@ const AdmUserGrp = (props) => {
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.admUserGrp.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticCena.valid));
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticCenatpService = new TicCenatpService();
+                const data = await ticCenatpService.getTicCenatps();
+
+                setTicCenatpItems(data)
+                //console.log("******************", ticCenatpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicCenatpItems(dataDD);
+                setDdTicCenatpItem(dataDD.find((item) => item.code === props.ticCena.tp) || null);
+                if (props.ticCena.tp) {
+                    const foundItem = data.find((item) => item.id === props.ticCena.tp);
+                    setTicCenatpItem(foundItem || null);
+                    ticCena.ctp = foundItem.code
+                    ticCena.ntp = foundItem.textx
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+    // Autocomplit>
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
-
 
     useEffect(() => {
         setDropdownItems(items);
@@ -42,16 +76,16 @@ const AdmUserGrp = (props) => {
 
     const handleCreateClick = async () => {
         try {
-            setSubmitted(true);            
-                const admUserGrpService = new AdmUserGrpService();
-                const data = await admUserGrpService.postAdmUserGrp(admUserGrp);
-                admUserGrp.id = data
-                props.handleDialogClose({ obj: admUserGrp, userGrpTip: props.userGrpTip });
+            setSubmitted(true);
+            const ticCenaService = new TicCenaService();
+            const data = await ticCenaService.postTicCena(ticCena);
+            ticCena.id = data
+            props.handleDialogClose({ obj: ticCena, cenaTip: props.cenaTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicCena ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -61,14 +95,15 @@ const AdmUserGrp = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const admUserGrpService = new AdmUserGrpService();
-            await admUserGrpService.putAdmUserGrp(admUserGrp);
-            props.handleDialogClose({ obj: admUserGrp, userGrpTip: props.userGrpTip });
+            const ticCenaService = new TicCenaService();
+
+            await ticCenaService.putTicCena(ticCena);
+            props.handleDialogClose({ obj: ticCena, cenaTip: props.cenaTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicCena ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -82,35 +117,42 @@ const AdmUserGrp = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const admUserGrpService = new AdmUserGrpService();
-            await admUserGrpService.deleteAdmUserGrp(admUserGrp);
-            props.handleDialogClose({ obj: admUserGrp, userGrpTip: 'DELETE' });
+            const ticCenaService = new TicCenaService();
+            await ticCenaService.deleteTicCena(ticCena);
+            props.handleDialogClose({ obj: ticCena, cenaTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicCena ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
         }
     };
 
-    const onInputChange = (e, type, name) => {
+    const onInputChange = (e, type, name, a) => {
         let val = ''
+
         if (type === "options") {
-            setDropdownItem(e.value);
             val = (e.target && e.target.value && e.target.value.code) || '';
+            if (name == "tp") {
+                setDdTicCenatpItem(e.value);
+                const foundItem = ticCenatpItems.find((item) => item.id === val);
+                setTicCenatpItem(foundItem || null);
+                ticCena.ntp = e.value.name
+                ticCena.ctp = foundItem.code
+            } else {
+                setDropdownItem(e.value);
+            }
+
         } else {
             val = (e.target && e.target.value) || '';
         }
-
-        let _admUserGrp = { ...admUserGrp };
-        _admUserGrp[`${name}`] = val;
-        if (name===`textx`) _admUserGrp[`text`] = val
-
-        setAdmUserGrp(_admUserGrp);
+        let _ticCena = { ...ticCena };
+        _ticCena[`${name}`] = val;
+        setTicCena(_ticCena);
     };
 
     const hideDeleteDialog = () => {
@@ -123,25 +165,40 @@ const AdmUserGrp = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-7">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={admUserGrp.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticCena.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !admUserGrp.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticCena.code })}
                             />
-                            {submitted && !admUserGrp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticCena.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-9">
-                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
+                        <div className="field col-12 md:col-12">
+                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="textx"
-                                value={admUserGrp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                id="text"
+                                value={ticCena.text} onChange={(e) => onInputChange(e, "text", 'text')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !admUserGrp.text })}
+                                className={classNames({ 'p-invalid': submitted && !ticCena.text })}
                             />
-                            {submitted && !admUserGrp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticCena.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+                            <Dropdown id="tp"
+                                value={ddTicCenatpItem}
+                                options={ddTicCenatpItems}
+                                onChange={(e) => onInputChange(e, "options", 'tp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticCena.tp })}
+                            />
+                            {submitted && !ticCena.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                             <Dropdown id="valid"
@@ -151,12 +208,11 @@ const AdmUserGrp = (props) => {
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !admUserGrp.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticCena.valid })}
                             />
-                            {submitted && !admUserGrp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                            {submitted && !ticCena.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                     </div>
-
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button
@@ -169,7 +225,7 @@ const AdmUserGrp = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.userGrpTip === 'CREATE') ? (
+                            {(props.cenaTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -178,7 +234,7 @@ const AdmUserGrp = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.userGrpTip !== 'CREATE') ? (
+                            {(props.cenaTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -186,8 +242,8 @@ const AdmUserGrp = (props) => {
                                     className="p-button-outlined p-button-danger"
                                     outlined
                                 />
-                            ) : null}                            
-                            {(props.userGrpTip !== 'CREATE') ? (
+                            ) : null}
+                            {(props.cenaTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -202,8 +258,8 @@ const AdmUserGrp = (props) => {
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inAction="delete"
-                item={admUserGrp.text}
+                inTicCena="delete"
+                item={ticCena.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -211,4 +267,4 @@ const AdmUserGrp = (props) => {
     );
 };
 
-export default AdmUserGrp;
+export default TicCena;

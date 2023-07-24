@@ -135,6 +135,7 @@ export const translations = {
         Tax_system: "Tax system",
         Taxes: "Taxes",
         Territorial_administration: "Territorial administration",
+        Territory: "Teritorija",
         Text: "Text",
         Type: "Type",
         Type_of_relationship: "Type of relationship",
@@ -291,7 +292,6 @@ export const translations = {
         Tax_system: "Poreski siste,",
         Taxes: "Porezi",
         Territorial_administration: "Administracija teritorija",
-        Territory: "Territory",
         Text: "Tekst",
         Territory: "Teritorija",
         Type: "Tip",
@@ -469,7 +469,25 @@ export const translations = {
         Userspermiss: "Дозволе корисника",
         Value: "Вредност",
         Valid: "Валидан",
-        Yes: "Да"
+        Yes: "Да",
+        ArttpList: "Тип артикла Листа",
+        Arttp: "Тип артикла",
+        Cenatp: "Тип цене",
+        CenatpList: "Тип цене Листа",
+        Artgrp: "Група артикала",
+        ArtgrpList: "Група артикала Листа",
+        Cena: "Цена",
+        CenaList: "Цене Листа",
+        Art: "Артикал",
+        ArtList: "Артикал Листа",
+        Um: "Јединица мере",
+        Tgp: "Тарифна група",
+        Doctp: "Тип документа",
+        DoctpList: "Тип документа Листа",
+        Docvr: "Врста документа",
+        DocvrList: "Врста документа Листа",
+        Duguje: "Дугује",
+        Znak: "Знак "
     }
   };
   

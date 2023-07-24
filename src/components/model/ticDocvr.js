@@ -1,58 +1,75 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { AdmRollService } from "../../service/model/AdmRollService";
+import { TicDocvrService } from "../../service/model/TicDocvrService";
+import { TicDoctpService } from "../../service/model/TicDoctpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
+import { Dropdown } from 'primereact/dropdown';
 
-const AdmRoll = (props) => {
-    const selectedLanguage = localStorage.getItem('sl')||'en'
+const TicDocvr = (props) => {
+console.log("#####################", props)
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [dropdownItem, setDropdownItem] = useState(null);
-    const [dropdownDNItem, setDropdownDNItem] = useState(null);
-    const [dropdownItems, setDropdownItems] = useState(null);
-    const [dropdownDNItems, setDropdownDNItems] = useState(null);
-    const [admRoll, setAdmRoll] = useState(props.admRoll);
+    const [ticDocvr, setTicDocvr] = useState(props.ticDocvr);
     const [submitted, setSubmitted] = useState(false);
 
+    const [ddTicDoctpItem, setDdTicDoctpItem] = useState(null);
+    const [ddTicDoctpItems, setDdTicDoctpItems] = useState(null);
+    const [ticDoctpItem, setTicDoctpItem] = useState(null);
+    const [ticDoctpItems, setTicDoctpItems] = useState(null);
+
+    const [dropdownItem, setDropdownItem] = useState(null);
+    const [dropdownItems, setDropdownItems] = useState(null);
+
+    const calendarRef = useRef(null);
+
     const toast = useRef(null);
-    const items01 = [ 
+    const items = [
         { name: `${translations[selectedLanguage].Yes}`, code: '1' },
         { name: `${translations[selectedLanguage].No}`, code: '0' }
     ];
 
-    const itemsDN = [ 
-        { name: `${translations[selectedLanguage].Yes}`, code: 'D' },
-        { name: `${translations[selectedLanguage].No}`, code: 'N' }
-    ];
-
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.admRoll.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticDocvr.valid));
     }, []);
 
-    
     useEffect(() => {
-        setDropdownDNItem(findDropdownItemDNByCode(props.admRoll.strukturna));
+        async function fetchData() {
+            try {
+                const ticDoctpService = new TicDoctpService();
+                const data = await ticDoctpService.getTicDoctps();
+
+                setTicDoctpItems(data)
+                //console.log("******************", ticDoctpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicDoctpItems(dataDD);
+                setDdTicDoctpItem(dataDD.find((item) => item.code === props.ticDocvr.tp) || null);
+                if (props.ticDocvr.tp) {
+                    const foundItem = data.find((item) => item.id === props.ticDocvr.tp);
+                    setTicDoctpItem(foundItem || null);
+                    ticDocvr.ctp = foundItem.code
+                    ticDocvr.ntp = foundItem.textx
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
     }, []);
+    // Autocomplit>
 
     const findDropdownItemByCode = (code) => {
-        return items01.find((item) => item.code === code) || null;
-    };
-
-    const findDropdownItemDNByCode = (code) => {
-        return itemsDN.find((itemDN) => itemDN.code === code) || null;
+        return items.find((item) => item.code === code) || null;
     };
 
     useEffect(() => {
-        setDropdownItems(items01);
-    }, []);
-
-    useEffect(() => {
-        setDropdownDNItems(itemsDN);
+        setDropdownItems(items);
     }, []);
 
     const handleCancelClick = () => {
@@ -61,16 +78,16 @@ const AdmRoll = (props) => {
 
     const handleCreateClick = async () => {
         try {
-            setSubmitted(true);            
-                const admRollService = new AdmRollService();
-                const data = await admRollService.postAdmRoll(admRoll);
-                admRoll.id = data
-                props.handleDialogClose({ obj: admRoll, rollTip: props.rollTip });
+            setSubmitted(true);
+            const ticDocvrService = new TicDocvrService();
+            const data = await ticDocvrService.postTicDocvr(ticDocvr);
+            ticDocvr.id = data
+            props.handleDialogClose({ obj: ticDocvr, docvrTip: props.docvrTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDocvr ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -80,14 +97,15 @@ const AdmRoll = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const admRollService = new AdmRollService();
-            await admRollService.putAdmRoll(admRoll);
-            props.handleDialogClose({ obj: admRoll, rollTip: props.rollTip });
+            const ticDocvrService = new TicDocvrService();
+
+            await ticDocvrService.putTicDocvr(ticDocvr);
+            props.handleDialogClose({ obj: ticDocvr, docvrTip: props.docvrTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDocvr ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -101,40 +119,42 @@ const AdmRoll = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const admRollService = new AdmRollService();
-            await admRollService.deleteAdmRoll(admRoll);
-            props.handleDialogClose({ obj: admRoll, rollTip: 'DELETE' });
+            const ticDocvrService = new TicDocvrService();
+            await ticDocvrService.deleteTicDocvr(ticDocvr);
+            props.handleDialogClose({ obj: ticDocvr, docvrTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDocvr ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
         }
     };
 
-    const onInputChange = (e, type, name) => {
+    const onInputChange = (e, type, name, a) => {
         let val = ''
+
         if (type === "options") {
-            if (name==="strukturna") {
-                setDropdownDNItem(e.value);
-            }
-            if (name==="valid") {
-                setDropdownItem(e.value);
-            }            
             val = (e.target && e.target.value && e.target.value.code) || '';
+            if (name == "tp") {
+                setDdTicDoctpItem(e.value);
+                const foundItem = ticDoctpItems.find((item) => item.id === val);
+                setTicDoctpItem(foundItem || null);
+                ticDocvr.ntp = e.value.name
+                ticDocvr.ctp = foundItem.code
+            } else {
+                setDropdownItem(e.value);
+            }
+
         } else {
             val = (e.target && e.target.value) || '';
         }
-
-        let _admRoll = { ...admRoll };
-        _admRoll[`${name}`] = val;
-        if (name===`textx`) _admRoll[`text`] = val
-
-        setAdmRoll(_admRoll);
+        let _ticDocvr = { ...ticDocvr };
+        _ticDocvr[`${name}`] = val;
+        setTicDocvr(_ticDocvr);
     };
 
     const hideDeleteDialog = () => {
@@ -150,36 +170,38 @@ const AdmRoll = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={admRoll.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticDocvr.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !admRoll.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocvr.code })}
                             />
-                            {submitted && !admRoll.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocvr.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
+                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="textx"
-                                value={admRoll.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                id="text"
+                                value={ticDocvr.text} onChange={(e) => onInputChange(e, "text", 'text')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !admRoll.textx })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocvr.text })}
                             />
-                            {submitted && !admRoll.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocvr.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-6 md:col-4">
-                            <label htmlFor="strukturna">{translations[selectedLanguage].Structures}</label>
-                            <Dropdown id="strukturna"
-                                value={dropdownDNItem}
-                                options={dropdownDNItems}
-                                onChange={(e) => onInputChange(e, "options", 'strukturna')}
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+                            <Dropdown id="tp"
+                                value={ddTicDoctpItem}
+                                options={ddTicDoctpItems}
+                                onChange={(e) => onInputChange(e, "options", 'tp')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !admRoll.strukturna })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocvr.tp })}
                             />
-                            {submitted && !admRoll.strukturna && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                         
-                        <div className="field col-6 md:col-4">
+                            {submitted && !ticDocvr.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                             <Dropdown id="valid"
                                 value={dropdownItem}
@@ -188,12 +210,11 @@ const AdmRoll = (props) => {
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !admRoll.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocvr.valid })}
                             />
-                            {submitted && !admRoll.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                            {submitted && !ticDocvr.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                     </div>
-
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button
@@ -206,7 +227,7 @@ const AdmRoll = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.rollTip === 'CREATE') ? (
+                            {(props.docvrTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -215,7 +236,7 @@ const AdmRoll = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.rollTip !== 'CREATE') ? (
+                            {(props.docvrTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -223,8 +244,8 @@ const AdmRoll = (props) => {
                                     className="p-button-outlined p-button-danger"
                                     outlined
                                 />
-                            ) : null}                            
-                            {(props.rollTip !== 'CREATE') ? (
+                            ) : null}
+                            {(props.docvrTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -239,8 +260,8 @@ const AdmRoll = (props) => {
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inAction="delete"
-                item={admRoll.name}
+                inTicDocvr="delete"
+                item={ticDocvr.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -248,4 +269,4 @@ const AdmRoll = (props) => {
     );
 };
 
-export default AdmRoll;
+export default TicDocvr;

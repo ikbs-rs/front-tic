@@ -7,32 +7,32 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { AdmUserPermissService } from "../../service/model/AdmUserPermissService";
-import AdmUserpermissU from './admUserPermissU';
+import { TicCenaService } from "../../service/model/TicCenaService";
+import TicCena from './ticCena';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
+import DateFunction from "../../utilities/DateFunction";
 
 
-export default function AdmUserpermissUL(props) {
+export default function TicCenaL(props) {
 
-  const objName = "adm_userpermiss_vu"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyAdmUserpermissU = EmptyEntities[objName]
-  emptyAdmUserpermissU.roll = props.admRoll.id
+  const objName = "tic_cena"
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
+  const emptyTicCena = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [admUserpermissUs, setAdmUserpermissUs] = useState([]);
-  const [admUserpermissU, setAdmUserpermissU] = useState(emptyAdmUserpermissU);
+  const [ticCenas, setTicCenas] = useState([]);
+  const [ticCena, setTicCena] = useState(emptyTicCena);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [userpermisUTip, setUserpermisUTip] = useState('');
+  const [cenaTip, setLocTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setAdmUserPermissULVisible(false);
+    props.setTicCenaLVisible(false);
   };
 
   useEffect(() => {
@@ -40,9 +40,10 @@ export default function AdmUserpermissUL(props) {
       try {
         ++i
         if (i < 2) {
-          const admUserpermissUService = new AdmUserPermissService();
-          const data = await admUserpermissUService.getAdmUserpermissUser(props.admRoll.id);
-          setAdmUserpermissUs(data);
+          const ticCenaService = new TicCenaService();
+          const data = await ticCenaService.getLista();
+          setTicCenas(data);
+
           initFilters();
         }
       } catch (error) {
@@ -56,31 +57,30 @@ export default function AdmUserpermissUL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _admUserpermissUs = [...admUserpermissUs];
-    let _admUserpermissU = { ...localObj.newObj.obj };
-
+    let _ticCenas = [...ticCenas];
+    let _ticCena = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.userpermisUTip === "CREATE") {
-      _admUserpermissUs.push(_admUserpermissU);
-    } else if (localObj.newObj.userpermisUTip === "UPDATE") {
+    if (localObj.newObj.cenaTip === "CREATE") {
+      _ticCenas.push(_ticCena);
+    } else if (localObj.newObj.cenaTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _admUserpermissUs[index] = _admUserpermissU;
-    } else if ((localObj.newObj.userpermisUTip === "DELETE")) {
-      _admUserpermissUs = admUserpermissUs.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmUserpermissU Delete', life: 3000 });
+      _ticCenas[index] = _ticCena;
+    } else if ((localObj.newObj.cenaTip === "DELETE")) {
+      _ticCenas = ticCenas.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicCena Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmUserpermissU ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicCena ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.userpermisUTip}`, life: 3000 });
-    setAdmUserpermissUs(_admUserpermissUs);
-    setAdmUserpermissU(emptyAdmUserpermissU);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.cenaTip}`, life: 3000 });
+    setTicCenas(_ticCenas);
+    setTicCena(emptyTicCena);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < admUserpermissUs.length; i++) {
-      if (admUserpermissUs[i].id === id) {
+    for (let i = 0; i < ticCenas.length; i++) {
+      if (ticCenas[i].id === id) {
         index = i;
         break;
       }
@@ -90,10 +90,11 @@ export default function AdmUserpermissUL(props) {
   };
 
   const openNew = () => {
-    setAdmUserpermissUDialog(emptyAdmUserpermissU);
+    setTicCenaDialog(emptyTicCena);
   };
 
   const onRowSelect = (event) => {
+    //ticCena.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -114,24 +115,23 @@ export default function AdmUserpermissUL(props) {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ocode: {
+      ctp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      otext: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },
-      o1code: {
+      ntp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      o1text: {
+      code: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },      
-      onoff: { value: null, matchMode: FilterMatchMode.EQUALS },
-      hijerarhija: { value: null, matchMode: FilterMatchMode.EQUALS },      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      text: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      valid: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
@@ -160,7 +160,7 @@ export default function AdmUserpermissUL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].RollsList}</b>
+        <b>{translations[selectedLanguage].CenaList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -183,8 +183,9 @@ export default function AdmUserpermissUL(props) {
       </div>
     );
   };
-  const onoffBodyTemplate = (rowData) => {
-    const valid = rowData.onoff == 1 ? true : false
+
+  const validBodyTemplate = (rowData) => {
+    const valid = rowData.valid == 1?true:false
     return (
       <i
         className={classNames("pi", {
@@ -194,22 +195,12 @@ export default function AdmUserpermissUL(props) {
       ></i>
     );
   };
-  const hijerarhijaBodyTemplate = (rowData) => {
-    const valid = rowData.hijerarhija == 1 ? true : false
-    return (
-      <i
-        className={classNames("pi", {
-          "text-green-500 pi-check-circle": valid,
-          "text-red-500 pi-times-circle": !valid
-        })}
-      ></i>
-    );
-  };   
-  const onoffFilterTemplate = (options) => {
+
+  const validFilterTemplate = (options) => {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].On_off}
+        {translations[selectedLanguage].Valid}
         </label>
         <TriStateCheckbox
           inputId="verified-filter"
@@ -218,34 +209,24 @@ export default function AdmUserpermissUL(props) {
         />
       </div>
     );
-  };  
-  const hijerarhijaFilterTemplate = (options) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Hijerarhija}
-        </label>
-        <TriStateCheckbox
-          inputId="verified-filter"
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-        />
-      </div>
-    );
-  }; 
-        
+  };
+
+  const formatDateColumn = (rowData, field) => {
+    return DateFunction.formatDate(rowData[field]);
+  };
+
   // <--- Dialog
-  const setAdmUserpermissUDialog = (admUserpermissU) => {
+  const setTicCenaDialog = (ticCena) => {
     setVisible(true)
-    setUserpermisUTip("CREATE")
-    setAdmUserpermissU({ ...admUserpermissU });
+    setLocTip("CREATE")
+    setTicCena({ ...ticCena });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const rollstrTemplate = (rowData) => {
+  const locTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -254,10 +235,8 @@ export default function AdmUserpermissUL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            rowData.nobj=rowData.o1text
-            rowData.nobjtp = rowData.otext
-            setAdmUserpermissUDialog(rowData)
-            setUserpermisUTip("UPDATE")
+            setTicCenaDialog(rowData)
+            setLocTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -269,33 +248,12 @@ export default function AdmUserpermissUL(props) {
   return (
     <div className="card">
       <Toast ref={toast} />
-      <div className="col-12">
-        <div className="card">
-          <div className="p-fluid formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-              <InputText id="code"
-                value={props.admRoll.code}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-6">
-              <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-              <InputText
-                id="text"
-                value={props.admRoll.textx}
-                disabled={true}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={admUserpermissU}
+        selection={ticCena}
         loading={loading}
-        value={admUserpermissUs}
+        value={ticCenas}
         header={header}
         showGridlines
         removableSort
@@ -308,64 +266,75 @@ export default function AdmUserpermissUL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setAdmUserpermissU(e.value)}
+        onSelectionChange={(e) => setTicCena(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={rollstrTemplate}
+          body={locTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="username"
-          header={translations[selectedLanguage].Username}
+          field="code"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="mail"
-          header={translations[selectedLanguage].Mail}
+          field="text"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "30%" }}
         ></Column>
         <Column
-          field="firstname"
-          header={translations[selectedLanguage].FirstName}
+          field="ctp"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="lastname"
-          header={translations[selectedLanguage].LastName}
+          field="ntp"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "30%" }}
-        ></Column>                                 
+          style={{ width: "35%" }}
+        ></Column>
+        <Column
+          field="valid"
+          filterField="valid"
+          dataType="numeric"
+          header={translations[selectedLanguage].Valid}
+          sortable
+          filter
+          filterElement={validFilterTemplate}
+          style={{ width: "10%" }}
+          bodyClassName="text-center"
+          body={validBodyTemplate}
+        ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Userpermiss}
+        header={translations[selectedLanguage].Cena}
         visible={visible}
-        style={{ width: '70%' }}
+        style={{ width: '60%' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
         }}
       >
         {showMyComponent && (
-          <AdmUserpermissU
+          <TicCena
             parameter={"inputTextValue"}
-            admUserpermissU={admUserpermissU}
-            admRoll={props.admRoll}
+            ticCena={ticCena}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            userpermisUTip={userpermisUTip}
+            cenaTip={cenaTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

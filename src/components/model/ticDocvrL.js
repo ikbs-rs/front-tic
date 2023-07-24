@@ -7,31 +7,32 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { AdmRollstrService } from "../../service/model/AdmRollstrService";
-import AdmRollstr from './admRollstr';
+import { TicDocvrService } from "../../service/model/TicDocvrService";
+import TicDocvr from './ticDocvr';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
+import DateFunction from "../../utilities/DateFunction";
 
 
-export default function AdmRollstrL(props) {
-  const objName = "adm_rollstr"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyAdmRollstr = EmptyEntities[objName]
-  emptyAdmRollstr.roll = props.admRoll.id
+export default function TicDocvrL(props) {
+
+  const objName = "tic_docvr"
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
+  const emptyTicDocvr = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [admRollstrs, setAdmRollstrs] = useState([]);
-  const [admRollstr, setAdmRollstr] = useState(emptyAdmRollstr);
+  const [ticDocvrs, setTicDocvrs] = useState([]);
+  const [ticDocvr, setTicDocvr] = useState(emptyTicDocvr);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [rollstrTip, setRollstrTip] = useState('');
+  const [docvrTip, setDocvrTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setAdmRollstrLVisible(false);
+    props.setTicDocvrLVisible(false);
   };
 
   useEffect(() => {
@@ -39,9 +40,10 @@ export default function AdmRollstrL(props) {
       try {
         ++i
         if (i < 2) {
-          const admRollstrService = new AdmRollstrService();
-          const data = await admRollstrService.getAdmRollstrRoll(props.admRoll.id);
-          setAdmRollstrs(data);
+          const ticDocvrService = new TicDocvrService();
+          const data = await ticDocvrService.getLista();
+          setTicDocvrs(data);
+
           initFilters();
         }
       } catch (error) {
@@ -55,31 +57,30 @@ export default function AdmRollstrL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _admRollstrs = [...admRollstrs];
-    let _admRollstr = { ...localObj.newObj.obj };
-
+    let _ticDocvrs = [...ticDocvrs];
+    let _ticDocvr = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.rollstrTip === "CREATE") {
-      _admRollstrs.push(_admRollstr);
-    } else if (localObj.newObj.rollstrTip === "UPDATE") {
+    if (localObj.newObj.docvrTip === "CREATE") {
+      _ticDocvrs.push(_ticDocvr);
+    } else if (localObj.newObj.docvrTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _admRollstrs[index] = _admRollstr;
-    } else if ((localObj.newObj.rollstrTip === "DELETE")) {
-      _admRollstrs = admRollstrs.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmRollstr Delete', life: 3000 });
+      _ticDocvrs[index] = _ticDocvr;
+    } else if ((localObj.newObj.docvrTip === "DELETE")) {
+      _ticDocvrs = ticDocvrs.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocvr Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmRollstr ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocvr ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.rollstrTip}`, life: 3000 });
-    setAdmRollstrs(_admRollstrs);
-    setAdmRollstr(emptyAdmRollstr);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docvrTip}`, life: 3000 });
+    setTicDocvrs(_ticDocvrs);
+    setTicDocvr(emptyTicDocvr);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < admRollstrs.length; i++) {
-      if (admRollstrs[i].id === id) {
+    for (let i = 0; i < ticDocvrs.length; i++) {
+      if (ticDocvrs[i].id === id) {
         index = i;
         break;
       }
@@ -89,10 +90,11 @@ export default function AdmRollstrL(props) {
   };
 
   const openNew = () => {
-    setAdmRollstrDialog(emptyAdmRollstr);
+    setTicDocvrDialog(emptyTicDocvr);
   };
 
   const onRowSelect = (event) => {
+    //ticDocvr.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -113,24 +115,23 @@ export default function AdmRollstrL(props) {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ocode: {
+      ctp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      otext: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },
-      o1code: {
+      ntp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      o1text: {
+      code: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },      
-      onoff: { value: null, matchMode: FilterMatchMode.EQUALS },
-      hijerarhija: { value: null, matchMode: FilterMatchMode.EQUALS },      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      text: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      valid: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
@@ -159,7 +160,7 @@ export default function AdmRollstrL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].RollsList}</b>
+        <b>{translations[selectedLanguage].DocvrList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -182,8 +183,9 @@ export default function AdmRollstrL(props) {
       </div>
     );
   };
-  const onoffBodyTemplate = (rowData) => {
-    const valid = rowData.onoff == 1 ? true : false
+
+  const validBodyTemplate = (rowData) => {
+    const valid = rowData.valid == 1?true:false
     return (
       <i
         className={classNames("pi", {
@@ -193,22 +195,12 @@ export default function AdmRollstrL(props) {
       ></i>
     );
   };
-  const hijerarhijaBodyTemplate = (rowData) => {
-    const valid = rowData.hijerarhija == 1 ? true : false
-    return (
-      <i
-        className={classNames("pi", {
-          "text-green-500 pi-check-circle": valid,
-          "text-red-500 pi-times-circle": !valid
-        })}
-      ></i>
-    );
-  };   
-  const onoffFilterTemplate = (options) => {
+
+  const validFilterTemplate = (options) => {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].On_off}
+        {translations[selectedLanguage].Valid}
         </label>
         <TriStateCheckbox
           inputId="verified-filter"
@@ -217,34 +209,24 @@ export default function AdmRollstrL(props) {
         />
       </div>
     );
-  };  
-  const hijerarhijaFilterTemplate = (options) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Hijerarhija}
-        </label>
-        <TriStateCheckbox
-          inputId="verified-filter"
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-        />
-      </div>
-    );
-  }; 
-        
+  };
+
+  const formatDateColumn = (rowData, field) => {
+    return DateFunction.formatDate(rowData[field]);
+  };
+
   // <--- Dialog
-  const setAdmRollstrDialog = (admRollstr) => {
+  const setTicDocvrDialog = (ticDocvr) => {
     setVisible(true)
-    setRollstrTip("CREATE")
-    setAdmRollstr({ ...admRollstr });
+    setDocvrTip("CREATE")
+    setTicDocvr({ ...ticDocvr });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const rollstrTemplate = (rowData) => {
+  const locTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -253,10 +235,8 @@ export default function AdmRollstrL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            rowData.nobj=rowData.o1text
-            rowData.nobjtp = rowData.otext
-            setAdmRollstrDialog(rowData)
-            setRollstrTip("UPDATE")
+            setTicDocvrDialog(rowData)
+            setDocvrTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -268,33 +248,12 @@ export default function AdmRollstrL(props) {
   return (
     <div className="card">
       <Toast ref={toast} />
-      <div className="col-12">
-        <div className="card">
-          <div className="p-fluid formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-              <InputText id="code"
-                value={props.admRoll.code}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-6">
-              <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-              <InputText
-                id="text"
-                value={props.admRoll.textx}
-                disabled={true}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={admRollstr}
+        selection={ticDocvr}
         loading={loading}
-        value={admRollstrs}
+        value={ticDocvrs}
         header={header}
         showGridlines
         removableSort
@@ -307,84 +266,75 @@ export default function AdmRollstrL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setAdmRollstr(e.value)}
+        onSelectionChange={(e) => setTicDocvr(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={rollstrTemplate}
+          body={locTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="ocode"
-          header={translations[selectedLanguage].ObjtpCode}
+          field="code"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="otext"
-          header={translations[selectedLanguage].ObjtpText}
+          field="text"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "30%" }}
         ></Column>
         <Column
-          field="o1code"
-          header={translations[selectedLanguage].ObjCode}
+          field="ctp"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="o1text"
-          header={translations[selectedLanguage].ObjText}
+          field="ntp"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "30%" }}
-        ></Column>        
+          style={{ width: "35%" }}
+        ></Column>
         <Column
-          field="onoff"
-          header={translations[selectedLanguage].On_off}
+          field="valid"
+          filterField="valid"
+          dataType="numeric"
+          header={translations[selectedLanguage].Valid}
           sortable
           filter
-          filterElement={onoffFilterTemplate}
+          filterElement={validFilterTemplate}
           style={{ width: "10%" }}
           bodyClassName="text-center"
-          body={onoffBodyTemplate}
-        ></Column> 
-        <Column
-          field="hijerarhija"
-          header={translations[selectedLanguage].Hijerarhija}
-          sortable
-          filter
-          filterElement={hijerarhijaFilterTemplate}
-          style={{ width: "10%" }}
-          bodyClassName="text-center"
-          body={hijerarhijaBodyTemplate}
-        ></Column>                          
+          body={validBodyTemplate}
+        ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Rollstructure}
+        header={translations[selectedLanguage].Docvr}
         visible={visible}
-        style={{ width: '70%' }}
+        style={{ width: '60%' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
         }}
       >
         {showMyComponent && (
-          <AdmRollstr
+          <TicDocvr
             parameter={"inputTextValue"}
-            admRollstr={admRollstr}
-            admRoll={props.admRoll}
+            ticDocvr={ticDocvr}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            rollstrTip={rollstrTip}
+            docvrTip={docvrTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

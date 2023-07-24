@@ -2,9 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class AdmMessageService {
-  async getAdmMessageV() {
-    const url = `${env.ADM_BACK_URL}/adm/message`;
+export class TicCenatpService {
+  async getTicCenatps() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/cenatp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -19,23 +20,41 @@ export class AdmMessageService {
     }
   }
 
-  async postAdmMessage(newObj) {
+  async getTicCenatp(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/cenatp/${objId}/?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+    
     try {
-      if (newObj.code.trim() === '' || newObj.text.trim() === '') {
+      const response = await axios.get(url, { headers });
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
+  async postTicCenatp(newObj) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.ADM_BACK_URL}/adm/message`;
+      const url = `${env.TIC_BACK_URL}/tic/x/cenatp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-
-
       const response = await axios.post(url, jsonObj, { headers });
+      //console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -44,21 +63,21 @@ export class AdmMessageService {
 
   }
 
-  async putAdmMessage(newObj) {
+  async putTicCenatp(newObj) {
     try {
-      if (newObj.code.trim() === '' || newObj.text.trim() === '') {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.ADM_BACK_URL}/adm/message`;
+      const url = `${env.TIC_BACK_URL}/tic/x/cenatp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -69,14 +88,14 @@ export class AdmMessageService {
 
   }
 
-  async deleteAdmMessage(newObj) {
-    const url = `${env.ADM_BACK_URL}/adm/message/${newObj.id}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      'Authorization': tokenLocal.token
-    };
-
+  async deleteTicCenatp(newObj) {
     try {
+      const url = `${env.TIC_BACK_URL}/tic/x/cenatp/${newObj.id}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Authorization': tokenLocal.token
+      };
+
       const response = await axios.delete(url, { headers });
       return response.data.items;
     } catch (error) {

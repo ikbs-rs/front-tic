@@ -1,39 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { AdmUserPermissService } from "../../service/model/AdmUserPermissService";
+import { TicCenatpService } from "../../service/model/TicCenatpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
-import { Dropdown } from 'primereact/dropdown';
-import { AdmRollService } from "../../service/model/AdmRollService";
 import { translations } from "../../configs/translations";
 
-const AdmUserPermiss = (props) => {
+const TicCenatp = (props) => {
     const selectedLanguage = localStorage.getItem('sl')||'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [admUserPermiss, setAdmUserPermiss] = useState(props.admUserPermiss);
+    const [dropdownItem, setDropdownItem] = useState(null);
+    const [dropdownItems, setDropdownItems] = useState(null);
+    const [ticCenatp, setTicCenatp] = useState(props.ticCenatp);
     const [submitted, setSubmitted] = useState(false);
-    const [ddRollItem, setDdRollItem] = useState(null);
-    const [ddRollItems, setDdRollItems] = useState(null);
 
     const toast = useRef(null);
+    const items = [
+        { name: `${translations[selectedLanguage].Yes}`, code: '1' },
+        { name: `${translations[selectedLanguage].No}`, code: '0' }
+    ];
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const admRollService = new AdmRollService();
-                const data = await admRollService.getAdmRollX();
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdRollItems(dataDD);
-                setDdRollItem(dataDD.find((item) => item.code === props.admUserPermiss.roll) || null);
-            } catch (error) {
-                console.error(error);
-                // Obrada greške ako je potrebna
-            }
-        }
-        fetchData();
+        setDropdownItem(findDropdownItemByCode(props.ticCenatp.valid));
+    }, []);
+
+    const findDropdownItemByCode = (code) => {
+        return items.find((item) => item.code === code) || null;
+    };
+
+
+    useEffect(() => {
+        setDropdownItems(items);
     }, []);
 
     const handleCancelClick = () => {
@@ -42,11 +42,11 @@ const AdmUserPermiss = (props) => {
 
     const handleCreateClick = async () => {
         try {
-            setSubmitted(true);
-            const admUserPermissService = new AdmUserPermissService();
-            const data = await admUserPermissService.postAdmUserPermiss(admUserPermiss);
-            admUserPermiss.id = data
-            props.handleDialogClose({ obj: admUserPermiss, userPermissTip: props.userPermissTip });
+            setSubmitted(true);            
+                const ticCenatpService = new TicCenatpService();
+                const data = await ticCenatpService.postTicCenatp(ticCenatp);
+                ticCenatp.id = data
+                props.handleDialogClose({ obj: ticCenatp, cenatpTip: props.cenatpTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -61,9 +61,9 @@ const AdmUserPermiss = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const admUserPermissService = new AdmUserPermissService();
-            await admUserPermissService.putAdmUserPermiss(admUserPermiss);
-            props.handleDialogClose({ obj: admUserPermiss, userPermissTip: props.userPermissTip });
+            const ticCenatpService = new TicCenatpService();
+            await ticCenatpService.putTicCenatp(ticCenatp);
+            props.handleDialogClose({ obj: ticCenatp, cenatpTip: props.cenatpTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -82,9 +82,9 @@ const AdmUserPermiss = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const admUserPermissService = new AdmUserPermissService();
-            await admUserPermissService.deleteAdmUserPermiss(admUserPermiss);
-            props.handleDialogClose({ obj: admUserPermiss, userPermissTip: 'DELETE' });
+            const ticCenatpService = new TicCenatpService();
+            await ticCenatpService.deleteTicCenatp(ticCenatp);
+            props.handleDialogClose({ obj: ticCenatp, cenatpTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
@@ -100,18 +100,17 @@ const AdmUserPermiss = (props) => {
     const onInputChange = (e, type, name) => {
         let val = ''
         if (type === "options") {
-            setDdRollItem(e.value);
-            admUserPermiss.rtext= e.value.name
-            admUserPermiss.rcode= e.value.code
+            setDropdownItem(e.value);
             val = (e.target && e.target.value && e.target.value.code) || '';
         } else {
             val = (e.target && e.target.value) || '';
         }
 
-        let _admUserPermiss = { ...admUserPermiss };
-        _admUserPermiss[`${name}`] = val;
+        let _ticCenatp = { ...ticCenatp };
+        _ticCenatp[`${name}`] = val;
+        if (name===`textx`) _ticCenatp[`text`] = val
 
-        setAdmUserPermiss(_admUserPermiss);
+        setTicCenatp(_ticCenatp);
     };
 
     const hideDeleteDialog = () => {
@@ -124,40 +123,38 @@ const AdmUserPermiss = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-12">
-                            <label htmlFor="code">{translations[selectedLanguage].Username}</label>
-                            <InputText id="code"
-                                value={props.admUser.username}
-                                disabled={true}
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
+                            <InputText id="code" autoFocus
+                                value={ticCenatp.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticCenatp.code })}
                             />
+                            {submitted && !ticCenatp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="text">{translations[selectedLanguage].Mail}</label>
+                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="mail"
-                                value={props.admUser.mail}
-                                disabled={true}
+                                id="textx"
+                                value={ticCenatp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticCenatp.textx })}
                             />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="col-12">
-                <div className="card">
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="roll">{translations[selectedLanguage].Roll} *</label>
-                            <Dropdown id="roll"
-                                value={ddRollItem}
-                                options={ddRollItems}
-                                onChange={(e) => onInputChange(e, "options", 'roll')}
+                            {submitted && !ticCenatp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                       
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
+                            <Dropdown id="valid"
+                                value={dropdownItem}
+                                options={dropdownItems}
+                                onChange={(e) => onInputChange(e, "options", 'valid')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !admUserPermiss.roll })}
+                                className={classNames({ 'p-invalid': submitted && !ticCenatp.valid })}
                             />
-                            {submitted && !admUserPermiss.roll && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
+                            {submitted && !ticCenatp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
                     </div>
 
                     <div className="flex flex-wrap gap-1">
@@ -172,7 +169,7 @@ const AdmUserPermiss = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.userPermissTip === 'CREATE') ? (
+                            {(props.cenatpTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -181,7 +178,7 @@ const AdmUserPermiss = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.userPermissTip !== 'CREATE') ? (
+                            {(props.cenatpTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -189,8 +186,8 @@ const AdmUserPermiss = (props) => {
                                     className="p-button-outlined p-button-danger"
                                     outlined
                                 />
-                            ) : null}
-                            {(props.userPermissTip !== 'CREATE') ? (
+                            ) : null}                            
+                            {(props.cenatpTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -206,7 +203,7 @@ const AdmUserPermiss = (props) => {
             <DeleteDialog
                 visible={deleteDialogVisible}
                 inAction="delete"
-                item={admUserPermiss.roll}
+                item={ticCenatp.text}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -214,4 +211,4 @@ const AdmUserPermiss = (props) => {
     );
 };
 
-export default AdmUserPermiss;
+export default TicCenatp;

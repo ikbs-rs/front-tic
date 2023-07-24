@@ -44,7 +44,8 @@ const EmptyEntities =
     "event": null,
     "eancode": "",
     "qrcode": "",
-    "valid": "1"
+    "valid": "1",
+    "grp": null,
   },
   "tic_artcena": {
     "id": null,
@@ -64,6 +65,13 @@ const EmptyEntities =
     "seatloc": null,
     "begda": "",
     "datumod2": ""
+  },
+  "tic_artgrp": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
   },
   "tic_arttp": {
     "id": null,
@@ -256,8 +264,8 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "valid": null,
-    "left": null,
-    "sign": ""
+    "duguje": null,
+    "znak": "+"
   },
   "tic_doctpx": {
     "id": null,

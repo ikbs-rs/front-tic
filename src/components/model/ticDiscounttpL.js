@@ -1,46 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
+import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { AdmUserPermissService } from "../../service/model/AdmUserPermissService";
-import AdmUserPermiss from './admUserPermiss';
+import './index.css';
+import { TicCenatpService } from "../../service/model/TicCenatpService";
+import TicCenatp from './ticCenatp';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
-import './index.css';
 import { translations } from "../../configs/translations";
 
-
-export default function AdmUserPermissL(props) {
-  const objName = "adm_userpermiss"
+export default function TicCenatpL(props) {
+  let i = 0
+  const objName = "tic_cenatp"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyAdmUserPermiss = EmptyEntities[objName]
-  emptyAdmUserPermiss.usr = props.admUser.id
+  const emptyTicCenatp = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [admUserPermisss, setAdmUserPermisss] = useState([]);
-  const [admUserPermiss, setAdmUserPermiss] = useState(emptyAdmUserPermiss);
+  const [ticCenatps, setTicCenatps] = useState([]);
+  const [ticCenatp, setTicCenatp] = useState(emptyTicCenatp);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [userPermissTip, setUserPermissTip] = useState('');
-  let i = 0
-  const handleCancelClick = () => {
-    props.setAdmUserPermissLVisible(false);
-  };
+  const [cenatpTip, setCenatpTip] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
-        if (i < 2) {
-          const admUserPermissService = new AdmUserPermissService();
-          const data = await admUserPermissService.getAdmUserPermissRoll(props.admUser.id);
-          setAdmUserPermisss(data);
-          initFilters();
+        if (i<2) {  
+        const ticCenatpService = new TicCenatpService();
+        const data = await ticCenatpService.getTicCenatps();
+        setTicCenatps(data);
+        initFilters();
         }
       } catch (error) {
         console.error(error);
@@ -53,32 +50,31 @@ export default function AdmUserPermissL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _admUserPermisss = [...admUserPermisss];
-    let _admUserPermiss = { ...localObj.newObj.obj };
-    console.log(_admUserPermiss)
+    let _ticCenatps = [...ticCenatps];
+    let _ticCenatp = { ...localObj.newObj.obj };
 
     //setSubmitted(true);
-    if (localObj.newObj.userPermissTip === "CREATE") {
-      _admUserPermisss.push(_admUserPermiss);
-    } else if (localObj.newObj.userPermissTip === "UPDATE") {
+    if (localObj.newObj.cenatpTip === "CREATE") {
+      _ticCenatps.push(_ticCenatp);
+    } else if (localObj.newObj.cenatpTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _admUserPermisss[index] = _admUserPermiss;
-    } else if ((localObj.newObj.userPermissTip === "DELETE")) {
-      _admUserPermisss = admUserPermisss.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmUserPermiss Delete', life: 3000 });
+      _ticCenatps[index] = _ticCenatp;
+    } else if ((localObj.newObj.cenatpTip === "DELETE")) {
+      _ticCenatps = ticCenatps.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicCenatp Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'AdmUserPermiss ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicCenatp ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.userPermissTip}`, life: 3000 });
-    setAdmUserPermisss(_admUserPermisss);
-    setAdmUserPermiss(emptyAdmUserPermiss);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.cenatpTip}`, life: 3000 });
+    setTicCenatps(_ticCenatps);
+    setTicCenatp(emptyTicCenatp);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < admUserPermisss.length; i++) {
-      if (admUserPermisss[i].id === id) {
+    for (let i = 0; i < ticCenatps.length; i++) {
+      if (ticCenatps[i].id === id) {
         index = i;
         break;
       }
@@ -88,14 +84,14 @@ export default function AdmUserPermissL(props) {
   };
 
   const openNew = () => {
-    setAdmUserPermissDialog(emptyAdmUserPermiss);
+    setTicCenatpDialog(emptyTicCenatp);
   };
 
   const onRowSelect = (event) => {
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
-      detail: `Id: ${event.data.id} Name: ${event.data.text}`,
+      detail: `Id: ${event.data.id} Name: ${event.data.textx}`,
       life: 3000,
     });
   };
@@ -104,7 +100,7 @@ export default function AdmUserPermissL(props) {
     toast.current.show({
       severity: "warn",
       summary: "Action Unselected",
-      detail: `Id: ${event.data.id} Name: ${event.data.text}`,
+      detail: `Id: ${event.data.id} Name: ${event.data.textx}`,
       life: 3000,
     });
   };
@@ -112,14 +108,15 @@ export default function AdmUserPermissL(props) {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      rcode: {
+      code: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      rtext: {
+      textx: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
+      valid: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
@@ -141,14 +138,11 @@ export default function AdmUserPermissL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-        <div className="flex flex-wrap gap-1" />
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        />
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].RollsList}</b>
+        <div className="flex-grow-1" />
+        <b>{translations[selectedLanguage].CenatpList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -172,18 +166,45 @@ export default function AdmUserPermissL(props) {
     );
   };
 
+  const validBodyTemplate = (rowData) => {
+    const valid = rowData.valid == 1?true:false
+    return (
+      <i
+        className={classNames("pi", {
+          "text-green-500 pi-check-circle": valid,
+          "text-red-500 pi-times-circle": !valid
+        })}
+      ></i>
+    );
+  };
+
+  const validFilterTemplate = (options) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        <label htmlFor="verified-filter" className="font-bold">
+        {translations[selectedLanguage].Valid}
+        </label>
+        <TriStateCheckbox
+          inputId="verified-filter"
+          value={options.value}
+          onChange={(e) => options.filterCallback(e.value)}
+        />
+      </div>
+    );
+  };
+
   // <--- Dialog
-  const setAdmUserPermissDialog = (admUserPermiss) => {
+  const setTicCenatpDialog = (ticCenatp) => {
     setVisible(true)
-    setUserPermissTip("CREATE")
-    setAdmUserPermiss({ ...admUserPermiss });
+    setCenatpTip("CREATE")
+    setTicCenatp({ ...ticCenatp });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const userPermissTemplate = (rowData) => {
+  const actionTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -192,8 +213,8 @@ export default function AdmUserPermissL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setAdmUserPermissDialog(rowData)
-            setUserPermissTip("UPDATE")
+            setTicCenatpDialog(rowData)
+            setCenatpTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -205,96 +226,83 @@ export default function AdmUserPermissL(props) {
   return (
     <div className="card">
       <Toast ref={toast} />
-      <div className="col-12">
-        <div className="card">
-          <div className="p-fluid formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="code">{translations[selectedLanguage].Username}</label>
-              <InputText id="code"
-                value={props.admUser.username}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-6">
-              <label htmlFor="text">{translations[selectedLanguage].Mail}</label>
-              <InputText
-                id="mail"
-                value={props.admUser.mail}
-                disabled={true}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={admUserPermiss}
+        selection={ticCenatp}
         loading={loading}
-        value={admUserPermisss}
+        value={ticCenatps}
         header={header}
         showGridlines
         removableSort
         filters={filters}
         scrollable
-        scrollHeight="550px"
+        sortField="code"        
+        sortOrder={1}
+        scrollHeight="750px"
         virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setAdmUserPermiss(e.value)}
+        onSelectionChange={(e) => setTicCenatp(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={userPermissTemplate}
+          body={actionTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
-        />
+        />        
         <Column
-          field="rcode"
-          header={translations[selectedLanguage].Rollcode}
+          field="code"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "25%" }}
         ></Column>
         <Column
-          field="rtext"
-          header={translations[selectedLanguage].Roll}
+          field="textx"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "75%" }}
+          style={{ width: "60%" }}
+        ></Column>
+        <Column
+          field="valid"
+          filterField="valid"
+          dataType="numeric"
+          header={translations[selectedLanguage].Valid}
+          sortable
+          filter
+          filterElement={validFilterTemplate}
+          style={{ width: "15%" }}
+          bodyClassName="text-center"
+          body={validBodyTemplate}
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Userspermiss}
+        header={translations[selectedLanguage].Cenatp}
         visible={visible}
-        style={{ width: '70%' }}
+        style={{ width: '50%' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
         }}
       >
         {showMyComponent && (
-          <AdmUserPermiss
+          <TicCenatp
             parameter={"inputTextValue"}
-            admUserPermiss={admUserPermiss}
-            admUser={props.admUser}
+            ticCenatp={ticCenatp}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            userPermissTip={userPermissTip}
+            cenatpTip={cenatpTip}
           />
         )}
-        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
-          <button className="p-dialog-header-close p-link">
-            <span className="p-dialog-header-close-icon pi pi-times"></span>
-          </button>
-        </div>
       </Dialog>
     </div>
   );
