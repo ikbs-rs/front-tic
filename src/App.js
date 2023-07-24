@@ -63,7 +63,7 @@ const App = () => {
             label: translations[selectedLanguage].Code_books,
             icon: 'pi pi-fw pi-bars',
             items: [
-                { label: translations[selectedLanguage].Sales_channels, icon: 'pi pi-fw pi-calendar', to: '/action' },
+                //{ label: translations[selectedLanguage].Sales_channels, icon: 'pi pi-fw pi-calendar', to: '/action' },
                 {
                     label: translations[selectedLanguage].Settings_seats,
                     icon: 'pi pi-fw pi-bars',
