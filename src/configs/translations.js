@@ -498,7 +498,12 @@ export const translations = {
         Discount: "Попуст",
         DiscountList: "Попуст Листа",
         Limit: "Лимит",
-        Condition: "Услоне"
+        Condition: "Услоне",
+        Seattp: "Тип седишта",
+        SeattpList: "Тип седишта Листа",
+        Seatatt: "Особина седишта",
+        SeatattList: "Особине седишта Листа",
+        Document: "Документи",
     }
   };
   

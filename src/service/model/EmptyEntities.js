@@ -480,14 +480,14 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_seattpatt": {
     "id": null,
     "site": null,
     "code": "",
     "text": "",
-    "valid": null
+    "valid": "1"
   },
   "tic_seattpatts": {
     "id": null,

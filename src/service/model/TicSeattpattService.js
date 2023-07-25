@@ -2,10 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicSeattpService {
-  async getTicSeattps() {
+export class TicSeattpattService {
+  async getTicSeattpatts() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/seattp/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/seattpatt/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -20,9 +20,9 @@ export class TicSeattpService {
     }
   }
 
-  async getTicSeattp(objId) {
+  async getTicSeattpatt(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/seattp/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/seattpatt/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -38,7 +38,7 @@ export class TicSeattpService {
   }
 
 
-  async postTicSeattp(newObj) {
+  async postTicSeattpatt(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -46,7 +46,7 @@ export class TicSeattpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/seattp/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/seattpatt/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export class TicSeattpService {
 
   }
 
-  async putTicSeattp(newObj) {
+  async putTicSeattpatt(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -71,7 +71,7 @@ export class TicSeattpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/seattp/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/seattpatt/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -88,9 +88,9 @@ export class TicSeattpService {
 
   }
 
-  async deleteTicSeattp(newObj) {
+  async deleteTicSeattpatt(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/x/seattp/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/seattpatt/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token

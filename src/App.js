@@ -24,6 +24,8 @@ import ArtGrp from './components/model/ticArtgrpL';
 import ArtTp from './components/model/ticArttpL';
 import Cena from './components/model/ticCenaL';
 import CenaTp from './components/model/ticCenatpL';
+import SeattpAtt from './components/model/ticSeattpattL';
+import SeatTp from './components/model/ticSeattpL';
 
 import Event from './components/model/ticEventL';
 import EmptyPage from './pages/EmptyPage';
@@ -78,8 +80,8 @@ const App = () => {
                     icon: 'pi pi-fw pi-bars',
                     items: [
                         { label: translations[selectedLanguage].Seat_type, icon: 'pi pi-fw pi-calendar', to: '/seattp' },
-                        { label: translations[selectedLanguage].Seats, icon: 'pi pi-fw pi-calendar', to: '/seat'  },
-                        { label: translations[selectedLanguage].Properties_seat, icon: 'pi pi-fw pi-calendar' , to: '/seatatt'}
+                       // { label: translations[selectedLanguage].Seats, icon: 'pi pi-fw pi-calendar', to: '/seat'  },
+                        { label: translations[selectedLanguage].Properties_seat, icon: 'pi pi-fw pi-calendar' , to: '/seattpatt'}
                     ]
                 },
                 {
@@ -133,7 +135,7 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
                         //{ label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
-                        { label: translations[selectedLanguage].Procurement, icon: 'pi pi-fw pi-clone', to: '/message' }
+                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/message' }
                     ]
                 }
             ]
@@ -473,7 +475,9 @@ const App = () => {
                 <div className="layout-content">
                     <Routes>
                         <Route path="/" element={<EmptyPage />} />
-
+                        
+                        <Route path="/seattpatt" element={<SeattpAtt />} />
+                        <Route path="/seattp" element={<SeatTp />} />
                         <Route path="/discounttp" element={<DiscountTp />} />
                         <Route path="/privilegetp" element={<PrivilegeTp />} />
                         <Route path="/privilege" element={<Privilege />} />
