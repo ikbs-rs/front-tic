@@ -8,35 +8,35 @@ import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import './index.css';
-import { TicDiscounttpService } from "../../service/model/TicDiscounttpService";
-import TicDiscounttp from './ticDiscounttp';
+import { TicPrivilegetpService } from "../../service/model/TicPrivilegetpService";
+import TicPrivilegetp from './ticPrivilegetp';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
 
-export default function TicDiscounttpL(props) {
+export default function TicPrivilegetpL(props) {
   let i = 0
-  const objName = "tic_discounttp"
+  const objName = "tic_privilegetp"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicDiscounttp = EmptyEntities[objName]
+  const emptyTicPrivilegetp = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticDiscounttps, setTicDiscounttps] = useState([]);
-  const [ticDiscounttp, setTicDiscounttp] = useState(emptyTicDiscounttp);
+  const [ticPrivilegetps, setTicPrivilegetps] = useState([]);
+  const [ticPrivilegetp, setTicPrivilegetp] = useState(emptyTicPrivilegetp);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [discounttpTip, setDiscounttpTip] = useState('');
+  const [privilegetpTip, setPrivilegetpTip] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
         if (i<2) {  
-        const ticDiscounttpService = new TicDiscounttpService();
-        const data = await ticDiscounttpService.getTicDiscounttps();
-        setTicDiscounttps(data);
+        const ticPrivilegetpService = new TicPrivilegetpService();
+        const data = await ticPrivilegetpService.getTicPrivilegetps();
+        setTicPrivilegetps(data);
         initFilters();
         }
       } catch (error) {
@@ -50,31 +50,31 @@ export default function TicDiscounttpL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticDiscounttps = [...ticDiscounttps];
-    let _ticDiscounttp = { ...localObj.newObj.obj };
+    let _ticPrivilegetps = [...ticPrivilegetps];
+    let _ticPrivilegetp = { ...localObj.newObj.obj };
 
     //setSubmitted(true);
-    if (localObj.newObj.discounttpTip === "CREATE") {
-      _ticDiscounttps.push(_ticDiscounttp);
-    } else if (localObj.newObj.discounttpTip === "UPDATE") {
+    if (localObj.newObj.privilegetpTip === "CREATE") {
+      _ticPrivilegetps.push(_ticPrivilegetp);
+    } else if (localObj.newObj.privilegetpTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticDiscounttps[index] = _ticDiscounttp;
-    } else if ((localObj.newObj.discounttpTip === "DELETE")) {
-      _ticDiscounttps = ticDiscounttps.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDiscounttp Delete', life: 3000 });
+      _ticPrivilegetps[index] = _ticPrivilegetp;
+    } else if ((localObj.newObj.privilegetpTip === "DELETE")) {
+      _ticPrivilegetps = ticPrivilegetps.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegetp Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDiscounttp ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegetp ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.discounttpTip}`, life: 3000 });
-    setTicDiscounttps(_ticDiscounttps);
-    setTicDiscounttp(emptyTicDiscounttp);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.privilegetpTip}`, life: 3000 });
+    setTicPrivilegetps(_ticPrivilegetps);
+    setTicPrivilegetp(emptyTicPrivilegetp);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticDiscounttps.length; i++) {
-      if (ticDiscounttps[i].id === id) {
+    for (let i = 0; i < ticPrivilegetps.length; i++) {
+      if (ticPrivilegetps[i].id === id) {
         index = i;
         break;
       }
@@ -84,7 +84,7 @@ export default function TicDiscounttpL(props) {
   };
 
   const openNew = () => {
-    setTicDiscounttpDialog(emptyTicDiscounttp);
+    setTicPrivilegetpDialog(emptyTicPrivilegetp);
   };
 
   const onRowSelect = (event) => {
@@ -142,7 +142,7 @@ export default function TicDiscounttpL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1" />
-        <b>{translations[selectedLanguage].DiscounttpList}</b>
+        <b>{translations[selectedLanguage].PrivilegetpList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -194,10 +194,10 @@ export default function TicDiscounttpL(props) {
   };
 
   // <--- Dialog
-  const setTicDiscounttpDialog = (ticDiscounttp) => {
+  const setTicPrivilegetpDialog = (ticPrivilegetp) => {
     setVisible(true)
-    setDiscounttpTip("CREATE")
-    setTicDiscounttp({ ...ticDiscounttp });
+    setPrivilegetpTip("CREATE")
+    setTicPrivilegetp({ ...ticPrivilegetp });
   }
   //  Dialog --->
 
@@ -213,8 +213,8 @@ export default function TicDiscounttpL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicDiscounttpDialog(rowData)
-            setDiscounttpTip("UPDATE")
+            setTicPrivilegetpDialog(rowData)
+            setPrivilegetpTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -229,9 +229,9 @@ export default function TicDiscounttpL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticDiscounttp}
+        selection={ticPrivilegetp}
         loading={loading}
-        value={ticDiscounttps}
+        value={ticPrivilegetps}
         header={header}
         showGridlines
         removableSort
@@ -246,7 +246,7 @@ export default function TicDiscounttpL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicDiscounttp(e.value)}
+        onSelectionChange={(e) => setTicPrivilegetp(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
@@ -285,7 +285,7 @@ export default function TicDiscounttpL(props) {
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Discounttp}
+        header={translations[selectedLanguage].Privilegetp}
         visible={visible}
         style={{ width: '50%' }}
         onHide={() => {
@@ -294,13 +294,13 @@ export default function TicDiscounttpL(props) {
         }}
       >
         {showMyComponent && (
-          <TicDiscounttp
+          <TicPrivilegetp
             parameter={"inputTextValue"}
-            ticDiscounttp={ticDiscounttp}
+            ticPrivilegetp={ticPrivilegetp}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            discounttpTip={discounttpTip}
+            privilegetpTip={privilegetpTip}
           />
         )}
       </Dialog>

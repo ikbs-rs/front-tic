@@ -9,6 +9,10 @@ import AppConfig from './AppConfig';
 import AppMenu from './AppMenu';
 import AppRightMenu from './AppRightMenu';
 
+import Discount from './components/model/ticDiscountL';
+import DiscountTp from './components/model/ticDiscounttpL';
+import PrivilegeTp from './components/model/ticPrivilegetpL';
+import Privilege from './components/model/ticPrivilegeL';
 import DocTp from './components/model/ticDoctpL';
 import DocVr from './components/model/ticDocvrL';
 import EventAtt from './components/model/ticEventattL';
@@ -469,6 +473,12 @@ const App = () => {
                 <div className="layout-content">
                     <Routes>
                         <Route path="/" element={<EmptyPage />} />
+
+                        <Route path="/discounttp" element={<DiscountTp />} />
+                        <Route path="/privilegetp" element={<PrivilegeTp />} />
+                        <Route path="/privilege" element={<Privilege />} />
+                        <Route path="/discount" element={<Discount />} />
+
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />
                         <Route path="/event" element={<Event />} />

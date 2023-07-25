@@ -402,7 +402,7 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "limit": null,
+    "limitirano": null,
     "valid": "1"
   },
   "tic_privilegecond": {

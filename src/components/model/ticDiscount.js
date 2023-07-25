@@ -1,21 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
+import { TicDiscountService } from "../../service/model/TicDiscountService";
 import { TicDiscounttpService } from "../../service/model/TicDiscounttpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
+import { Dropdown } from 'primereact/dropdown';
 
-const TicDiscounttp = (props) => {
-    const selectedLanguage = localStorage.getItem('sl')||'en'
+const TicDiscount = (props) => {
+
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [ticDiscount, setTicDiscount] = useState(props.ticDiscount);
+    const [submitted, setSubmitted] = useState(false);
+    const [ddTicDiscounttpItem, setDdTicDiscounttpItem] = useState(null);
+    const [ddTicDiscounttpItems, setDdTicDiscounttpItems] = useState(null);
+    const [ticDiscounttpItem, setTicDiscounttpItem] = useState(null);
+    const [ticDiscounttpItems, setTicDiscounttpItems] = useState(null);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [ticDiscounttp, setTicDiscounttp] = useState(props.ticDiscounttp);
-    const [submitted, setSubmitted] = useState(false);
+
+    const calendarRef = useRef(null);
 
     const toast = useRef(null);
     const items = [
@@ -24,13 +32,39 @@ const TicDiscounttp = (props) => {
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.ticDiscounttp.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticDiscount.valid));
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDiscounttpService = new TicDiscounttpService();
+                const data = await ticDiscounttpService.getTicDiscounttps();
+
+                setTicDiscounttpItems(data)
+                //console.log("******************", ticDiscounttpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicDiscounttpItems(dataDD);
+                setDdTicDiscounttpItem(dataDD.find((item) => item.code === props.ticDiscount.tp) || null);
+                if (props.ticDiscount.tp) {
+                    const foundItem = data.find((item) => item.id === props.ticDiscount.tp);
+                    setTicDiscounttpItem(foundItem || null);
+                    ticDiscount.ctp = foundItem.code
+                    ticDiscount.ntp = foundItem.textx
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+    // Autocomplit>
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
-
 
     useEffect(() => {
         setDropdownItems(items);
@@ -42,16 +76,16 @@ const TicDiscounttp = (props) => {
 
     const handleCreateClick = async () => {
         try {
-            setSubmitted(true);            
-                const ticDiscounttpService = new TicDiscounttpService();
-                const data = await ticDiscounttpService.postTicDiscounttp(ticDiscounttp);
-                ticDiscounttp.id = data
-                props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: props.discounttpTip });
+            setSubmitted(true);
+            const ticDiscountService = new TicDiscountService();
+            const data = await ticDiscountService.postTicDiscount(ticDiscount);
+            ticDiscount.id = data
+            props.handleDialogClose({ obj: ticDiscount, discountTip: props.discountTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -61,14 +95,15 @@ const TicDiscounttp = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const ticDiscounttpService = new TicDiscounttpService();
-            await ticDiscounttpService.putTicDiscounttp(ticDiscounttp);
-            props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: props.discounttpTip });
+            const ticDiscountService = new TicDiscountService();
+
+            await ticDiscountService.putTicDiscount(ticDiscount);
+            props.handleDialogClose({ obj: ticDiscount, discountTip: props.discountTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -82,35 +117,42 @@ const TicDiscounttp = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticDiscounttpService = new TicDiscounttpService();
-            await ticDiscounttpService.deleteTicDiscounttp(ticDiscounttp);
-            props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: 'DELETE' });
+            const ticDiscountService = new TicDiscountService();
+            await ticDiscountService.deleteTicDiscount(ticDiscount);
+            props.handleDialogClose({ obj: ticDiscount, discountTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "Action ",
+                summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
         }
     };
 
-    const onInputChange = (e, type, name) => {
+    const onInputChange = (e, type, name, a) => {
         let val = ''
+
         if (type === "options") {
-            setDropdownItem(e.value);
             val = (e.target && e.target.value && e.target.value.code) || '';
+            if (name == "tp") {
+                setDdTicDiscounttpItem(e.value);
+                const foundItem = ticDiscounttpItems.find((item) => item.id === val);
+                setTicDiscounttpItem(foundItem || null);
+                ticDiscount.ntp = e.value.name
+                ticDiscount.ctp = foundItem.code
+            } else {
+                setDropdownItem(e.value);
+            }
+
         } else {
             val = (e.target && e.target.value) || '';
         }
-
-        let _ticDiscounttp = { ...ticDiscounttp };
-        _ticDiscounttp[`${name}`] = val;
-        if (name===`textx`) _ticDiscounttp[`text`] = val
-
-        setTicDiscounttp(_ticDiscounttp);
+        let _ticDiscount = { ...ticDiscount };
+        _ticDiscount[`${name}`] = val;
+        setTicDiscount(_ticDiscount);
     };
 
     const hideDeleteDialog = () => {
@@ -123,25 +165,40 @@ const TicDiscounttp = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-7">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={ticDiscounttp.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticDiscount.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticDiscount.code })}
                             />
-                            {submitted && !ticDiscounttp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDiscount.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
+                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="textx"
-                                value={ticDiscounttp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                id="text"
+                                value={ticDiscount.text} onChange={(e) => onInputChange(e, "text", 'text')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.textx })}
+                                className={classNames({ 'p-invalid': submitted && !ticDiscount.text })}
                             />
-                            {submitted && !ticDiscounttp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                       
+                            {submitted && !ticDiscount.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+                            <Dropdown id="tp"
+                                value={ddTicDiscounttpItem}
+                                options={ddTicDiscounttpItems}
+                                onChange={(e) => onInputChange(e, "options", 'tp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticDiscount.tp })}
+                            />
+                            {submitted && !ticDiscount.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                             <Dropdown id="valid"
@@ -151,12 +208,11 @@ const TicDiscounttp = (props) => {
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticDiscount.valid })}
                             />
-                            {submitted && !ticDiscounttp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                            {submitted && !ticDiscount.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                     </div>
-
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button
@@ -169,7 +225,7 @@ const TicDiscounttp = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.discounttpTip === 'CREATE') ? (
+                            {(props.discountTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -178,7 +234,7 @@ const TicDiscounttp = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.discounttpTip !== 'CREATE') ? (
+                            {(props.discountTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -186,8 +242,8 @@ const TicDiscounttp = (props) => {
                                     className="p-button-outlined p-button-danger"
                                     outlined
                                 />
-                            ) : null}                            
-                            {(props.discounttpTip !== 'CREATE') ? (
+                            ) : null}
+                            {(props.discountTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -202,8 +258,8 @@ const TicDiscounttp = (props) => {
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inAction="delete"
-                item={ticDiscounttp.text}
+                inTicDiscount="delete"
+                item={ticDiscount.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -211,4 +267,4 @@ const TicDiscounttp = (props) => {
     );
 };
 
-export default TicDiscounttp;
+export default TicDiscount;

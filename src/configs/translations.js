@@ -487,7 +487,18 @@ export const translations = {
         Docvr: "Врста документа",
         DocvrList: "Врста документа Листа",
         Duguje: "Дугује",
-        Znak: "Знак "
+        Znak: "Знак ",
+        Discounttp: "Тип попуста",
+        DiscounttpList: "Тип попуста Листа",
+        Privilegetp: "Привилегија",
+        PrivilegetpList: "Тип привилегија Листа",
+        Privilege: "Privilegija",
+        PrivilegeList: "Privilegije Lista",
+        ctp: "Шифра типа", 
+        Discount: "Попуст",
+        DiscountList: "Попуст Листа",
+        Limit: "Лимит",
+        Condition: "Услоне"
     }
   };
   
