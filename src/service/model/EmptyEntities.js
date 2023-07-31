@@ -22,7 +22,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_agendax": {
@@ -30,7 +30,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_art": {
@@ -45,7 +45,7 @@ const EmptyEntities =
     "eancode": "",
     "qrcode": "",
     "valid": "1",
-    "grp": null,
+    "grp": null
   },
   "tic_artcena": {
     "id": null,
@@ -58,6 +58,21 @@ const EmptyEntities =
     "begda": "",
     "datumod2": ""
   },
+  "tic_artgrp": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "tic_artgrpx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
+  },
   "tic_artseat": {
     "id": null,
     "site": null,
@@ -66,12 +81,13 @@ const EmptyEntities =
     "begda": "",
     "datumod2": ""
   },
-  "tic_artgrp": {
+  "tic_arttax": {
     "id": null,
-    "site": null,
-    "code": "",
-    "text": "",
-    "valid": "1"
+    "art": null,
+    "tax": null,
+    "value": "",
+    "begda": "",
+    "endda": ""
   },
   "tic_arttp": {
     "id": null,
@@ -85,7 +101,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_artx": {
@@ -93,7 +109,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_cena": {
@@ -116,7 +132,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_cenax": {
@@ -124,7 +140,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_chanellseatloc": {
@@ -155,7 +171,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_condtp": {
@@ -170,7 +186,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_discount": {
@@ -193,7 +209,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_discountx": {
@@ -201,7 +217,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_doc": {
@@ -213,7 +229,13 @@ const EmptyEntities =
     "curr": null,
     "currrate": null,
     "usr": null,
-    "status": ""
+    "status": "",
+    "docobj": null,
+    "broj": null,
+    "obj": null,
+    "obj2": null,
+    "opis": "",
+    "timecreation": ""
   },
   "tic_docdocslink": {
     "id": null,
@@ -249,7 +271,8 @@ const EmptyEntities =
     "rightcurr": null,
     "begtm": "",
     "endtm": "",
-    "status": ""
+    "status": "",
+    "fee": null
   },
   "tic_docslink": {
     "id": null,
@@ -263,16 +286,16 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": null,
-    "duguje": null,
-    "znak": "+"
+    "valid": "1",
+    "duguje": "1",
+    "znak": ""
   },
   "tic_doctpx": {
     "id": null,
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_docvr": {
@@ -288,7 +311,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_event": {
@@ -303,7 +326,10 @@ const EmptyEntities =
     "endtm": "",
     "status": "1",
     "descript": "",
-    "note": ""
+    "note": "",
+    "event": null,
+    "ctg": null,
+    "loc": null
   },
   "tic_eventagenda": {
     "id": null,
@@ -333,7 +359,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_eventcenatp": {
@@ -343,6 +369,21 @@ const EmptyEntities =
     "cenatp": null,
     "begda": "",
     "datumod2": ""
+  },
+  "tic_eventctg": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "tic_eventctgx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
   },
   "tic_eventlink": {
     "id": null,
@@ -359,6 +400,20 @@ const EmptyEntities =
     "begda": "",
     "endda": ""
   },
+  "tic_events": {
+    "id": null,
+    "selection_duration": "0000",
+    "payment_duration": "0000",
+    "booking_duration": "0000",
+    "max_ticket": 5,
+    "online_payment": 1,
+    "cash_payment": 1,
+    "delivery_payment": 1,
+    "presale_enabled": 0,
+    "presale_until": "",
+    "presale_discount": 0,
+    "presale_discount_absolute": 0
+  },
   "tic_eventtp": {
     "id": null,
     "site": null,
@@ -371,7 +426,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_eventx": {
@@ -379,7 +434,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_naime": {
@@ -402,7 +457,7 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "limitirano": null,
+    "limitirano": "1",
     "valid": "1"
   },
   "tic_privilegecond": {
@@ -447,7 +502,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_privilegex": {
@@ -455,7 +510,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_seat": {
@@ -503,7 +558,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_seattpx": {
@@ -511,7 +566,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_seatx": {
@@ -519,7 +574,7 @@ const EmptyEntities =
     "site": null,
     "tableid": null,
     "lang": "",
-    "grammcase": null,
+    "grammcase": "1",
     "text": ""
   },
   "tic_stampa": {

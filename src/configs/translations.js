@@ -504,6 +504,20 @@ export const translations = {
         Seatatt: "Особина седишта",
         SeatattList: "Особине седишта Листа",
         Document: "Документи",
+        Eventctg: "Категорија догађаја",
+        EventctgList: "Категорија догађаја Листа",
+        ctg: "Категорија",
+        selection_duration: "Максималано време селекције",
+        payment_duration: "Максималано време плаћања",
+        booking_duration: "Максималано време резервациј",
+        max_ticket: "Максималан број карти",
+        online_payment: "Онлајн плаћање",
+        cash_payment: "Кеш плаћање",
+        delivery_payment: "Поузећем",
+        presale_enabled: "Претпродаја",
+        presale_until: "Претпродаја до",
+        presale_discount: "Претпродајни попуст",
+        ParentEvent: "Надређени догађај"
     }
   };
   

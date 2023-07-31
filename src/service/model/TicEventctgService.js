@@ -2,46 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicEventService {
-  async getLista(objId) {
+export class TicEventctgService {
+  async getTicEventctgs() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_event_v&sl=${selectedLanguage}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
-
-    try {
-      const response = await axios.get(url, { headers });
-      return response.data.item;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getCmnListaByItem( tab, route, view, item, objId) {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    console.log("***********L************"  , url, "*********L*******")
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
-
-    try {
-
-      const response = await axios.get(url, { headers });
-      return response.data.item;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getTicEvents() {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventctg/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -56,14 +20,14 @@ export class TicEventService {
     }
   }
 
-  async getTicEvent(objId) {
+  async getTicEventctg(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/event/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventctg/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
-
+    
     try {
       const response = await axios.get(url, { headers });
       return response.data.items;
@@ -74,7 +38,7 @@ export class TicEventService {
   }
 
 
-  async postTicEvent(newObj) {
+  async postTicEventctg(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -82,7 +46,7 @@ export class TicEventService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventctg/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -99,7 +63,7 @@ export class TicEventService {
 
   }
 
-  async putTicEvent(newObj) {
+  async putTicEventctg(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -107,14 +71,13 @@ export class TicEventService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventctg/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log("*#################"  , jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -125,9 +88,9 @@ export class TicEventService {
 
   }
 
-  async deleteTicEvent(newObj) {
+  async deleteTicEventctg(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/x/event/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventctg/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token

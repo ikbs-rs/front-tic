@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { classNames } from "primereact/utils";
-import { TicDoctpService } from "../../service/model/TicDoctpService"
+import { classNames } from 'primereact/utils';
+import { TicEventctgService } from "../../service/model/TicEventctgService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -9,14 +9,12 @@ import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
 
-const TicDoctp = (props) => {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
+const TicEventctg = (props) => {
+    const selectedLanguage = localStorage.getItem('sl')||'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [ddDugujeItem, setDdDugujeItem] = useState(null);
-    const [ddDugujeItems, setDdDugujeItems] = useState(null);
-    const [ticDoctp, setTicDoctp] = useState(props.ticDoctp);
+    const [ticEventctg, setTicEventctg] = useState(props.ticEventctg);
     const [submitted, setSubmitted] = useState(false);
 
     const toast = useRef(null);
@@ -26,18 +24,10 @@ const TicDoctp = (props) => {
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.ticDoctp.valid));
-    }, []);
-
-    useEffect(() => {
-        setDdDugujeItem(findDdDugujeItemByCode(props.ticDoctp.duguje));
+        setDropdownItem(findDropdownItemByCode(props.ticEventctg.valid));
     }, []);
 
     const findDropdownItemByCode = (code) => {
-        return items.find((item) => item.code === code) || null;
-    };
-
-    const findDdDugujeItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
 
@@ -46,21 +36,17 @@ const TicDoctp = (props) => {
         setDropdownItems(items);
     }, []);
 
-    useEffect(() => {
-        setDdDugujeItems(items);
-    }, []);
-
     const handleCancelClick = () => {
         props.setVisible(false);
     };
 
     const handleCreateClick = async () => {
         try {
-            setSubmitted(true);
-            const ticDoctpService = new TicDoctpService();
-            const data = await ticDoctpService.postTicDoctp(ticDoctp);
-            ticDoctp.id = data
-            props.handleDialogClose({ obj: ticDoctp, doctpTip: props.doctpTip });
+            setSubmitted(true);            
+                const ticEventctgService = new TicEventctgService();
+                const data = await ticEventctgService.postTicEventctg(ticEventctg);
+                ticEventctg.id = data
+                props.handleDialogClose({ obj: ticEventctg, eventctgTip: props.eventctgTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -75,9 +61,9 @@ const TicDoctp = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const ticDoctpService = new TicDoctpService();
-            await ticDoctpService.putTicDoctp(ticDoctp);
-            props.handleDialogClose({ obj: ticDoctp, doctpTip: props.doctpTip });
+            const ticEventctgService = new TicEventctgService();
+            await ticEventctgService.putTicEventctg(ticEventctg);
+            props.handleDialogClose({ obj: ticEventctg, eventctgTip: props.eventctgTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -96,9 +82,9 @@ const TicDoctp = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticDoctpService = new TicDoctpService();
-            await ticDoctpService.deleteTicDoctp(ticDoctp);
-            props.handleDialogClose({ obj: ticDoctp, doctpTip: 'DELETE' });
+            const ticEventctgService = new TicEventctgService();
+            await ticEventctgService.deleteTicEventctg(ticEventctg);
+            props.handleDialogClose({ obj: ticEventctg, eventctgTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
@@ -114,22 +100,17 @@ const TicDoctp = (props) => {
     const onInputChange = (e, type, name) => {
         let val = ''
         if (type === "options") {
+            setDropdownItem(e.value);
             val = (e.target && e.target.value && e.target.value.code) || '';
-            if (name == "duguje") {
-                setDdDugujeItem(e.value);
-            } else {
-                setDropdownItem(e.value);
-            }
-
         } else {
             val = (e.target && e.target.value) || '';
         }
 
-        let _ticDoctp = { ...ticDoctp };
-        _ticDoctp[`${name}`] = val;
-        if (name === `textx`) _ticDoctp[`text`] = val
+        let _ticEventctg = { ...ticEventctg };
+        _ticEventctg[`${name}`] = val;
+        if (name===`textx`) _ticEventctg[`text`] = val
 
-        setTicDoctp(_ticDoctp);
+        setTicEventctg(_ticEventctg);
     };
 
     const hideDeleteDialog = () => {
@@ -145,44 +126,22 @@ const TicDoctp = (props) => {
                         <div className="field col-12 md:col-7">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={ticDoctp.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticEventctg.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDoctp.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticEventctg.code })}
                             />
-                            {submitted && !ticDoctp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEventctg.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
                                 id="textx"
-                                value={ticDoctp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                value={ticEventctg.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDoctp.textx })}
+                                className={classNames({ 'p-invalid': submitted && !ticEventctg.textx })}
                             />
-                            {submitted && !ticDoctp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-
-                        <div className="field col-12 md:col-5">
-                            <label htmlFor="duguje">{translations[selectedLanguage].Duguje}</label>
-                            <Dropdown id="duguje"
-                                value={ddDugujeItem}
-                                options={ddDugujeItems}
-                                onChange={(e) => onInputChange(e, "options", 'duguje')}
-                                required
-                                optionLabel="name"
-                                placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDoctp.Duguje })}
-                            />
-                            {submitted && !ticDoctp.duguje && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="znak">{translations[selectedLanguage].Sign}</label>
-                            <InputText
-                                id="znak"
-                                value={ticDoctp.znak} onChange={(e) => onInputChange(e, "text", 'znak')}
-                            />
-                        </div>
-
+                            {submitted && !ticEventctg.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                       
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                             <Dropdown id="valid"
@@ -192,10 +151,10 @@ const TicDoctp = (props) => {
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDoctp.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticEventctg.valid })}
                             />
-                            {submitted && !ticDoctp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
+                            {submitted && !ticEventctg.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
                     </div>
 
                     <div className="flex flex-wrap gap-1">
@@ -210,7 +169,7 @@ const TicDoctp = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.doctpTip === 'CREATE') ? (
+                            {(props.eventctgTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -219,7 +178,7 @@ const TicDoctp = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.doctpTip !== 'CREATE') ? (
+                            {(props.eventctgTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -227,8 +186,8 @@ const TicDoctp = (props) => {
                                     className="p-button-outlined p-button-danger"
                                     outlined
                                 />
-                            ) : null}
-                            {(props.doctpTip !== 'CREATE') ? (
+                            ) : null}                            
+                            {(props.eventctgTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -244,7 +203,7 @@ const TicDoctp = (props) => {
             <DeleteDialog
                 visible={deleteDialogVisible}
                 inAction="delete"
-                item={ticDoctp.text}
+                item={ticEventctg.text}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -252,4 +211,4 @@ const TicDoctp = (props) => {
     );
 };
 
-export default TicDoctp;
+export default TicEventctg;

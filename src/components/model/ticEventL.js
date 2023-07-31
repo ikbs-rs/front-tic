@@ -358,18 +358,32 @@ export default function TicEventL(props) {
           style={{ width: "20%" }}
         ></Column>
         <Column
+          field="nctg"
+          header={translations[selectedLanguage].ctg}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>         
+        <Column
           field="ntp"
           header={translations[selectedLanguage].Type}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column> 
+        <Column
+          field="nevent"
+          header={translations[selectedLanguage].Event}
+          sortable
+          filter
+          style={{ width: "15%" }}
+        ></Column>         
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
           sortable
           filter
-          style={{ width: "10%" }}
+          style={{ width: "7%" }}
           body={(rowData) => formatDateColumn(rowData, "begda")}
         ></Column>
         <Column
