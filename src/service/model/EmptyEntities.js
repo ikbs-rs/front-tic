@@ -73,6 +73,15 @@ const EmptyEntities =
     "grammcase": "1",
     "text": ""
   },
+  "tic_artprivilege": {
+    "id": null,
+    "site": null,
+    "art": null,
+    "privilege": null,
+    "begda": "",
+    "endda": "",
+    "value": ""
+  },  
   "tic_artseat": {
     "id": null,
     "site": null,
@@ -235,7 +244,9 @@ const EmptyEntities =
     "obj": null,
     "obj2": null,
     "opis": "",
-    "timecreation": ""
+    "timecreation": "",
+    "storno": "0",
+    "year": null
   },
   "tic_docdocslink": {
     "id": null,
@@ -449,7 +460,9 @@ const EmptyEntities =
     "par": null,
     "privilege": null,
     "begda": "",
-    "datumod2": ""
+    "datumod2": "",
+    "maxprc": null,
+    "maxval": null
   },
   "tic_privilege": {
     "id": null,

@@ -13,6 +13,7 @@ import Discount from './components/model/ticDiscountL';
 import DiscountTp from './components/model/ticDiscounttpL';
 import PrivilegeTp from './components/model/ticPrivilegetpL';
 import Privilege from './components/model/ticPrivilegeL';
+import Doc from './components/model/ticDocL';
 import DocTp from './components/model/ticDoctpL';
 import DocVr from './components/model/ticDocvrL';
 import EventAtt from './components/model/ticEventattL';
@@ -137,7 +138,7 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
                         //{ label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
-                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/message' }
+                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' }
                     ]
                 }
             ]
@@ -488,6 +489,7 @@ const App = () => {
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />
                         <Route path="/event" element={<Event />} />
+                        <Route path="/doc" element={<Doc />} />
                         <Route path="/doctp" element={<DocTp />} />
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/eventtp" element={<EventTP />} />
