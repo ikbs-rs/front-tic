@@ -1,6 +1,9 @@
 import env from "../configs/env"
 import moment from 'moment'
 
+const currYear =  () => {
+  return moment().format('YYYY');
+}
 
 const currDate =  () => {
     return moment().format('YYYYMMDD');
@@ -121,6 +124,7 @@ const convertTimeToDBFormat = (time) => {
 
 
 export default {
+    currYear,
     currDate,
     currDatetime,
     currTime,

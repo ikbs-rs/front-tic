@@ -7,36 +7,37 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicPrivilegeService } from "../../service/model/TicPrivilegeService";
-import TicPrivilege from './ticPrivilege';
+import { CmnParService } from "../../service/model/CmnParService";
+import CmnPar from './cmnPar';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
-import TicPrivilegelinkL from "./ticPrivilegelinkL"
-import TicPrivilegediscountL from "./ticPrivilegediscountL"
+//import CmnParattsL from './cmnParattsL';
+//import CmnParlinkL from './cmnParlinkL';
 
 
-export default function TicPrivilegeL(props) {
-
-  const objName = "tic_privilege"
+export default function CmnParL(props) {
+  console.log("propspropspropspropsprops", props)
+  const objName = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const emptyTicPrivilege = EmptyEntities[objName]
+  const emptyCmnPar = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticPrivileges, setTicPrivileges] = useState([]);
-  const [ticPrivilege, setTicPrivilege] = useState(emptyTicPrivilege);
+  const [cmnPars, setCmnPars] = useState([]);
+  const [cmnPar, setCmnPar] = useState(emptyCmnPar);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [privilegeTip, setPrivilegeTip] = useState('');
-  const [ticPrivilegelinkLVisible, setTicPrivilegelinkLVisible] = useState(false);
-  const [ticPrivilegediscountLVisible, setTicPrivilegediscountLVisible] = useState(false);
+  const [parTip, setParTip] = useState('');
+  const [cmnParattsLVisible, setCmnParattsLVisible] = useState(false);
+  const [cmnParlinkLVisible, setCmnParlinkLVisible] = useState(false);
   let i = 0
+
   const handleCancelClick = () => {
-    props.setTicPrivilegeLVisible(false);
+    props.setCmnParLVisible(false);
   };
 
   useEffect(() => {
@@ -44,9 +45,9 @@ export default function TicPrivilegeL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticPrivilegeService = new TicPrivilegeService();
-          const data = await ticPrivilegeService.getLista();
-          setTicPrivileges(data);
+          const cmnParService = new CmnParService();
+          const data = await cmnParService.getLista();
+          setCmnPars(data);
 
           initFilters();
         }
@@ -61,30 +62,39 @@ export default function TicPrivilegeL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticPrivileges = [...ticPrivileges];
-    let _ticPrivilege = { ...localObj.newObj.obj };
+    let _cmnPars = [...cmnPars];
+    let _cmnPar = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.privilegeTip === "CREATE") {
-      _ticPrivileges.push(_ticPrivilege);
-    } else if (localObj.newObj.privilegeTip === "UPDATE") {
+    if (localObj.newObj.parTip === "CREATE") {
+      _cmnPars.unshift(_cmnPar);
+    } else if (localObj.newObj.parTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticPrivileges[index] = _ticPrivilege;
-    } else if ((localObj.newObj.privilegeTip === "DELETE")) {
-      _ticPrivileges = ticPrivileges.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilege Delete', life: 3000 });
+      _cmnPars[index] = _cmnPar;
+    } else if ((localObj.newObj.parTip === "DELETE")) {
+      _cmnPars = cmnPars.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnPar Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilege ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnPar ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.privilegeTip}`, life: 3000 });
-    setTicPrivileges(_ticPrivileges);
-    setTicPrivilege(emptyTicPrivilege);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.parTip}`, life: 3000 });
+    setCmnPars(_cmnPars);
+    setShowMyComponent(false)
+    setCmnPar(emptyCmnPar);
+  };
+
+  const handleCmnParattsLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  };
+
+  const handleCmnParlinkLDialogClose = (newObj) => {
+    const localObj = { newObj };
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticPrivileges.length; i++) {
-      if (ticPrivileges[i].id === id) {
+    for (let i = 0; i < cmnPars.length; i++) {
+      if (cmnPars[i].id === id) {
         index = i;
         break;
       }
@@ -93,28 +103,30 @@ export default function TicPrivilegeL(props) {
     return index;
   };
 
-  const handleTicPrivilegelinkLDialogClose = (newObj) => {
-    const localObj = { newObj };
-  };
-
-  const handleTicPrivilegediscountLDialogClose = (newObj) => {
-    const localObj = { newObj };
-  };
-
   const openNew = () => {
-    setTicPrivilegeDialog(emptyTicPrivilege);
+    setShowMyComponent(true)
+    setCmnParDialog(emptyCmnPar);
   };
 
-  const openPrivilegelink = () => {
-    setTicPrivilegelinkDialog();
+  
+  const returnPar = () => {
+    props.setCmnParLVisible(false);
+    props.handleCmnParLDialogClose({obj: cmnPar})
+    setCmnParDialog(emptyCmnPar);
   };
 
-  const openPrivilegediscount = () => {
-    setTicPrivilegediscountDialog();
-  };  
+  const openParAtt = () => {
+    setCmnParattsLDialog();
+  };
+
+  const openParLink = () => {
+    setCmnParlinkLDialog();
+  };
 
   const onRowSelect = (event) => {
-    //ticPrivilege.begda = event.data.begda
+    //cmnPar.begda = event.data.begda
+    console.log("****************event.data************************", event.data)
+    setCmnPar(event.data)
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -143,15 +155,14 @@ export default function TicPrivilegeL(props) {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      code: {
+      endda: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      text: {
+      begda: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      valid: { value: null, matchMode: FilterMatchMode.EQUALS },
+      }
     });
     setGlobalFilterValue("");
   };
@@ -170,35 +181,35 @@ export default function TicPrivilegeL(props) {
     setGlobalFilterValue(value1);
   };
 
-  const setTicPrivilegelinkDialog = () => {
-    setShowMyComponent(true);
-    setTicPrivilegelinkLVisible(true);
-  } 
-  
-  const setTicPrivilegediscountDialog = () => {
-    setShowMyComponent(true);
-    setTicPrivilegediscountLVisible(true);
-  } 
   const renderHeader = () => {
     return (
       <div className="flex card-container">
+        <div className="flex flex-wrap gap-1" />
+        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
+        />
+
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].User} icon="pi pi-users"  onClick={openPrivilegelink} text raised />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Discount} icon="pi pi-percentage"  onClick={openPrivilegediscount} text raised />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Link} icon="pi pi-sitemap" onClick={openPrivilegelink} text raised />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Condition} icon="pi pi-plus" onClick={openPrivilegelink} text raised />
-        </div>
+        {!props.lookUp && (
+          <>
+            <div className="flex flex-wrap gap-1">
+              <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={openParAtt} text raised disabled={!cmnPar} />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openParLink} text raised disabled={!cmnPar} />
+            </div>
+          </>
+        )}
+        {props.lookUp && (
+          <>
+            <div className="flex flex-wrap gap-1">
+              <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={returnPar} text raised disabled={!cmnPar} />
+            </div>
+          </>
+        )}        
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].PrivilegeList}</b>
+        <b>{translations[selectedLanguage].ParList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -222,49 +233,33 @@ export default function TicPrivilegeL(props) {
     );
   };
 
-  const validBodyTemplate = (rowData) => {
-    const valid = rowData.valid == 1?true:false
-    return (
-      <i
-        className={classNames("pi", {
-          "text-green-500 pi-check-circle": valid,
-          "text-red-500 pi-times-circle": !valid
-        })}
-      ></i>
-    );
-  };
-
-  const validFilterTemplate = (options) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Valid}
-        </label>
-        <TriStateCheckbox
-          inputId="verified-filter"
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-        />
-      </div>
-    );
-  };
-
   const formatDateColumn = (rowData, field) => {
     return DateFunction.formatDate(rowData[field]);
   };
 
   // <--- Dialog
-  const setTicPrivilegeDialog = (ticPrivilege) => {
+
+  const setCmnParattsLDialog = () => {
+    setShowMyComponent(true);
+    setCmnParattsLVisible(true);
+  }
+
+  const setCmnParlinkLDialog = () => {
+    setShowMyComponent(true);
+    setCmnParlinkLVisible(true);
+  }
+
+  const setCmnParDialog = (cmnPar) => {
     setVisible(true)
-    setPrivilegeTip("CREATE")
-    setTicPrivilege({ ...ticPrivilege });
+    setParTip("CREATE")
+    setCmnPar({ ...cmnPar });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const locTemplate = (rowData) => {
+  const parTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -273,8 +268,9 @@ export default function TicPrivilegeL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicPrivilegeDialog(rowData)
-            setPrivilegeTip("UPDATE")
+            setShowMyComponent(true)
+            setCmnParDialog(rowData)
+            setParTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -286,12 +282,13 @@ export default function TicPrivilegeL(props) {
   return (
     <div className="card">
       <Toast ref={toast} />
+
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticPrivilege}
+        selection={cmnPar}
         loading={loading}
-        value={ticPrivileges}
+        value={cmnPars}
         header={header}
         showGridlines
         removableSort
@@ -304,60 +301,69 @@ export default function TicPrivilegeL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicPrivilege(e.value)}
+        onSelectionChange={(e) => setCmnPar(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={locTemplate}
+          body={parTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
           field="code"
-          header={translations[selectedLanguage].Code}
+          header={translations[selectedLanguage].code}
           sortable
           filter
-          style={{ width: "15%" }}
+          style={{ width: "20%" }}
         ></Column>
         <Column
           field="text"
-          header={translations[selectedLanguage].Text}
+          header={translations[selectedLanguage].text}
           sortable
           filter
-          style={{ width: "30%" }}
-        ></Column>
-        <Column
-          field="ctp"
-          header={translations[selectedLanguage].ctp}
-          sortable
-          filter
-          style={{ width: "15%" }}
+          style={{ width: "20%" }}
         ></Column>
         <Column
           field="ntp"
-          header={translations[selectedLanguage].Type}
+          header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "35%" }}
         ></Column>
         <Column
-          field="valid"
-          filterField="valid"
-          dataType="numeric"
-          header={translations[selectedLanguage].Valid}
+          field="place"
+          header={translations[selectedLanguage].place}
           sortable
           filter
-          filterElement={validFilterTemplate}
-          style={{ width: "10%" }}
-          bodyClassName="text-center"
-          body={validBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>
+        <Column
+          field="activity"
+          header={translations[selectedLanguage].activity}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>
+        <Column
+          field="pib"
+          header={translations[selectedLanguage].pib}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>
+        <Column
+          field="idnum"
+          header={translations[selectedLanguage].idnum}
+          sortable
+          filter
+          style={{ width: "20%" }}
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Privilege}
+        header={translations[selectedLanguage].Link}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -366,13 +372,13 @@ export default function TicPrivilegeL(props) {
         }}
       >
         {showMyComponent && (
-          <TicPrivilege
+          <CmnPar
             parameter={"inputTextValue"}
-            ticPrivilege={ticPrivilege}
+            cmnPar={cmnPar}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            privilegeTip={privilegeTip}
+            parTip={parTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
@@ -381,46 +387,48 @@ export default function TicPrivilegeL(props) {
           </button>
         </div>
       </Dialog>
+      {/*
       <Dialog
-        header={translations[selectedLanguage].PrivilegelinkList}
-        visible={ticPrivilegelinkLVisible}
-        style={{ width: '90%' }}
+        header={translations[selectedLanguage].ParattsLista}
+        visible={cmnParattsLVisible}
+        style={{ width: '70%' }}
         onHide={() => {
-          setTicPrivilegelinkLVisible(false);
+          setCmnParattsLVisible(false);
           setShowMyComponent(false);
         }}
       >
         {showMyComponent && (
-          <TicPrivilegelinkL
+          <CmnParattsL
             parameter={"inputTextValue"}
-            ticPrivilege={ticPrivilege}
-            handleTicPrivilegelinkLDialogClose={handleTicPrivilegelinkLDialogClose}
-            setTicPrivilegelinkLVisible={setTicPrivilegelinkLVisible}
+            cmnPar={cmnPar}
+            handleCmnParattsLDialogClose={handleCmnParattsLDialogClose}
+            setCmnParattsLVisible={setCmnParattsLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>       
+      <Dialog
+        header={translations[selectedLanguage].ParlinkLista}
+        visible={cmnParlinkLVisible}
+        style={{ width: '70%' }}
+        onHide={() => {
+          setCmnParlinkLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <CmnParlinkL
+            parameter={"inputTextValue"}
+            cmnPar={cmnPar}
+            handleCmnParlinkLDialogClose={handleCmnParlinkLDialogClose}
+            setCmnParlinkLVisible={setCmnParlinkLVisible}
             dialog={true}
             lookUp={false}
           />
         )}
       </Dialog>   
-      <Dialog
-        header={translations[selectedLanguage].PrivilegediscountList}
-        visible={ticPrivilegediscountLVisible}
-        style={{ width: '90%' }}
-        onHide={() => {
-          setTicPrivilegediscountLVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <TicPrivilegediscountL
-            parameter={"inputTextValue"}
-            ticPrivilege={ticPrivilege}
-            handleTicPrivilegediscountLDialogClose={handleTicPrivilegediscountLDialogClose}
-            setTicPrivilegediscountLVisible={setTicPrivilegediscountLVisible}
-            dialog={true}
-            lookUp={false}
-          />
-        )}
-      </Dialog>           
+      */}
     </div>
   );
 }

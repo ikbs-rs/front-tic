@@ -20,7 +20,7 @@ import { Dropdown } from 'primereact/dropdown';
 export default function TicDocL(props) {
   let i = 0
   const objName = "tic_doc"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDoc = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocs, setTicDocs] = useState([]);
@@ -41,13 +41,13 @@ export default function TicDocL(props) {
       try {
         ++i
         console.log(i, "------------------------------Listawwww---------------------------------------------------", ticDocvr)
-        if (i<2) {  
-            const ticDocService = new TicDocService();
-            const data = await ticDocService.getCmnListaByItem( 'doc', 'listabynum', 'tic_docbynum_v', 'aa.docvr', '1');
-            console.log(data, "------------------------------Lista---------------------------------------------------")
-            setTicDocs(data);
-            initFilters();
-         }
+        if (i < 2) {
+          const ticDocService = new TicDocService();
+          const data = await ticDocService.getCmnListaByItem('doc', 'listabynum', 'tic_docbynum_v', 'aa.docvr', ddTicDocvrItem.code);
+          console.log(data, "------------------------------Lista---------------------------------------------------")
+          setTicDocs(data);
+          initFilters();
+        }
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -58,28 +58,28 @@ export default function TicDocL(props) {
 
   useEffect(() => {
     async function fetchData() {
-        try {
-            const ticDocvrService = new TicDocvrService();
-            const data = await ticDocvrService.getTicDocvrs();
+      try {
+        const ticDocvrService = new TicDocvrService();
+        const data = await ticDocvrService.getTicDocvrs();
 
-            setTicDocvrs(data)
-            //console.log("******************", ticDocvrlinkItem)
+        setTicDocvrs(data)
+        //console.log("******************", ticDocvrlinkItem)
 
-            const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            setDdTicDocvrItems(dataDD);
-            //setDdTicDocvrItem(dataDD.find((item) => item.code === props.ticDoc.doc1) || null);
-            if (props.ticDoc.docvr) {
-                const foundItem = data.find((item) => item.id === props.ticDoc.docvr);
-                setTicDocvr(foundItem || null);
-            }
-
-        } catch (error) {
-            console.error(error);
-            // Obrada greške ako je potrebna
+        const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+        setDdTicDocvrItems(dataDD);
+        //setDdTicDocvrItem(dataDD.find((item) => item.code === props.ticDoc.doc1) || null);
+        if (props.ticDoc.docvr) {
+          const foundItem = data.find((item) => item.id === props.ticDoc.docvr);
+          setTicDocvr(foundItem || null);
         }
+
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
     }
     fetchData();
-}, []);  
+  }, []);
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -138,19 +138,19 @@ export default function TicDocL(props) {
       life: 3000,
     });
   };
-    const onInputChange = (e, type, name) => {
-        let val = ''
-        if (type === "options") {
-          val = (e.target && e.target.value && e.target.value.code) || '';          
-            if (name == "docvr") {
-                setDdTicDocvrItem(e.value);
-                const foundItem = ticDocvrs.find((item) => item.id === val);
-                console.log(ticDocvrs, "+++++++++++++++++++onInputChange++++++++++++++++++++++", foundItem)
-                setTicDocvr(foundItem || null);  
-                ticDoc.docvr = val              
-            }
-        }
+  const onInputChange = (e, type, name) => {
+    let val = ''
+    if (type === "options") {
+      val = (e.target && e.target.value && e.target.value.code) || '';
+      if (name == "docvr") {
+        setDdTicDocvrItem(e.value);
+        const foundItem = ticDocvrs.find((item) => item.id === val);
+        console.log(ticDocvrs, "+++++++++++++++++++onInputChange++++++++++++++++++++++", foundItem)
+        setTicDocvr(foundItem || null);
+        ticDoc.docvr = val
       }
+    }
+  }
   // <heder za filter
   const initFilters = () => {
     setFilters({
@@ -188,18 +188,8 @@ export default function TicDocL(props) {
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        <div className="flex flex-wrap gap-5">
-          <p></p>
-          <Dropdown id="docvr"
-            value={ddTicDocvrItem}
-            options={ddTicDocvrItems}
-            onChange={(e) => onInputChange(e, "options", 'docvr')}
-            optionLabel="name"
-            placeholder="Select One"
-          />
 
-        </div>
-        <div className="flex flex-wrap gap-2"><p></p><label htmlFor="docvr">{translations[selectedLanguage].docvr_}</label></div>        
+       
         <div className="flex-grow-1" />
         <b>{translations[selectedLanguage].DocList}</b>
         <div className="flex-grow-1"></div>
@@ -230,11 +220,11 @@ export default function TicDocL(props) {
   };
 
   const formatTimeColumn = (rowData, field) => {
-    return DateFunction.convertTimeToDisplayFormat (rowData[field]);
+    return DateFunction.convertTimeToDisplayFormat(rowData[field]);
   };
 
   const stornoBodyTemplate = (rowData) => {
-    const storno = rowData.storno == 1?true:false
+    const storno = rowData.storno == 1 ? true : false
     return (
       <i
         className={classNames("pi", {
@@ -249,7 +239,7 @@ export default function TicDocL(props) {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Valid}
+          {translations[selectedLanguage].Valid}
         </label>
         <TriStateCheckbox
           inputId="verified-filter"
@@ -292,7 +282,46 @@ export default function TicDocL(props) {
 
   return (
     <div className="card">
-      <Toast ref={toast} />
+      <Toast ref={toast} />   
+      <div className="p-fluid formgrid grid">
+        <div className="field col-12 md:col-3">
+          <label htmlFor="docvr">{translations[selectedLanguage].docvr_}</label>
+          <Dropdown id="docvr"
+            value={ddTicDocvrItem}
+            options={ddTicDocvrItems}
+            onChange={(e) => onInputChange(e, "options", 'docvr')}
+            optionLabel="name"
+            placeholder="Select One"
+          />
+
+        </div>
+        <div className="field col-12 md:col-4">
+          <label htmlFor="docobj">{translations[selectedLanguage].ndocobj}</label>
+          <Dropdown id="docobj"
+            //value={ddTicEventlinkItem}
+            // options={ddTicEventlinkItems}
+            onChange={(e) => onInputChange(e, "options", 'docobj')}
+            required
+            optionLabel="name"
+            placeholder="Select One"
+          //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
+          />
+          {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
+        </div>
+        <div className="field col-12 md:col-4">
+          <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
+          <Dropdown id="event"
+            //value={ddTicEventlinkItem}
+            // options={ddTicEventlinkItems}
+            onChange={(e) => onInputChange(e, "options", 'event')}
+            required
+            optionLabel="name"
+            placeholder="Select One"
+          //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
+          />
+          {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
+        </div>        
+      </div>
       <DataTable
         dataKey="id"
         selectionMode="single"
@@ -304,7 +333,7 @@ export default function TicDocL(props) {
         removableSort
         filters={filters}
         scrollable
-        sortField="date"        
+        sortField="date"
         sortOrder={1}
         scrollHeight="750px"
         virtualScrollerOptions={{ itemSize: 46 }}
@@ -323,7 +352,14 @@ export default function TicDocL(props) {
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
-        />        
+        />
+        <Column
+          field="nevent"
+          header={translations[selectedLanguage].nevent}
+          sortable
+          filter
+          style={{ width: "15%" }}
+        ></Column>
         <Column
           field="ndocvr"
           header={translations[selectedLanguage].ndocvr}
@@ -332,19 +368,19 @@ export default function TicDocL(props) {
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="docobj"
+          field="ndocobj"
           header={translations[selectedLanguage].ndocobj}
           sortable
           filter
           style={{ width: "15%" }}
-        ></Column>        
+        ></Column>
         <Column
-          field="god"
-          header={translations[selectedLanguage].god}
+          field="year"
+          header={translations[selectedLanguage].year}
           sortable
           filter
           style={{ width: "10%" }}
-        ></Column>        
+        ></Column>
         <Column
           field="broj"
           header={translations[selectedLanguage].broj}
@@ -363,7 +399,7 @@ export default function TicDocL(props) {
           style={{ width: "5%" }}
           bodyClassName="text-center"
           body={stornoBodyTemplate}
-        ></Column>   
+        ></Column>
         <Column
           field="date"
           header={translations[selectedLanguage].date}
@@ -371,27 +407,27 @@ export default function TicDocL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "date")}
-        ></Column>             
+        ></Column>
         <Column
           field="cpar"
           header={translations[selectedLanguage].cpar}
           sortable
           filter
           style={{ width: "10%" }}
-        ></Column>   
+        ></Column>
         <Column
           field="npar"
           header={translations[selectedLanguage].npar}
           sortable
           filter
           style={{ width: "15%" }}
-        ></Column>             
+        ></Column>
 
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Doc}
         visible={visible}
-        style={{ width: '80%' }}
+        style={{ width: '95%', height: '1400px' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
@@ -405,7 +441,7 @@ export default function TicDocL(props) {
             setVisible={setVisible}
             dialog={true}
             ticDocvr={ticDocvr}
-            docTip={docTip}            
+            docTip={docTip}
           />
         )}
       </Dialog>

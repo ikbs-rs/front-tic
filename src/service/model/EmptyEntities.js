@@ -1,3 +1,7 @@
+import DateFunction from "../../utilities/DateFunction"
+
+const god = DateFunction.currYear
+
 const EmptyEntities = 
 {
   "tic_agenda": {
@@ -56,7 +60,7 @@ const EmptyEntities =
     "value": null,
     "terr": null,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_artgrp": {
     "id": null,
@@ -82,13 +86,13 @@ const EmptyEntities =
     "endda": "",
     "value": ""
   },  
-  "tic_artseat": {
+  "tic_artloc": {
     "id": null,
     "site": null,
     "art": null,
-    "seatloc": null,
+    "loc": null,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_arttax": {
     "id": null,
@@ -235,18 +239,18 @@ const EmptyEntities =
     "docvr": null,
     "date": "",
     "tm": "",
-    "curr": null,
-    "currrate": null,
+    "curr": "1",
+    "currrate": "1",
     "usr": null,
-    "status": "",
+    "status": "1",
     "docobj": null,
     "broj": null,
-    "obj": null,
+    "event": null,
     "obj2": null,
     "opis": "",
     "timecreation": "",
     "storno": "0",
-    "year": null
+    "year": `${new Date().getFullYear().toString()}`
   },
   "tic_docdocslink": {
     "id": null,
@@ -379,7 +383,7 @@ const EmptyEntities =
     "event": null,
     "cenatp": null,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_eventctg": {
     "id": null,
@@ -484,16 +488,16 @@ const EmptyEntities =
     "endcondition": "",
     "endvalue": "",
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_privilegediscount": {
     "id": null,
     "site": null,
     "privilege": null,
     "discount": null,
-    "value": null,
+    "value": 0,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_privilegelink": {
     "id": null,
@@ -501,7 +505,7 @@ const EmptyEntities =
     "privilege1": null,
     "privilege2": null,
     "begda": "",
-    "datumod2": ""
+    "endda": ""
   },
   "tic_privilegetp": {
     "id": null,

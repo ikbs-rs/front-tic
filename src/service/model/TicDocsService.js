@@ -2,10 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicDocService {
+export class TicDocsService {
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doc_v&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docs_v&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -39,28 +39,9 @@ export class TicDocService {
     }
   }
 
-  async getCmnListaByItem2(tab, route, view, item1, objId1, item2, objId2) {
+  async getTicDocss() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item1=${item1}&id1=${objId1}&item2=${item2}&id2=${objId2}&sl=${selectedLanguage}`;
-    console.log("***********L************", url, "*********L*******")
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
-
-    try {
-
-      const response = await axios.get(url, { headers });
-      return response.data.item;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  async getTicDocs() {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/docs/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -75,9 +56,9 @@ export class TicDocService {
     }
   }
 
-  async getTicDoc(objId) {
+  async getTicDocs(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/docs/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -93,16 +74,15 @@ export class TicDocService {
   }
 
 
-  async postTicDoc(newObj) {
+  async postTicDocs(newObj) {
     try {
-      console.log(newObj, "=====================newObj=============================")
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.date.trim() === '' || newObj.npar.trim() === '' || newObj.pib === null) {
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/doc/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/docs/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -119,15 +99,15 @@ export class TicDocService {
 
   }
 
-  async putTicDoc(newObj) {
+  async putTicDocs(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.date.trim() === '' || newObj.npar.trim() === '' || newObj.pib === null) {
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/doc/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/docs/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -145,9 +125,9 @@ export class TicDocService {
 
   }
 
-  async deleteTicDoc(newObj) {
+  async deleteTicDocs(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/doc/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/docs/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token
@@ -177,24 +157,5 @@ export class TicDocService {
       throw error;
     }
   }
-
-  async  getCmnPar(cmnParCode) {
-    const selectedLanguage = localStorage.getItem('sl') || 'en';
-    const url = `${env.CMN_URL}/?endpoint=parend&code=${cmnParCode}&sl=${selectedLanguage}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
-  
-    try {
-      console.log(url, "***************url**************")
-      const response = await axios.get(url, { headers });
-      return response.data; // Očekujemo da će ovo vratiti objekat sa ključevima 'code' i 'text'
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-  
 }
 
