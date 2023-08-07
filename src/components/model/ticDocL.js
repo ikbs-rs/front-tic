@@ -40,11 +40,9 @@ export default function TicDocL(props) {
     async function fetchData() {
       try {
         ++i
-        console.log(i, "------------------------------Listawwww---------------------------------------------------", ticDocvr)
         if (i < 2) {
           const ticDocService = new TicDocService();
           const data = await ticDocService.getCmnListaByItem('doc', 'listabynum', 'tic_docbynum_v', 'aa.docvr', ddTicDocvrItem.code);
-          console.log(data, "------------------------------Lista---------------------------------------------------")
           setTicDocs(data);
           initFilters();
         }

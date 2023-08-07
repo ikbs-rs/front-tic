@@ -615,6 +615,7 @@ export const translations = {
         Privilegediscount: "Веза",
         PrivilegediscountList: "Привилегије попуст Листа",
         privilege: "Привилегије",
+        Test: "Test",
     }
   };
   

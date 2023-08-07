@@ -13,7 +13,8 @@ import DateFunction from "../../utilities/DateFunction"
 import TicDocsL from './ticDocsL';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
-import CmnParL from './cmnParL';
+//import CmnParL from './cmnParL';
+import CmnParL from './remoteComponentContainer';
 
 const TicDoc = (props) => {
     //console.log("***********************************", props, "***********************************")
@@ -435,6 +436,7 @@ const TicDoc = (props) => {
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
+            {/*
             <Dialog
                 header={translations[selectedLanguage].ParList}
                 visible={cmnParLVisible}
@@ -452,6 +454,24 @@ const TicDoc = (props) => {
                         setCmnParLVisible={setCmnParLVisible}
                         dialog={true}
                         lookUp={true}
+                    />
+                )}
+            </Dialog>
+            */}
+            <Dialog
+                header={translations[selectedLanguage].ParList}
+                visible={cmnParLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setCmnParLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParLVisible && (
+                    <CmnParL
+                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parend&sl=sr_cyr"
+                        queryParams={{ sl: 'sr_cyr', lookUp: true, dialog: true, ticDoc: ticDoc }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleCmnParLDialogClose}
                     />
                 )}
             </Dialog>

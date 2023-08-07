@@ -18,7 +18,7 @@ import DateFunction from "../../utilities/DateFunction";
 
 export default function TicDocsL(props) {
 
-  console.log(props,"*******************TicDocsL************************")
+  //console.log(props,"*******************TicDocsL************************")
   const objName = "tic_docs"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyTicDocs = EmptyEntities[objName]

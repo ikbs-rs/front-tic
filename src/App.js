@@ -28,6 +28,7 @@ import Cena from './components/model/ticCenaL';
 import CenaTp from './components/model/ticCenatpL';
 import SeattpAtt from './components/model/ticSeattpattL';
 import SeatTp from './components/model/ticSeattpL';
+import Atest from './components/model/1test';
 
 import Event from './components/model/ticEventL';
 import EmptyPage from './pages/EmptyPage';
@@ -151,7 +152,7 @@ const App = () => {
                     label: translations[selectedLanguage].Reports,
                     icon: 'pi pi-prime',
                     items: [
-                        { label: translations[selectedLanguage].Report, icon: 'pi pi-database', to: '/izv1' }
+                        { label: translations[selectedLanguage].Test, icon: 'pi pi-database', to: '/atest' }
                     ]
                 },
                 {
@@ -503,6 +504,8 @@ const App = () => {
                         <Route path="/cena" element={<Cena />} />
                         <Route path="/cenatp" element={<CenaTp />} />
                         <Route path="/docvr" element={<DocVr />} />
+
+                        <Route path="/atest" element={<Atest />} />
                     </Routes>
                 </div>
 
