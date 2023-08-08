@@ -43,7 +43,6 @@ export default function TicPrivilegelinkL(props) {
         if (i < 2) {
           const ticPrivilegelinkService = new TicPrivilegelinkService();
           const data = await ticPrivilegelinkService.getLista(props.ticPrivilege.id);
-          console.log("Link podaci", data)
           setTicPrivilegelinks(data);
 
           initFilters();

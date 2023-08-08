@@ -1,341 +1,359 @@
-import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
-import { TriStateCheckbox } from "primereact/tristatecheckbox";
-import { Toast } from "primereact/toast";
-import { TicEventattsService } from "../../service/model/TicEventattsService";
+import React, { useState, useEffect, useRef } from 'react';
+import { classNames } from 'primereact/utils';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { TriStateCheckbox } from 'primereact/tristatecheckbox';
+import { Checkbox } from 'primereact/checkbox';
+import { Toast } from 'primereact/toast';
+import { TicEventattsService } from '../../service/model/TicEventattsService';
 import TicEventatts from './ticEventatts';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
-import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction";
-
+import { translations } from '../../configs/translations';
+import DateFunction from '../../utilities/DateFunction';
 
 export default function TicEventattsL(props) {
+    const objName = 'tic_eventatts';
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const emptyTicEventatts = EmptyEntities[objName];
+    emptyTicEventatts.event = props.ticEvent.id;
+    const [showMyComponent, setShowMyComponent] = useState(true);
+    const [ticEventattss, setTicEventattss] = useState([]);
+    const [ticEventatts, setTicEventatts] = useState(emptyTicEventatts);
+    const [filters, setFilters] = useState('');
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [loading, setLoading] = useState(false);
+    const toast = useRef(null);
+    const [visible, setVisible] = useState(false);
+    const [eventattsTip, setEventattsTip] = useState('');
+    let i = 0;
+    const handleCancelClick = () => {
+        props.setTicEventattsLVisible(false);
+    };
 
-  const objName = "tic_eventatts"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventatts = EmptyEntities[objName]
-  emptyTicEventatts.event = props.ticEvent.id
-  const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventattss, setTicEventattss] = useState([]);
-  const [ticEventatts, setTicEventatts] = useState(emptyTicEventatts);
-  const [filters, setFilters] = useState('');
-  const [globalFilterValue, setGlobalFilterValue] = useState('');
-  const [loading, setLoading] = useState(false);
-  const toast = useRef(null);
-  const [visible, setVisible] = useState(false);
-  const [eventattsTip, setEventattsTip] = useState('');
-  let i = 0
-  const handleCancelClick = () => {
-    props.setTicEventattsLVisible(false);
-  };
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                ++i;
+                console.log(i, "***************************************************")
+                if (i < 2) {
+                    const ticEventattsService = new TicEventattsService();
+                    const data = await ticEventattsService.getLista(props.ticEvent.id);
+                    console.log(data, "***************************************************")
+                    setTicEventattss(data);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        ++i
-        if (i < 2) {
-          const ticEventattsService = new TicEventattsService();
-          const data = await ticEventattsService.getLista(props.ticEvent.id);
-          console.log("Link podaci", data)
-          setTicEventattss(data);
-
-          initFilters();
+                    initFilters();
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
         }
-      } catch (error) {
-        console.error(error);
-        // Obrada greške ako je potrebna
-      }
-    }
-    fetchData();
-  }, []);
+        fetchData();
+    }, []);
 
-  const handleDialogClose = (newObj) => {
-    const localObj = { newObj };
+    const handleDialogClose = (newObj) => {
+        const localObj = { newObj };
 
-    let _ticEventattss = [...ticEventattss];
-    let _ticEventatts = { ...localObj.newObj.obj };
-    //setSubmitted(true);
-    if (localObj.newObj.eventattsTip === "CREATE") {
-      _ticEventattss.push(_ticEventatts);
-    } else if (localObj.newObj.eventattsTip === "UPDATE") {
-      const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventattss[index] = _ticEventatts;
-    } else if ((localObj.newObj.eventattsTip === "DELETE")) {
-      _ticEventattss = ticEventattss.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts Delete', life: 3000 });
-    } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts ?', life: 3000 });
-    }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventattsTip}`, life: 3000 });
-    setTicEventattss(_ticEventattss);
-    setTicEventatts(emptyTicEventatts);
-  };
+        let _ticEventattss = [...ticEventattss];
+        let _ticEventatts = { ...localObj.newObj.obj };
+        //setSubmitted(true);
+        if (localObj.newObj.eventattsTip === 'CREATE') {
+            _ticEventattss.push(_ticEventatts);
+        } else if (localObj.newObj.eventattsTip === 'UPDATE') {
+            const index = findIndexById(localObj.newObj.obj.id);
+            _ticEventattss[index] = _ticEventatts;
+        } else if (localObj.newObj.eventattsTip === 'DELETE') {
+            _ticEventattss = ticEventattss.filter((val) => val.id !== localObj.newObj.obj.id);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts Delete', life: 3000 });
+        } else {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts ?', life: 3000 });
+        }
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventattsTip}`, life: 3000 });
+        setTicEventattss(_ticEventattss);
+        setTicEventatts(emptyTicEventatts);
+    };
 
-  const findIndexById = (id) => {
-    let index = -1;
+    const findIndexById = (id) => {
+        let index = -1;
 
-    for (let i = 0; i < ticEventattss.length; i++) {
-      if (ticEventattss[i].id === id) {
-        index = i;
-        break;
-      }
-    }
+        for (let i = 0; i < ticEventattss.length; i++) {
+            if (ticEventattss[i].id === id) {
+                index = i;
+                break;
+            }
+        }
 
-    return index;
-  };
+        return index;
+    };
 
-  const openNew = () => {
-    setTicEventattsDialog(emptyTicEventatts);
-  };
+    const openNew = () => {
+        setTicEventattsDialog(emptyTicEventatts);
+    };
 
-  const onRowSelect = (event) => {
-    //ticEventatts.begda = event.data.begda
-    toast.current.show({
-      severity: "info",
-      summary: "Action Selected",
-      detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
-    });
-  };
+    const onRowSelect = (event) => {
+        //ticEventatts.begda = event.data.begda
+        toast.current.show({
+            severity: 'info',
+            summary: 'Action Selected',
+            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
+            life: 3000
+        });
+    };
 
-  const onRowUnselect = (event) => {
-    toast.current.show({
-      severity: "warn",
-      summary: "Action Unselected",
-      detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
-    });
-  };
-  // <heder za filter
-  const initFilters = () => {
-    setFilters({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ctp: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      ntp: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },
-      endda: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      },
-      begda: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
-    });
-    setGlobalFilterValue("");
-  };
+    const onRowUnselect = (event) => {
+        toast.current.show({
+            severity: 'warn',
+            summary: 'Action Unselected',
+            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
+            life: 3000
+        });
+    };
+    // <heder za filter
+    const initFilters = () => {
+        setFilters({
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+            ctp: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+            },
+            ntp: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+            },
+            valid: { value: null, matchMode: FilterMatchMode.EQUALS }
+        });
+        setGlobalFilterValue('');
+    };
 
-  const clearFilter = () => {
-    initFilters();
-  };
+    const clearFilter = () => {
+        initFilters();
+    };
 
-  const onGlobalFilterChange = (e) => {
-    let value1 = e.target.value
-    let _filters = { ...filters };
+    const onGlobalFilterChange = (e) => {
+        let value1 = e.target.value;
+        let _filters = { ...filters };
 
-    _filters["global"].value = value1;
+        _filters['global'].value = value1;
 
-    setFilters(_filters);
-    setGlobalFilterValue(value1);
-  };
+        setFilters(_filters);
+        setGlobalFilterValue(value1);
+    };
 
-  const renderHeader = () => {
-    return (
-      <div className="flex card-container">
-        <div className="flex flex-wrap gap-1" />
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        />
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
-        </div>
-        <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventattsList}</b>
-        <div className="flex-grow-1"></div>
-        <div className="flex flex-wrap gap-1">
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              value={globalFilterValue}
-              onChange={onGlobalFilterChange}
-              placeholder={translations[selectedLanguage].KeywordSearch}
-            />
-          </span>
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label={translations[selectedLanguage].Clear}
-            outlined
-            onClick={clearFilter}
-            text raised
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const formatDateColumn = (rowData, field) => {
-    return DateFunction.formatDate(rowData[field]);
-  };
-
-  // <--- Dialog
-  const setTicEventattsDialog = (ticEventatts) => {
-    setVisible(true)
-    setEventattsTip("CREATE")
-    setTicEventatts({ ...ticEventatts });
-  }
-  //  Dialog --->
-
-  const header = renderHeader();
-  // heder za filter/>
-
-  const eventattsTemplate = (rowData) => {
-    return (
-      <div className="flex flex-wrap gap-1">
-
-        <Button
-          type="button"
-          icon="pi pi-pencil"
-          style={{ width: '24px', height: '24px' }}
-          onClick={() => {
-            setTicEventattsDialog(rowData)
-            setEventattsTip("UPDATE")
-          }}
-          text
-          raised ></Button>
-
-      </div>
-    );
-  };
-
-  return (
-    <div className="card">
-      <Toast ref={toast} />
-      <div className="col-12">
-        <div className="card">
-          <div className="p-fluid formgrid grid">
-            <div className="field col-12 md:col-6">
-              <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-              <InputText id="code"
-                value={props.ticEvent.code}
-                disabled={true}
-              />
+    const renderHeader = () => {
+        return (
+            <div className="flex card-container">
+                <div className="flex flex-wrap gap-1" />
+                <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+                </div>
+                <div className="flex-grow-1"></div>
+                <b>{translations[selectedLanguage].EventattsList}</b>
+                <div className="flex-grow-1"></div>
+                <div className="flex flex-wrap gap-1">
+                    <span className="p-input-icon-left">
+                        <i className="pi pi-search" />
+                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder={translations[selectedLanguage].KeywordSearch} />
+                    </span>
+                    <Button type="button" icon="pi pi-filter-slash" label={translations[selectedLanguage].Clear} outlined onClick={clearFilter} text raised />
+                </div>
             </div>
-            <div className="field col-12 md:col-6">
-              <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-              <InputText
-                id="text"
-                value={props.ticEvent.textx}
-                disabled={true}
-              />
-            </div>           
-          </div>
+        );
+    };
+
+    const validBodyTemplate = (rowData) => {
+        const valid = rowData.valid == 1 ? true : false;
+        return (
+            <i
+                className={classNames('pi', {
+                    'text-green-500 pi-check-circle': valid,
+                    'text-red-500 pi-times-circle': !valid
+                })}
+            ></i>
+        );
+    };
+
+    const validFilterTemplate = (options) => {
+        return (
+            <div className="flex align-items-center gap-2">
+                <label htmlFor="verified-filter" className="font-bold">
+                    {translations[selectedLanguage].Valid}
+                </label>
+                <TriStateCheckbox inputId="verified-filter" value={options.value} onChange={(e) => options.filterCallback(e.value)} />
+            </div>
+        );
+    };
+
+    // <--- Dialog
+    const setTicEventattsDialog = (ticEventatts) => {
+        setVisible(true);
+        setEventattsTip('CREATE');
+        setTicEventatts({ ...ticEventatts });
+    };
+    //  Dialog --->
+
+    const header = renderHeader();
+    // heder za filter/>
+
+    const eventattsTemplate = (rowData) => {
+        return (
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-pencil"
+                    style={{ width: '24px', height: '24px' }}
+                    onClick={() => {
+                        setTicEventattsDialog(rowData);
+                        setEventattsTip('UPDATE');
+                    }}
+                    text
+                    raised
+                ></Button>
+            </div>
+        );
+    };
+
+    // funkcije
+    const validEditor = (rowData, field) => {
+        return (
+            <Checkbox
+                checked={rowData.valid === 1}
+                onChange={(e) => {
+                    rowData.valid = e.checked ? 1 : 0;
+                    setTicEventattss([...ticEventattss]);
+                }}
+            />
+        );
+    };
+
+    const valueEditor = (rowData, field) => {
+        return (
+            <InputText
+                value={rowData.value}
+                onChange={(e) => {
+                    rowData.value = e.target.value;
+                    setTicEventattss([...ticEventattss]);
+                }}
+            />
+        );
+    };
+
+    const onCellEditComplete = (e) => {
+        let { rowData, newValue, field, originalEvent: event } = e;
+
+        switch (field) {
+            case 'valid':
+              if (newValue != null) rowData[field] = newValue;
+              else event.preventDefault();              
+                break;
+            case 'value':
+              if (newValue.trim().length > 0) rowData[field] = newValue;
+              else event.preventDefault();              
+                break;
+            default:
+                if (newValue.trim().length > 0) rowData[field] = newValue;
+                else event.preventDefault();
+                break;
+        }
+    };
+
+    // Funkcije
+
+    return (
+        <div className="card">
+            <Toast ref={toast} />
+            <div className="col-12">
+                <div className="card">
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
+                            <InputText id="code" value={props.ticEvent.code} disabled={true} />
+                        </div>
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
+                            <InputText id="text" value={props.ticEvent.textx} disabled={true} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <DataTable
+                dataKey="id"
+                selectionMode="single"
+                selection={ticEventatts}
+                loading={loading}
+                value={ticEventattss}
+                header={header}
+                showGridlines
+                removableSort
+                //editMode="cell"
+                rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
+                filters={filters}
+                scrollable
+                scrollHeight="550px"
+                virtualScrollerOptions={{ itemSize: 46 }}
+                tableStyle={{ minWidth: '50rem' }}
+                //metaKeySelection={false}
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                onSelectionChange={(e) => setTicEventatts(e.value)}
+                onRowSelect={onRowSelect}
+                onRowUnselect={onRowUnselect}
+            >
+                <Column
+                    //bodyClassName="text-center"
+                    body={eventattsTemplate}
+                    exportable={false}
+                    headerClassName="w-10rem"
+                    style={{ minWidth: '4rem' }}
+                />
+                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '15%' }}></Column>
+                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '35%' }}></Column>
+                <Column
+                    field="value"
+                    header={translations[selectedLanguage].Value}
+                    sortable
+                    filter
+                    style={{ width: '20%' }}
+                    editor={(props) => valueEditor(props.rowData, props.field)} // Dodali smo editor za editiranje value
+                    onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
+                ></Column>
+                <Column
+                    field="valid"
+                    filterField="valid"
+                    dataType="numeric"
+                    header={translations[selectedLanguage].Valid}
+                    sortable
+                    filter
+                    filterElement={validFilterTemplate}
+                    style={{ width: '15%' }}
+                    bodyClassName="text-center"
+                    body={validBodyTemplate}
+                    editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
+                    onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
+                ></Column>
+            </DataTable>
+            <Dialog
+                header={translations[selectedLanguage].Link}
+                visible={visible}
+                style={{ width: '60%' }}
+                onHide={() => {
+                    setVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && <TicEventatts parameter={'inputTextValue'} ticEventatts={ticEventatts} ticEvent={props.ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventattsTip={eventattsTip} />}
+                <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+                    <button className="p-dialog-header-close p-link">
+                        <span className="p-dialog-header-close-icon pi pi-times"></span>
+                    </button>
+                </div>
+            </Dialog>
         </div>
-      </div>
-      <DataTable
-        dataKey="id"
-        selectionMode="single"
-        selection={ticEventatts}
-        loading={loading}
-        value={ticEventattss}
-        header={header}
-        showGridlines
-        removableSort
-        filters={filters}
-        scrollable
-        scrollHeight="550px"
-        virtualScrollerOptions={{ itemSize: 46 }}
-        tableStyle={{ minWidth: "50rem" }}
-        metaKeySelection={false}
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventatts(e.value)}
-        onRowSelect={onRowSelect}
-        onRowUnselect={onRowUnselect}
-      >
-        <Column
-          //bodyClassName="text-center"
-          body={eventattsTemplate}
-          exportable={false}
-          headerClassName="w-10rem"
-          style={{ minWidth: '4rem' }}
-        />
-        <Column
-          field="ctp"
-          header={translations[selectedLanguage].Code}
-          sortable
-          filter
-          style={{ width: "15%" }}
-        ></Column>
-        <Column
-          field="ntp"
-          header={translations[selectedLanguage].Text}
-          sortable
-          filter
-          style={{ width: "35%" }}
-        ></Column>
-        <Column
-          field="value"
-          header={translations[selectedLanguage].Value}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>        
-        <Column
-          field="begda"
-          header={translations[selectedLanguage].Begda}
-          sortable
-          filter
-          style={{ width: "10%" }}
-          body={(rowData) => formatDateColumn(rowData, "begda")}
-        ></Column>  
-        <Column
-          field="endda"
-          header={translations[selectedLanguage].Endda}
-          sortable
-          filter
-          style={{ width: "10%" }}
-          body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>         
-      </DataTable>
-      <Dialog
-        header={translations[selectedLanguage].Link}
-        visible={visible}
-        style={{ width: '60%' }}
-        onHide={() => {
-          setVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <TicEventatts
-            parameter={"inputTextValue"}
-            ticEventatts={ticEventatts}
-            ticEvent={props.ticEvent}
-            handleDialogClose={handleDialogClose}
-            setVisible={setVisible}
-            dialog={true}
-            eventattsTip={eventattsTip}
-          />
-        )}
-        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
-          <button className="p-dialog-header-close p-link">
-            <span className="p-dialog-header-close-icon pi pi-times"></span>
-          </button>
-        </div>
-      </Dialog>
-    </div>
-  );
+    );
 }

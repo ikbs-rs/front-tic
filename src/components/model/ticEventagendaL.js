@@ -43,7 +43,6 @@ export default function TicEventagendaL(props) {
         if (i < 2) {
           const ticEventagendaService = new TicEventagendaService();
           const data = await ticEventagendaService.getLista(props.ticEvent.id);
-          console.log("Link podaci", data)
           setTicEventagendas(data);
 
           initFilters();

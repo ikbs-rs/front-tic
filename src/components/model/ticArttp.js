@@ -8,8 +8,14 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
+import { useFetchObjData, useDropdown } from "./customHook";
 
 const TicArttp = (props) => {
+    const data = useFetchObjData("tic", "arttp", "1683417767216549888");
+    console.log(data.ddItems, "*******************useFetchObjData**********************")
+    const data1 = useDropdown(1);
+    console.log(data1, "*******************useFetchObjData**********************")
+
     const selectedLanguage = localStorage.getItem('sl')||'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
@@ -27,7 +33,7 @@ const TicArttp = (props) => {
         setDropdownItem(findDropdownItemByCode(props.ticArttp.valid));
     }, []);
 
-    const findDropdownItemByCode = (code) => {
+    const findDropdownItemByCode = (code) => {        
         return items.find((item) => item.code === code) || null;
     };
 

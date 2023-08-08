@@ -7,8 +7,8 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicPrivilegediscountService } from "../../service/model/TicPrivilegediscountService";
-import TicPrivilegediscount from './ticPrivilegediscount';
+import { TicEventtpsService } from "../../service/model/TicEventtpsService";
+import TicEventtps from './ticEventtps';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -16,24 +16,24 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicPrivilegediscountL(props) {
+export default function TicEventtpsL(props) {
 
-  const objName = "tic_privilegediscount"
+  const objName = "tic_eventtps"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicPrivilegediscount = EmptyEntities[objName]
-  emptyTicPrivilegediscount.privilege = props.ticPrivilege.id
+  const emptyTicEventtps = EmptyEntities[objName]
+  emptyTicEventtps.eventtp = props.ticEventtp.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticPrivilegediscounts, setTicPrivilegediscounts] = useState([]);
-  const [ticPrivilegediscount, setTicPrivilegediscount] = useState(emptyTicPrivilegediscount);
+  const [ticEventtpss, setTicEventtpss] = useState([]);
+  const [ticEventtps, setTicEventtps] = useState(emptyTicEventtps);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [privilegediscountTip, setPrivilegediscountTip] = useState('');
+  const [eventtpsTip, setEventattsTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicPrivilegediscountLVisible(false);
+    props.setTicEventtpsLVisible(false);
   };
 
   useEffect(() => {
@@ -41,9 +41,9 @@ export default function TicPrivilegediscountL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticPrivilegediscountService = new TicPrivilegediscountService();
-          const data = await ticPrivilegediscountService.getLista(props.ticPrivilege.id);
-          setTicPrivilegediscounts(data);
+          const ticEventtpsService = new TicEventtpsService();
+          const data = await ticEventtpsService.getLista(props.ticEventtp.id);
+          setTicEventtpss(data);
 
           initFilters();
         }
@@ -58,30 +58,30 @@ export default function TicPrivilegediscountL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticPrivilegediscounts = [...ticPrivilegediscounts];
-    let _ticPrivilegediscount = { ...localObj.newObj.obj };
+    let _ticEventtpss = [...ticEventtpss];
+    let _ticEventtps = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.privilegediscountTip === "CREATE") {
-      _ticPrivilegediscounts.push(_ticPrivilegediscount);
-    } else if (localObj.newObj.privilegediscountTip === "UPDATE") {
+    if (localObj.newObj.eventtpsTip === "CREATE") {
+      _ticEventtpss.push(_ticEventtps);
+    } else if (localObj.newObj.eventtpsTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticPrivilegediscounts[index] = _ticPrivilegediscount;
-    } else if ((localObj.newObj.privilegediscountTip === "DELETE")) {
-      _ticPrivilegediscounts = ticPrivilegediscounts.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegediscount Delete', life: 3000 });
+      _ticEventtpss[index] = _ticEventtps;
+    } else if ((localObj.newObj.eventtpsTip === "DELETE")) {
+      _ticEventtpss = ticEventtpss.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventtps Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegediscount ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventtps ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.privilegediscountTip}`, life: 3000 });
-    setTicPrivilegediscounts(_ticPrivilegediscounts);
-    setTicPrivilegediscount(emptyTicPrivilegediscount);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventtpsTip}`, life: 3000 });
+    setTicEventtpss(_ticEventtpss);
+    setTicEventtps(emptyTicEventtps);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticPrivilegediscounts.length; i++) {
-      if (ticPrivilegediscounts[i].id === id) {
+    for (let i = 0; i < ticEventtpss.length; i++) {
+      if (ticEventtpss[i].id === id) {
         index = i;
         break;
       }
@@ -91,11 +91,11 @@ export default function TicPrivilegediscountL(props) {
   };
 
   const openNew = () => {
-    setTicPrivilegediscountDialog(emptyTicPrivilegediscount);
+    setTicEventtpsDialog(emptyTicEventtps);
   };
 
   const onRowSelect = (event) => {
-    //ticPrivilegediscount.begda = event.data.begda
+    //ticEventtps.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -160,7 +160,7 @@ export default function TicPrivilegediscountL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].PrivilegediscountList}</b>
+        <b>{translations[selectedLanguage].EventattsList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -189,17 +189,17 @@ export default function TicPrivilegediscountL(props) {
   };
 
   // <--- Dialog
-  const setTicPrivilegediscountDialog = (ticPrivilegediscount) => {
+  const setTicEventtpsDialog = (ticEventtps) => {
     setVisible(true)
-    setPrivilegediscountTip("CREATE")
-    setTicPrivilegediscount({ ...ticPrivilegediscount });
+    setEventattsTip("CREATE")
+    setTicEventtps({ ...ticEventtps });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const privilegediscountTemplate = (rowData) => {
+  const eventtpsTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -208,8 +208,8 @@ export default function TicPrivilegediscountL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicPrivilegediscountDialog(rowData)
-            setPrivilegediscountTip("UPDATE")
+            setTicEventtpsDialog(rowData)
+            setEventattsTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -227,7 +227,7 @@ export default function TicPrivilegediscountL(props) {
             <div className="field col-12 md:col-6">
               <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticPrivilege.code}
+                value={props.ticEventtp.code}
                 disabled={true}
               />
             </div>
@@ -235,7 +235,7 @@ export default function TicPrivilegediscountL(props) {
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticPrivilege.text}
+                value={props.ticEventtp.textx}
                 disabled={true}
               />
             </div>           
@@ -245,9 +245,9 @@ export default function TicPrivilegediscountL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticPrivilegediscount}
+        selection={ticEventtps}
         loading={loading}
-        value={ticPrivilegediscounts}
+        value={ticEventtpss}
         header={header}
         showGridlines
         removableSort
@@ -260,31 +260,38 @@ export default function TicPrivilegediscountL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicPrivilegediscount(e.value)}
+        onSelectionChange={(e) => setTicEventtps(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={privilegediscountTemplate}
+          body={eventtpsTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cdiscount"
+          field="catt"
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "15%" }}
         ></Column>
         <Column
-          field="ndiscount"
+          field="natt"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
-        ></Column>       
+          style={{ width: "35%" }}
+        ></Column>
+        <Column
+          field="value"
+          header={translations[selectedLanguage].Value}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>        
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -312,14 +319,14 @@ export default function TicPrivilegediscountL(props) {
         }}
       >
         {showMyComponent && (
-          <TicPrivilegediscount
+          <TicEventtps
             parameter={"inputTextValue"}
-            ticPrivilegediscount={ticPrivilegediscount}
-            ticPrivilege={props.ticPrivilege}
+            ticEventtps={ticEventtps}
+            ticEventtp={props.ticEventtp}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            privilegediscountTip={privilegediscountTip}
+            eventtpsTip={eventtpsTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

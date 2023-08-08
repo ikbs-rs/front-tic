@@ -358,7 +358,8 @@ const EmptyEntities =
     "site": null,
     "code": "",
     "text": "",
-    "valid": "1"
+    "valid": "1",
+    "inputp": null
   },
   "tic_eventatts": {
     "id": null,
@@ -366,8 +367,7 @@ const EmptyEntities =
     "event": null,
     "att": null,
     "value": "",
-    "begda": "",
-    "endda": ""
+    "valid": "0"
   },
   "tic_eventattx": {
     "id": null,
@@ -436,6 +436,16 @@ const EmptyEntities =
     "text": "",
     "valid": "1"
   },
+  "tic_eventtps": {
+    "id": null,
+    "site": null,
+    "eventtp": null,
+    "att": null,
+    "inputtp": null,
+    "value": "",
+    "begda": "",
+    "endda": ""
+  },  
   "tic_eventtpx": {
     "id": null,
     "site": null,

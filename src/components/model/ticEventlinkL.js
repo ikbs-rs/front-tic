@@ -43,7 +43,6 @@ export default function TicEventlinkL(props) {
         if (i < 2) {
           const ticEventlinkService = new TicEventlinkService();
           const data = await ticEventlinkService.getLista(props.ticEvent.id);
-          console.log("Link podaci", data)
           setTicEventlinks(data);
 
           initFilters();

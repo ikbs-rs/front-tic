@@ -143,7 +143,6 @@ export default function TicDocL(props) {
       if (name == "docvr") {
         setDdTicDocvrItem(e.value);
         const foundItem = ticDocvrs.find((item) => item.id === val);
-        console.log(ticDocvrs, "+++++++++++++++++++onInputChange++++++++++++++++++++++", foundItem)
         setTicDocvr(foundItem || null);
         ticDoc.docvr = val
       }

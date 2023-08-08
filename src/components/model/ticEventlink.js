@@ -11,7 +11,7 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 
 const TicEventlink = (props) => {
-    //console.log("Props", props)
+
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventlink, setTicEventlink] = useState(props.ticEventlink);

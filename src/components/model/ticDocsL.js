@@ -44,7 +44,6 @@ export default function TicDocsL(props) {
         if (i < 2) {
           const ticDocsService = new TicDocsService();
           const data = await ticDocsService.getCmnListaByItem('doc', 'listabynum', 'tic_docssbynum_v', 'aa.doc', props.ticDoc.id);
-          console.log("Link podaci", data)
           setTicDocss(data);
 
           initFilters();

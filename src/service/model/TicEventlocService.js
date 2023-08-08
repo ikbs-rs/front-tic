@@ -57,8 +57,7 @@ export class TicEventlocService {
 
 
     async postTicEventloc(newObj) {
-        try {
-            console.log("*-*-*-*-*", newObj)            
+        try {            
             const selectedLanguage = localStorage.getItem('sl') || 'en'
             if (newObj.action === null || newObj.roll === null) {
                 throw new Error(
@@ -72,7 +71,6 @@ export class TicEventlocService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-console.log("*-*-*-*-*", url, newObj, jsonObj)
             const response = await axios.post(url, jsonObj, { headers });
             return response.data.items;
         } catch (error) {

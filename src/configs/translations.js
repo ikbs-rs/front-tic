@@ -616,6 +616,7 @@ export const translations = {
         PrivilegediscountList: "Привилегије попуст Листа",
         privilege: "Привилегије",
         Test: "Test",
+        inputtp: "Начин уношења"
     }
   };
   

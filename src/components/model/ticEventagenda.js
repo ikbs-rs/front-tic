@@ -13,7 +13,7 @@ import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
 
 const TicEventagenda = (props) => {
-    console.log("Props `````````````", props)
+
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventagenda, setTicEventagenda] = useState(props.ticEventagenda);

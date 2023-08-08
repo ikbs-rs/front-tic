@@ -71,7 +71,6 @@ export class TicEventlinkService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-console.log("*-*-*-*-*", url, newObj, jsonObj)
             const response = await axios.post(url, jsonObj, { headers });
             return response.data.items;
         } catch (error) {
