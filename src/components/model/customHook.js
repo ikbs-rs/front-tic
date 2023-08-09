@@ -94,3 +94,50 @@ export const useDropdown = (...args) => {
 
     return { ddItems, ddItem };
 };
+
+export async function fetchObjData(...args) {
+    try {
+        let backend = '';
+        switch (args[0]) {
+            case 'adm':
+                backend = env.ADM_BACK_URL;
+                break;
+            case 'cmn':
+                backend = env.CMN_BACK_URL;
+                break;
+            case 'tic':
+                backend = env.TIC_BACK_URL;
+                break;
+            default:
+                console.error('Pogresan naziv polja');
+        }
+
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const url = `${backend}/${args[0]}/x/${args[1]}/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+        const response = await axios.get(url, { headers });        
+        const datas = response.data.items;
+
+        const items = datas.map(({ textx, id }) => ({ name: textx, code: id }));
+
+        const data = datas.find((item) => item.id === args[2]);
+
+        let ddItems = null;
+        let ddItem = null;
+        if (data) {
+            const dataDD = { code: data.id, textx: data.itextxd };
+            ddItem = dataDD;
+        }
+        ddItems = items;
+
+        return { ddItems, ddItem, items: datas, item: data || null };
+    } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+        return { ddItems: null, ddItem: null, items: null, item: null };
+    }
+}
+

@@ -119,22 +119,6 @@ export class TicEventtpsService {
         }
 
     }
-
-    async getCmnInputtps() {
-        const selectedLanguage = localStorage.getItem('sl') || 'en'
-        const url = `${env.CMN_BACK_URL}/cmn/x/inputtp/?sl=${selectedLanguage}`;
-        const tokenLocal = await Token.getTokensLS();
-        const headers = {
-            Authorization: tokenLocal.token
-        };
-
-        try {
-            const response = await axios.get(url, { headers });
-            return response.data.items;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }    
+   
 }
 

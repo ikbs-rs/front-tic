@@ -13,7 +13,6 @@ export default function AutoDemo() {
             const file = event.files[0]
             const fileService = new FileService();
             const data = await fileService.uploadFile(file, `test.jpeg`);
-            console.log(data.status, "===============================", data.message)
             toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
             event.options.clear();
 

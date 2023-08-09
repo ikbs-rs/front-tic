@@ -262,15 +262,22 @@ export default function TicEventattL(props) {
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "25%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="textx"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
+          style={{ width: "55%" }}
         ></Column>
+        <Column
+          field="ddlist"
+          header={translations[selectedLanguage].ddlist}
+          sortable
+          filter
+          style={{ width: "25%" }}
+        ></Column>        
         <Column
           field="valid"
           filterField="valid"
@@ -279,7 +286,7 @@ export default function TicEventattL(props) {
           sortable
           filter
           filterElement={validFilterTemplate}
-          style={{ width: "15%" }}
+          style={{ width: "10%" }}
           bodyClassName="text-center"
           body={validBodyTemplate}
         ></Column>

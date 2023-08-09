@@ -95,7 +95,6 @@ export class TicDocService {
 
   async postTicDoc(newObj) {
     try {
-      console.log(newObj, "=====================newObj=============================")
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.date.trim() === '' || newObj.npar.trim() === '' || newObj.pib === null) {
         throw new Error(

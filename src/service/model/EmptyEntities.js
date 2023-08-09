@@ -359,7 +359,8 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "valid": "1",
-    "inputp": null
+    "inputp": null,
+    "ddlist": ""
   },
   "tic_eventatts": {
     "id": null,
@@ -367,7 +368,8 @@ const EmptyEntities =
     "event": null,
     "att": null,
     "value": "",
-    "valid": "0"
+    "valid": "0",
+    "text": ""
   },
   "tic_eventattx": {
     "id": null,

@@ -21,11 +21,7 @@ const TicEventtps = (props) => {
     const [ddTicEventatt, setDdTicEventattItem] = useState(null);
     const [ddTicEventatts, setDdTicEventattItems] = useState(null);
     const [ticEventtattItem, setTicEventattItem] = useState(null);
-    const [ticEventtattItems, setTicEventattItems] = useState(null);
-    const [ddCmnInputtp, setDdCmnInputtpItem] = useState(null);
-    const [ddCmnInputtps, setDdCmnInputtpItems] = useState(null);
-    const [cmnInputtpItem, setCmnInputtpItem] = useState(null);
-    const [cmnInputtpItems, setCmnInputtpItems] = useState(null);    
+    const [ticEventtattItems, setTicEventattItems] = useState(null);   
     
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventtps.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventtps.endda || DateFunction.currDate())))
@@ -60,31 +56,7 @@ const TicEventtps = (props) => {
         }
         fetchData();
     }, []);
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const ticEventtpsService = new TicEventtpsService();
-                const data = await ticEventtpsService.getCmnInputtps();
-
-                setCmnInputtpItems(data)
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdCmnInputtpItems(dataDD);
-                setDdCmnInputtpItem(dataDD.find((item) => item.code === props.ticEventtps.inputtp) || null);
-                if (props.ticEventtps.att) {
-                    const foundItem = data.find((item) => item.id === props.ticEventtps.inputtp);
-                    setCmnInputtpItem(foundItem || null);
-                    ticEventtps.ctp = foundItem.code
-                    ticEventtps.ntp = foundItem.textx
-                }
-
-            } catch (error) {
-                console.error(error);
-                // Obrada greške ako je potrebna
-            }
-        }
-        fetchData();
-    }, []);    
+   
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -165,12 +137,6 @@ const TicEventtps = (props) => {
                     setTicEventattItem(foundItem || null);
                     ticEventtps.natt = e.value.name
                     ticEventtps.catt = foundItem.code
-                } else if (name == "inputtp") {
-                    setDdCmnInputtpItem(e.value);
-                    const foundItem = cmnInputtpItems.find((item) => item.id === val);
-                    setCmnInputtpItem(foundItem || null);                    
-                    ticEventtps.cinputtp = foundItem.code
-                    ticEventtps.ninputtp = e.value.name
                 }
             }                
         } else if (type === "Calendar") {
@@ -240,19 +206,6 @@ const TicEventtps = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEventtps.att })}
                             />
                             {submitted && !ticEventtps.att && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-7">
-                            <label htmlFor="inputtp">{translations[selectedLanguage].inputtp} *</label>
-                            <Dropdown id="inputtp"
-                                value={ddCmnInputtp}
-                                options={ddCmnInputtps}
-                                onChange={(e) => onInputChange(e, "options", 'inputtp')}
-                                required
-                                optionLabel="name"
-                                placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticEventtps.inputtp })}
-                            />
-                            {submitted && !ticEventtps.inputtp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>                        
                     </div>
 

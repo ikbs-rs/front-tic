@@ -198,6 +198,12 @@ const TicEventatts = (props) => {
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-11">
+                            <label htmlFor="text">{translations[selectedLanguage].Descript}</label>
+                            <InputText id="text" value={ticEventatts.text} onChange={(e) => onInputChange(e, 'text', 'text')} />
+                        </div>
+                    </div>                    
+                    <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                             <Dropdown

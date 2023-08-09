@@ -1,3 +1,12 @@
+/**
+ * Argumenti respektivno koji se prosledjuju
+ * 0 - modu, `adm`
+ * 1 - tabela, bez prefiksa, `user`
+ * 2 - id tabele
+ * 3 - naziv atributa po kome se pretrazuje
+ * 5 - mumericki atrinut 0 ili 1
+ * 6 - vrednost atributa pokome se pretrazuje
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
@@ -14,7 +23,8 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from '../../configs/translations';
-import DateFunction from '../../utilities/DateFunction';
+import { fetchObjData } from './customHook';
+import { Dropdown } from 'primereact/dropdown';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -30,7 +40,11 @@ export default function TicEventattsL(props) {
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
     const [eventattsTip, setEventattsTip] = useState('');
+    const [dropdownItem, setDropdownItem] = useState(null);
+    const [dropdownItems, setDropdownItems] = useState(null);
+    const [dropdownAllItems, setDropdownAllItems] = useState(null);
     let i = 0;
+
     const handleCancelClick = () => {
         props.setTicEventattsLVisible(false);
     };
@@ -39,12 +53,23 @@ export default function TicEventattsL(props) {
         async function fetchData() {
             try {
                 ++i;
-                console.log(i, "***************************************************")
                 if (i < 2) {
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id);
-                    console.log(data, "***************************************************")
+                    // Proširivanje dropdownData niza za svaki red sa inputtp === "3"
+                    const updatedDropdownItems = { ...dropdownAllItems };
+                    await Promise.all(
+                        data.map(async (row) => {
+                            if (row.inputtp === '3' && row.ddlist) {
+                                const [modul, tabela] = row.ddlist.split(',');
+                                const apsTabela = modul + `_` + tabela;
+                                const dataDD = await fetchObjData(modul, tabela); // Sačekaj izvršenje
+                                updatedDropdownItems[apsTabela] = dataDD.ddItems;
+                            }
+                        })
+                    );
                     setTicEventattss(data);
+                    setDropdownAllItems(updatedDropdownItems);
 
                     initFilters();
                 }
@@ -76,6 +101,68 @@ export default function TicEventattsL(props) {
         toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventattsTip}`, life: 3000 });
         setTicEventattss(_ticEventattss);
         setTicEventatts(emptyTicEventatts);
+    };
+
+    // const handleDropdownChange = async (e, rowData, apsTabela) => {
+    //     rowData.value = e.value.code;
+    //     const val = (e.target && e.target.value && e.target.value.code) || '';
+    //     setDropdownItem(e.value);
+
+    //     let _ticEventatts = { ...ticEventatts };
+    //     _ticEventatts[`value`] = val;
+    //     setTicEventatts(_ticEventatts);
+    //     // Ažuriramo podatke u bazi bez submita
+    //     await updateDataInDatabase(_ticEventatts);
+    // };
+
+    const onInputChange = async (e, type, name, rowData, apsTabela) => {
+        let val = '';
+        if (name === 'value') {
+            switch (type) {
+                case 'input':
+                    val = (e.target && e.target.value) || '';
+                    rowData.value = e.target.value;
+                    setTicEventattss([...ticEventattss]);
+                    break;
+                case 'checkbox':
+                    rowData.value = e.checked ? '1' : '0';
+                    setTicEventattss([...ticEventattss]);
+                    val = e.checked ? 1 : 0;
+                    break;
+                case 'options':
+                    rowData.value = e.value.code;
+                    val = (e.target && e.target.value && e.target.value.code) || '';
+                    setDropdownItem(e.value);
+                    break;
+                default:
+                    val = '';
+                    break;
+            }
+        } else if (name === 'valid') {
+            rowData.valid = e.checked ? 1 : 0;
+            setTicEventattss([...ticEventattss]);
+            val = e.checked ? 1 : 0;
+        } else if (name === 'text') {
+            val = (e.target && e.target.value) || '';
+            rowData.text = e.target.value;
+            setTicEventattss([...ticEventattss]);
+        }
+
+        let _ticEventatts = { ...ticEventatts };
+        _ticEventatts[`${name}`] = val;
+        setTicEventatts(_ticEventatts);
+        await updateDataInDatabase(_ticEventatts);
+    };
+
+    const updateDataInDatabase = async (rowData) => {
+        try {
+            const ticEventattsService = new TicEventattsService();
+            await ticEventattsService.putTicEventatts(rowData);
+            // Dodatno rukovanje ažuriranim podacima, ako je potrebno
+        } catch (err) {
+            console.error('Error updating data:', err);
+            // Dodatno rukovanje greškom, ako je potrebno
+        }
     };
 
     const findIndexById = (id) => {
@@ -219,47 +306,89 @@ export default function TicEventattsL(props) {
     };
 
     // funkcije
+    const textEditor = (rowData, field) => {
+        return <InputText value={rowData.text || ''} onChange={(e) => onInputChange(e, 'text', 'text', rowData, null)} />;
+    };
+
     const validEditor = (rowData, field) => {
-        return (
-            <Checkbox
-                checked={rowData.valid === 1}
-                onChange={(e) => {
-                    rowData.valid = e.checked ? 1 : 0;
-                    setTicEventattss([...ticEventattss]);
-                }}
-            />
-        );
+        return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
     };
 
     const valueEditor = (rowData, field) => {
-        return (
-            <InputText
-                value={rowData.value}
-                onChange={(e) => {
-                    rowData.value = e.target.value;
-                    setTicEventattss([...ticEventattss]);
-                }}
-            />
-        );
+        switch (rowData.inputtp) {
+            case '1':
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
+            case '2':
+                return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)} />;
+            case '3':
+                const [modul, tabela] = rowData.ddlist.split(',');
+                const apsTabela = `${modul}_${tabela}`;
+
+                const selectedOptions = dropdownAllItems[apsTabela] || [];
+                setDropdownItems(selectedOptions);
+                const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
+                setDropdownItem(selectedOption);
+
+                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
+            default:
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
+        }
     };
 
-    const onCellEditComplete = (e) => {
-        let { rowData, newValue, field, originalEvent: event } = e;
-
+    const onCellEditComplete = async (e) => {
+        let { rowData, newValue, newRowData, field, originalEvent: event } = e;
+        let _rowData = { ...rowData };
+        let _newValue = newValue;
         switch (field) {
             case 'valid':
-              if (newValue != null) rowData[field] = newValue;
-              else event.preventDefault();              
+                if (newValue != null) _rowData[field] = _newValue;
+                else event.preventDefault();
                 break;
             case 'value':
-              if (newValue.trim().length > 0) rowData[field] = newValue;
-              else event.preventDefault();              
+                if (newValue != null) {
+                    _rowData[field] = _newValue;
+                } else event.preventDefault();
+                break;
+            case 'text': // Dodali smo ovu sekciju za kolonu "text"
+                if (newValue != null) {
+                    _rowData[field] = _newValue;
+                } else event.preventDefault();
                 break;
             default:
-                if (newValue.trim().length > 0) rowData[field] = newValue;
+                if (newValue != null) _rowData[field] = _newValue;
                 else event.preventDefault();
                 break;
         }
+
+        // Ažuriramo stanje komponente
+        setTicEventattss([...ticEventattss]);
+    };
+
+    const valueTemplate = (rowData) => {
+        if (rowData.inputtp === '3' && rowData.ddlist) {
+            const [modul, tabela] = rowData.ddlist.split(',');
+            const apsTabela = `${modul}_${tabela}`;
+            const dropdownData = dropdownAllItems[apsTabela] || [];
+            const dropdownValue = dropdownData.find((item) => item.code === rowData.value);
+            if (dropdownValue) {
+                return <span>{dropdownValue.name}</span>;
+            }
+        }
+
+        if (rowData.inputtp === '2') {
+            const value = rowData.value == 1 ? true : false;
+            return (
+                <i
+                    className={classNames('pi', {
+                        'text-green-500 pi-check-circle': value,
+                        'text-red-500 pi-times-circle': !value
+                    })}
+                ></i>
+            );
+        }
+
+        // Prikazujemo ili "value" ili default vrednost
+        return rowData.value;
     };
 
     // Funkcije
@@ -312,8 +441,10 @@ export default function TicEventattsL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '15%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '35%' }}></Column>
+                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
+                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '25%' }}></Column>
+                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable filter style={{ width: '10%' }}></Column>
+                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter style={{ width: '10%' }}></Column>
                 <Column
                     field="value"
                     header={translations[selectedLanguage].Value}
@@ -321,8 +452,19 @@ export default function TicEventattsL(props) {
                     filter
                     style={{ width: '20%' }}
                     editor={(props) => valueEditor(props.rowData, props.field)} // Dodali smo editor za editiranje value
+                    body={valueTemplate}
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
                 ></Column>
+                <Column
+                    field="text"
+                    header={translations[selectedLanguage].Descript}
+                    sortable
+                    filter
+                    style={{ width: '10%' }}
+                    editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>
+
                 <Column
                     field="valid"
                     filterField="valid"
@@ -331,7 +473,7 @@ export default function TicEventattsL(props) {
                     sortable
                     filter
                     filterElement={validFilterTemplate}
-                    style={{ width: '15%' }}
+                    style={{ width: '10%' }}
                     bodyClassName="text-center"
                     body={validBodyTemplate}
                     editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
