@@ -12,7 +12,7 @@ export default function AutoDemo() {
             console.log('Custom upload started Bravo:', event);
             const file = event.files[0]
             const fileService = new FileService();
-            const data = await fileService.uploadFile(file, `test.jpeg`);
+            const data = await fileService.uploadFile(file, event.files[0].name);
             toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
             event.options.clear();
 
@@ -34,7 +34,7 @@ export default function AutoDemo() {
                 chooseLabel="Browse"
                 emptyTemplate={
                     <p className="m-0">Drag and drop files to here to upload.</p>
-                  }                
+                  }
             />
         </div>
     );

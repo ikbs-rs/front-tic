@@ -25,6 +25,8 @@ import './index.css';
 import { translations } from '../../configs/translations';
 import { fetchObjData } from './customHook';
 import { Dropdown } from 'primereact/dropdown';
+import { FileUpload } from "primereact/fileupload";
+import FileService from "../../service/FileService";
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -102,6 +104,29 @@ export default function TicEventattsL(props) {
         setTicEventattss(_ticEventattss);
         setTicEventatts(emptyTicEventatts);
     };
+
+    const onTemplateSelect = (e) => {
+        console.log("onTemplateSelect")
+        console.log("File name:"+e.files[0].name)
+    };
+
+    const handleCustomUpload = async (event) => {
+        try {
+            console.log('Custom upload started Bravo:', event);
+            console.log('Custom upload started File name:', event.files[0].name);
+            const file = event.files[0]
+            const fileService = new FileService();
+            const data = await fileService.uploadFile(file, event.files[0].name);
+            toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
+            event.options.clear();
+
+        } catch (error) {
+            console.error(error);
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error uploading file' });
+        }
+    }
+
+
 
     // const handleDropdownChange = async (e, rowData, apsTabela) => {
     //     rowData.value = e.value.code;
@@ -316,6 +341,22 @@ export default function TicEventattsL(props) {
 
     const valueEditor = (rowData, field) => {
         switch (rowData.inputtp) {
+            case '4':
+                return   <div className="card flex justify-content-center">
+                    <Toast ref={toast}></Toast>
+                    <FileUpload
+                        name="Fajl"
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        uploadHandler={handleCustomUpload}
+                        onSelect={onTemplateSelect}
+                        customUpload={true}
+                        chooseLabel="Browse"
+                        emptyTemplate={
+                            <p className="m-0">Drag and drop files to here to upload.</p>
+                        }
+                    />
+                </div>
             case '1':
                 return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
             case '2':
@@ -365,6 +406,28 @@ export default function TicEventattsL(props) {
     };
 
     const valueTemplate = (rowData) => {
+
+        if (rowData.inputtp === '4') {
+
+            return (
+                <div className="card flex justify-content-center">
+                    <Toast ref={toast}></Toast>
+                    <FileUpload
+                        name="Fajl"
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        uploadHandler={handleCustomUpload}
+                        onSelect={onTemplateSelect}
+                        customUpload={true}
+                        chooseLabel="Browse"
+                        emptyTemplate={
+                            <p className="m-0">Drag and drop files to here to upload.</p>
+                        }
+                    />
+                </div>
+            );
+        }
+
         if (rowData.inputtp === '3' && rowData.ddlist) {
             const [modul, tabela] = rowData.ddlist.split(',');
             const apsTabela = `${modul}_${tabela}`;
