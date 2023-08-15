@@ -267,6 +267,9 @@ export default function TicEventattsL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={openNew} text raised />
+                </div>
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
                 <div className="flex-grow-1"></div>

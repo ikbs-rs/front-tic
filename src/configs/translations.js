@@ -618,6 +618,7 @@ export const translations = {
         Test: "Test",
         inputtp: "Начин уношења",
         ddlist: "Листа података (modul,tabela)",
+        AutoAtts: "Ауто. унос"
     }
   };
   
