@@ -25,8 +25,8 @@ import './index.css';
 import { translations } from '../../configs/translations';
 import { fetchObjData } from './customHook';
 import { Dropdown } from 'primereact/dropdown';
-import { FileUpload } from "primereact/fileupload";
-import FileService from "../../service/FileService";
+import { FileUpload } from 'primereact/fileupload';
+import FileService from '../../service/FileService';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -56,6 +56,7 @@ export default function TicEventattsL(props) {
             try {
                 ++i;
                 if (i < 2) {
+                    let updatedData = {};
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id);
                     // Proširivanje dropdownData niza za svaki red sa inputtp === "3"
@@ -68,9 +69,13 @@ export default function TicEventattsL(props) {
                                 const dataDD = await fetchObjData(modul, tabela); // Sačekaj izvršenje
                                 updatedDropdownItems[apsTabela] = dataDD.ddItems;
                             }
+                            updatedData = data.map((row) => ({
+                                ...row,
+                                isUploadPending: false // Initialize isUploadPending to false for each row
+                            }));
                         })
                     );
-                    setTicEventattss(data);
+                    setTicEventattss(updatedData);
                     setDropdownAllItems(updatedDropdownItems);
 
                     initFilters();
@@ -106,27 +111,26 @@ export default function TicEventattsL(props) {
     };
 
     const onTemplateSelect = (e) => {
-        console.log("onTemplateSelect")
-        console.log("File name:"+e.files[0].name)
+        console.log('onTemplateSelect');
+        console.log('File name:' + e.files[0].name);
     };
 
-    const handleCustomUpload = async (event) => {
+    const handleCustomUpload = async (event, rowData) => {
         try {
             console.log('Custom upload started Bravo:', event);
             console.log('Custom upload started File name:', event.files[0].name);
-            const file = event.files[0]
+            rowData.isUploadPending = false;
+            const file = event.files[0];
             const fileService = new FileService();
             const data = await fileService.uploadFile(file, event.files[0].name);
+            rowData.isUploadPending = true;
             toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
             event.options.clear();
-
         } catch (error) {
             console.error(error);
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error uploading file' });
         }
-    }
-
-
+    };
 
     // const handleDropdownChange = async (e, rowData, apsTabela) => {
     //     rowData.value = e.value.code;
@@ -209,12 +213,14 @@ export default function TicEventattsL(props) {
 
     const onRowSelect = (event) => {
         //ticEventatts.begda = event.data.begda
-        toast.current.show({
-            severity: 'info',
-            summary: 'Action Selected',
-            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-            life: 3000
-        });
+        if (toast.current.show!=null) {
+            toast.current.show({
+                severity: 'info',
+                summary: 'Action Selected',
+                detail: `Id: ${event.data.id} Name: ${event.data.text}`,
+                life: 3000
+            });
+        }
     };
 
     const onRowUnselect = (event) => {
@@ -342,21 +348,22 @@ export default function TicEventattsL(props) {
     const valueEditor = (rowData, field) => {
         switch (rowData.inputtp) {
             case '4':
-                return   <div className="card flex justify-content-center">
-                    <Toast ref={toast}></Toast>
-                    <FileUpload
-                        name="Fajl"
-                        accept="image/*"
-                        maxFileSize={1000000}
-                        uploadHandler={handleCustomUpload}
-                        onSelect={onTemplateSelect}
-                        customUpload={true}
-                        chooseLabel="Browse"
-                        emptyTemplate={
-                            <p className="m-0">Drag and drop files to here to upload.</p>
-                        }
-                    />
-                </div>
+                return (
+                    <div className="card flex justify-content-center">
+                        <Toast ref={toast}></Toast>
+                        <FileUpload
+                            //mode="basic"
+                            name="Fajl"
+                            accept="image/*"
+                            maxFileSize={1000000}
+                            uploadHandler={(event) => handleCustomUpload(event, rowData)}
+                            onSelect={onTemplateSelect}
+                            customUpload={true}
+                            chooseLabel="Browse"
+                            emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>}
+                        />
+                    </div>
+                );
             case '1':
                 return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
             case '2':
@@ -380,6 +387,7 @@ export default function TicEventattsL(props) {
         let { rowData, newValue, newRowData, field, originalEvent: event } = e;
         let _rowData = { ...rowData };
         let _newValue = newValue;
+
         switch (field) {
             case 'valid':
                 if (newValue != null) _rowData[field] = _newValue;
@@ -388,6 +396,10 @@ export default function TicEventattsL(props) {
             case 'value':
                 if (newValue != null) {
                     _rowData[field] = _newValue;
+                    // Check if upload is pending and prevent exiting edit mode
+                    if (rowData.inputtp === '4' && !_rowData.isUploadPending) {
+                        event.preventDefault();
+                    }
                 } else event.preventDefault();
                 break;
             case 'text': // Dodali smo ovu sekciju za kolonu "text"
@@ -406,7 +418,7 @@ export default function TicEventattsL(props) {
     };
 
     const valueTemplate = (rowData) => {
-
+        /*
         if (rowData.inputtp === '4') {
 
             return (
@@ -427,7 +439,7 @@ export default function TicEventattsL(props) {
                 </div>
             );
         }
-
+*/
         if (rowData.inputtp === '3' && rowData.ddlist) {
             const [modul, tabela] = rowData.ddlist.split(',');
             const apsTabela = `${modul}_${tabela}`;
