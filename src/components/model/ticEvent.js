@@ -125,9 +125,8 @@ const TicEvent = (props) => {
     useEffect(() => {
         async function fetchData() {
           try { 
-            const objId = 'MO' // Mesto odrzavanja, scena, hala ... - treba ubaciti u DB parametre
             const ticEventService = new TicEventService();
-            const data = await ticEventService.getCmnListaByItem('loc', 'listabytxt', 'cmn_locbytxt_v', 't.code', objId);
+            const data = await ticEventService.getCmnObjXcsLista();
             const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
             console.log(dataDD,"+++++++++++++++++++++++++++", props.ticEvent.loc)
             setDdLocItems(dataDD);
@@ -485,7 +484,7 @@ const TicEvent = (props) => {
                             </div>
                         </div>
                     </div>
-                    {/**/}
+                    {/*
                     {showMyComponent && (
                         <TicEvents
                             parameter={"inputTextValue"}
@@ -498,6 +497,7 @@ const TicEvent = (props) => {
                             eventsTip={eventsTip}
                         />
                     )}
+                    */}
                 </div>
             </div>
 
