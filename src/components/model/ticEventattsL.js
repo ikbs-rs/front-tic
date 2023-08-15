@@ -61,7 +61,7 @@ export default function TicEventattsL(props) {
                     const data = await ticEventattsService.getLista(props.ticEvent.id);
                     // Proširivanje dropdownData niza za svaki red sa inputtp === "3"
                     const updatedDropdownItems = { ...dropdownAllItems };
-                    await Promise.all(
+                    updatedData = await Promise.all(
                         data.map(async (row) => {
                             if (row.inputtp === '3' && row.ddlist) {
                                 const [modul, tabela] = row.ddlist.split(',');
@@ -69,10 +69,7 @@ export default function TicEventattsL(props) {
                                 const dataDD = await fetchObjData(modul, tabela); // Sačekaj izvršenje
                                 updatedDropdownItems[apsTabela] = dataDD.ddItems;
                             }
-                            updatedData = data.map((row) => ({
-                                ...row,
-                                isUploadPending: false // Initialize isUploadPending to false for each row
-                            }));
+                            return { ...row, isUploadPending: false }; // Dodaj novu kolonu sa statusom
                         })
                     );
                     setTicEventattss(updatedData);
@@ -213,7 +210,7 @@ export default function TicEventattsL(props) {
 
     const onRowSelect = (event) => {
         //ticEventatts.begda = event.data.begda
-        if (toast.current.show!=null) {
+        if (toast.current.show != null) {
             toast.current.show({
                 severity: 'info',
                 summary: 'Action Selected',
