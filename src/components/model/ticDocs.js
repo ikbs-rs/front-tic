@@ -1,21 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicDocsService } from "../../service/model/TicDocsService";
+import { TicDocsService } from '../../service/model/TicDocsService';
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
-import { Toast } from "primereact/toast";
+import { Toast } from 'primereact/toast';
 import DeleteDialog from '../dialog/DeleteDialog';
-import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction"
+import { translations } from '../../configs/translations';
+import DateFunction from '../../utilities/DateFunction';
 import InputMask from 'react-input-mask';
-import env from "../../configs/env"
+import env from '../../configs/env';
 import axios from 'axios';
-import Token from "../../utilities/Token";
+import Token from '../../utilities/Token';
+import { Dialog } from 'primereact/dialog';
+import TicArtL from './ticArtL';
 
 const TicDocs = (props) => {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
@@ -23,6 +25,10 @@ const TicDocs = (props) => {
     const [submitted, setSubmitted] = useState(false);
     const [ddTpItem, setDdTpItem] = useState(null);
     const [ddTpItems, setDdTpItems] = useState(null);
+    const [ticArtLVisible, setTicArtLVisible] = useState(false);
+    const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
+    const [showMyComponent, setShowMyComponent] = useState(true);
+    const [ticArt, setTicArt] = useState(null);
 
     const toast = useRef(null);
     const items = [
@@ -60,7 +66,6 @@ const TicDocs = (props) => {
         return items.find((item) => item.code === code) || null;
     };
 
-
     useEffect(() => {
         setDropdownItems(items);
     }, []);
@@ -69,22 +74,39 @@ const TicDocs = (props) => {
         props.setVisible(false);
     };
 
+    const handleArtClick = async (e, destination) => {
+        try {
+            console.log(destination, "***********************************")
+            if (destination === 'local') setTicArtDialog()
+            else setTicArtRemoteDialog()
+            
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch ticArt data",
+                life: 3000,
+            });
+        }
+    };
+
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            ticDocs.begtm = DateFunction.convertTimeToDBFormat(ticDocs.begtm)
-            ticDocs.endtm = DateFunction.convertTimeToDBFormat(ticDocs.endtm)
+            ticDocs.begtm = DateFunction.convertTimeToDBFormat(ticDocs.begtm);
+            ticDocs.endtm = DateFunction.convertTimeToDBFormat(ticDocs.endtm);
             const ticDocsService = new TicDocsService();
             const data = await ticDocsService.postTicDocs(ticDocs);
-            ticDocs.id = data
+            ticDocs.id = data;
             props.handleDialogClose({ obj: ticDocs, docsTip: props.docsTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
-                severity: "error",
-                summary: "Action ",
+                severity: 'error',
+                summary: 'Action ',
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 5000
             });
         }
     };
@@ -92,20 +114,20 @@ const TicDocs = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            console.log("Preeeeeeee", ticDocs.begtm)
-            ticDocs.begtm = DateFunction.convertTimeToDBFormat(ticDocs.begtm)
-            ticDocs.endtm = DateFunction.convertTimeToDBFormat(ticDocs.endtm)
-            console.log("Posleeeeeeeeee", ticDocs.begtm)
+            console.log('Preeeeeeee', ticDocs.begtm);
+            ticDocs.begtm = DateFunction.convertTimeToDBFormat(ticDocs.begtm);
+            ticDocs.endtm = DateFunction.convertTimeToDBFormat(ticDocs.endtm);
+            console.log('Posleeeeeeeeee', ticDocs.begtm);
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(ticDocs);
             props.handleDialogClose({ obj: ticDocs, docsTip: props.docsTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
-                severity: "error",
-                summary: "Action ",
+                severity: 'error',
+                summary: 'Action ',
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 5000
             });
         }
     };
@@ -124,21 +146,21 @@ const TicDocs = (props) => {
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
-                severity: "error",
-                summary: "Action ",
+                severity: 'error',
+                summary: 'Action ',
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 5000
             });
         }
     };
 
     const onInputChange = (e, type, name) => {
-        let val = ''
-        if (type === "options") {
-            if (name == "tg") {
+        let val = '';
+        if (type === 'options') {
+            if (name == 'tg') {
                 setDdTpItem(e.value);
-                ticDocs.ctp = e.value.code
-                ticDocs.ntp = e.value.name
+                ticDocs.ctp = e.value.code;
+                ticDocs.ntp = e.value.name;
             } else {
                 setDropdownItem(e.value);
             }
@@ -149,7 +171,7 @@ const TicDocs = (props) => {
 
         let _ticDocs = { ...ticDocs };
         _ticDocs[`${name}`] = val;
-        if (name === `textx`) _ticDocs[`text`] = val
+        if (name === `textx`) _ticDocs[`text`] = val;
 
         setTicDocs(_ticDocs);
     };
@@ -158,40 +180,62 @@ const TicDocs = (props) => {
         setDeleteDialogVisible(false);
     };
 
+    const setTicArtDialog = (destination) => {
+        setTicArtLVisible(true)
+    }
+    
+    const setTicArtRemoteDialog = () => {
+        setTicArtRemoteLVisible(true)
+    }
+
+    const handleTicArtLDialogClose = (newObj) => {
+        //const localObj = { newObj };
+        setTicArt(newObj.obj);
+        ticDocs.art = newObj.obj.id
+        ticDocs.nart = newObj.obj.text
+        ticDocs.cart = newObj.obj.code
+    };
+    const handleTicArtRemoteLDialogClose = (newObj) => {
+        //const localObj = { newObj };
+        setTicArt(newObj.obj);
+        ticDocs.art = newObj.obj.id
+        ticDocs.nart = newObj.obj.text
+        ticDocs.cart = newObj.obj.code
+    };
     return (
         <div className="grid">
             <Toast ref={toast} />
             <div className="col-12">
                 <div className="card">
-                    
                     <div className="p-fluid formgrid grid">
-                        
                         <div className="field col-12 md:col-7">
                             <label htmlFor="code">{translations[selectedLanguage].cart}</label>
-                            <InputText id="code" autoFocus
-                                value={ticDocs.code} onChange={(e) => onInputChange(e, "text", 'code')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.code })}
-                            />
-                        
+                            <div className="p-inputgroup flex-1">
+                                <InputText 
+                                    id="code" 
+                                    autoFocus 
+                                    value={ticDocs.code} 
+                                    onChange={(e) => onInputChange(e, 'text', 'code')} 
+                                    required 
+                                    className={classNames({ 'p-invalid': submitted && !ticDocs.code })} 
+                                />
+                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')}  className="p-button" />
+                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />
+                            </div>
                             {submitted && !ticDocs.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="textx">{translations[selectedLanguage].nart}</label>
-                            <InputText
-                                id="textx"
-                                value={ticDocs.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.textx })}
-                            />
+                            <InputText id="textx" value={ticDocs.textx} onChange={(e) => onInputChange(e, 'text', 'textx')} required className={classNames({ 'p-invalid': submitted && !ticDocs.textx })} />
                             {submitted && !ticDocs.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-9">
                             <label htmlFor="tg">{translations[selectedLanguage].curr} *</label>
-                            <Dropdown id="tg"
+                            <Dropdown
+                                id="tg"
                                 value={ddTpItem}
                                 options={ddTpItems}
-                                onChange={(e) => onInputChange(e, "options", 'tg')}
+                                onChange={(e) => onInputChange(e, 'options', 'tg')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
@@ -206,7 +250,8 @@ const TicDocs = (props) => {
                                 mask="99:99"
                                 maskChar="0" // This will replace unfilled characters with '0'
                                 placeholder="HH:mm"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.begtm)} onChange={(e) => onInputChange(e, "text", 'begtm')}
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.begtm)}
+                                onChange={(e) => onInputChange(e, 'text', 'begtm')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.begtm })}
                             />
@@ -219,7 +264,8 @@ const TicDocs = (props) => {
                                 mask="99:99"
                                 maskChar="0" // This will replace unfilled characters with '0'
                                 placeholder="HH:mm"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.endtm)} onChange={(e) => onInputChange(e, "text", 'endtm')}
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.endtm)}
+                                onChange={(e) => onInputChange(e, 'text', 'endtm')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.endtm })}
                             />
@@ -227,10 +273,11 @@ const TicDocs = (props) => {
                         </div>
                         <div className="field col-12 md:col-5">
                             <label htmlFor="valid">{translations[selectedLanguage].Status}</label>
-                            <Dropdown id="valid"
+                            <Dropdown
+                                id="valid"
                                 value={dropdownItem}
                                 options={dropdownItems}
-                                onChange={(e) => onInputChange(e, "options", 'valid')}
+                                onChange={(e) => onInputChange(e, 'options', 'valid')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
@@ -241,55 +288,57 @@ const TicDocs = (props) => {
                     </div>
 
                     <div className="flex flex-wrap gap-1">
-                        {props.dialog ? (
-                            <Button
-                                label={translations[selectedLanguage].Cancel}
-                                icon="pi pi-times"
-                                className="p-button-outlined p-button-secondary"
-                                onClick={handleCancelClick}
-                                outlined
-                            />
-                        ) : null}
+                        {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.docsTip === 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Create}
-                                    icon="pi pi-check"
-                                    onClick={handleCreateClick}
-                                    severity="success"
-                                    outlined
-                                />
-                            ) : null}
-                            {(props.docsTip !== 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Delete}
-                                    icon="pi pi-trash"
-                                    onClick={showDeleteDialog}
-                                    className="p-button-outlined p-button-danger"
-                                    outlined
-                                />
-                            ) : null}
-                            {(props.docsTip !== 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Save}
-                                    icon="pi pi-check"
-                                    onClick={handleSaveClick}
-                                    severity="success"
-                                    outlined
-                                />
-                            ) : null}
+                            {props.docsTip === 'CREATE' ? <Button label={translations[selectedLanguage].Create} icon="pi pi-check" onClick={handleCreateClick} severity="success" outlined /> : null}
+                            {props.docsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
+                            {props.docsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
                         </div>
                     </div>
                 </div>
             </div>
-            <DeleteDialog
-                visible={deleteDialogVisible}
-                inAction="delete"
-                item={ticDocs.text}
-                onHide={hideDeleteDialog}
-                onDelete={handleDeleteClick}
-            />
+            <DeleteDialog visible={deleteDialogVisible} inAction="delete" item={ticDocs.text} onHide={hideDeleteDialog} onDelete={handleDeleteClick} />
+            <Dialog
+                header={translations[selectedLanguage].ArtList}
+                visible={ticArtLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setTicArtLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticArtLVisible && (
+                    <TicArtL
+                        parameter={"inputTextValue"}
+                        ticDocs={ticDocs}
+                        handleTicArtLDialogClose={handleTicArtLDialogClose}
+                        setTicArtLVisible={setTicArtLVisible}
+                        dialog={true}
+                        lookUp={true}
+                    />
+                )}
+            </Dialog>
+            <Dialog
+                header="Naslov"
+                visible={ticArtRemoteLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setTicArtRemoteLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticArtRemoteLVisible && (
+                    <TicArtL
+                        parameter={"inputTextValue"}
+                        ticDocs={ticDocs}
+                        handleTicArtRemoteLDialogClose={handleTicArtRemoteLDialogClose}
+                        setTicArtLVisible={setTicArtLVisible}
+                        dialog={true}
+                        lookUp={true}
+                    />
+                )}
+            </Dialog>            
         </div>
     );
 };
