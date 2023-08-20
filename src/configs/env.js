@@ -7,6 +7,7 @@ const env = {
     ADM_BACK_URL: 'http://ws11.ems.local:8302',
     CMN_BACK_URL: 'http://ws11.ems.local:8303',   
     TIC_BACK_URL: 'http://ws11.ems.local:8304', 
+    IMG_BACK_URL: 'http://ws11.ems.local:8305',    
   };
   
   export default env;

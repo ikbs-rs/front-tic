@@ -166,14 +166,22 @@ export default function TicEventattsL(props) {
                 case 'fileUpload':
                     try {
                         console.log('Custom upload started Bravo:', e);
-                        console.log('Custom upload started File name:', e.files[0].name);
+                        const originalFileExtension = e.files[0].name.split('.').pop();
+                        const newFileName = `${ticEventatts.event}.${originalFileExtension}`;
+                        console.log('Modified file name:', newFileName);
+
                         rowData.isUploadPending = false;
+                        const relPath = 'public/tic/event/'
                         const file = e.files[0];
                         const fileService = new FileService();
-                        const data = await fileService.uploadFile(file, e.files[0].name);
+                        const data = await fileService.uploadFile(file, newFileName, relPath);
                         rowData.isUploadPending = true;
                         toast.current.show({severity: 'success', summary: 'Success', detail: data.message});
                         e.options.clear();
+                        val = relPath+newFileName
+                        rowData.value = val;
+                        console.log (val, "------------------------------------", rowData.value)
+                        setTicEventattss([...ticEventattss]);
                     } catch (error) {
                         console.error(error);
                         toast.current.show({severity: 'error', summary: 'Error', detail: 'Error uploading file'});
@@ -290,12 +298,7 @@ export default function TicEventattsL(props) {
                             onClick={openNew} text raised/>
                 </div>
                 <div className="flex flex-wrap gap-1">
-<<<<<<< HEAD
                     <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={handleAutoInputClick} text raised />
-=======
-                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={openNew} text
-                            raised/>
->>>>>>> 792e22929df70f9a5f31de0dacc0e0d3e57c275a
                 </div>
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
