@@ -15,7 +15,7 @@ import axios from 'axios';
 import Token from "../../utilities/Token";
 
 const TicArt = (props) => {
-
+    console.log(props, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", props.eventArt) 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticArt, setTicArt] = useState(props.ticArt);
@@ -35,6 +35,11 @@ const TicArt = (props) => {
     const [ddCmnUmItems, setDdCmnUmItems] = useState(null);
     const [cmnUmItem, setCmnUmItem] = useState(null);
     const [cmnUmItems, setCmnUmItems] = useState(null);
+
+    const [ddTicEventItem, setDdTicEventItem] = useState(null);
+    const [ddTicEventItems, setDdTicEventItems] = useState(null);
+    const [ticEventItem, setTicEventItem] = useState(null);
+    const [ticEventItems, setTicEventItems] = useState(null);
 
     const [ddCmnTgpItem, setDdCmnTgpItem] = useState(null);
     const [ddCmnTgpItems, setDdCmnTgpItems] = useState(null);
@@ -136,7 +141,37 @@ const TicArt = (props) => {
         }
         fetchData();
     }, []);    
+    
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+                const tokenLocal = await Token.getTokensLS();
+                const headers = {
+                    Authorization: tokenLocal.token
+                };
 
+                const response = await axios.get(url, { headers });
+                const data = response.data.items;
+                setTicEventItems(data)
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicEventItems(dataDD);
+                let targetEvent = props.ticArt.event ? props.ticArt.event : props.ticEventId;
+                setDdTicEventItem(dataDD.find((item) => item.code === targetEvent) || null);                
+                //setDdTicEventItem(dataDD.find((item) => item.code === props.ticArt.event  || item.code === props.ticEventId));
+                if (props.ticArt.event || props.ticEventId) {
+                    const foundItem = data.find((item) => item.id === targetEvent) || null ;
+                    setTicEventItem(foundItem || null);
+                    ticArt.cevent = foundItem.code
+                    ticArt.nevent = foundItem.textx
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);  
     
     useEffect(() => {
         async function fetchData() {
@@ -262,6 +297,12 @@ const TicArt = (props) => {
                 setCmnUmItem(foundItem || null);
                 ticArt.num = e.value.name
                 ticArt.cum = foundItem.code
+            } else if (name == "event") {
+                setDdTicEventItem(e.value);
+                foundItem = ticEventItems.find((item) => item.id === val);
+                setTicEventItem(foundItem || null);
+                ticArt.nevent = e.value.name
+                ticArt.cevent = foundItem.code
             } else if (name == "tgp") {
                 setDdCmnTgpItem(e.value);
                 foundItem = cmnTgpItems.find((item) => item.id === val);
@@ -335,6 +376,19 @@ const TicArt = (props) => {
                             />
                             {submitted && !ticArt.grp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>  
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
+                            <Dropdown id="event"
+                                value={ddTicEventItem}
+                                options={ddTicEventItems}
+                                onChange={(e) => onInputChange(e, "options", 'event')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticArt.event })}
+                            />
+                            {submitted && !ticArt.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                         
                         <div className="field col-12 md:col-7">
                             <label htmlFor="um">{translations[selectedLanguage].Um} *</label>
                             <Dropdown id="um"

@@ -4,7 +4,7 @@ import Token from '../../utilities/Token';
 import { Button } from "primereact/button";
 import { translations } from "../../configs/translations";
 
-const RemoteComponentContainer = ({ remoteUrl, queryParams, onTaskComplete }) => {
+const RemoteComponentContainer = ({ remoteUrl, queryParams, onTaskComplete, originUrl }) => {
   //console.log(remoteUrl, "***********RemoteComponentContainer**********", queryParams)
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const [isLoading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ const RemoteComponentContainer = ({ remoteUrl, queryParams, onTaskComplete }) =>
   useEffect(() => {
     const handleMessageFromIframe = (event) => {
       // Provera da li poruka dolazi iz očekivanog izvora
-      if (event.origin === 'http://ws10.ems.local:8353') {
+      if (event.origin === originUrl) {
         // Provera tipa poruke
         if (event.data.type === 'dataFromIframe') {
           const receivedData = event.data.data;
@@ -66,7 +66,7 @@ const RemoteComponentContainer = ({ remoteUrl, queryParams, onTaskComplete }) =>
     // Provera da li je iframe već učitan
     if (iframe && iframe.contentWindow) {
       const message = { type: 'dataUpdate', data: queryParams };
-      iframe.contentWindow.postMessage(message, 'http://ws10.ems.local:8353');
+      iframe.contentWindow.postMessage(message, originUrl);
     }
   };
 

@@ -27,6 +27,7 @@ import { fetchObjData } from './customHook';
 import { Dropdown } from 'primereact/dropdown';
 import { FileUpload } from 'primereact/fileupload';
 import FileService from '../../service/FileService';
+import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -45,6 +46,8 @@ export default function TicEventattsL(props) {
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
     const [dropdownAllItems, setDropdownAllItems] = useState(null);
+    const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+
     let i = 0;
 
     const handleCancelClick = () => {
@@ -129,6 +132,16 @@ export default function TicEventattsL(props) {
         }
     };
 
+    const handleAutoInputClick = () => {
+        setConfirmDialogVisible(true);
+    };
+    
+    const handleConfirm = () => {
+        // Ovde pozovite vašu funkciju autoInput
+        // autoInput();
+        setConfirmDialogVisible(false);
+    };
+    
     // const handleDropdownChange = async (e, rowData, apsTabela) => {
     //     rowData.value = e.value.code;
     //     const val = (e.target && e.target.value && e.target.value.code) || '';
@@ -268,7 +281,7 @@ export default function TicEventattsL(props) {
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={openNew} text raised />
+                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={handleAutoInputClick} text raised />
                 </div>
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
@@ -571,6 +584,11 @@ export default function TicEventattsL(props) {
                     </button>
                 </div>
             </Dialog>
+            <ConfirmDialog 
+                visible={confirmDialogVisible} 
+                onHide={() => setConfirmDialogVisible(false)} 
+                onConfirm={handleConfirm} 
+            />
         </div>
     );
 }

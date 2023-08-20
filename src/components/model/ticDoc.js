@@ -472,6 +472,7 @@ const TicDoc = (props) => {
                         remoteUrl="http://ws10.ems.local:8353/?endpoint=parend&sl=sr_cyr"
                         queryParams={{ sl: 'sr_cyr', lookUp: true, dialog: true, ticDoc: ticDoc }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParLDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
                     />
                 )}
             </Dialog>

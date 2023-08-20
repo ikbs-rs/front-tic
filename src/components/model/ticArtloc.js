@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicEventlocService } from "../../service/model/TicEventlocService";
+import { TicArtlocService } from "../../service/model/TicArtlocService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -10,22 +10,20 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
-import env from "../../configs/env"
-import axios from 'axios';
-import Token from "../../utilities/Token";
 
-const TicEventloc = (props) => {
-    
+const TicArtloc = (props) => {
+
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [ticEventloc, setTicEventloc] = useState(props.ticEventloc);
+    const [ticArtloc, setTicArtloc] = useState(props.ticArtloc);
     const [submitted, setSubmitted] = useState(false);
-    const [ddTicEventlocItem, setDdTicEventlocItem] = useState(null);
-    const [ddTicEventlocItems, setDdTicEventlocItems] = useState(null);
-    const [ticEventlocItem, setTicEventlocItem] = useState(null);
-    const [ticEventlocItems, setTicEventlocItems] = useState(null);
-    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.begda || props.ticEvent.begda)));
-    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.endda || props.ticEvent.endda)))
+    const [ddCmnLoc, setDdCmnLocItem] = useState(null);
+    const [ddCmnLocs, setDdCmnLocItems] = useState(null);
+    const [cmnLocItem, setCmnLocItem] = useState(null);
+    const [cmnLocItems, setCmnLocItems] = useState(null);   
+    
+    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticArtloc.begda || DateFunction.currDate())));
+    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticArtloc.endda || DateFunction.currDate())))
 
     const calendarRef = useRef(null);
 
@@ -33,26 +31,19 @@ const TicEventloc = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            try {
-                const url = `${env.CMN_BACK_URL}/cmn/x/obj/?sl=${selectedLanguage}`;
-                const tokenLocal = await Token.getTokensLS();
-                const headers = {
-                    Authorization: tokenLocal.token
-                };
-
-                const response = await axios.get(url, { headers });
-                const data = response.data.items;
-                setTicEventlocItems(data)
+            try {               
+                const ticArtlocService = new TicArtlocService();
+                const data = await ticArtlocService.getCmnLocs();
+                setCmnLocItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdTicEventlocItems(dataDD);
-                setDdTicEventlocItem(dataDD.find((item) => item.code === props.ticEventloc.loc) || null);
-                if (props.ticEventloc.loc) {
-                    const foundItem = data.find((item) => item.id === props.ticEventloc.loc);
-                    setTicEventlocItem(foundItem || null);
-                    ticEventloc.cloc = foundItem.code
-                    ticEventloc.nloc = foundItem.textx
+                setDdCmnLocItems(dataDD);
+                setDdCmnLocItem(dataDD.find((item) => item.code === props.ticArtloc.loc) || null);
+                if (props.ticArtloc.loc) {
+                    const foundItem = data.find((item) => item.id === props.ticArtloc.loc);
+                    setCmnLocItem(foundItem || null);
+                    ticArtloc.cloc = foundItem.code
+                    ticArtloc.nloc = foundItem.textx
                 }
-
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -60,6 +51,7 @@ const TicEventloc = (props) => {
         }
         fetchData();
     }, []);
+   
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -69,17 +61,17 @@ const TicEventloc = (props) => {
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            ticEventloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
-            const ticEventlocService = new TicEventlocService();
-            const data = await ticEventlocService.postTicEventloc(ticEventloc);
-            ticEventloc.id = data
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: props.eventlocTip });
+            ticArtloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticArtloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            const ticArtlocService = new TicArtlocService();
+            const data = await ticArtlocService.postTicArtloc(ticArtloc);
+            ticArtloc.id = data
+            props.handleDialogClose({ obj: ticArtloc, artlocTip: props.artlocTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -89,17 +81,17 @@ const TicEventloc = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            ticEventloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
-            const ticEventlocService = new TicEventlocService();
+            ticArtloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticArtloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
+            const ticArtlocService = new TicArtlocService();
 
-            await ticEventlocService.putTicEventloc(ticEventloc);
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: props.eventlocTip });
+            await ticArtlocService.putTicArtloc(ticArtloc);
+            props.handleDialogClose({ obj: ticArtloc, artlocTip: props.artlocTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -113,15 +105,15 @@ const TicEventloc = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticEventlocService = new TicEventlocService();
-            await ticEventlocService.deleteTicEventloc(ticEventloc);
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: 'DELETE' });
+            const ticArtlocService = new TicArtlocService();
+            await ticArtlocService.deleteTicArtloc(ticArtloc);
+            props.handleDialogClose({ obj: ticArtloc, artlocTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -133,20 +125,27 @@ const TicEventloc = (props) => {
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdTicEventlocItem(e.value);
-            const foundItem = ticEventlocItems.find((item) => item.id === val);
-            setTicEventlocItem(foundItem || null);
-            ticEventloc.nloc = e.value.name
-            ticEventloc.cloc = foundItem.code
+            if (type === "options") {
+                if (name == "loc") {
+                    setDdCmnLocItem(e.value);
+                    const foundItem = cmnLocItems.find((item) => item.id === val);
+                    setCmnLocItem(foundItem || null);
+                    ticArtloc.nloc = e.value.name
+                    ticArtloc.cloc = foundItem.code
+                }
+            }                
         } else if (type === "Calendar") {
             const dateVal = DateFunction.dateGetValue(e.value)
+            console.log(dateVal, "***********************************")
             val = (e.target && e.target.value) || '';
             switch (name) {
                 case "begda":
                     setBegda(e.value)
+                    //ticArtloc.begda = DateFunction.formatDateToDBFormat(dateVal)
                     break;
                 case "endda":
                     setEndda(e.value)
+                    //ticArtloc.endda = DateFunction.formatDateToDBFormat(dateVal)
                     break;
                 default:
                     console.error("Pogresan naziv polja")
@@ -154,9 +153,9 @@ const TicEventloc = (props) => {
         } else {
             val = (e.target && e.target.value) || '';
         }
-        let _ticEventloc = { ...ticEventloc };
-        _ticEventloc[`${name}`] = val;
-        setTicEventloc(_ticEventloc);
+        let _ticArtloc = { ...ticArtloc };
+        _ticArtloc[`${name}`] = val;
+        setTicArtloc(_ticArtloc);
     };
 
     const hideDeleteDialog = () => {
@@ -172,7 +171,7 @@ const TicEventloc = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code"
-                                value={props.ticEvent.code}
+                                value={props.ticArt.code}
                                 disabled={true}
                             />
                         </div>
@@ -180,7 +179,7 @@ const TicEventloc = (props) => {
                             <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                             <InputText
                                 id="text"
-                                value={props.ticEvent.text}
+                                value={props.ticArt.text}
                                 disabled={true}
                             />
                         </div>
@@ -191,18 +190,18 @@ const TicEventloc = (props) => {
                 <div className="card">
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="loc">{translations[selectedLanguage].Location} *</label>
+                            <label htmlFor="loc">{translations[selectedLanguage].Attribute} *</label>
                             <Dropdown id="loc"
-                                value={ddTicEventlocItem}
-                                options={ddTicEventlocItems}
+                                value={ddCmnLoc}
+                                options={ddCmnLocs}
                                 onChange={(e) => onInputChange(e, "options", 'loc')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticEventloc.loc })}
+                                className={classNames({ 'p-invalid': submitted && !ticArtloc.loc })}
                             />
-                            {submitted && !ticEventloc.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
+                            {submitted && !ticArtloc.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
@@ -239,7 +238,7 @@ const TicEventloc = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.eventlocTip === 'CREATE') ? (
+                            {(props.artlocTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -248,7 +247,7 @@ const TicEventloc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.eventlocTip !== 'CREATE') ? (
+                            {(props.artlocTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -257,7 +256,7 @@ const TicEventloc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.eventlocTip !== 'CREATE') ? (
+                            {(props.artlocTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -272,8 +271,8 @@ const TicEventloc = (props) => {
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inTicEventloc="delete"
-                item={ticEventloc.roll}
+                inTicArtloc="delete"
+                item={ticArtloc.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -281,4 +280,4 @@ const TicEventloc = (props) => {
     );
 };
 
-export default TicEventloc;
+export default TicArtloc;

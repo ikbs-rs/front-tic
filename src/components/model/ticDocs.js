@@ -15,6 +15,7 @@ import axios from 'axios';
 import Token from '../../utilities/Token';
 import { Dialog } from 'primereact/dialog';
 import TicArtL from './ticArtL';
+import TicArtW from './remoteComponentContainer';
 
 const TicDocs = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -76,17 +77,16 @@ const TicDocs = (props) => {
 
     const handleArtClick = async (e, destination) => {
         try {
-            console.log(destination, "***********************************")
-            if (destination === 'local') setTicArtDialog()
-            else setTicArtRemoteDialog()
-            
+            console.log(destination, '***********************************');
+            if (destination === 'local') setTicArtDialog();
+            else setTicArtRemoteDialog();
         } catch (error) {
             console.error(error);
             toast.current.show({
-                severity: "error",
-                summary: "Error",
-                detail: "Failed to fetch ticArt data",
-                life: 3000,
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticArt data',
+                life: 3000
             });
         }
     };
@@ -181,26 +181,26 @@ const TicDocs = (props) => {
     };
 
     const setTicArtDialog = (destination) => {
-        setTicArtLVisible(true)
-    }
-    
+        setTicArtLVisible(true);
+    };
+
     const setTicArtRemoteDialog = () => {
-        setTicArtRemoteLVisible(true)
-    }
+        setTicArtRemoteLVisible(true);
+    };
 
     const handleTicArtLDialogClose = (newObj) => {
         //const localObj = { newObj };
         setTicArt(newObj.obj);
-        ticDocs.art = newObj.obj.id
-        ticDocs.nart = newObj.obj.text
-        ticDocs.cart = newObj.obj.code
+        ticDocs.art = newObj.obj.id;
+        ticDocs.nart = newObj.obj.text;
+        ticDocs.cart = newObj.obj.code;
     };
     const handleTicArtRemoteLDialogClose = (newObj) => {
         //const localObj = { newObj };
         setTicArt(newObj.obj);
-        ticDocs.art = newObj.obj.id
-        ticDocs.nart = newObj.obj.text
-        ticDocs.cart = newObj.obj.code
+        ticDocs.art = newObj.obj.id;
+        ticDocs.nart = newObj.obj.text;
+        ticDocs.cart = newObj.obj.code;
     };
     return (
         <div className="grid">
@@ -211,15 +211,8 @@ const TicDocs = (props) => {
                         <div className="field col-12 md:col-7">
                             <label htmlFor="code">{translations[selectedLanguage].cart}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText 
-                                    id="code" 
-                                    autoFocus 
-                                    value={ticDocs.code} 
-                                    onChange={(e) => onInputChange(e, 'text', 'code')} 
-                                    required 
-                                    className={classNames({ 'p-invalid': submitted && !ticDocs.code })} 
-                                />
-                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')}  className="p-button" />
+                                <InputText id="code" autoFocus value={ticDocs.code} onChange={(e) => onInputChange(e, 'text', 'code')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
+                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
                                 <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />
                             </div>
                             {submitted && !ticDocs.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -308,16 +301,7 @@ const TicDocs = (props) => {
                     setShowMyComponent(false);
                 }}
             >
-                {ticArtLVisible && (
-                    <TicArtL
-                        parameter={"inputTextValue"}
-                        ticDocs={ticDocs}
-                        handleTicArtLDialogClose={handleTicArtLDialogClose}
-                        setTicArtLVisible={setTicArtLVisible}
-                        dialog={true}
-                        lookUp={true}
-                    />
-                )}
+                {ticArtLVisible && <TicArtL parameter={'inputTextValue'} ticDocs={ticDocs} handleTicArtLDialogClose={handleTicArtLDialogClose} setTicArtLVisible={setTicArtLVisible} dialog={true} lookUp={true} />}
             </Dialog>
             <Dialog
                 header="Naslov"
@@ -329,16 +313,17 @@ const TicDocs = (props) => {
                 }}
             >
                 {ticArtRemoteLVisible && (
-                    <TicArtL
-                        parameter={"inputTextValue"}
-                        ticDocs={ticDocs}
-                        handleTicArtRemoteLDialogClose={handleTicArtRemoteLDialogClose}
+                    <TicArtW
+                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parend&sl=sr_cyr"
+                        queryParams={{ sl: 'sr_cyr', lookUp: true, dialog: true, ticDoc: props.ticDoc, ticDocs: ticDocs }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleTicArtRemoteLDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
                         setTicArtLVisible={setTicArtLVisible}
                         dialog={true}
                         lookUp={true}
                     />
                 )}
-            </Dialog>            
+            </Dialog>
         </div>
     );
 };

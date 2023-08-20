@@ -1,45 +1,29 @@
 import axios from 'axios';
-import env from '../../configs/env';
-import Token from '../../utilities/Token';
+import env from "../../configs/env"
+import Token from "../../utilities/Token";
 
-export class TicArtService {
+export class TicArtlocService {
+
     async getLista(objId) {
-        const selectedLanguage = localStorage.getItem('sl') || 'en';
-        const url = `${env.TIC_BACK_URL}/tic/x/art/_v/lista/?stm=tic_art_v&sl=${selectedLanguage}`;
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/artloc/_v/lista/?stm=tic_artloc_v&objid=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
-            Authorization: tokenLocal.token
+          Authorization: tokenLocal.token
         };
-
         try {
-            const response = await axios.get(url, { headers });
-            return response.data.item;
+          const response = await axios.get(url, { headers });
+          console.log(url, "**********************************", response.data.item)
+          return response.data.item;
         } catch (error) {
-            console.error(error);
-            throw error;
+          console.error(error);
+          throw error;
         }
-    }
+      }
 
-    async getEventLista(objId) {
-        const selectedLanguage = localStorage.getItem('sl') || 'en';
-        const url = `${env.TIC_BACK_URL}/tic/x/art/_v/lista/?stm=tic_eventart_v&objid=${objId}&sl=${selectedLanguage}`;
-        const tokenLocal = await Token.getTokensLS();
-        const headers = {
-            Authorization: tokenLocal.token
-        };
-
-        try {
-            const response = await axios.get(url, { headers });
-            return response.data.item;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
-
-    async getTicArts() {
-        const selectedLanguage = localStorage.getItem('sl') || 'en';
-        const url = `${env.TIC_BACK_URL}/tic/x/art/?sl=${selectedLanguage}`;
+      async getCmnLocs() {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.CMN_BACK_URL}/cmn/x/loc/?sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
             Authorization: tokenLocal.token
@@ -54,9 +38,9 @@ export class TicArtService {
         }
     }
 
-    async getTicArt(objId) {
-        const selectedLanguage = localStorage.getItem('sl') || 'en';
-        const url = `${env.TIC_BACK_URL}/tic/x/art/${objId}/?sl=${selectedLanguage}`;
+    async getTicArtlocs() {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/artloc/?sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
             Authorization: tokenLocal.token
@@ -71,21 +55,40 @@ export class TicArtService {
         }
     }
 
-    async postTicArt(newObj) {
+    async getTicArtloc(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/artloc/${objId}/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
         try {
-            const selectedLanguage = localStorage.getItem('sl') || 'en';
-            if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
-                throw new Error('Items must be filled!');
+            const response = await axios.get(url, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+
+    async postTicArtloc(newObj) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (newObj.action === null || newObj.roll === null) {
+                throw new Error(
+                    "Items must be filled!"
+                );
             }
-            const url = `${env.TIC_BACK_URL}/tic/x/art/?sl=${selectedLanguage}`;
+            const url = `${env.TIC_BACK_URL}/tic/artloc/?sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
-                Authorization: tokenLocal.token
+                'Authorization': tokenLocal.token
             };
-            const jsonObj = JSON.stringify(newObj);
+            const jsonObj = JSON.stringify(newObj)
             const response = await axios.post(url, jsonObj, { headers });
-            //console.log("**************"  , response, "****************")
             return response.data.items;
         } catch (error) {
             console.error(error);
@@ -93,19 +96,21 @@ export class TicArtService {
         }
     }
 
-    async putTicArt(newObj) {
+    async putTicArtloc(newObj) {
         try {
-            const selectedLanguage = localStorage.getItem('sl') || 'en';
-            if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
-                throw new Error('Items must be filled!');
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (newObj.action === null || newObj.roll === null)  {
+                throw new Error(
+                    "Items must be filled!"
+                );
             }
-            const url = `${env.TIC_BACK_URL}/tic/x/art/?sl=${selectedLanguage}`;
+            const url = `${env.TIC_BACK_URL}/tic/artloc/?sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
-                Authorization: tokenLocal.token
+                'Authorization': tokenLocal.token
             };
-            const jsonObj = JSON.stringify(newObj);
+            const jsonObj = JSON.stringify(newObj)
             const response = await axios.put(url, jsonObj, { headers });
             //console.log("**************"  , response, "****************")
             return response.data.items;
@@ -113,14 +118,15 @@ export class TicArtService {
             console.error(error);
             throw error;
         }
+
     }
 
-    async deleteTicArt(newObj) {
+    async deleteTicArtloc(newObj) {
         try {
-            const url = `${env.TIC_BACK_URL}/tic/x/art/${newObj.id}`;
+            const url = `${env.TIC_BACK_URL}/tic/artloc/${newObj.id}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {
-                Authorization: tokenLocal.token
+                'Authorization': tokenLocal.token
             };
 
             const response = await axios.delete(url, { headers });
@@ -128,5 +134,8 @@ export class TicArtService {
         } catch (error) {
             throw error;
         }
+
     }
+   
 }
+

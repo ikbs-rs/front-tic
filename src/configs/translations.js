@@ -618,7 +618,19 @@ export const translations = {
         Test: "Test",
         inputtp: "Начин уношења",
         ddlist: "Листа података (modul,tabela)",
-        AutoAtts: "Ауто. унос"
+        AutoAtts: "Ауто. унос",
+        ArtlocList: "Локације артикла Листа",
+        Loc: "Локација",
+        ArtcenaList: "Цена артикла Листа",
+        Copy: "Копирање",
+        CopyObj: "Коп. обј",
+        CopyTemp: "Коп. тепл.",
+        Template: "Темплејт",
+        Arts: "Артикли",
+        Fin: "Финансије",
+        EventartList: "Артикли догађаја Листа",
+        EventcenatpList: "Типови цена догађаја Листа",
+        Cenatp: "Тип цене",
     }
   };
   

@@ -57,10 +57,11 @@ const EmptyEntities =
     "event": null,
     "art": null,
     "cena": null,
-    "value": null,
+    "value": "1",
     "terr": null,
     "begda": "",
-    "endda": ""
+    "endda": "",
+    "curr": null
   },
   "tic_artgrp": {
     "id": null,

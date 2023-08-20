@@ -38,6 +38,40 @@ export class TicCenaService {
     }
   }
 
+  async getCmnCurrs() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/curr/?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getCmnTerrs() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/terr/?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getTicCena(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/x/cena/${objId}/?sl=${selectedLanguage}`;
