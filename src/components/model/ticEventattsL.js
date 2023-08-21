@@ -118,7 +118,6 @@ export default function TicEventattsL(props) {
 
     const onTemplateSelect = (e) => {
         console.log('onTemplateSelect');
-        console.log('File name:' + e.files[0].name);
     };
 
 
@@ -180,8 +179,15 @@ export default function TicEventattsL(props) {
                         e.options.clear();
                         val = relPath+newFileName
                         rowData.value = val;
-                        console.log (val, "------------------------------------", rowData.value)
-                        setTicEventattss([...ticEventattss]);
+                        const rowIndex = ticEventattss.findIndex((row) => row.id === rowData.id);
+
+                        // Ažurirajte reda sa novim podacima
+                        const updatedTicEventattss = [...ticEventattss];
+                        updatedTicEventattss[rowIndex] = rowData;
+            
+                        // Postavljanje novog niza kao stanje za ticEventattss
+                        setTicEventattss(updatedTicEventattss);                        
+                        //setTicEventattss([...ticEventattss]);
                     } catch (error) {
                         console.error(error);
                         toast.current.show({severity: 'error', summary: 'Error', detail: 'Error uploading file'});
@@ -237,24 +243,11 @@ export default function TicEventattsL(props) {
     };
 
     const onRowSelect = (event) => {
-        //ticEventatts.begda = event.data.begda
-        if (toast.current.show != null) {
-            toast.current.show({
-                severity: 'info',
-                summary: 'Action Selected',
-                detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-                life: 3000
-            });
-        }
+        console.log("onRowSelect")
     };
 
     const onRowUnselect = (event) => {
-        toast.current.show({
-            severity: 'warn',
-            summary: 'Action Unselected',
-            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-            life: 3000
-        });
+        console.log("onRowUnselect")
     };
     // <heder za filter
     const initFilters = () => {
@@ -385,7 +378,6 @@ export default function TicEventattsL(props) {
             case '4':
                 return (
                     <div className="card flex justify-content-center">
-                        <Toast ref={toast}></Toast>
                         <FileUpload
                             //mode="basic"
                             name="Fajl"
@@ -458,28 +450,6 @@ export default function TicEventattsL(props) {
     };
 
     const valueTemplate = (rowData) => {
-        /*
-        if (rowData.inputtp === '4') {
-
-            return (
-                <div className="card flex justify-content-center">
-                    <Toast ref={toast}></Toast>
-                    <FileUpload
-                        name="Fajl"
-                        accept="image/*"
-                        maxFileSize={1000000}
-                        uploadHandler={handleCustomUpload}
-                        onSelect={onTemplateSelect}
-                        customUpload={true}
-                        chooseLabel="Browse"
-                        emptyTemplate={
-                            <p className="m-0">Drag and drop files to here to upload.</p>
-                        }
-                    />
-                </div>
-            );
-        }
-*/
         if (rowData.inputtp === '3' && rowData.ddlist) {
             const [modul, tabela] = rowData.ddlist.split(',');
             const apsTabela = `${modul}_${tabela}`;

@@ -35,7 +35,6 @@ class FileService {
       };
 
       const response = await axios.post(url, formData, { headers });
-      console.log(fileName, "********************", file, "------------------------------", url)
       return {status: response.status, message: response.data.message};
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -60,6 +59,7 @@ class FileService {
       throw error;
     }
   }
+  
 }
 
 export default FileService;

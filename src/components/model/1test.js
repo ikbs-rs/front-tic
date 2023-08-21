@@ -1,11 +1,11 @@
 import React from "react";
-import FileUpload from "./FileUpload"; // Prilagodite putanju
+import EmpA from "./empA";
 
 const App = () => {
   return (
     <div>
       <h1>File Upload Example</h1>
-      <FileUpload />
+      <EmpA />
     </div>
   );
 };

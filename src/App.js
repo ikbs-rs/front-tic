@@ -31,6 +31,7 @@ import SeatTp from './components/model/ticSeattpL';
 import Atest from './components/model/1test';
 
 import Event from './components/model/ticEventL';
+import EventProdaja from './components/model/ticEventProdajaL';
 import EmptyPage from './pages/EmptyPage';
 
 import PrimeReact from 'primereact/api';
@@ -490,6 +491,7 @@ const App = () => {
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />
                         <Route path="/event" element={<Event />} />
+                        <Route path="/eventprodaja" element={<EventProdaja />} />
                         <Route path="/doc" element={<Doc />} />
                         <Route path="/doctp" element={<DocTp />} />
                         <Route path="/docvr" element={<DocVr />} />

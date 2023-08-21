@@ -14,7 +14,7 @@ import DateFunction from '../../utilities/DateFunction';
 import { useFetchObjData, useDropdown } from './customHook';
 
 const TicEventatts = (props) => {
-    console.log(props, '***************************Props****************');
+
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const dataDd = useDropdown(props.ticEventatts.valid);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
