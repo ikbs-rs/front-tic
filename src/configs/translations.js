@@ -630,7 +630,6 @@ export const translations = {
         Fin: "Финансије",
         EventartList: "Артикли догађаја Листа",
         EventcenatpList: "Типови цена догађаја Листа",
-        Cenatp: "Тип цене",
         Bill: "Рачуни",
         Reservation: "Резервације",
         Sales: "Продаја",

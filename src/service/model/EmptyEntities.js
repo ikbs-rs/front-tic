@@ -246,7 +246,6 @@ const EmptyEntities =
     "status": "1",
     "docobj": null,
     "broj": null,
-    "event": null,
     "obj2": null,
     "opis": "",
     "timecreation": "",

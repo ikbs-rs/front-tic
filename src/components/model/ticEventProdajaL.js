@@ -50,7 +50,6 @@ export default function TicEventL(props) {
                             imageUrl: generateImageUrl(obj.id, relPath, selectedLanguage)
                         };
                     });
-                    console.log(updatedData, '********************************');
                     setTicEvents(updatedData);
                     initFilters();
                 }
@@ -103,6 +102,8 @@ export default function TicEventL(props) {
     };
 
     const onRowSelect = (event) => {
+            setTicEventDialog(event.data);
+            setEventTip('UPDATE');  
         toast.current.show({
             severity: 'info',
             summary: 'Action Selected',
@@ -153,9 +154,11 @@ export default function TicEventL(props) {
     const renderHeader = () => {
         return (
             <div className="flex card-container">
+                {/** 
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
+                */}
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].EventsList}</b>
                 <div className="flex-grow-1"></div>
@@ -245,7 +248,7 @@ export default function TicEventL(props) {
                 loading={loading}
                 value={ticEvents}
                 header={header}
-                showGridlines
+                //showGridlines
                 removableSort
                 filters={filters}
                 scrollable
@@ -279,18 +282,6 @@ export default function TicEventL(props) {
                 <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                 <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
                 <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
-                <Column
-                    field="status"
-                    filterField="status"
-                    dataType="numeric"
-                    header={translations[selectedLanguage].Status}
-                    sortable
-                    filter
-                    filterElement={statusFilterTemplate}
-                    style={{ width: '10%' }}
-                    bodyClassName="text-center"
-                    body={statusBodyTemplate}
-                ></Column>
             </DataTable>
             <Dialog
                 header={translations[selectedLanguage].Event}

@@ -128,7 +128,6 @@ const TicEvent = (props) => {
             const ticEventService = new TicEventService();
             const data = await ticEventService.getCmnObjXcsLista();
             const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            console.log(dataDD,"+++++++++++++++++++++++++++", props.ticEvent.loc)
             setDdLocItems(dataDD);
             setDdLocItem(dataDD.find((item) => item.code === props.ticEvent.loc) || null);
           } catch (error) {

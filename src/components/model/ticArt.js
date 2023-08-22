@@ -15,7 +15,7 @@ import axios from 'axios';
 import Token from "../../utilities/Token";
 
 const TicArt = (props) => {
-    console.log(props, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", props.eventArt) 
+    
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticArt, setTicArt] = useState(props.ticArt);

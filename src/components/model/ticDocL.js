@@ -16,8 +16,13 @@ import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction"
 import { Dropdown } from 'primereact/dropdown';
+import { useSearchParams } from 'react-router-dom';
 
 export default function TicDocL(props) {
+
+  const [searchParams] = useSearchParams();
+  const docVr = searchParams.get('docVr');
+  console.log(docVr, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
   let i = 0
   const objName = "tic_doc"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -61,13 +66,13 @@ export default function TicDocL(props) {
         const data = await ticDocvrService.getTicDocvrs();
 
         setTicDocvrs(data)
-        //console.log("******************", ticDocvrlinkItem)
 
         const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
         setDdTicDocvrItems(dataDD);
-        //setDdTicDocvrItem(dataDD.find((item) => item.code === props.ticDoc.doc1) || null);
-        if (props.ticDoc.docvr) {
-          const foundItem = data.find((item) => item.id === props.ticDoc.docvr);
+       
+        if (docVr) {
+          const foundItem = data.find((item) => item.code === docVr );
+          setDdTicDocvrItem(dataDD.find((item) => item.code === foundItem.id) || null);
           setTicDocvr(foundItem || null);
         }
 
@@ -77,7 +82,7 @@ export default function TicDocL(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [docVr]);
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
