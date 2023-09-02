@@ -17,7 +17,7 @@ import DateFunction from "../../utilities/DateFunction";
 
 
 export default function TicEventlocL(props) {
-console.log("LOKACIJE", props)
+
   const objName = "tic_eventloc"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyTicEventloc = EmptyEntities[objName]
@@ -43,7 +43,6 @@ console.log("LOKACIJE", props)
         if (i < 2) {
           const ticEventlocService = new TicEventlocService();
           const data = await ticEventlocService.getLista(props.ticEvent.id);
-          console.log("LOCATION podaci", data)
           setTicEventlocs(data);
 
           initFilters();

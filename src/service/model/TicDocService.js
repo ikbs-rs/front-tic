@@ -20,17 +20,35 @@ export class TicDocService {
     }
   }
 
-  async getCmnListaByItem(tab, route, view, item, objId) {
+  async getTicListaByItem(tab, route, view, item, objId) {
+    
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    //console.log("***********L************", url, "*********L*******")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
 
     try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+  
+ // ('obj', 'listabytxt', 'cmn_obj_tp_v', 'aa.doc', 'O');
 
+  async getCmnListaByItem(tab, route, view, item, objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -42,7 +60,6 @@ export class TicDocService {
   async getCmnListaByItem2(tab, route, view, item1, objId1, item2, objId2) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item1=${item1}&id1=${objId1}&item2=${item2}&id2=${objId2}&sl=${selectedLanguage}`;
-    //console.log("***********L************", url, "*********L*******")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token

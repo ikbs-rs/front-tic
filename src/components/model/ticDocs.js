@@ -16,12 +16,17 @@ import Token from '../../utilities/Token';
 import { Dialog } from 'primereact/dialog';
 import TicArtL from './ticArtL';
 import TicArtW from './remoteComponentContainer';
+import TicEventProdajaL from './ticEventProdajaL';
+import CmnParL from './remoteComponentContainer';
+import CmnPar from './remoteComponentContainer';
+import { TicDocService } from "../../service/model/TicDocService";
 
 const TicDocs = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
+    const [ticDoc, setTicDoc] = useState(props.ticDoc);    
     const [ticDocs, setTicDocs] = useState(props.ticDocs);
     const [submitted, setSubmitted] = useState(false);
     const [ddTpItem, setDdTpItem] = useState(null);
@@ -30,6 +35,20 @@ const TicDocs = (props) => {
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticArt, setTicArt] = useState(null);
+
+    const [ticEvent, setTicEvent] = useState(null);
+    const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
+    const [cmnParLVisible, setCmnParLVisible] = useState(false);
+    const [cmnPar, setCmnPar] = useState(null);
+    const [cmnParVisible, setCmnParVisible] = useState(false);
+
+    const [cmnCurrItem, setCmnCurrItem] = useState(null);
+    const [cmnCurrItems, setCmnCurrItems] = useState(null);
+    const [ddCmnCurrItem, setDdCmnCurrItem] = useState(null);
+    const [ddCmnCurrItems, setDdCmnCurrItems] = useState(null);
+
+
+    const [ticProdajaLVisible, setTicProdajaLVisible] = useState(false);
 
     const toast = useRef(null);
     const items = [
@@ -63,6 +82,30 @@ const TicDocs = (props) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getCmnCurrs();
+
+                setCmnCurrItems(data)
+                console.log(data, "********props.ticDoc.curr**********", props.ticDoc.curr)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdCmnCurrItems(dataDD);
+                setDdCmnCurrItem(dataDD.find((item) => item.code === props.ticDoc.curr) || null);
+                const foundItem = data.find((item) => item.id === props.ticDoc.curr);
+                setCmnCurrItem(foundItem || null);
+                ticDocs.ccurr = foundItem.code
+                ticDocs.ncurr = foundItem.textx
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);    
+
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
@@ -77,7 +120,6 @@ const TicDocs = (props) => {
 
     const handleArtClick = async (e, destination) => {
         try {
-            console.log(destination, '***********************************');
             if (destination === 'local') setTicArtDialog();
             else setTicArtRemoteDialog();
         } catch (error) {
@@ -90,6 +132,64 @@ const TicDocs = (props) => {
             });
         }
     };
+
+    const handleEventProdajaClick = async (e, destination) => {
+        try {
+            setTicEventProdajaLDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticArt data',
+                life: 3000
+            });
+        }
+    };
+
+    const handleParLClick = async () => {
+        try {
+            // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
+            // const ticDocService = new TicDocService();
+            // const cmnParData = await ticDocService.getCmnPar(cmnParCode);
+            setCmnParLDialog()
+            // setCmnPar(cmnParData);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch cmnPar data",
+                life: 3000,
+            });
+        }
+    };
+
+    const handleParClick = async () => {
+        try {
+            // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
+            // const ticDocService = new TicDocService();
+            // const cmnParData = await ticDocService.getCmnPar(cmnParCode);
+            setCmnParDialog()
+            // setCmnPar(cmnParData);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch cmnPar data",
+                life: 3000,
+            });
+        }
+    };
+
+    const setCmnParDialog = () => {
+        setCmnParVisible(true)
+    }
+    
+    const setCmnParLDialog = () => {
+        setCmnParLVisible(true)
+    }
 
     const handleCreateClick = async () => {
         try {
@@ -180,6 +280,30 @@ const TicDocs = (props) => {
         setDeleteDialogVisible(false);
     };
 
+    const handleTicEventProdajaLDialogClose = (newObj) => {
+        setTicEvent(newObj);
+        ticDocs.event = newObj.id;
+        ticDocs.nevent = newObj.text;
+        ticDocs.cevent = newObj.code;
+        setTicEventProdajaLVisible(false);
+      };        
+
+    
+      const handleCmnParLDialogClose = (newObj) => {
+        if (newObj?.id) {
+            setCmnPar(newObj);
+            ticDocs.usr = newObj.id
+            ticDocs.npar = newObj.text
+            ticDocs.cpar = newObj.code
+        }
+        setCmnParLVisible(false)
+    };
+
+    const handleCmnParDialogClose = (newObj) => {
+        setCmnPar(newObj);
+        setCmnParVisible(false)
+    };      
+
     const setTicArtDialog = (destination) => {
         setTicArtLVisible(true);
     };
@@ -187,14 +311,20 @@ const TicDocs = (props) => {
     const setTicArtRemoteDialog = () => {
         setTicArtRemoteLVisible(true);
     };
+    
+    const setTicEventProdajaLDialog = (destination) => {
+        setTicEventProdajaLVisible(true);
+    };    
 
     const handleTicArtLDialogClose = (newObj) => {
-        //const localObj = { newObj };
-        setTicArt(newObj.obj);
-        ticDocs.art = newObj.obj.id;
-        ticDocs.nart = newObj.obj.text;
-        ticDocs.cart = newObj.obj.code;
+
+        setTicArt(newObj);
+        ticDocs.art = newObj.id;
+        ticDocs.nart = newObj.text;
+        ticDocs.cart = newObj.code;
+        setTicArtLVisible(false);
     };
+    /*
     const handleTicArtRemoteLDialogClose = (newObj) => {
         //const localObj = { newObj };
         setTicArt(newObj.obj);
@@ -202,28 +332,43 @@ const TicDocs = (props) => {
         ticDocs.nart = newObj.obj.text;
         ticDocs.cart = newObj.obj.code;
     };
+    */
     return (
         <div className="grid">
             <Toast ref={toast} />
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-7">
-                            <label htmlFor="code">{translations[selectedLanguage].cart}</label>
+                    <div className="field col-12 md:col-3">
+                            <label htmlFor="cevent">{translations[selectedLanguage].cevent}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="code" autoFocus value={ticDocs.code} onChange={(e) => onInputChange(e, 'text', 'code')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
-                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
-                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />
+                                <InputText id="cevent" autoFocus value={ticDocs.cevent} onChange={(e) => onInputChange(e, 'text', 'cevent')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
+                                <Button icon="pi pi-search" onClick={(e) => handleEventProdajaClick(e)} className="p-button" />
+                                {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
                             </div>
-                            {submitted && !ticDocs.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-12">
-                            <label htmlFor="textx">{translations[selectedLanguage].nart}</label>
-                            <InputText id="textx" value={ticDocs.textx} onChange={(e) => onInputChange(e, 'text', 'textx')} required className={classNames({ 'p-invalid': submitted && !ticDocs.textx })} />
-                            {submitted && !ticDocs.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocs.cevent && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-9">
-                            <label htmlFor="tg">{translations[selectedLanguage].curr} *</label>
+                            <label htmlFor="nevent">{translations[selectedLanguage].nevent}</label>
+                            <InputText id="nevent" value={ticDocs.nevent} onChange={(e) => onInputChange(e, 'text', 'nevent')} required className={classNames({ 'p-invalid': submitted && !ticDocs.nart })} />
+                            {submitted && !ticDocs.nevent && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="cart">{translations[selectedLanguage].cart}</label>
+                            <div className="p-inputgroup flex-1">
+                                <InputText id="cart"  value={ticDocs.cart} onChange={(e) => onInputChange(e, 'text', 'cart')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
+                                <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
+                                {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
+                            </div>
+                            {submitted && !ticDocs.cart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-9">
+                            <label htmlFor="nart">{translations[selectedLanguage].nart}</label>
+                            <InputText id="nart" value={ticDocs.nart} onChange={(e) => onInputChange(e, 'text', 'nart')} required className={classNames({ 'p-invalid': submitted && !ticDocs.nart })} />
+                            {submitted && !ticDocs.nart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="tg">{translations[selectedLanguage].tg} *</label>
                             <Dropdown
                                 id="tg"
                                 value={ddTpItem}
@@ -236,6 +381,31 @@ const TicDocs = (props) => {
                             />
                             {submitted && !ticDocs.tg && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="curr">{translations[selectedLanguage].curr} *</label>
+                            <Dropdown
+                                id="curr"
+                                value={ddCmnCurrItem}
+                                options={ddCmnCurrItems}
+                                onChange={(e) => onInputChange(e, 'options', 'curr')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.curr })}
+                            />
+                            {submitted && !ticDocs.curr && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>    
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="left">{translations[selectedLanguage].Left} *</label>
+                            <InputText
+                                id="left"
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.left)}
+                                onChange={(e) => onInputChange(e, 'text', 'left')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.left })}
+                            />
+                            {submitted && !ticDocs.left && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                                            
                         <div className="field col-12 md:col-4">
                             <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
                             <InputText
@@ -264,6 +434,28 @@ const TicDocs = (props) => {
                             />
                             {submitted && !ticDocs.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="cpar">{translations[selectedLanguage].cpar} *</label>
+                            <div className="p-inputgroup flex-1">
+                                <InputText id="cpar" 
+                                    value={ticDocs.cpar} onChange={(e) => onInputChange(e, "text", 'cpar')}
+                                    required
+                                    className={classNames({ 'p-invalid': submitted && !ticDocs.cpar })}
+                                />
+                                <Button icon="pi pi-search" onClick={handleParLClick} className="p-button" />
+                                <Button icon="pi pi-search" onClick={handleParClick} className="p-button-success" />
+                            </div>
+                            {submitted && !ticDocs.cpar && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-9">
+                            <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
+                            <InputText
+                                id="npar"
+                                value={props.ticDocs.npar}
+                                disabled={true}
+                            />
+                        </div>                        
+
                         <div className="field col-12 md:col-5">
                             <label htmlFor="valid">{translations[selectedLanguage].Status}</label>
                             <Dropdown
@@ -301,29 +493,75 @@ const TicDocs = (props) => {
                     setShowMyComponent(false);
                 }}
             >
-                {ticArtLVisible && <TicArtL parameter={'inputTextValue'} ticDocs={ticDocs} handleTicArtLDialogClose={handleTicArtLDialogClose} setTicArtLVisible={setTicArtLVisible} dialog={true} lookUp={true} />}
+                {ticArtLVisible && 
+                    <TicArtL 
+                        parameter={'inputTextValue'} 
+                        ticDocs={ticDocs} 
+                        onTaskComplete={handleTicArtLDialogClose} 
+                        setTicArtLVisible={setTicArtLVisible} 
+                        dialog={true} 
+                        lookUp={true} 
+                    />}
             </Dialog>
+{/** 
+ * Dialog za izbor Dogadjaja EventProdajaL.js 
+ * */}            
             <Dialog
-                header="Naslov"
-                visible={ticArtRemoteLVisible}
+                header={translations[selectedLanguage].EventList}
+                visible={ticEventProdajaLVisible}
                 style={{ width: '90%', height: '1400px' }}
                 onHide={() => {
-                    setTicArtRemoteLVisible(false);
+                    setTicEventProdajaLVisible(false);
                     setShowMyComponent(false);
                 }}
             >
-                {ticArtRemoteLVisible && (
-                    <TicArtW
-                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parend&sl=sr_cyr"
-                        queryParams={{ sl: 'sr_cyr', lookUp: true, dialog: true, ticDoc: props.ticDoc, ticDocs: ticDocs }} // Dodajte ostale parametre po potrebi
-                        onTaskComplete={handleTicArtRemoteLDialogClose}
+                {ticEventProdajaLVisible && 
+                    <TicEventProdajaL 
+                        parameter={'inputTextValue'} 
+                        ticDocs={ticDocs} 
+                        ticDoc={props.ticDoc} 
+                        onTaskComplete={handleTicEventProdajaLDialogClose} 
+                        setTicEventProdajaLVisible={setTicEventProdajaLVisible} 
+                        dialog={true} 
+                        lookUp={true} 
+                    />}
+            </Dialog>    
+            <Dialog
+                header={translations[selectedLanguage].ParList}
+                visible={cmnParLVisible}
+                style={{ width: '90%', height: '1300px' }}
+                onHide={() => {
+                    setCmnParLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParLVisible && (
+                    <CmnParL
+                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parlend&sl=sr_cyr"
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleCmnParLDialogClose}
                         originUrl="http://ws10.ems.local:8353"
-                        setTicArtLVisible={setTicArtLVisible}
-                        dialog={true}
-                        lookUp={true}
                     />
                 )}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].Par}
+                visible={cmnParVisible}
+                style={{ width: '90%', height: '1100px' }}
+                onHide={() => {
+                    setCmnParVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParVisible && (
+                    <CmnPar
+                        remoteUrl= {`http://ws10.ems.local:8353/?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleCmnParDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
+                    />
+                )}
+            </Dialog>                               
         </div>
     );
 };

@@ -23,7 +23,6 @@ export class TicDocsService {
   async getCmnListaByItem(tab, route, view, item, objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    //console.log("***********L************", url, "*********L*******")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token

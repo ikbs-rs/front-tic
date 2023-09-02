@@ -135,7 +135,7 @@ const TicPrivilegediscount = (props) => {
             ticPrivilegediscount.cdiscount = foundItem.code
         } else if (type === "Calendar") {
             const dateVal = DateFunction.dateGetValue(e.value)
-            console.log(dateVal, "***********************************")
+            //console.log(dateVal, "***********************************")
             val = (e.target && e.target.value) || '';
             switch (name) {
                 case "begda":
@@ -152,7 +152,7 @@ const TicPrivilegediscount = (props) => {
         } else {
             val = (e.target && e.target.value) || '';
         }
-        console.log(ticPrivilegediscount, "*****************ticPrivilegediscount******************")
+        //console.log(ticPrivilegediscount, "*****************ticPrivilegediscount******************")
         let _ticPrivilegediscount = { ...ticPrivilegediscount };
         _ticPrivilegediscount[`${name}`] = val;
         console.log(ticPrivilegediscount, "*****************_ticPrivilegediscount******************")

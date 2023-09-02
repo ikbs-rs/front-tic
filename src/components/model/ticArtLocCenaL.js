@@ -53,11 +53,11 @@ export default function TicArtL(props) {
                 if (i < 2) {
                     const ticArtService = new TicArtService();
                     let data = [];
-                    // if (props.eventArt) {
-                    //     data = await ticArtService.getEventLista(props.ticEvent.id);
-                    // } else {
+                    if (props.eventArt) {
+                        data = await ticArtService.getEventLista(props.ticEvent.id);
+                    } else {
                         data = await ticArtService.getLista();
-                    // }
+                    }
                     setTicArts(data);
 
                     initFilters();

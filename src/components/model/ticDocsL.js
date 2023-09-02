@@ -14,6 +14,8 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
+import WebMap from './remoteComponentContainer';
+import TicEventProdajaL from './ticEventProdajaL';
 
 
 export default function TicDocsL(props) {
@@ -32,6 +34,8 @@ export default function TicDocsL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [docsTip, setDocsTip] = useState('');
+  const [webMapVisible, setWebMapVisible] = useState(false);
+  const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   let i = 0
   const handleCancelClick = () => {
     props.setTicDocsLVisible(false);
@@ -95,6 +99,62 @@ export default function TicDocsL(props) {
     setTicDocsDialog(emptyTicDocs);
   };
 
+/*
+Web Map *********************************************************************************************************
+*/
+  const handleWebMapClick = async () => {
+    try {
+        setWebMapDialog()
+    } catch (error) {
+        console.error(error);
+        toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to fetch cmnPar data",
+            life: 3000,
+        });
+    }
+};
+
+const setWebMapDialog = () => {
+  setWebMapVisible(true)
+}
+
+const handleWebMapDialogClose = (newObj) => {
+  setWebMapVisible(false)
+};
+/*
+Event Prodaja *****************************************************************************************************
+*/
+const handleEventProdajaClick = async (e, destination) => {
+  try {
+      setTicEventProdajaLDialog();
+  } catch (error) {
+      console.error(error);
+      toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch ticArt data',
+          life: 3000
+      });
+  }
+};
+
+const setTicEventProdajaLDialog = (destination) => {
+  setTicEventProdajaLVisible(true);
+}; 
+
+
+const handleTicEventProdajaLDialogClose = (newObj) => {
+  //setTicEvent(newObj);
+  // ticDocs.event = newObj.id;
+  // ticDocs.nevent = newObj.text;
+  // ticDocs.cevent = newObj.code;
+  setTicEventProdajaLVisible(false);
+};  
+/*
+Click Handle *****************************************************************************************************
+*/
   const onRowSelect = (event) => {
     //ticDocs.begda = event.data.begda
     toast.current.show({
@@ -155,11 +215,18 @@ export default function TicDocsL(props) {
     return (
       <div className="flex card-container">
         <div className="flex flex-wrap gap-1" />
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        />
+        {(props.dialog) ? (<Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised/>): null}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        {
+        <div className="flex flex-wrap gap-1">
+            <Button label={translations[selectedLanguage].web} icon="pi pi-table" onClick={handleWebMapClick} severity="info" text raised />
+        </div>
+        }
+        <div className="flex flex-wrap gap-1">
+            <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
+        </div>        
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].DocsList}</b>
         <div className="flex-grow-1"></div>
@@ -364,7 +431,7 @@ export default function TicDocsL(props) {
       <Dialog
         header={translations[selectedLanguage].Link}
         visible={visible}
-        style={{ width: '60%' }}
+        style={{ width: '90%' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
@@ -387,6 +454,44 @@ export default function TicDocsL(props) {
           </button>
         </div>
       </Dialog>
+      <Dialog
+                header={translations[selectedLanguage].webMap}
+                visible={webMapVisible}
+                style={{ width: '90%', height: '1100px' }}
+                onHide={() => {
+                    setWebMapVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {webMapVisible && (
+                    <WebMap
+                        remoteUrl= {`http://ws11.ems.local:3000/#/events/?docid=${props.ticDoc.id}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleWebMapDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
+                    />
+                )}
+            </Dialog>   
+            <Dialog
+                header={translations[selectedLanguage].EventList}
+                visible={ticEventProdajaLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setTicEventProdajaLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticEventProdajaLVisible && 
+                    <TicEventProdajaL 
+                        parameter={'inputTextValue'} 
+                        ticDocs={ticDocs} 
+                        ticDoc={props.ticDoc} 
+                        onTaskComplete={handleTicEventProdajaLDialogClose} 
+                        setTicEventProdajaLVisible={setTicEventProdajaLVisible} 
+                        dialog={true} 
+                        lookUp={true} 
+                    />}
+            </Dialog>                 
     </div>
   );
 }

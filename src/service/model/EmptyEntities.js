@@ -287,7 +287,10 @@ const EmptyEntities =
     "begtm": "",
     "endtm": "",
     "status": "",
-    "fee": null
+    "fee": null,
+		"par": null,
+		"descript": "string"
+
   },
   "tic_docslink": {
     "id": null,
@@ -352,6 +355,16 @@ const EmptyEntities =
     "event": null,
     "agenda": null,
     "date": ""
+  },
+  "tic_eventart": {
+  "id": null,
+  "site": null,
+  "event": null,
+  "art": null,
+  "discount": 0,
+  "descript": "",
+  "begda": "",
+  "endda":  ""
   },
   "tic_eventatt": {
     "id": null,

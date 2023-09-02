@@ -635,6 +635,17 @@ export const translations = {
         Sales: "Продаја",
         Tmp: "Остало",
         Image: "Слика",
+        Confirm: "Потврди",
+        CreateSt: "Креирај даље",
+        SaveSt: "Сними даље",
+        web: "Web",
+        selection: "Селекција",
+        Par: "Партнер",
+        Left: "Количина",
+        tg: "Тарифна група",
+        cevent: "Шифра догађаја",
+        Choice: "Избор",
+        Description: "Опис",
     }
   };
   

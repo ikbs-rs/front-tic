@@ -135,7 +135,7 @@ const TicPrivilegelink = (props) => {
             ticPrivilegelink.cprivilege = foundItem.code
         } else if (type === "Calendar") {
             const dateVal = DateFunction.dateGetValue(e.value)
-            console.log(dateVal, "***********************************")
+            //console.log(dateVal, "***********************************")
             val = (e.target && e.target.value) || '';
             switch (name) {
                 case "begda":

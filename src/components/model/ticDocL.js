@@ -22,7 +22,7 @@ export default function TicDocL(props) {
 
   const [searchParams] = useSearchParams();
   const docVr = searchParams.get('docVr');
-  console.log(docVr, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+  //console.log(docVr, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
   let i = 0
   const objName = "tic_doc"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -30,16 +30,23 @@ export default function TicDocL(props) {
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocs, setTicDocs] = useState([]);
   const [ticDoc, setTicDoc] = useState(emptyTicDoc);
-  const [ticDocvrs, setTicDocvrs] = useState([]);
-  const [ticDocvr, setTicDocvr] = useState(null);
+
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [docTip, setDocTip] = useState('');
+  
+  const [ticDocvrs, setTicDocvrs] = useState([]);
+  const [ticDocvr, setTicDocvr] = useState(null);  
   const [ddTicDocvrItem, setDdTicDocvrItem] = useState(null);
   const [ddTicDocvrItems, setDdTicDocvrItems] = useState(null);
+
+  const [ticDocobjs, setTicDocobjs] = useState([]);
+  const [ticDocobj, setTicDocobj] = useState(null);
+  const [ddTicDocobjItem, setDdTicDocobjItem] = useState(null);
+  const [ddTicDocobjItems, setDdTicDocobjItems] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -47,7 +54,7 @@ export default function TicDocL(props) {
         ++i
         if (i < 2) {
           const ticDocService = new TicDocService();
-          const data = await ticDocService.getCmnListaByItem('doc', 'listabynum', 'tic_docbynum_v', 'aa.docvr', ddTicDocvrItem.code);
+          const data = await ticDocService.getTicListaByItem('doc', 'listabynum', 'tic_docbynum_v', 'aa.docvr', ddTicDocvrItem.code);
           setTicDocs(data);
           initFilters();
         }
@@ -57,7 +64,32 @@ export default function TicDocL(props) {
       }
     }
     fetchData();
-  }, [ddTicDocvrItem]);
+  }, [ddTicDocvrItem, ticDoc]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+          const ticDocService = new TicDocService();
+          const data = await ticDocService.getCmnListaByItem('obj', 'listabytxt', 'cmn_obj_tp_v', 't.code', 'O');
+
+          setTicDocobjs(data);
+
+          const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+          setDdTicDocobjItems(dataDD);
+
+          const foundItem = data.find((item) => item.code === 'O0' );
+          emptyTicDoc.docobj = foundItem.id;
+          setDdTicDocobjItem(dataDD.find((item) => item.code === foundItem.id) || null);
+          setTicDocobj(foundItem || null);
+         
+        //}
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -72,6 +104,7 @@ export default function TicDocL(props) {
        
         if (docVr) {
           const foundItem = data.find((item) => item.code === docVr );
+          emptyTicDoc.docvr = foundItem.id;
           setDdTicDocvrItem(dataDD.find((item) => item.code === foundItem.id) || null);
           setTicDocvr(foundItem || null);
         }
@@ -142,17 +175,26 @@ export default function TicDocL(props) {
     });
   };
   const onInputChange = (e, type, name) => {
-    let val = ''
+    let val = '';
     if (type === "options") {
-      val = (e.target && e.target.value && e.target.value.code) || '';
-      if (name == "docvr") {
-        setDdTicDocvrItem(e.value);
-        const foundItem = ticDocvrs.find((item) => item.id === val);
-        setTicDocvr(foundItem || null);
-        ticDoc.docvr = val
-      }
+        let _ticDoc = { ...ticDoc };
+        val = (e.target && e.target.value && e.target.value.code) || '';
+        if (name == "docvr") {
+            setDdTicDocvrItem(e.value);
+            const foundItem = ticDocvrs.find((item) => item.id === val);
+            setTicDocvr(foundItem || null);
+            _ticDoc.docvr = val;
+            emptyTicDoc.docvr = val;
+        } else if (name == "docobj") {
+            setDdTicDocobjItem(e.value);
+            const foundItem = ticDocobjs.find((item) => item.id === val);
+            setTicDocobj(foundItem || null);
+            _ticDoc.docobj = val;
+            emptyTicDoc.docobj = val;
+        }
+        setTicDoc(_ticDoc);
     }
-  }
+}
   // <heder za filter
   const initFilters = () => {
     setFilters({
@@ -300,8 +342,8 @@ export default function TicDocL(props) {
         <div className="field col-12 md:col-4">
           <label htmlFor="docobj">{translations[selectedLanguage].ndocobj}</label>
           <Dropdown id="docobj"
-            //value={ddTicEventlinkItem}
-            // options={ddTicEventlinkItems}
+            value={ddTicDocobjItem}
+            options={ddTicDocobjItems}
             onChange={(e) => onInputChange(e, "options", 'docobj')}
             required
             optionLabel="name"
@@ -309,20 +351,7 @@ export default function TicDocL(props) {
           //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
           />
           {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
-        </div>
-        <div className="field col-12 md:col-4">
-          <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
-          <Dropdown id="event"
-            //value={ddTicEventlinkItem}
-            // options={ddTicEventlinkItems}
-            onChange={(e) => onInputChange(e, "options", 'event')}
-            required
-            optionLabel="name"
-            placeholder="Select One"
-          //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
-          />
-          {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
-        </div>        
+        </div>       
       </div>
       <DataTable
         dataKey="id"
@@ -355,13 +384,6 @@ export default function TicDocL(props) {
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
-        <Column
-          field="nevent"
-          header={translations[selectedLanguage].nevent}
-          sortable
-          filter
-          style={{ width: "15%" }}
-        ></Column>
         <Column
           field="ndocvr"
           header={translations[selectedLanguage].ndocvr}
@@ -443,6 +465,7 @@ export default function TicDocL(props) {
             setVisible={setVisible}
             dialog={true}
             ticDocvr={ticDocvr}
+            ticDocobj={ticDocobj}
             docTip={docTip}
           />
         )}

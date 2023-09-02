@@ -19,7 +19,7 @@ import TicEventattsL from './ticEventattsL';
 import TicEventagendaL from './ticEventagendaL';
 import TicEventlocL from './ticEventlocL';
 import { SplitButton } from 'primereact/splitbutton';
-import TicArtL from './ticArtL';
+import TicEventrtL from './ticEventartL';
 import TicEventcenatpL from './ticEventcenatpL';
 
 export default function TicEventL(props) {
@@ -238,7 +238,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Objects} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Loc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <SplitButton label={translations[selectedLanguage].Fin} /*icon="pi pi-copy" onClick={openEventloc}*/ model={finItems} severity="info" raised text disabled={!ticEvent} />
@@ -505,10 +505,10 @@ export default function TicEventL(props) {
                 }}
             >
                 {showMyComponent && 
-                  <TicArtL 
+                  <TicEventrtL 
                     parameter={'inputTextValue'} 
                     ticEvent={ticEvent} 
-                    setTicArtLVisible={setTicArtLVisible} 
+                    //setTicArtLVisible={setTicArtLVisible} 
                     setTicEventartLVisible={setTicEventartLVisible} 
                     dialog={true} 
                     lookUp={true} 

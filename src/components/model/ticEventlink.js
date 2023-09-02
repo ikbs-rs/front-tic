@@ -183,7 +183,7 @@ const TicEventlink = (props) => {
 
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-11">
-                            <label htmlFor="value">{translations[selectedLanguage].Note}</label>
+                            <label htmlFor="value">{translations[selectedLanguage].Note} *</label>
                             <InputText
                                 id="note"
                                 value={ticEventlink.note} onChange={(e) => onInputChange(e, "text", 'note')}

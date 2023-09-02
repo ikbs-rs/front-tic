@@ -15,6 +15,7 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 //import CmnParL from './cmnParL';
 import CmnParL from './remoteComponentContainer';
+import CmnPar from './remoteComponentContainer';
 
 const TicDoc = (props) => {
     //console.log("***********************************", props, "***********************************")
@@ -35,10 +36,13 @@ const TicDoc = (props) => {
     const [cmnCurrItems, setCmnCurrItems] = useState(null);
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(null);
+    const [cmnParVisible, setCmnParVisible] = useState(false);
 
 
     const [date, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDoc.date || DateFunction.currDate())));
     const [tm, setTm] = useState(DateFunction.formatDatetime(props.ticDoc.tm || DateFunction.currDatetime()));
+
+    const [docTip, setDocTip] = useState(props.docTip);
 
     const toast = useRef(null);
     const items = [
@@ -62,7 +66,7 @@ const TicDoc = (props) => {
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnCurrItems(dataDD);
                 setDdCmnCurrItem(dataDD.find((item) => item.code === props.ticDoc.curr) || null);
-                if (props.ticDoc.tp) {
+                if (props.ticDoc.curr) {
                     const foundItem = data.find((item) => item.id === props.ticDoc.curr);
                     setCmnCurrItem(foundItem || null);
                     ticDoc.ccurr = foundItem.code
@@ -88,6 +92,24 @@ const TicDoc = (props) => {
         props.setVisible(false);
     };
 
+    const handleParLClick = async () => {
+        try {
+            // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
+            // const ticDocService = new TicDocService();
+            // const cmnParData = await ticDocService.getCmnPar(cmnParCode);
+            setCmnParLDialog()
+            // setCmnPar(cmnParData);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch cmnPar data",
+                life: 3000,
+            });
+        }
+    };
+
     const handleParClick = async () => {
         try {
             // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
@@ -105,7 +127,6 @@ const TicDoc = (props) => {
             });
         }
     };
-
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
@@ -116,6 +137,30 @@ const TicDoc = (props) => {
             ticDoc.id = data
             props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 5000,
+            });
+        }
+    };
+
+    const handleNextClick = async (event) => {
+        try {
+            setSubmitted(true);
+            ticDoc.date = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(date));
+            ticDoc.tm = DateFunction.formatDateTimeToDBFormat(tm);
+            const ticDocService = new TicDocService();
+            if (event=='CREATE') {
+                const data = await ticDocService.postTicDoc(ticDoc);
+                ticDoc.id = data
+                props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
+            } else {
+                await ticDocService.putTicDoc(ticDoc); 
+            }
+            setDocTip('UPDATE');
         } catch (err) {
             toast.current.show({
                 severity: "error",
@@ -144,6 +189,7 @@ const TicDoc = (props) => {
             });
         }
     };
+    
 
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
@@ -206,17 +252,29 @@ const TicDoc = (props) => {
         setDeleteDialogVisible(false);
     };
 
+    
     const handleCmnParLDialogClose = (newObj) => {
-        //const localObj = { newObj };
-        setCmnPar(newObj.obj);
-        ticDoc.usr = newObj.obj.id
-        ticDoc.npar = newObj.obj.text
-        ticDoc.cpar = newObj.obj.code
+        if (newObj?.id) {
+            setCmnPar(newObj);
+            ticDoc.usr = newObj.id
+            ticDoc.npar = newObj.text
+            ticDoc.cpar = newObj.code
+        }
+        setCmnParLVisible(false)
+    };
+
+    const handleCmnParDialogClose = (newObj) => {
+        setCmnPar(newObj);
+        setCmnParVisible(false)
     };
 
     // <--- Dialog
-    const setCmnParDialog = () => {
+    const setCmnParLDialog = () => {
         setCmnParLVisible(true)
+    }
+
+    const setCmnParDialog = () => {
+        setCmnParVisible(true)
     }
     //  Dialog --->
     return (
@@ -237,7 +295,7 @@ const TicDoc = (props) => {
                             <label htmlFor="ndocobj">{translations[selectedLanguage].ndocobj}</label>
                             <InputText
                                 id="ndocobj"
-                                value={props.ticDoc.ndocobj}
+                                value={props.ticDocobj.text}
                                 disabled={true}
                             />
                         </div>
@@ -281,22 +339,7 @@ const TicDoc = (props) => {
                 <div className="card">
                 */}
                     <div className="p-fluid formgrid grid">
-
                         <div className="field col-12 md:col-4">
-                            <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
-                            <Dropdown id="event"
-                                //value={ddTicEventlinkItem}
-                                // options={ddTicEventlinkItems}
-                                onChange={(e) => onInputChange(e, "options", 'event')}
-                                required
-                                optionLabel="name"
-                                placeholder="Select One"
-                            //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
-                            />
-                            {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
-                        </div>
-
-                        <div className="field col-12 md:col-3">
                             <label htmlFor="cpar">{translations[selectedLanguage].cpar} *</label>
                             <div className="p-inputgroup flex-1">
                                 <InputText id="cpar" autoFocus
@@ -304,11 +347,12 @@ const TicDoc = (props) => {
                                     required
                                     className={classNames({ 'p-invalid': submitted && !ticDoc.cpar })}
                                 />
-                                <Button icon="pi pi-search" onClick={handleParClick} className="p-button" />
+                                <Button icon="pi pi-search" onClick={handleParLClick} className="p-button" />
+                                <Button icon="pi pi-search" onClick={handleParClick} className="p-button-success" />
                             </div>
                             {submitted && !ticDoc.cpar && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
                             <InputText
                                 id="npar"
@@ -382,7 +426,7 @@ const TicDoc = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.docTip === 'CREATE') ? (
+                            {(docTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -391,7 +435,7 @@ const TicDoc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.docTip !== 'CREATE') ? (
+                            {(docTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -400,7 +444,7 @@ const TicDoc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.docTip !== 'CREATE') ? (
+                            {(docTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -409,6 +453,23 @@ const TicDoc = (props) => {
                                     outlined
                                 />
                             ) : null}
+                            {(docTip == 'CREATE') ? (
+                                <Button
+                                    label={translations[selectedLanguage].CreateSt}
+                                    icon="pi pi-check"
+                                    onClick={() => handleNextClick('CREATE')}
+                                    severity="success"
+                                    outlined
+                                />
+                            ) : (
+                                <Button
+                                label={translations[selectedLanguage].SaveSt}
+                                icon="pi pi-check"
+                                onClick={() => handleNextClick('UPDATE')}
+                                severity="success"
+                                outlined
+                                />
+                            )}                            
                         </div>
                     </div>
                 </div>
@@ -461,7 +522,7 @@ const TicDoc = (props) => {
             <Dialog
                 header={translations[selectedLanguage].ParList}
                 visible={cmnParLVisible}
-                style={{ width: '90%', height: '1400px' }}
+                style={{ width: '90%', height: '1300px' }}
                 onHide={() => {
                     setCmnParLVisible(false);
                     setShowMyComponent(false);
@@ -469,13 +530,31 @@ const TicDoc = (props) => {
             >
                 {cmnParLVisible && (
                     <CmnParL
-                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parend&sl=sr_cyr"
-                        queryParams={{ sl: 'sr_cyr', lookUp: true, dialog: true, ticDoc: ticDoc }} // Dodajte ostale parametre po potrebi
+                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parlend&sl=sr_cyr"
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParLDialogClose}
                         originUrl="http://ws10.ems.local:8353"
                     />
                 )}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].Par}
+                visible={cmnParVisible}
+                style={{ width: '90%', height: '1100px' }}
+                onHide={() => {
+                    setCmnParVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParVisible && (
+                    <CmnPar
+                        remoteUrl= {`http://ws10.ems.local:8353/?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleCmnParDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
+                    />
+                )}
+            </Dialog>        
         </div>
     );
 };

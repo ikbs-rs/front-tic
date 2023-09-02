@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventlocService } from "../../service/model/TicEventlocService";
+import { TicEventService } from "../../service/model/TicEventService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -34,14 +35,15 @@ const TicEventloc = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const url = `${env.CMN_BACK_URL}/cmn/x/obj/?sl=${selectedLanguage}`;
-                const tokenLocal = await Token.getTokensLS();
-                const headers = {
-                    Authorization: tokenLocal.token
-                };
-
-                const response = await axios.get(url, { headers });
-                const data = response.data.items;
+                // const url = `${env.CMN_BACK_URL}/cmn/x/loc/?sl=${selectedLanguage}`;
+                // const tokenLocal = await Token.getTokensLS();
+                // const headers = {
+                //     Authorization: tokenLocal.token
+                // };
+                // const response = await axios.get(url, { headers });
+                // const data = response.data.items;
+                const ticEventService = new TicEventService();
+                const data = await ticEventService.getCmnObjXcsLista();                
                 setTicEventlocItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventlocItems(dataDD);
@@ -196,7 +198,7 @@ const TicEventloc = (props) => {
                                 value={ddTicEventlocItem}
                                 options={ddTicEventlocItems}
                                 onChange={(e) => onInputChange(e, "options", 'loc')}
-                                required
+                                required                            
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !ticEventloc.loc })}

@@ -13,7 +13,7 @@ export class TicArtlocService {
         };
         try {
           const response = await axios.get(url, { headers });
-          console.log(url, "**********************************", response.data.item)
+          //console.log(url, "**********************************", response.data.item)
           return response.data.item;
         } catch (error) {
           console.error(error);

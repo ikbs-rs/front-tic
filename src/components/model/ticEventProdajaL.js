@@ -15,10 +15,13 @@ import { Dialog } from 'primereact/dialog';
 import { translations } from '../../configs/translations';
 import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
+import WebMap from './remoteComponentContainer';
 
 export default function TicEventL(props) {
+    console.log(props, '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
     const objName = 'tic_event';
+    const docId = props.ticDoc?.id || 1
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const emptyTicEvent = EmptyEntities[objName];
     const [showMyComponent, setShowMyComponent] = useState(true);
@@ -30,6 +33,7 @@ export default function TicEventL(props) {
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
     const [eventTip, setEventTip] = useState('');
+    const [webMapVisible, setWebMapVisible] = useState(false);
 
     const generateImageUrl = (id, relpath, selectedLanguage) => {
         return `${env.IMG_BACK_URL}/public/tic/${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
@@ -60,6 +64,9 @@ export default function TicEventL(props) {
         }
         fetchData();
     }, []);
+    const handleCancelClick = () => {
+        props.setTicEventProdajaLVisible(false);
+    };
 
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
@@ -84,6 +91,15 @@ export default function TicEventL(props) {
         setTicEvent(emptyTicEvent);
     };
 
+    const handleTaskComplete = () => {
+        console.log(ticEvent, '**********************handleTaskComplete**************************');
+        if (ticEvent ) {
+            props.onTaskComplete(ticEvent);
+        } else {
+            toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
+        }
+    };
+
     const findIndexById = (id) => {
         let index = -1;
 
@@ -102,8 +118,10 @@ export default function TicEventL(props) {
     };
 
     const onRowSelect = (event) => {
+        /*
             setTicEventDialog(event.data);
             setEventTip('UPDATE');  
+        */
         toast.current.show({
             severity: 'info',
             summary: 'Action Selected',
@@ -154,11 +172,15 @@ export default function TicEventL(props) {
     const renderHeader = () => {
         return (
             <div className="flex card-container">
+                {props.dialog && <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />}
                 {/** 
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 */}
+                <div className="flex flex-wrap gap-1">
+                {props.dialog && <Button label={translations[selectedLanguage].Confirm} icon="pi pi-table" onClick={handleTaskComplete} severity="info" text raised disabled={!ticEvent} />}
+                </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].EventsList}</b>
                 <div className="flex-grow-1"></div>
@@ -211,7 +233,33 @@ export default function TicEventL(props) {
         setTicEvent({ ...ticEvent });
     };
 
-    //  Dialog --->
+/*
+Web Map *********************************************************************************************************
+*/
+    const handleWebMapClick = async (rowData) => {
+        try {
+            setTicEvent(rowData)
+            setWebMapDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+
+    const setWebMapDialog = () => {
+        setWebMapVisible(true);
+    };
+
+    const handleWebMapDialogClose = (newObj) => {
+        setWebMapVisible(false);
+    };
+
+    //  Dialog -------------------------------------------------------------------------------------------------------->
 
     const header = renderHeader();
     // heder za filter/>
@@ -225,10 +273,11 @@ export default function TicEventL(props) {
             <div className="flex flex-wrap gap-1">
                 <Button
                     type="button"
-                    icon="pi pi-pencil"
+                    icon="pi pi-map"
                     style={{ width: '24px', height: '24px' }}
                     onClick={() => {
-                        setTicEventDialog(rowData);
+                        //setTicEventDialog(rowData);
+                        handleWebMapClick(rowData)
                         setEventTip('UPDATE');
                     }}
                     text
@@ -294,6 +343,24 @@ export default function TicEventL(props) {
             >
                 {showMyComponent && <TicEvent parameter={'inputTextValue'} ticEvent={ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventTip={eventTip} />}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].webMap}
+                visible={webMapVisible}
+                style={{ width: '90%', height: '1100px' }}
+                onHide={() => {
+                    setWebMapVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {webMapVisible && (
+                    <WebMap
+                        remoteUrl= {`http://ws11.ems.local:3000/#/seatmap/${ticEvent.id}?docid=${docId}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        onTaskComplete={handleWebMapDialogClose}
+                        originUrl="http://ws10.ems.local:8353"
+                    />
+                )}
+            </Dialog>             
         </div>
     );
 }

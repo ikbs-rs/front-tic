@@ -7,8 +7,8 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventcenatpService } from "../../service/model/TicEventcenatpService";
-import TicEventcenatp from './ticEventcenatp';
+import { TicEventartService } from "../../service/model/TicEventartService";
+import TicEventart from './ticEventart';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -16,24 +16,24 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicEventcenatpL(props) {
+export default function TicEventartL(props) {
 
-  const objName = "tic_eventcenatp"
+  const objName = "tic_eventart"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventcenatp = EmptyEntities[objName]
-  emptyTicEventcenatp.event = props.ticEvent.id
+  const emptyTicEventart = EmptyEntities[objName]
+  emptyTicEventart.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventcenatps, setTicEventcenatps] = useState([]);
-  const [ticEventcenatp, setTicEventcenatp] = useState(emptyTicEventcenatp);
+  const [ticEventarts, setTicEventarts] = useState([]);
+  const [ticEventart, setTicEventart] = useState(emptyTicEventart);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventcenatpTip, setEventcenatpTip] = useState('');
+  const [eventartTip, setEventartTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventcenatpLVisible(false);
+    props.setTicEventartLVisible(false);
   };
 
   useEffect(() => {
@@ -41,9 +41,9 @@ export default function TicEventcenatpL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticEventcenatpService = new TicEventcenatpService();
-          const data = await ticEventcenatpService.getLista(props.ticEvent.id);
-          setTicEventcenatps(data);
+          const ticEventartService = new TicEventartService();
+          const data = await ticEventartService.getLista(props.ticEvent.id);
+          setTicEventarts(data);
 
           initFilters();
         }
@@ -58,30 +58,30 @@ export default function TicEventcenatpL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticEventcenatps = [...ticEventcenatps];
-    let _ticEventcenatp = { ...localObj.newObj.obj };
+    let _ticEventarts = [...ticEventarts];
+    let _ticEventart = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventcenatpTip === "CREATE") {
-      _ticEventcenatps.push(_ticEventcenatp);
-    } else if (localObj.newObj.eventcenatpTip === "UPDATE") {
+    if (localObj.newObj.eventartTip === "CREATE") {
+      _ticEventarts.push(_ticEventart);
+    } else if (localObj.newObj.eventartTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventcenatps[index] = _ticEventcenatp;
-    } else if ((localObj.newObj.eventcenatpTip === "DELETE")) {
-      _ticEventcenatps = ticEventcenatps.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventcenatp Delete', life: 3000 });
+      _ticEventarts[index] = _ticEventart;
+    } else if ((localObj.newObj.eventartTip === "DELETE")) {
+      _ticEventarts = ticEventarts.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventart Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventcenatp ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventart ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventcenatpTip}`, life: 3000 });
-    setTicEventcenatps(_ticEventcenatps);
-    setTicEventcenatp(emptyTicEventcenatp);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartTip}`, life: 3000 });
+    setTicEventarts(_ticEventarts);
+    setTicEventart(emptyTicEventart);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventcenatps.length; i++) {
-      if (ticEventcenatps[i].id === id) {
+    for (let i = 0; i < ticEventarts.length; i++) {
+      if (ticEventarts[i].id === id) {
         index = i;
         break;
       }
@@ -91,11 +91,11 @@ export default function TicEventcenatpL(props) {
   };
 
   const openNew = () => {
-    setTicEventcenatpDialog(emptyTicEventcenatp);
+    setTicEventartDialog(emptyTicEventart);
   };
 
   const onRowSelect = (event) => {
-    //ticEventcenatp.begda = event.data.begda
+    //ticEventart.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -160,7 +160,7 @@ export default function TicEventcenatpL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventcenatpList}</b>
+        <b>{translations[selectedLanguage].EventartList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -189,17 +189,17 @@ export default function TicEventcenatpL(props) {
   };
 
   // <--- Dialog
-  const setTicEventcenatpDialog = (ticEventcenatp) => {
+  const setTicEventartDialog = (ticEventart) => {
     setVisible(true)
-    setEventcenatpTip("CREATE")
-    setTicEventcenatp({ ...ticEventcenatp });
+    setEventartTip("CREATE")
+    setTicEventart({ ...ticEventart });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const eventcenatpTemplate = (rowData) => {
+  const eventartTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -208,8 +208,8 @@ export default function TicEventcenatpL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventcenatpDialog(rowData)
-            setEventcenatpTip("UPDATE")
+            setTicEventartDialog(rowData)
+            setEventartTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -245,9 +245,9 @@ export default function TicEventcenatpL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventcenatp}
+        selection={ticEventart}
         loading={loading}
-        value={ticEventcenatps}
+        value={ticEventarts}
         header={header}
         showGridlines
         removableSort
@@ -260,31 +260,45 @@ export default function TicEventcenatpL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventcenatp(e.value)}
+        onSelectionChange={(e) => setTicEventart(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={eventcenatpTemplate}
+          body={eventartTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="ccenatp"
+          field="cart"
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
-          field="ncenatp"
+          field="nart"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
-        ></Column>      
+          style={{ width: "30%" }}
+        ></Column>   
+        <Column
+          field="discount"
+          header={translations[selectedLanguage].Discount}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>  
+        <Column
+          field="descript"
+          header={translations[selectedLanguage].Description}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>                 
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -312,14 +326,14 @@ export default function TicEventcenatpL(props) {
         }}
       >
         {showMyComponent && (
-          <TicEventcenatp
+          <TicEventart
             parameter={"inputTextValue"}
-            ticEventcenatp={ticEventcenatp}
+            ticEventart={ticEventart}
             ticEvent={props.ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventcenatpTip={eventcenatpTip}
+            eventartTip={eventartTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
