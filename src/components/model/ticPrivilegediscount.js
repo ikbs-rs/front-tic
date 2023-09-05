@@ -13,7 +13,7 @@ import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
 
 const TicPrivilegediscount = (props) => {
-
+console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegediscount*-*-*-*-*-*-*-*-*-")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticPrivilegediscount, setTicPrivilegediscount] = useState(props.ticPrivilegediscount);

@@ -641,11 +641,16 @@ export const translations = {
         web: "Web",
         selection: "Селекција",
         Par: "Партнер",
-        Left: "Количина",
+        Left: "Износ",
+        output: "Количина",
         tg: "Тарифна група",
         cevent: "Шифра догађаја",
         Choice: "Избор",
         Description: "Опис",
+        sediste: "Седиште",
+        sektor: "Сектор",
+        Storno: "Сторно",
+        afterSales: "Постпродаја",
     }
   };
   

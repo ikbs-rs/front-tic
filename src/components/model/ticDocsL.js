@@ -16,15 +16,16 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import WebMap from './remoteComponentContainer';
 import TicEventProdajaL from './ticEventProdajaL';
+import DeleteDialog from '../dialog/DeleteDialog';
 
 
 export default function TicDocsL(props) {
 
-  //console.log(props,"*******************TicDocsL************************")
+ console.log(props,"*******************TicDocsL************************")
   const objName = "tic_docs"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyTicDocs = EmptyEntities[objName]
-  emptyTicDocs.event = props.ticDoc.id
+  emptyTicDocs.doc = props.ticDoc.id
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocss, setTicDocss] = useState([]);
   const [ticDocs, setTicDocs] = useState(emptyTicDocs);
@@ -47,7 +48,9 @@ export default function TicDocsL(props) {
         ++i
         if (i < 2) {
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getCmnListaByItem('doc', 'listabynum', 'tic_docssbynum_v', 'aa.doc', props.ticDoc.id);
+          const data = await ticDocsService.getLista(props.ticDoc.id);
+          //const data = await ticDocsService.getLista("1698042558175121408");
+          //console.log(data, "***************** Date ******************")
           setTicDocss(data);
 
           initFilters();
@@ -98,6 +101,13 @@ export default function TicDocsL(props) {
   const openNew = () => {
     setTicDocsDialog(emptyTicDocs);
   };
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const showDeleteDialog = () => {
+    setDeleteDialogVisible(true);
+};
+const hideDeleteDialog = () => {
+  setDeleteDialogVisible(false);
+};
 
 /*
 Web Map *********************************************************************************************************
@@ -226,7 +236,13 @@ Click Handle *******************************************************************
         }
         <div className="flex flex-wrap gap-1">
             <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
-        </div>        
+        </div>  
+        <div className="flex flex-wrap gap-1">
+        <Button label={translations[selectedLanguage].afterSales} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-warning" raised />     
+        </div>         
+        <div className="flex flex-wrap gap-1">
+        <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />     
+        </div> 
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].DocsList}</b>
         <div className="flex-grow-1"></div>
@@ -395,8 +411,8 @@ Click Handle *******************************************************************
           style={{ width: "5%" }}
         ></Column>   
         <Column
-          field="right"
-          header={translations[selectedLanguage].right_}
+          field="potrazuje"
+          header={translations[selectedLanguage].potrazuje}
           sortable
           //filter
           style={{ width: "15%" }}
@@ -428,6 +444,7 @@ Click Handle *******************************************************************
         ></Column> 
 */}                  
       </DataTable>
+      <DeleteDialog visible={deleteDialogVisible} inAction="delete"  onHide={hideDeleteDialog}  />
       <Dialog
         header={translations[selectedLanguage].Link}
         visible={visible}

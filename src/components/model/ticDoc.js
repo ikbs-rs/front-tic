@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicDocService } from "../../service/model/TicDocService";
+import { TicFunctionService } from "../../service/model/TicFunctionService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -22,7 +23,7 @@ const TicDoc = (props) => {
     const objName = "tic_docs"
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicEvents = EmptyEntities[objName]
-    const [showMyComponent, setShowMyComponent] = useState(true);
+    const [showMyComponent, setShowMyComponent] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
@@ -80,6 +81,28 @@ const TicDoc = (props) => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                //console.log(props.ticDoc, "999999999999999999999999999999999999999")
+                let _ticDoc = { ...ticDoc }
+                const ticFunctionService = new TicFunctionService();
+                const data = await ticFunctionService.getParpopust(props.ticDoc.usr);
+                _ticDoc.parpopust = data.value||0
+            
+                setTicDoc(_ticDoc)
+                //console.log(data.value, "Rezultat getParpopust", props.ticDoc.usr, " ********************:", _ticDoc);
+                setShowMyComponent(true)
+                // Ovde možete da obradite rezultat dobijen iz getParpopust funkcije
+                //console.log(data, "Rezultat getParpopust:", ticDoc);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);    
+
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
@@ -92,6 +115,18 @@ const TicDoc = (props) => {
         props.setVisible(false);
     };
 
+    const handleParBlur = async (parValue) => {
+        try {
+            const ticFunctionService = new TicFunctionService();
+            const data = await ticFunctionService.getParpopust(parValue);
+            ticDoc.parpopust = data.value
+            // Ovde možete da obradite rezultat dobijen iz getParpopust funkcije
+            console.log("Rezultat getParpopust:", data);
+        } catch (error) {
+            console.error("Greška pri pozivanju getParpopust funkcije:", error);
+        }
+    };
+    
     const handleParLClick = async () => {
         try {
             // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
@@ -253,12 +288,21 @@ const TicDoc = (props) => {
     };
 
     
-    const handleCmnParLDialogClose = (newObj) => {
+    const handleCmnParLDialogClose = async (newObj) => {
         if (newObj?.id) {
             setCmnPar(newObj);
-            ticDoc.usr = newObj.id
-            ticDoc.npar = newObj.text
-            ticDoc.cpar = newObj.code
+            let _ticDoc = { ...ticDoc }
+            _ticDoc.usr = newObj.id
+            _ticDoc.npar = newObj.text
+            _ticDoc.cpar = newObj.code
+
+            const ticFunctionService = new TicFunctionService();
+            const data = await ticFunctionService.getParpopust(newObj.id);
+            _ticDoc.parpopust = data.value||0
+            
+            setTicDoc(_ticDoc)
+            // Ovde možete da obradite rezultat dobijen iz getParpopust funkcije
+            console.log("Rezultat getParpopust:", data);
         }
         setCmnParLVisible(false)
     };
@@ -344,6 +388,7 @@ const TicDoc = (props) => {
                             <div className="p-inputgroup flex-1">
                                 <InputText id="cpar" autoFocus
                                     value={ticDoc.cpar} onChange={(e) => onInputChange(e, "text", 'cpar')}
+                                    //onBlur={() => handleParBlur(ticDoc.par)}
                                     required
                                     className={classNames({ 'p-invalid': submitted && !ticDoc.cpar })}
                                 />

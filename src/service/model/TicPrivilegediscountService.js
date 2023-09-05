@@ -97,9 +97,10 @@ console.log("*-*-*jsonObj-*-*", url, newObj, jsonObj)
                 'Content-Type': 'application/json',
                 'Authorization': tokenLocal.token
             };
+            console.log("**************"  , newObj, "****************")
             const jsonObj = JSON.stringify(newObj)
             const response = await axios.put(url, jsonObj, { headers });
-            //console.log("**************"  , response, "****************")
+            
             return response.data.items;
         } catch (error) {
             console.error(error);

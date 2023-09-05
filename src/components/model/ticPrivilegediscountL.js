@@ -283,8 +283,15 @@ export default function TicPrivilegediscountL(props) {
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
-        ></Column>       
+          style={{ width: "50%" }}
+        ></Column>  
+        <Column
+          field="value"
+          header={translations[selectedLanguage].Value}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>              
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}

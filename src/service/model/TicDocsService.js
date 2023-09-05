@@ -1,11 +1,12 @@
 import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
+import DateFunction from "../../utilities/DateFunction"
 
 export class TicDocsService {
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docs_v&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docs_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -75,8 +76,11 @@ export class TicDocsService {
 
   async postTicDocs(newObj) {
     try {
+      let locObj = { ...newObj };
+      locObj.begtm = DateFunction.currDatetime()
+      locObj.endtm = '99991231000000'
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
+      if (newObj.curr === null || newObj.art === null || newObj.status === null) {
         throw new Error(
           "Items must be filled!"
         );
@@ -87,7 +91,9 @@ export class TicDocsService {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
-      const jsonObj = JSON.stringify(newObj)
+      
+      const jsonObj = JSON.stringify(locObj)
+      console.log(locObj, "-*-*-*-*-*-*-*-*-*-*-*-*-*-*-postTicDocs*-*-*-*----------------------------")
       const response = await axios.post(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -101,7 +107,7 @@ export class TicDocsService {
   async putTicDocs(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
+      if (newObj.curr === null || newObj.art === null || newObj.status === null) {
         throw new Error(
           "Items must be filled!"
         );

@@ -14,7 +14,8 @@ import env from '../../configs/env';
 import axios from 'axios';
 import Token from '../../utilities/Token';
 import { Dialog } from 'primereact/dialog';
-import TicArtL from './ticArtL';
+//import TicArtL from './ticArtL';
+import TicEventstL from './ticEventstL';
 import TicArtW from './remoteComponentContainer';
 import TicEventProdajaL from './ticEventProdajaL';
 import CmnParL from './remoteComponentContainer';
@@ -22,6 +23,7 @@ import CmnPar from './remoteComponentContainer';
 import { TicDocService } from "../../service/model/TicDocService";
 
 const TicDocs = (props) => {
+    console.log(props, "000000000000000000000000000000000000000000000000000000000")
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
@@ -29,9 +31,9 @@ const TicDocs = (props) => {
     const [ticDoc, setTicDoc] = useState(props.ticDoc);    
     const [ticDocs, setTicDocs] = useState(props.ticDocs);
     const [submitted, setSubmitted] = useState(false);
-    const [ddTpItem, setDdTpItem] = useState(null);
+    const [ddTpItem, setDdTpItem] = useState(1);
     const [ddTpItems, setDdTpItems] = useState(null);
-    const [ticArtLVisible, setTicArtLVisible] = useState(false);
+    const [ticArtLVisible, setTicEventstLVisible] = useState(false);
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticArt, setTicArt] = useState(null);
@@ -57,13 +59,20 @@ const TicDocs = (props) => {
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.ticDocs.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticDocs.status));
+    }, []);
+
+    useEffect(() => {
+        let _ticDocs = { ...ticDocs };
+        _ticDocs.discount = ticDoc.parpopust;
+        _ticDocs.curr = ticDoc.curr;
+        setTicDocs(_ticDocs);;
     }, []);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const url = `${env.TIC_BACK_URL}/tic/x/docstp/?sl=${selectedLanguage}`;
+                const url = `${env.CMN_BACK_URL}/cmn/x/tgp/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
@@ -89,13 +98,12 @@ const TicDocs = (props) => {
                 const data = await ticDocService.getCmnCurrs();
 
                 setCmnCurrItems(data)
-                console.log(data, "********props.ticDoc.curr**********", props.ticDoc.curr)
-
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnCurrItems(dataDD);
                 setDdCmnCurrItem(dataDD.find((item) => item.code === props.ticDoc.curr) || null);
                 const foundItem = data.find((item) => item.id === props.ticDoc.curr);
                 setCmnCurrItem(foundItem || null);
+                ticDocs.ccurr = props.ticDoc.curr
                 ticDocs.ccurr = foundItem.code
                 ticDocs.ncurr = foundItem.textx
             } catch (error) {
@@ -205,7 +213,7 @@ const TicDocs = (props) => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Action ',
-                detail: `${err.response.data.error}`,
+                //detail: `${err.response.data.error}`,
                 life: 5000
             });
         }
@@ -226,7 +234,7 @@ const TicDocs = (props) => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Action ',
-                detail: `${err.response.data.error}`,
+               // detail: `${err.response.data.error}`,
                 life: 5000
             });
         }
@@ -305,7 +313,7 @@ const TicDocs = (props) => {
     };      
 
     const setTicArtDialog = (destination) => {
-        setTicArtLVisible(true);
+        setTicEventstLVisible (true);
     };
 
     const setTicArtRemoteDialog = () => {
@@ -317,12 +325,15 @@ const TicDocs = (props) => {
     };    
 
     const handleTicArtLDialogClose = (newObj) => {
-
+console.log(newObj, "111111111111111111111111111111111111111111111111111111111111111")
         setTicArt(newObj);
-        ticDocs.art = newObj.id;
-        ticDocs.nart = newObj.text;
-        ticDocs.cart = newObj.code;
-        setTicArtLVisible(false);
+        ticDocs.art = newObj.art;
+        ticDocs.nart = newObj.nart;
+        ticDocs.cart = newObj.cart;
+        ticDocs.price = newObj.cena;
+        ticDocs.loc = newObj.loc1;
+        ticDocs.potrazuje = newObj.cena*ticDocs.output;
+        setTicEventstLVisible(false);
     };
     /*
     const handleTicArtRemoteLDialogClose = (newObj) => {
@@ -342,7 +353,11 @@ const TicDocs = (props) => {
                     <div className="field col-12 md:col-3">
                             <label htmlFor="cevent">{translations[selectedLanguage].cevent}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cevent" autoFocus value={ticDocs.cevent} onChange={(e) => onInputChange(e, 'text', 'cevent')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
+                                <InputText id="cevent" autoFocus value={ticDocs.cevent} 
+                                onChange={(e) => onInputChange(e, 'text', 'cevent')} 
+                                required 
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.cevent })} 
+                                />
                                 <Button icon="pi pi-search" onClick={(e) => handleEventProdajaClick(e)} className="p-button" />
                                 {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
                             </div>
@@ -350,13 +365,20 @@ const TicDocs = (props) => {
                         </div>
                         <div className="field col-12 md:col-9">
                             <label htmlFor="nevent">{translations[selectedLanguage].nevent}</label>
-                            <InputText id="nevent" value={ticDocs.nevent} onChange={(e) => onInputChange(e, 'text', 'nevent')} required className={classNames({ 'p-invalid': submitted && !ticDocs.nart })} />
+                            <InputText id="nevent" value={ticDocs.nevent} 
+                            onChange={(e) => onInputChange(e, 'text', 'nevent')} 
+                            required 
+                            className={classNames({ 'p-invalid': submitted && !ticDocs.nevent })} 
+                            />
                             {submitted && !ticDocs.nevent && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>                        
                         <div className="field col-12 md:col-3">
                             <label htmlFor="cart">{translations[selectedLanguage].cart}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cart"  value={ticDocs.cart} onChange={(e) => onInputChange(e, 'text', 'cart')} required className={classNames({ 'p-invalid': submitted && !ticDocs.code })} />
+                                <InputText id="cart"  value={ticDocs.cart} 
+                                onChange={(e) => onInputChange(e, 'text', 'cart')} 
+                                required 
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.cart })} />
                                 <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
                                 {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
                             </div>
@@ -367,7 +389,7 @@ const TicDocs = (props) => {
                             <InputText id="nart" value={ticDocs.nart} onChange={(e) => onInputChange(e, 'text', 'nart')} required className={classNames({ 'p-invalid': submitted && !ticDocs.nart })} />
                             {submitted && !ticDocs.nart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-5">
+                        {/* <div className="field col-12 md:col-5">
                             <label htmlFor="tg">{translations[selectedLanguage].tg} *</label>
                             <Dropdown
                                 id="tg"
@@ -394,18 +416,70 @@ const TicDocs = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.curr })}
                             />
                             {submitted && !ticDocs.curr && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>    
-                        <div className="field col-12 md:col-4">
-                            <label htmlFor="left">{translations[selectedLanguage].Left} *</label>
+                        </div>  */}
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="price">{translations[selectedLanguage].price} *</label>
                             <InputText
-                                id="left"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.left)}
-                                onChange={(e) => onInputChange(e, 'text', 'left')}
+                                id="price"
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.price)}
+                                onChange={(e) => onInputChange(e, 'text', 'price')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.left })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.price })}
                             />
-                            {submitted && !ticDocs.left && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocs.price && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                           
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="output">{translations[selectedLanguage].output} *</label>
+                            <InputText
+                                id="output"
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.output)}
+                                onChange={(e) => onInputChange(e, 'text', 'output')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.output })}
+                            />
+                            {submitted && !ticDocs.output && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>   
+                        <div className="field col-12 md:col-2">
+                            <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
+                            <InputText
+                                id="discount"
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.discount)}
+                                onChange={(e) => onInputChange(e, 'text', 'discount')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.discount })}
+                            />
+                            {submitted && !ticDocs.discount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                                               
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="potrazuje">{translations[selectedLanguage].Left} *</label>
+                            <InputText
+                                id="potrazuje"
+                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.potrazuje)}
+                                onChange={(e) => onInputChange(e, 'text', 'potrazuje')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.potrazuje })}
+                            />
+                            {submitted && !ticDocs.potrazuje && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>                                            
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="cpar">{translations[selectedLanguage].cpar} *</label>
+                            <div className="p-inputgroup flex-1">
+                                <InputText id="cpar" 
+                                    value={ticDocs.cpar} 
+                                    onChange={(e) => onInputChange(e, "text", 'cpar')}
+                                />
+                                <Button icon="pi pi-search" onClick={handleParLClick} className="p-button" />
+                                <Button icon="pi pi-search" onClick={handleParClick} className="p-button-success" />
+                            </div>
+                        </div>
+                        <div className="field col-12 md:col-9">
+                            <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
+                            <InputText
+                                id="npar"
+                                value={props.ticDocs.npar}
+                                disabled={true}
+                            />
+                        </div>                        
                         <div className="field col-12 md:col-4">
                             <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
                             <InputText
@@ -415,10 +489,8 @@ const TicDocs = (props) => {
                                 placeholder="HH:mm"
                                 value={DateFunction.convertTimeToDisplayFormat(ticDocs.begtm)}
                                 onChange={(e) => onInputChange(e, 'text', 'begtm')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.begtm })}
+                                disabled={true}
                             />
-                            {submitted && !ticDocs.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-4">
                             <label htmlFor="endtm">{translations[selectedLanguage].EndTM}</label>
@@ -429,46 +501,22 @@ const TicDocs = (props) => {
                                 placeholder="HH:mm"
                                 value={DateFunction.convertTimeToDisplayFormat(ticDocs.endtm)}
                                 onChange={(e) => onInputChange(e, 'text', 'endtm')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.endtm })}
-                            />
-                            {submitted && !ticDocs.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-3">
-                            <label htmlFor="cpar">{translations[selectedLanguage].cpar} *</label>
-                            <div className="p-inputgroup flex-1">
-                                <InputText id="cpar" 
-                                    value={ticDocs.cpar} onChange={(e) => onInputChange(e, "text", 'cpar')}
-                                    required
-                                    className={classNames({ 'p-invalid': submitted && !ticDocs.cpar })}
-                                />
-                                <Button icon="pi pi-search" onClick={handleParLClick} className="p-button" />
-                                <Button icon="pi pi-search" onClick={handleParClick} className="p-button-success" />
-                            </div>
-                            {submitted && !ticDocs.cpar && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-9">
-                            <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
-                            <InputText
-                                id="npar"
-                                value={props.ticDocs.npar}
                                 disabled={true}
                             />
-                        </div>                        
-
+                        </div>
                         <div className="field col-12 md:col-5">
-                            <label htmlFor="valid">{translations[selectedLanguage].Status}</label>
+                            <label htmlFor="status">{translations[selectedLanguage].Status}</label>
                             <Dropdown
-                                id="valid"
+                                id="status"
                                 value={dropdownItem}
                                 options={dropdownItems}
-                                onChange={(e) => onInputChange(e, 'options', 'valid')}
+                                onChange={(e) => onInputChange(e, 'options', 'status')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.status })}
                             />
-                            {submitted && !ticDocs.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocs.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
 
@@ -489,16 +537,16 @@ const TicDocs = (props) => {
                 visible={ticArtLVisible}
                 style={{ width: '90%', height: '1400px' }}
                 onHide={() => {
-                    setTicArtLVisible(false);
+                    setTicEventstLVisible(false);
                     setShowMyComponent(false);
                 }}
             >
                 {ticArtLVisible && 
-                    <TicArtL 
+                    <TicEventstL 
                         parameter={'inputTextValue'} 
                         ticDocs={ticDocs} 
                         onTaskComplete={handleTicArtLDialogClose} 
-                        setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventstLVisible ={setTicEventstLVisible } 
                         dialog={true} 
                         lookUp={true} 
                     />}

@@ -17,6 +17,7 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction"
 import { Dropdown } from 'primereact/dropdown';
 import { useSearchParams } from 'react-router-dom';
+import DeleteDialog from '../dialog/DeleteDialog';
 
 export default function TicDocL(props) {
 
@@ -156,6 +157,13 @@ export default function TicDocL(props) {
   const openNew = () => {
     setTicDocDialog(emptyTicDoc);
   };
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const showDeleteDialog = () => {
+    setDeleteDialogVisible(true);
+};  
+const hideDeleteDialog = () => {
+  setDeleteDialogVisible(false);
+};
 
   const onRowSelect = (doc) => {
     toast.current.show({
@@ -232,7 +240,9 @@ export default function TicDocL(props) {
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-
+        <div className="flex flex-wrap gap-1">
+        <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />     
+        </div> 
        
         <div className="flex-grow-1" />
         <b>{translations[selectedLanguage].DocList}</b>
@@ -448,6 +458,7 @@ export default function TicDocL(props) {
         ></Column>
 
       </DataTable>
+      <DeleteDialog visible={deleteDialogVisible} inAction="delete"  onHide={hideDeleteDialog}  />
       <Dialog
         header={translations[selectedLanguage].Doc}
         visible={visible}
