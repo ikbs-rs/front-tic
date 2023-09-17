@@ -32,8 +32,10 @@ const RemoteComponentContainer = ({ remoteUrl, queryParams, onTaskComplete, orig
 
     // Slušanje poruka iz iFrame-a
     useEffect(() => {
+        console.log("**********originSlušanje poruka***********", originUrl)
         const handleMessageFromIframe = (event) => {
             // Provera da li poruka dolazi iz očekivanog izvora
+            console.log(event.origin, "**********originSlušanje poruka***********", originUrl)
             if (event.origin === originUrl) {
                 // Provera tipa poruke
                 if (event.data.visible) {

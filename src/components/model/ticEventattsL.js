@@ -126,8 +126,12 @@ export default function TicEventattsL(props) {
     };
     
     const handleConfirm = () => {
-        // Ovde pozovite vašu funkciju autoInput
-        // autoInput();
+        //setSubmitted(true);
+        //const ticDocService = new TicDocService();
+        // await ticDocService.deleteTicDoc(ticDoc);
+        // props.handleDialogClose({ obj: ticDoc, docTip: 'DELETE' });
+        // props.setVisible(false);
+        // hideDeleteDialog();
         setConfirmDialogVisible(false);
     };
     

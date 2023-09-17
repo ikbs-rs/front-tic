@@ -17,10 +17,12 @@ import { Dialog } from 'primereact/dialog';
 //import CmnParL from './cmnParL';
 import CmnParL from './remoteComponentContainer';
 import CmnPar from './remoteComponentContainer';
+import env from "../../configs/env"
 
 const TicDoc = (props) => {
-    //console.log("***********************************", props, "***********************************")
+    console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************")
     const objName = "tic_docs"
+    const domen = env.DOMEN
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicEvents = EmptyEntities[objName]
     const [showMyComponent, setShowMyComponent] = useState(false);
@@ -575,10 +577,10 @@ const TicDoc = (props) => {
             >
                 {cmnParLVisible && (
                     <CmnParL
-                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parlend&sl=sr_cyr"
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        remoteUrl={`${env.CMN_URL}?endpoint=parlend&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${domen}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParLDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl={`${domen}`}
                     />
                 )}
             </Dialog>
@@ -593,10 +595,10 @@ const TicDoc = (props) => {
             >
                 {cmnParVisible && (
                     <CmnPar
-                        remoteUrl= {`http://ws10.ems.local:8353/?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        remoteUrl= {`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${domen}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl={`${domen}`}
                     />
                 )}
             </Dialog>        

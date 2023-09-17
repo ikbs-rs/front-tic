@@ -78,6 +78,13 @@ const EmptyEntities =
     "grammcase": "1",
     "text": ""
   },
+  "tic_artlink": {
+		"id": null,
+		"site": null,
+		"art1": null,
+		"art2": null,
+		"tp": ""
+	},
   "tic_artprivilege": {
     "id": null,
     "site": null,
@@ -252,6 +259,13 @@ const EmptyEntities =
     "storno": "0",
     "year": `${new Date().getFullYear().toString()}`
   },
+	"tic_docb": {
+		"id": null,
+		"site": null,
+		"doc": null,
+		"tp": "",
+		"bcontent": null
+	},  
   "tic_docdocslink": {
     "id": null,
     "site": null,
@@ -265,6 +279,25 @@ const EmptyEntities =
     "doc2": null,
     "time": ""
   },
+	"tic_docpaydelivery ": {
+		"id": null,
+		"site": null,
+		"docpayment": "number",
+		"courier": "number",
+		"delivery_adress": "string",
+		"amount": "number",
+		"dat": "string",
+		"datdelivery": "string",
+		"status": "string"
+	},  
+	"tic_docpayment": {
+			"id": null,
+			"site": null,
+			"doc": null,
+			"paymenttp": null,
+			"amount": null,
+			"bcontent": null
+	},  
   "tic_docs": {
     "id": null,
     "site": null,
@@ -493,6 +526,20 @@ const EmptyEntities =
     "maxprc": null,
     "maxval": null
   },
+  "tic_paycard": {
+		"attributes": {
+			"id": null,
+			"site": null,
+			"docpayment": null,
+			"ccard": null,
+			"owner": "",
+			"cardnum": "",
+			"code": "",
+			"dat": "",
+			"amount": null,
+			"status": null
+		}
+	},	
   "tic_privilege": {
     "id": null,
     "site": null,
@@ -619,6 +666,16 @@ const EmptyEntities =
     "grammcase": "1",
     "text": ""
   },
+	"tic_speccheck": {
+			"id": null,
+			"site": null,
+			"docpayment": null,
+			"bank": null,
+			"code1": "",
+			"code2": "",
+			"code3": "",
+			"amount": null
+  },  
   "tic_stampa": {
     "id": null,
     "site": null,

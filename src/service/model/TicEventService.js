@@ -10,7 +10,7 @@ export class TicEventService {
     const headers = {
       Authorization: tokenLocal.token
     };
-
+console.log(url, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
     try {
       const response = await axios.get(url, { headers });
       return response.data.item;

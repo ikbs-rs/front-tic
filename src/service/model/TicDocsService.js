@@ -93,7 +93,6 @@ export class TicDocsService {
       };
       
       const jsonObj = JSON.stringify(locObj)
-      console.log(locObj, "-*-*-*-*-*-*-*-*-*-*-*-*-*-*-postTicDocs*-*-*-*----------------------------")
       const response = await axios.post(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;

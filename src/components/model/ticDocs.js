@@ -585,10 +585,10 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
             >
                 {cmnParLVisible && (
                     <CmnParL
-                        remoteUrl="http://ws10.ems.local:8353/?endpoint=parlend&sl=sr_cyr"
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        remoteUrl={`${env.CMN_URL}?endpoint=parlend&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${env.DOMEN}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParLDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl={`${env.DOMEN}`}
                     />
                 )}
             </Dialog>
@@ -603,10 +603,10 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
             >
                 {cmnParVisible && (
                     <CmnPar
-                        remoteUrl= {`http://ws10.ems.local:8353/?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        remoteUrl= {`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${env.DOMEN}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl={`${env.DOMEN}`}
                     />
                 )}
             </Dialog>                               

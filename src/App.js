@@ -8,6 +8,7 @@ import AppFooter from './AppFooter';
 import AppConfig from './AppConfig';
 import AppMenu from './AppMenu';
 import AppRightMenu from './AppRightMenu';
+import './index.css';
 
 import Discount from './components/model/ticDiscountL';
 import DiscountTp from './components/model/ticDiscounttpL';
@@ -433,7 +434,7 @@ const App = () => {
 
             <AppRightMenu rightPanelMenuActive={rightPanelMenuActive} onRightMenuClick={onRightMenuClick}></AppRightMenu>
 
-            <div className="layout-menu-container" onClick={onMenuClick} >
+            <div className="layout-menu-container"  onClick={onMenuClick} >
                 {inlineUser && (
                     <div className="layout-profile">
                         <button type="button" className="p-link layout-profile-button" onClick={onInlineUserClick}>
