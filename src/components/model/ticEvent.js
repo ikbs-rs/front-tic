@@ -159,6 +159,28 @@ const TicEvent = (props) => {
         setDropdownItems(items);
     }, []);
 
+      
+    useEffect(() => {
+        async function fetchData() {
+          try { 
+            const ticEventService = new TicEventService();
+            const data = await ticEventService.getLista();
+            const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+            setDdEventItems(dataDD);
+            setDdEventItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);            
+            setTicEvents(data);
+          } catch (error) {
+            console.error(error);
+            // Obrada greške ako je potrebna
+          }
+        }
+        fetchData();
+      }, []);      
+
+    useEffect(() => {
+        setDropdownItems(items);
+    }, []);
+
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
