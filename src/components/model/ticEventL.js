@@ -57,6 +57,7 @@ export default function TicEventL(props) {
       }
   ];    
 
+  /*
   const finItems = [
     {
         label: `${translations[selectedLanguage].Cenatp}`,
@@ -69,6 +70,7 @@ export default function TicEventL(props) {
         command: () => openEventart()
     }
 ]; 
+*/
     useEffect(() => {
         async function fetchData() {
             try {
@@ -133,6 +135,7 @@ export default function TicEventL(props) {
     const setTicArtLVisible = (newObj) => {
       const localObj = { newObj };
   };
+
     const findIndexById = (id) => {
         let index = -1;
 
@@ -229,7 +232,10 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
+                </div>                
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Setings} icon="pi pi-table" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Agenda} icon="pi pi-shield" onClick={openEventagenda} severity="info" text raised disabled={!ticEvent} />
@@ -241,7 +247,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Loc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <SplitButton label={translations[selectedLanguage].Fin} /*icon="pi pi-copy" onClick={openEventloc}*/ model={finItems} severity="info" raised text disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
                 </div>    
         {/*
                 <div className="flex flex-wrap gap-1">
@@ -379,7 +385,7 @@ export default function TicEventL(props) {
                 scrollable
                 sortField="code"
                 sortOrder={1}
-                scrollHeight="750px"
+                scrollHeight="650px"
                 virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}

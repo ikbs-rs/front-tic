@@ -98,6 +98,7 @@ export const useDropdown = (...args) => {
 export async function fetchObjData(...args) {
     try {
         let backend = '';
+        let url = '';
         switch (args[0]) {
             case 'adm':
                 backend = env.ADM_BACK_URL;
@@ -113,14 +114,19 @@ export async function fetchObjData(...args) {
         }
 
         const selectedLanguage = localStorage.getItem('sl') || 'en';
-        const url = `${backend}/${args[0]}/x/${args[1]}/?sl=${selectedLanguage}`;
+        switch (args[1]) {
+            case 'user':        
+                url = `${backend}/${args[0]}/${args[1]}/_v/lista/?stm=adm_usereventdd_v&sl=${selectedLanguage}`;
+                break;
+            default:
+                url = `${backend}/${args[0]}/x/${args[1]}/?sl=${selectedLanguage}`;
+        }        
         const tokenLocal = await Token.getTokensLS();
         const headers = {
             Authorization: tokenLocal.token
         };
-        const response = await axios.get(url, { headers });        
-        const datas = response.data.items;
-
+        const response = await axios.get(url, { headers });       
+        const datas = response.data.items||response.data.item;
         const items = datas.map(({ textx, id }) => ({ name: textx, code: id }));
 
         const data = datas.find((item) => item.id === args[2]);

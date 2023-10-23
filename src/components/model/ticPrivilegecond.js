@@ -180,7 +180,7 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                 console.error("Pogresan naziv polja")
         }            
         } else if (type === "Calendar") {
-            const dateVal = DateFunction.dateGetValue(e.value)
+            //const dateVal = DateFunction.dateGetValue(e.value)
             //console.log(dateVal, "***********************************")
             val = (e.target && e.target.value) || '';
             switch (name) {
@@ -237,7 +237,7 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                 <div className="card">
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="begcondtp">{translations[selectedLanguage].begcondtp} *</label>
+                            <label htmlFor="begcondtp">{translations[selectedLanguage].Nbegcond} *</label>
                             <Dropdown id="begcondtp" autoFocus
                                 value={ddTicBegcondtpItem}
                                 options={ddTicBegcondtpItems}
@@ -251,18 +251,18 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                         </div>
 
                         <div className="field col-12 md:col-6">
-                            <label htmlFor="value">{translations[selectedLanguage].Value}</label>
-                            <InputText id="value" 
-                                value={ticPrivilegecond.value} onChange={(e) => onInputChange(e, "text", 'value')}
+                            <label htmlFor="begvalue">{translations[selectedLanguage].Begvalue}</label>
+                            <InputText id="begvalue" 
+                                value={ticPrivilegecond.begvalue} onChange={(e) => onInputChange(e, "text", 'begvalue')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticPrivilegecond.value })}
+                                className={classNames({ 'p-invalid': submitted && !ticPrivilegecond.begvalue })}
                             />
-                            {submitted && !ticPrivilegecond.value && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticPrivilegecond.begvalue && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="endcondtp">{translations[selectedLanguage].endcondtp} *</label>
+                            <label htmlFor="endcondtp">{translations[selectedLanguage].Nendcond} *</label>
                             <Dropdown id="endcondtp" autoFocus
                                 value={ddTicEndcondtpItem}
                                 options={ddTicEndcondtpItems}
@@ -276,13 +276,13 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                         </div>
 
                         <div className="field col-12 md:col-6">
-                            <label htmlFor="value">{translations[selectedLanguage].Value}</label>
-                            <InputText id="value" 
-                                value={ticPrivilegecond.value} onChange={(e) => onInputChange(e, "text", 'value')}
+                            <label htmlFor="endvalue">{translations[selectedLanguage].Endvalue}</label>
+                            <InputText id="endvalue" 
+                                value={ticPrivilegecond.endvalue} onChange={(e) => onInputChange(e, "text", 'endvalue')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticPrivilegecond.value })}
+                                className={classNames({ 'p-invalid': submitted && !ticPrivilegecond.endvalue })}
                             />
-                            {submitted && !ticPrivilegecond.value && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticPrivilegecond.endvalue && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>                    
                     <div className="p-fluid formgrid grid">

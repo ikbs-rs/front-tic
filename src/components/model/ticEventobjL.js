@@ -7,8 +7,8 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicPrivilegecondService } from "../../service/model/TicPrivilegecondService";
-import TicPrivilegecond from './ticPrivilegecond';
+import { TicEventlocService } from "../../service/model/TicEventlocService";
+import TicEventloc from './ticEventloc';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -16,26 +16,24 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicPrivilegecondL(props) {
+export default function TicEventlocL(props) {
 
-  const objName = "tic_privilegecond"
+  const objName = "tic_eventloc"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicPrivilegecond = EmptyEntities[objName]
-  emptyTicPrivilegecond.privilege = props.ticPrivilege.id
-  emptyTicPrivilegecond.begcondition = '>='
-  emptyTicPrivilegecond.endcondition = '<='
+  const emptyTicEventloc = EmptyEntities[objName]
+  emptyTicEventloc.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticPrivilegeconds, setTicPrivilegeconds] = useState([]);
-  const [ticPrivilegecond, setTicPrivilegecond] = useState(emptyTicPrivilegecond);
+  const [ticEventlocs, setTicEventlocs] = useState([]);
+  const [ticEventloc, setTicEventloc] = useState(emptyTicEventloc);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [privilegecondTip, setPrivilegecondTip] = useState('');
+  const [eventlocTip, setEventlocTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicPrivilegecondLVisible(false);
+    props.setTicEventlocLVisible(false);
   };
 
   useEffect(() => {
@@ -43,9 +41,9 @@ export default function TicPrivilegecondL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticPrivilegecondService = new TicPrivilegecondService();
-          const data = await ticPrivilegecondService.getLista(props.ticPrivilege.id);
-          setTicPrivilegeconds(data);
+          const ticEventlocService = new TicEventlocService();
+          const data = await ticEventlocService.getLista(props.ticEvent.id);
+          setTicEventlocs(data);
 
           initFilters();
         }
@@ -60,30 +58,30 @@ export default function TicPrivilegecondL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticPrivilegeconds = [...ticPrivilegeconds];
-    let _ticPrivilegecond = { ...localObj.newObj.obj };
+    let _ticEventlocs = [...ticEventlocs];
+    let _ticEventloc = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.privilegecondTip === "CREATE") {
-      _ticPrivilegeconds.push(_ticPrivilegecond);
-    } else if (localObj.newObj.privilegecondTip === "UPDATE") {
+    if (localObj.newObj.eventlocTip === "CREATE") {
+      _ticEventlocs.push(_ticEventloc);
+    } else if (localObj.newObj.eventlocTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticPrivilegeconds[index] = _ticPrivilegecond;
-    } else if ((localObj.newObj.privilegecondTip === "DELETE")) {
-      _ticPrivilegeconds = ticPrivilegeconds.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegecond Delete', life: 3000 });
+      _ticEventlocs[index] = _ticEventloc;
+    } else if ((localObj.newObj.eventlocTip === "DELETE")) {
+      _ticEventlocs = ticEventlocs.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventloc Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrivilegecond ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventloc ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.privilegecondTip}`, life: 3000 });
-    setTicPrivilegeconds(_ticPrivilegeconds);
-    setTicPrivilegecond(emptyTicPrivilegecond);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventlocTip}`, life: 3000 });
+    setTicEventlocs(_ticEventlocs);
+    setTicEventloc(emptyTicEventloc);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticPrivilegeconds.length; i++) {
-      if (ticPrivilegeconds[i].id === id) {
+    for (let i = 0; i < ticEventlocs.length; i++) {
+      if (ticEventlocs[i].id === id) {
         index = i;
         break;
       }
@@ -93,11 +91,11 @@ export default function TicPrivilegecondL(props) {
   };
 
   const openNew = () => {
-    setTicPrivilegecondDialog(emptyTicPrivilegecond);
+    setTicEventlocDialog(emptyTicEventloc);
   };
 
   const onRowSelect = (event) => {
-    //ticPrivilegecond.begda = event.data.begda
+    //ticEventloc.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -162,7 +160,7 @@ export default function TicPrivilegecondL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].PrivilegecondList}</b>
+        <b>{translations[selectedLanguage].EventlocList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -191,17 +189,17 @@ export default function TicPrivilegecondL(props) {
   };
 
   // <--- Dialog
-  const setTicPrivilegecondDialog = (ticPrivilegecond) => {
+  const setTicEventlocDialog = (ticEventloc) => {
     setVisible(true)
-    setPrivilegecondTip("CREATE")
-    setTicPrivilegecond({ ...ticPrivilegecond });
+    setEventlocTip("CREATE")
+    setTicEventloc({ ...ticEventloc });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const privilegecondTemplate = (rowData) => {
+  const eventlocTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -210,8 +208,8 @@ export default function TicPrivilegecondL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicPrivilegecondDialog(rowData)
-            setPrivilegecondTip("UPDATE")
+            setTicEventlocDialog(rowData)
+            setEventlocTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -229,7 +227,7 @@ export default function TicPrivilegecondL(props) {
             <div className="field col-12 md:col-6">
               <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticPrivilege.code}
+                value={props.ticEvent.code}
                 disabled={true}
               />
             </div>
@@ -237,7 +235,7 @@ export default function TicPrivilegecondL(props) {
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticPrivilege.text}
+                value={props.ticEvent.textx}
                 disabled={true}
               />
             </div>           
@@ -247,9 +245,9 @@ export default function TicPrivilegecondL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticPrivilegecond}
+        selection={ticEventloc}
         loading={loading}
-        value={ticPrivilegeconds}
+        value={ticEventlocs}
         header={header}
         showGridlines
         removableSort
@@ -262,59 +260,31 @@ export default function TicPrivilegecondL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicPrivilegecond(e.value)}
+        onSelectionChange={(e) => setTicEventloc(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={privilegecondTemplate}
+          body={eventlocTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cbegcondtp"
-          header={translations[selectedLanguage].Begcond}
+          field="cloc"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "20%" }}
         ></Column>
         <Column
-          field="nbegcondtp"
-          header={translations[selectedLanguage].Nbegcond}
+          field="nloc"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "30%" }}
-        ></Column>  
-        <Column
-          field="begvalue"
-          header={translations[selectedLanguage].Begvalue}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>        
-        <Column
-          field="cendcondtp"
-          header={translations[selectedLanguage].Endcond}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>
-        <Column
-          field="nendcondtp"
-          header={translations[selectedLanguage].Nendcond}
-          sortable
-          filter
-          style={{ width: "30%" }}
-        ></Column>   
-        <Column
-          field="endvalue"
-          header={translations[selectedLanguage].Endvalue}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>                         
+          style={{ width: "60%" }}
+        ></Column>      
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -333,7 +303,7 @@ export default function TicPrivilegecondL(props) {
         ></Column>         
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Privilegecond}
+        header={translations[selectedLanguage].Link}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -342,14 +312,14 @@ export default function TicPrivilegecondL(props) {
         }}
       >
         {showMyComponent && (
-          <TicPrivilegecond
+          <TicEventloc
             parameter={"inputTextValue"}
-            ticPrivilegecond={ticPrivilegecond}
-            ticPrivilege={props.ticPrivilege}
+            ticEventloc={ticEventloc}
+            ticEvent={props.ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            privilegecondTip={privilegecondTip}
+            eventlocTip={eventlocTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

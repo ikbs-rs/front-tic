@@ -642,7 +642,6 @@ export const translations = {
         selection: "Селекција",
         Par: "Партнер",
         Left: "Износ",
-        output: "Количина",
         tg: "Тарифна група",
         cevent: "Шифра догађаја",
         Choice: "Избор",
@@ -654,10 +653,14 @@ export const translations = {
         Conditional: "Услови",
         Begcond: "Шифра почетног",
         Nbegcond: "Почетни",
-        Begconditional: "Почетног услов",
+        Begvalue: "Почетног услов",
         Endcond: "Шифра крајњег", 
         Nendcond: "Крајњи",
-        Endconditional: "Крајњи услов", 
+        Endvalue: "Крајњи услов", 
+        PrivilegecondList: "Услови привилегија Листа",
+        Privilegecond: "Услови привилегијe",
+        Setings: "Поставке",
+        Channels: "Канали",
     }
   };
   

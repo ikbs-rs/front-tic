@@ -7,27 +7,29 @@
  * 5 - mumericki atrinut 0 ili 1
  * 6 - vrednost atributa pokome se pretrazuje
  */
-import React, {useState, useEffect, useRef} from 'react';
-import {classNames} from 'primereact/utils';
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
-import {InputText} from 'primereact/inputtext';
-import {Button} from 'primereact/button';
-import {FilterMatchMode, FilterOperator} from 'primereact/api';
-import {TriStateCheckbox} from 'primereact/tristatecheckbox';
-import {Checkbox} from 'primereact/checkbox';
-import {Toast} from 'primereact/toast';
-import {TicEventattsService} from '../../service/model/TicEventattsService';
+import React, { useState, useEffect, useRef } from 'react';
+import { classNames } from 'primereact/utils';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { TriStateCheckbox } from 'primereact/tristatecheckbox';
+import { Checkbox } from 'primereact/checkbox';
+import { Toast } from 'primereact/toast';
+import { TicEventattsService } from '../../service/model/TicEventattsService';
 import TicEventatts from './ticEventatts';
-import {EmptyEntities} from '../../service/model/EmptyEntities';
-import {Dialog} from 'primereact/dialog';
+import { EmptyEntities } from '../../service/model/EmptyEntities';
+import { Dialog } from 'primereact/dialog';
 import './index.css';
-import {translations} from '../../configs/translations';
-import {fetchObjData} from './customHook';
-import {Dropdown} from 'primereact/dropdown';
-import {FileUpload} from 'primereact/fileupload';
+import { translations } from '../../configs/translations';
+import { fetchObjData } from './customHook';
+import { Dropdown } from 'primereact/dropdown';
+import { FileUpload } from 'primereact/fileupload';
 import FileService from '../../service/FileService';
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import { Calendar } from 'primereact/calendar';
+import DateFunction from "../../utilities/DateFunction"
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -63,7 +65,7 @@ export default function TicEventattsL(props) {
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id);
                     // Proširivanje dropdownData niza za svaki red sa inputtp === "3"
-                    const updatedDropdownItems = {...dropdownAllItems};
+                    const updatedDropdownItems = { ...dropdownAllItems };
                     updatedData = await Promise.all(
                         data.map(async (row) => {
                             if (row.inputtp === '3' && row.ddlist) {
@@ -72,7 +74,7 @@ export default function TicEventattsL(props) {
                                 const dataDD = await fetchObjData(modul, tabela); // Sačekaj izvršenje
                                 updatedDropdownItems[apsTabela] = dataDD.ddItems;
                             }
-                            return {...row, isUploadPending: false}; // Dodaj novu kolonu sa statusom
+                            return { ...row, isUploadPending: false }; // Dodaj novu kolonu sa statusom
                         })
                     );
                     setTicEventattss(updatedData);
@@ -90,10 +92,10 @@ export default function TicEventattsL(props) {
     }, []);
 
     const handleDialogClose = (newObj) => {
-        const localObj = {newObj};
+        const localObj = { newObj };
 
         let _ticEventattss = [...ticEventattss];
-        let _ticEventatts = {...localObj.newObj.obj};
+        let _ticEventatts = { ...localObj.newObj.obj };
         //setSubmitted(true);
         if (localObj.newObj.eventattsTip === 'CREATE') {
             _ticEventattss.push(_ticEventatts);
@@ -102,9 +104,9 @@ export default function TicEventattsL(props) {
             _ticEventattss[index] = _ticEventatts;
         } else if (localObj.newObj.eventattsTip === 'DELETE') {
             _ticEventattss = ticEventattss.filter((val) => val.id !== localObj.newObj.obj.id);
-            toast.current.show({severity: 'success', summary: 'Successful', detail: 'TicEventatts Delete', life: 3000});
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts Delete', life: 3000 });
         } else {
-            toast.current.show({severity: 'success', summary: 'Successful', detail: 'TicEventatts ?', life: 3000});
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatts ?', life: 3000 });
         }
         toast.current.show({
             severity: 'success',
@@ -120,11 +122,10 @@ export default function TicEventattsL(props) {
         console.log('onTemplateSelect');
     };
 
-
     const handleAutoInputClick = () => {
         setConfirmDialogVisible(true);
     };
-    
+
     const handleConfirm = () => {
         //setSubmitted(true);
         //const ticDocService = new TicDocService();
@@ -134,7 +135,7 @@ export default function TicEventattsL(props) {
         // hideDeleteDialog();
         setConfirmDialogVisible(false);
     };
-    
+
     // const handleDropdownChange = async (e, rowData, apsTabela) => {
     //     rowData.value = e.value.code;
     //     const val = (e.target && e.target.value && e.target.value.code) || '';
@@ -149,6 +150,7 @@ export default function TicEventattsL(props) {
 
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
         let val = '';
+        let _ticEventatts = {}
         if (name === 'value') {
             switch (type) {
                 case 'input':
@@ -174,34 +176,50 @@ export default function TicEventattsL(props) {
                         console.log('Modified file name:', newFileName);
 
                         rowData.isUploadPending = false;
-                        const relPath = 'public/tic/event/'
+                        const relPath = 'public/tic/event/';
                         const file = e.files[0];
                         const fileService = new FileService();
                         const data = await fileService.uploadFile(file, newFileName, relPath);
                         rowData.isUploadPending = true;
-                        toast.current.show({severity: 'success', summary: 'Success', detail: data.message});
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
                         e.options.clear();
-                        val = relPath+newFileName
+                        val = relPath + newFileName;
                         rowData.value = val;
                         const rowIndex = ticEventattss.findIndex((row) => row.id === rowData.id);
 
                         // Ažurirajte reda sa novim podacima
                         const updatedTicEventattss = [...ticEventattss];
                         updatedTicEventattss[rowIndex] = rowData;
-            
+
                         // Postavljanje novog niza kao stanje za ticEventattss
-                        setTicEventattss(updatedTicEventattss);                        
+                        setTicEventattss(updatedTicEventattss);
                         //setTicEventattss([...ticEventattss]);
                     } catch (error) {
                         console.error(error);
-                        toast.current.show({severity: 'error', summary: 'Error', detail: 'Error uploading file'});
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error uploading file' });
                     }
-
+                    break;
+                case 'calendar':
+                    val = await DateFunction.formatDateToDBFormat(DateFunction.dateGetValue((e.target && e.target.value) || ''))
+                    rowData.value = val
                     break;
                 default:
                     val = '';
                     break;
             }
+                    
+            // Napravite kopiju trenutnog niza
+            const updatedTicEventattss = [...ticEventattss];
+
+            // Pronađite indeks trenutnog reda
+            const rowIndex = updatedTicEventattss.findIndex((row) => row.id === rowData.id);
+
+            // Ažurirajte samo trenutni red sa novim podacima
+            updatedTicEventattss[rowIndex] = rowData;
+
+            // Postavljanje novog niza kao stanje za ticEventattss
+            setTicEventattss(updatedTicEventattss);
+            
         } else if (name === 'valid') {
             rowData.valid = e.checked ? 1 : 0;
             setTicEventattss([...ticEventattss]);
@@ -212,17 +230,29 @@ export default function TicEventattsL(props) {
             setTicEventattss([...ticEventattss]);
         }
 
-        let _ticEventatts = {...ticEventatts};
+        _ticEventatts = { ...ticEventatts };
         _ticEventatts[`${name}`] = val;
         setTicEventatts(_ticEventatts);
         await updateDataInDatabase(_ticEventatts);
+
+            // Ažurirajte stanje komponente nakon ažuriranja podataka
+            // const updatedTicEventattss = ticEventattss.map((row) => {
+            //     if (row.id === rowData.id) {
+            //         return { ...rowData };
+            //     }
+            //     return row;
+            // });
+            // console.log(updatedTicEventattss, "*****************LOG POSLE U********************")
+            // setTicEventattss(updatedTicEventattss);
+           
     };
 
     const updateDataInDatabase = async (rowData) => {
         try {
+            //console.log(rowData, "***********updateDataInDatabase************", rowData.value)
             const ticEventattsService = new TicEventattsService();
             await ticEventattsService.putTicEventatts(rowData);
-            // Dodatno rukovanje ažuriranim podacima, ako je potrebno
+            // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
         } catch (err) {
             console.error('Error updating data:', err);
             // Dodatno rukovanje greškom, ako je potrebno
@@ -247,25 +277,25 @@ export default function TicEventattsL(props) {
     };
 
     const onRowSelect = (event) => {
-        console.log("onRowSelect")
+        console.log('onRowSelect');
     };
 
     const onRowUnselect = (event) => {
-        console.log("onRowUnselect")
+        console.log('onRowUnselect');
     };
     // <heder za filter
     const initFilters = () => {
         setFilters({
-            global: {value: null, matchMode: FilterMatchMode.CONTAINS},
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
             ctp: {
                 operator: FilterOperator.AND,
-                constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
             ntp: {
                 operator: FilterOperator.AND,
-                constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
-            valid: {value: null, matchMode: FilterMatchMode.EQUALS}
+            valid: { value: null, matchMode: FilterMatchMode.EQUALS }
         });
         setGlobalFilterValue('');
     };
@@ -276,7 +306,7 @@ export default function TicEventattsL(props) {
 
     const onGlobalFilterChange = (e) => {
         let value1 = e.target.value;
-        let _filters = {...filters};
+        let _filters = { ...filters };
 
         _filters['global'].value = value1;
 
@@ -287,12 +317,10 @@ export default function TicEventattsL(props) {
     const renderHeader = () => {
         return (
             <div className="flex card-container">
-                <div className="flex flex-wrap gap-1"/>
-                <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick}
-                        text raised/>
+                <div className="flex flex-wrap gap-1" />
+                <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success"
-                            onClick={openNew} text raised/>
+                    <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={handleAutoInputClick} text raised />
@@ -302,12 +330,10 @@ export default function TicEventattsL(props) {
                 <div className="flex-grow-1"></div>
                 <div className="flex flex-wrap gap-1">
                     <span className="p-input-icon-left">
-                        <i className="pi pi-search"/>
-                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange}
-                                   placeholder={translations[selectedLanguage].KeywordSearch}/>
+                        <i className="pi pi-search" />
+                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder={translations[selectedLanguage].KeywordSearch} />
                     </span>
-                    <Button type="button" icon="pi pi-filter-slash" label={translations[selectedLanguage].Clear}
-                            outlined onClick={clearFilter} text raised/>
+                    <Button type="button" icon="pi pi-filter-slash" label={translations[selectedLanguage].Clear} outlined onClick={clearFilter} text raised />
                 </div>
             </div>
         );
@@ -331,8 +357,7 @@ export default function TicEventattsL(props) {
                 <label htmlFor="verified-filter" className="font-bold">
                     {translations[selectedLanguage].Valid}
                 </label>
-                <TriStateCheckbox inputId="verified-filter" value={options.value}
-                                  onChange={(e) => options.filterCallback(e.value)}/>
+                <TriStateCheckbox inputId="verified-filter" value={options.value} onChange={(e) => options.filterCallback(e.value)} />
             </div>
         );
     };
@@ -341,7 +366,7 @@ export default function TicEventattsL(props) {
     const setTicEventattsDialog = (ticEventatts) => {
         setVisible(true);
         setEventattsTip('CREATE');
-        setTicEventatts({...ticEventatts});
+        setTicEventatts({ ...ticEventatts });
     };
     //  Dialog --->
 
@@ -354,7 +379,7 @@ export default function TicEventattsL(props) {
                 <Button
                     type="button"
                     icon="pi pi-pencil"
-                    style={{width: '24px', height: '24px'}}
+                    style={{ width: '24px', height: '24px' }}
                     onClick={() => {
                         setTicEventattsDialog(rowData);
                         setEventattsTip('UPDATE');
@@ -368,16 +393,15 @@ export default function TicEventattsL(props) {
 
     // funkcije
     const textEditor = (rowData, field) => {
-        return <InputText value={rowData.text || ''}
-                          onChange={(e) => onInputChange(e, 'text', 'text', rowData, null)}/>;
+        return <InputText value={rowData.text || ''} onChange={(e) => onInputChange(e, 'text', 'text', rowData, null)} />;
     };
 
     const validEditor = (rowData, field) => {
-        return <Checkbox checked={rowData.valid === 1}
-                         onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)}/>;
+        return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
     };
 
     const valueEditor = (rowData, field) => {
+        //console.log(rowData, '************************rowData****************************');
         switch (rowData.inputtp) {
             case '4':
                 return (
@@ -396,32 +420,37 @@ export default function TicEventattsL(props) {
                     </div>
                 );
             case '1':
-                return <InputText value={rowData.value || ''}
-                                  onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)}/>;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
             case '2':
-                return <Checkbox checked={rowData.value === '1'}
-                                 onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)}/>;
+                return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)} />;
             case '3':
                 const [modul, tabela] = rowData.ddlist.split(',');
                 const apsTabela = `${modul}_${tabela}`;
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
+                console.log(selectedOptions, '******************selectedOptions*******', apsTabela, '*********WWWWW******', dropdownAllItems);
                 setDropdownItems(selectedOptions);
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
 
-                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions}
-                                 onChange={(e) => onInputChange(e, 'options', 'value', rowData, apsTabela)}
-                                 placeholder="Select One" optionLabel="name"/>;
+                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
+            case '5': // Za kalendar
+                return (
+                    <Calendar
+                        showIcon
+                        dateFormat="dd.mm.yy"
+                        value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
+                        onChange={async (e) => onInputChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
+                    />
+                );
             default:
-                return <InputText value={rowData.value || ''}
-                                  onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)}/>;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
         }
     };
 
     const onCellEditComplete = async (e) => {
-        let {rowData, newValue, newRowData, field, originalEvent: event} = e;
-        let _rowData = {...rowData};
+        let { rowData, newValue, newRowData, field, originalEvent: event } = e;
+        let _rowData = { ...rowData };
         let _newValue = newValue;
 
         switch (field) {
@@ -475,6 +504,15 @@ export default function TicEventattsL(props) {
                 ></i>
             );
         }
+        if (rowData.inputtp === '5') {
+            let value = ''
+            if (rowData.value){
+                value = DateFunction.formatDate(rowData.value)
+            }
+            return (
+                <span>{value}</span>
+            );
+        }
 
         // Prikazujemo ili "value" ili default vrednost
         return rowData.value;
@@ -484,17 +522,17 @@ export default function TicEventattsL(props) {
 
     return (
         <div className="card">
-            <Toast ref={toast}/>
+            <Toast ref={toast} />
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-6">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-                            <InputText id="code" value={props.ticEvent.code} disabled={true}/>
+                            <InputText id="code" value={props.ticEvent.code} disabled={true} />
                         </div>
                         <div className="field col-12 md:col-6">
                             <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-                            <InputText id="text" value={props.ticEvent.textx} disabled={true}/>
+                            <InputText id="text" value={props.ticEvent.textx} disabled={true} />
                         </div>
                     </div>
                 </div>
@@ -509,16 +547,16 @@ export default function TicEventattsL(props) {
                 showGridlines
                 removableSort
                 //editMode="cell"
-                rowClassName={(rowData) => ({'editing-row': rowData === ticEventatts})}
+                rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
                 filters={filters}
                 scrollable
                 scrollHeight="550px"
-                virtualScrollerOptions={{itemSize: 46}}
-                tableStyle={{minWidth: '50rem'}}
+                //virtualScrollerOptions={{ itemSize: 46 }}
+                tableStyle={{ minWidth: '50rem' }}
                 //metaKeySelection={false}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rows={75}
+                rowsPerPageOptions={[25, 50, 75]}
                 onSelectionChange={(e) => setTicEventatts(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
@@ -528,22 +566,18 @@ export default function TicEventattsL(props) {
                     body={eventattsTemplate}
                     exportable={false}
                     headerClassName="w-10rem"
-                    style={{minWidth: '4rem'}}
+                    style={{ minWidth: '4rem' }}
                 />
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter
-                        style={{width: '10%'}}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter
-                        style={{width: '25%'}}></Column>
-                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable filter
-                        style={{width: '10%'}}></Column>
-                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter
-                        style={{width: '10%'}}></Column>
+                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
+                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '25%' }}></Column>
+                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable filter style={{ width: '10%' }}></Column>
+                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter style={{ width: '10%' }}></Column>
                 <Column
                     field="value"
                     header={translations[selectedLanguage].Value}
                     sortable
                     filter
-                    style={{width: '20%'}}
+                    style={{ width: '20%' }}
                     editor={(props) => valueEditor(props.rowData, props.field)} // Dodali smo editor za editiranje value
                     body={valueTemplate}
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
@@ -553,7 +587,7 @@ export default function TicEventattsL(props) {
                     header={translations[selectedLanguage].Descript}
                     sortable
                     filter
-                    style={{width: '10%'}}
+                    style={{ width: '10%' }}
                     editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
@@ -566,7 +600,7 @@ export default function TicEventattsL(props) {
                     sortable
                     filter
                     filterElement={validFilterTemplate}
-                    style={{width: '10%'}}
+                    style={{ width: '10%' }}
                     bodyClassName="text-center"
                     body={validBodyTemplate}
                     editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
@@ -576,27 +610,20 @@ export default function TicEventattsL(props) {
             <Dialog
                 header={translations[selectedLanguage].Link}
                 visible={visible}
-                style={{width: '60%'}}
+                style={{ width: '60%' }}
                 onHide={() => {
                     setVisible(false);
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent &&
-                    <TicEventatts parameter={'inputTextValue'} ticEventatts={ticEventatts} ticEvent={props.ticEvent}
-                                  handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true}
-                                  eventattsTip={eventattsTip}/>}
-                <div className="p-dialog-header-icons" style={{display: 'none'}}>
+                {showMyComponent && <TicEventatts parameter={'inputTextValue'} ticEventatts={ticEventatts} ticEvent={props.ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventattsTip={eventattsTip} />}
+                <div className="p-dialog-header-icons" style={{ display: 'none' }}>
                     <button className="p-dialog-header-close p-link">
                         <span className="p-dialog-header-close-icon pi pi-times"></span>
                     </button>
                 </div>
             </Dialog>
-            <ConfirmDialog 
-                visible={confirmDialogVisible} 
-                onHide={() => setConfirmDialogVisible(false)} 
-                onConfirm={handleConfirm} 
-            />
+            <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} />
         </div>
     );
 }
