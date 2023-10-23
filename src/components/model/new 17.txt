@@ -1,0 +1,35 @@
+set ORDS_HOME=C:\TOOLS\ords
+set ORDS_CONFIG=C:\TOOLS\ords\config
+set ORDS_LOGS=%ORDS_CONFIG%\logs
+
+c:\app\ords\bin\ords.exe --config %ORDS_CONFIG% install repair --interactive --log-folder %ORDS_LOGS%
+
+
+
+set ORDS_HOME=C:\TOOLS\ords
+set ORDS_CONFIG=C:\TOOLS\ords\config
+set ORDS_LOGS=%ORDS_CONFIG%\logs
+set DB_HOSTNAME=localhost
+set DB_PORT=1521
+set DB_SERVICE=emsdb.ems.local
+set SYSDBA_USER=SYS
+
+ords.exe --config %ORDS_CONFIG% install --log-folder %ORDS_LOGS% --admin-user %SYSDBA_USER% --db-hostname %DB_HOSTNAME% --db-port %DB_PORT% --db-servicename %DB_SERVICE% --feature-db-api true --feature-rest-enabled-sql true --feature-sdw true --gateway-mode proxied --gateway-user APEX_PUBLIC_USER --proxy-user  
+  
+set ORDS_HOME=C:\TOOLS\ords
+set ORDS_CONFIG=C:\TOOLS\ords\config
+
+ords.exe --config %ORDS_CONFIG% uninstall --interactive
+
+ords --config C:\TOOLS\ords\config install --interactive --log-folder C:\TOOLS\ords\config\logs
+
+
+1682140949712867328		О	Особина	1	2	
+1689000999244926976		EMAXREZ	Максимална резервација резервација (час)	1	1	
+1682490339497480192		SRT	Сртификат	1	3	cmn,par
+1689037335737798656		CMN_CURR	Листа валута	1	3	cmn,curr
+1689632684277895168		UPL	Слика за аватар догадјаја	1	4	
+1693189154923745280		TMPL	њљње	1	2	
+
+
+f2c7c7
