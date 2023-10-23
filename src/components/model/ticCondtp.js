@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicDiscounttpService } from "../../service/model/TicDiscounttpService";
+import { TicCondtpService } from "../../service/model/TicCondtpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -9,12 +9,12 @@ import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
 
-const TicDiscounttp = (props) => {
+const TicCondtp = (props) => {
     const selectedLanguage = localStorage.getItem('sl')||'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [ticDiscounttp, setTicDiscounttp] = useState(props.ticDiscounttp);
+    const [ticCondtp, setTicCondtp] = useState(props.ticCondtp);
     const [submitted, setSubmitted] = useState(false);
 
     const toast = useRef(null);
@@ -24,7 +24,7 @@ const TicDiscounttp = (props) => {
     ];
 
     useEffect(() => {
-        setDropdownItem(findDropdownItemByCode(props.ticDiscounttp.valid));
+        setDropdownItem(findDropdownItemByCode(props.ticCondtp.valid));
     }, []);
 
     const findDropdownItemByCode = (code) => {
@@ -43,10 +43,10 @@ const TicDiscounttp = (props) => {
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);            
-                const ticDiscounttpService = new TicDiscounttpService();
-                const data = await ticDiscounttpService.postTicDiscounttp(ticDiscounttp);
-                ticDiscounttp.id = data
-                props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: props.discounttpTip });
+                const ticCondtpService = new TicCondtpService();
+                const data = await ticCondtpService.postTicCondtp(ticCondtp);
+                ticCondtp.id = data
+                props.handleDialogClose({ obj: ticCondtp, condtpTip: props.condtpTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -61,9 +61,9 @@ const TicDiscounttp = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            const ticDiscounttpService = new TicDiscounttpService();
-            await ticDiscounttpService.putTicDiscounttp(ticDiscounttp);
-            props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: props.discounttpTip });
+            const ticCondtpService = new TicCondtpService();
+            await ticCondtpService.putTicCondtp(ticCondtp);
+            props.handleDialogClose({ obj: ticCondtp, condtpTip: props.condtpTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -82,9 +82,9 @@ const TicDiscounttp = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticDiscounttpService = new TicDiscounttpService();
-            await ticDiscounttpService.deleteTicDiscounttp(ticDiscounttp);
-            props.handleDialogClose({ obj: ticDiscounttp, discounttpTip: 'DELETE' });
+            const ticCondtpService = new TicCondtpService();
+            await ticCondtpService.deleteTicCondtp(ticCondtp);
+            props.handleDialogClose({ obj: ticCondtp, condtpTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
@@ -106,11 +106,11 @@ const TicDiscounttp = (props) => {
             val = (e.target && e.target.value) || '';
         }
 
-        let _ticDiscounttp = { ...ticDiscounttp };
-        _ticDiscounttp[`${name}`] = val;
-        if (name===`textx`) _ticDiscounttp[`text`] = val
+        let _ticCondtp = { ...ticCondtp };
+        _ticCondtp[`${name}`] = val;
+        if (name===`textx`) _ticCondtp[`text`] = val
 
-        setTicDiscounttp(_ticDiscounttp);
+        setTicCondtp(_ticCondtp);
     };
 
     const hideDeleteDialog = () => {
@@ -126,21 +126,21 @@ const TicDiscounttp = (props) => {
                         <div className="field col-12 md:col-7">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={ticDiscounttp.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={ticCondtp.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.code })}
+                                className={classNames({ 'p-invalid': submitted && !ticCondtp.code })}
                             />
-                            {submitted && !ticDiscounttp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticCondtp.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
                                 id="textx"
-                                value={ticDiscounttp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                value={ticCondtp.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.textx })}
+                                className={classNames({ 'p-invalid': submitted && !ticCondtp.textx })}
                             />
-                            {submitted && !ticDiscounttp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticCondtp.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>                       
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
@@ -151,9 +151,9 @@ const TicDiscounttp = (props) => {
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDiscounttp.valid })}
+                                className={classNames({ 'p-invalid': submitted && !ticCondtp.valid })}
                             />
-                            {submitted && !ticDiscounttp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticCondtp.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>                        
                     </div>
 
@@ -169,7 +169,7 @@ const TicDiscounttp = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.discounttpTip === 'CREATE') ? (
+                            {(props.condtpTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -178,7 +178,7 @@ const TicDiscounttp = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.discounttpTip !== 'CREATE') ? (
+                            {(props.condtpTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -187,7 +187,7 @@ const TicDiscounttp = (props) => {
                                     outlined
                                 />
                             ) : null}                            
-                            {(props.discounttpTip !== 'CREATE') ? (
+                            {(props.condtpTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -203,7 +203,7 @@ const TicDiscounttp = (props) => {
             <DeleteDialog
                 visible={deleteDialogVisible}
                 inAction="delete"
-                item={ticDiscounttp.text}
+                item={ticCondtp.text}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -211,4 +211,4 @@ const TicDiscounttp = (props) => {
     );
 };
 
-export default TicDiscounttp;
+export default TicCondtp;

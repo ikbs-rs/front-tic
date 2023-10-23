@@ -11,6 +11,7 @@ import AppRightMenu from './AppRightMenu';
 import './index.css';
 
 import Discount from './components/model/ticDiscountL';
+import Condtp from './components/model/ticCondtpL';
 import DiscountTp from './components/model/ticDiscounttpL';
 import PrivilegeTp from './components/model/ticPrivilegetpL';
 import Privilege from './components/model/ticPrivilegeL';
@@ -96,7 +97,8 @@ const App = () => {
                         { label: translations[selectedLanguage].Privilege_type, icon: 'pi pi-fw pi-calendar', to: '/privilegetp' },
                         { label: translations[selectedLanguage].Privileges, icon: 'pi pi-fw pi-calendar', to: '/privilege'  },
                         { label: translations[selectedLanguage].Discount_type, icon: 'pi pi-fw pi-calendar' , to: '/discounttp'},
-                        { label: translations[selectedLanguage].Discount, icon: 'pi pi-fw pi-calendar' , to: '/discount'}
+                        { label: translations[selectedLanguage].Discount, icon: 'pi pi-fw pi-calendar' , to: '/discount'},
+                        { label: translations[selectedLanguage].Conditional, icon: 'pi pi-fw pi-calendar' , to: '/condtp'}
                     ]
                 },
                 {
@@ -488,6 +490,7 @@ const App = () => {
                         <Route path="/privilegetp" element={<PrivilegeTp />} />
                         <Route path="/privilege" element={<Privilege />} />
                         <Route path="/discount" element={<Discount />} />
+                        <Route path="/condtp" element={<Condtp />} />
 
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />

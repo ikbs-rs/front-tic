@@ -651,6 +651,7 @@ export const translations = {
         sektor: "Сектор",
         Storno: "Сторно",
         afterSales: "Постпродаја",
+        Conditional: "Услови"
     }
   };
   
