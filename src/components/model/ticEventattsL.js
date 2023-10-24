@@ -34,6 +34,7 @@ import DateFunction from "../../utilities/DateFunction"
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
     const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const [submitted, setSubmitted] = useState(false);
     const emptyTicEventatts = EmptyEntities[objName];
     emptyTicEventatts.event = props.ticEvent.id;
     const [showMyComponent, setShowMyComponent] = useState(true);
@@ -126,13 +127,16 @@ export default function TicEventattsL(props) {
         setConfirmDialogVisible(true);
     };
 
-    const handleConfirm = () => {
-        //setSubmitted(true);
-        //const ticDocService = new TicDocService();
-        // await ticDocService.deleteTicDoc(ticDoc);
-        // props.handleDialogClose({ obj: ticDoc, docTip: 'DELETE' });
-        // props.setVisible(false);
-        // hideDeleteDialog();
+    const handleConfirm = async () => {
+        //console.log(props.ticEvent, "***********handleConfirm********************")
+        setSubmitted(true);
+        const ticEventattsService = new TicEventattsService();
+        await ticEventattsService.postAutoEventatts(props.ticEvent.id);
+        const data = await ticEventattsService.getLista(props.ticEvent.id);
+        setTicEventattss(data);        
+        props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
+        props.setVisible(false);
+        //hideDeleteDialog();
         setConfirmDialogVisible(false);
     };
 
@@ -207,7 +211,7 @@ export default function TicEventattsL(props) {
                     val = '';
                     break;
             }
-                    
+
             // Napravite kopiju trenutnog niza
             const updatedTicEventattss = [...ticEventattss];
 
@@ -219,7 +223,7 @@ export default function TicEventattsL(props) {
 
             // Postavljanje novog niza kao stanje za ticEventattss
             setTicEventattss(updatedTicEventattss);
-            
+
         } else if (name === 'valid') {
             rowData.valid = e.checked ? 1 : 0;
             setTicEventattss([...ticEventattss]);
@@ -235,16 +239,16 @@ export default function TicEventattsL(props) {
         setTicEventatts(_ticEventatts);
         await updateDataInDatabase(_ticEventatts);
 
-            // Ažurirajte stanje komponente nakon ažuriranja podataka
-            // const updatedTicEventattss = ticEventattss.map((row) => {
-            //     if (row.id === rowData.id) {
-            //         return { ...rowData };
-            //     }
-            //     return row;
-            // });
-            // console.log(updatedTicEventattss, "*****************LOG POSLE U********************")
-            // setTicEventattss(updatedTicEventattss);
-           
+        // Ažurirajte stanje komponente nakon ažuriranja podataka
+        // const updatedTicEventattss = ticEventattss.map((row) => {
+        //     if (row.id === rowData.id) {
+        //         return { ...rowData };
+        //     }
+        //     return row;
+        // });
+        // console.log(updatedTicEventattss, "*****************LOG POSLE U********************")
+        // setTicEventattss(updatedTicEventattss);
+
     };
 
     const updateDataInDatabase = async (rowData) => {
@@ -323,7 +327,7 @@ export default function TicEventattsL(props) {
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" onClick={handleAutoInputClick} text raised />
+                    <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
                 </div>
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
@@ -428,7 +432,7 @@ export default function TicEventattsL(props) {
                 const apsTabela = `${modul}_${tabela}`;
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
-                console.log(selectedOptions, '******************selectedOptions*******', apsTabela, '*********WWWWW******', dropdownAllItems);
+                //console.log(selectedOptions, '******************selectedOptions*******', apsTabela, '*********WWWWW******', dropdownAllItems);
                 setDropdownItems(selectedOptions);
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
@@ -506,7 +510,7 @@ export default function TicEventattsL(props) {
         }
         if (rowData.inputtp === '5') {
             let value = ''
-            if (rowData.value){
+            if (rowData.value) {
                 value = DateFunction.formatDate(rowData.value)
             }
             return (

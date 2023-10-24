@@ -239,12 +239,12 @@ export default function TicEventattL(props) {
         scrollable
         sortField="code"        
         sortOrder={1}
-        scrollHeight="750px"
-        virtualScrollerOptions={{ itemSize: 46 }}
+        scrollHeight="650px"
+        //virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
-        rows={10}
+        rows={50}
         rowsPerPageOptions={[5, 10, 25, 50]}
         onSelectionChange={(e) => setTicEventatt(e.value)}
         onRowSelect={onRowSelect}

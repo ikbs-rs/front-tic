@@ -79,6 +79,29 @@ export class TicEventattsService {
         }
     }
 
+    async postAutoEventatts(objId) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_autoeventatts_s&objId1=${objId}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            //const jsonObj = JSON.stringify(newObj)
+            const response = await axios.post(url, {}, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async putTicEventatts(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'

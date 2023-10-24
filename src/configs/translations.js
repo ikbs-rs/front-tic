@@ -666,6 +666,11 @@ export const translations = {
         Objtp: "Тип објекта",
         Organizer: "Организатор",
         EventartcanaList: "Цена артикла Листа",
+        Cterr: "Шифра територије",
+        Nterr: "Teritorija",
+        Ccurr: "Шифра валуте",
+        Ncurr: "Валута",
+        Activation: "Активација"
     }
   };
   

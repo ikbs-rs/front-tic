@@ -21,7 +21,11 @@ export default function TicEventartcenaL(props) {
   const objName = "tic_eventartcena"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyTicEventartcena = EmptyEntities[objName]
-  emptyTicEventartcena.event = props.ticEvent.id
+  emptyTicEventartcena.eventart = props.ticEventart.id
+  emptyTicEventartcena.event = props.ticEventart.event
+  emptyTicEventartcena.art = props.ticEventart.art
+  emptyTicEventartcena.begda = props.ticEventart.begda
+  emptyTicEventartcena.endda = props.ticEventart.endda
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticEventartcenas, setTicEventartcenas] = useState([]);
   const [ticEventartcena, setTicEventartcena] = useState(emptyTicEventartcena);
@@ -42,7 +46,7 @@ export default function TicEventartcenaL(props) {
         ++i
         if (i < 2) {
           const ticEventartcenaService = new TicEventartcenaService();
-          const data = await ticEventartcenaService.getLista(props.ticEvent.id);
+          const data = await ticEventartcenaService.getLista(props.ticEventart.id);
           setTicEventartcenas(data);
 
           initFilters();
@@ -227,7 +231,7 @@ export default function TicEventartcenaL(props) {
             <div className="field col-12 md:col-6">
               <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticEvent.code}
+                value={props.ticEventart.code}
                 disabled={true}
               />
             </div>
@@ -235,7 +239,7 @@ export default function TicEventartcenaL(props) {
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticEvent.textx}
+                value={props.ticEventart.text}
                 disabled={true}
               />
             </div>           
@@ -276,15 +280,50 @@ export default function TicEventartcenaL(props) {
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="ncena"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
-        ></Column>      
+          style={{ width: "299%" }}
+        ></Column>    
+        <Column
+          field="cterr"
+          header={translations[selectedLanguage].Cterr}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="nterr"
+          header={translations[selectedLanguage].Nterr}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>  
+        <Column
+          field="ccurr"
+          header={translations[selectedLanguage].Ccurr}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="ncurr"
+          header={translations[selectedLanguage].Ncurr}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>  
+        <Column
+          field="value"
+          header={translations[selectedLanguage].Value}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>                        
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -303,7 +342,7 @@ export default function TicEventartcenaL(props) {
         ></Column>         
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Link}
+        header={translations[selectedLanguage].Cena}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -315,7 +354,7 @@ export default function TicEventartcenaL(props) {
           <TicEventartcena
             parameter={"inputTextValue"}
             ticEventartcena={ticEventartcena}
-            ticEvent={props.ticEvent}
+            ticEventart={props.ticEventart}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}

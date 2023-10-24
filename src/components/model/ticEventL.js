@@ -47,32 +47,32 @@ export default function TicEventL(props) {
     const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
 
     const copyItems = [
+        {
+            label: `${translations[selectedLanguage].Obj}`,
+            icon: 'pi pi-map',
+            command: () => openEventloc()
+        },
+        {
+            label: `${translations[selectedLanguage].Template}`,
+            icon: 'pi pi-copy',
+            command: () => openEventloc()
+        }
+    ];
+
+    /*
+    const finItems = [
       {
-          label: `${translations[selectedLanguage].Obj}`,
+          label: `${translations[selectedLanguage].Cenatp}`,
           icon: 'pi pi-map',
-          command: () => openEventloc()
+          command: () => openEventcenatp()
       },
       {
-          label: `${translations[selectedLanguage].Template}`,
+          label: `${translations[selectedLanguage].Arts}`,
           icon: 'pi pi-copy',
-          command: () => openEventloc()
+          command: () => openEventart()
       }
-  ];    
-
-  /*
-  const finItems = [
-    {
-        label: `${translations[selectedLanguage].Cenatp}`,
-        icon: 'pi pi-map',
-        command: () => openEventcenatp()
-    },
-    {
-        label: `${translations[selectedLanguage].Arts}`,
-        icon: 'pi pi-copy',
-        command: () => openEventart()
-    }
-]; 
-*/
+  ]; 
+  */
     useEffect(() => {
         async function fetchData() {
             try {
@@ -131,12 +131,12 @@ export default function TicEventL(props) {
     };
 
     const handleTicEventcenatpLDialogClose = (newObj) => {
-      const localObj = { newObj };
-  };
+        const localObj = { newObj };
+    };
 
     const setTicArtLVisible = (newObj) => {
-      const localObj = { newObj };
-  };
+        const localObj = { newObj };
+    };
 
     const findIndexById = (id) => {
         let index = -1;
@@ -172,16 +172,16 @@ export default function TicEventL(props) {
     };
 
     const openEventcenatp = () => {
-      setTicEventcenatpDialog();
-  };
+        setTicEventcenatpDialog();
+    };
 
     const openEventart = () => {
-      setTicEventartDialog();
-  };
+        setTicEventartDialog();
+    };
 
-  const openEventobj = () => {
-    setTicEventobjDialog();
-};
+    const openEventobj = () => {
+        setTicEventobjDialog();
+    };
     const onRowSelect = (event) => {
         toast.current.show({
             severity: 'info',
@@ -238,7 +238,7 @@ export default function TicEventL(props) {
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventobj} severity="info" text raised disabled={!ticEvent} />
-                </div>                
+                </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Setings} icon="pi pi-table" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
                 </div>
@@ -253,8 +253,8 @@ export default function TicEventL(props) {
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
-                </div>    
-        {/*
+                </div>
+                {/*
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Cenatp} icon="pi pi-dollar" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
@@ -262,11 +262,14 @@ export default function TicEventL(props) {
                 <div className="flex flex-wrap gap-1">
                     <SplitButton label={translations[selectedLanguage].Copy} /*icon="pi pi-copy" onClick={openEventloc}* model={copyItems} severity="info" raised text disabled={!ticEvent} />
                 </div> 
-            */}   
+            */}
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="warning" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
-         {/*        <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Activation} icon="pi pi-caret-right" severity="danger" onClick={openEventloc} text raised disabled={!ticEvent} />
+                </div>                
+                {/*        <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
         */}
@@ -343,19 +346,19 @@ export default function TicEventL(props) {
     };
 
     const setTicEventcenatpDialog = () => {
-      setShowMyComponent(true);
-      setTicEventcenatpLVisible(true);
-  };
+        setShowMyComponent(true);
+        setTicEventcenatpLVisible(true);
+    };
 
     const setTicEventartDialog = () => {
-      setShowMyComponent(true);
-      setTicEventartLVisible(true);
-  };   
+        setShowMyComponent(true);
+        setTicEventartLVisible(true);
+    };
 
-  const setTicEventobjDialog = () => {
-    setShowMyComponent(true);
-    setTicEventobjLVisible(true);
-    };    
+    const setTicEventobjDialog = () => {
+        setShowMyComponent(true);
+        setTicEventobjLVisible(true);
+    };
     //  Dialog --->
 
     const header = renderHeader();
@@ -467,7 +470,16 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && <TicEventattsL parameter={'inputTextValue'} ticEvent={ticEvent} handleTicEventattsLDialogClose={handleTicEventattsLDialogClose} setTicEventattsLVisible={setTicEventattsLVisible} dialog={true} lookUp={false} />}
+                {showMyComponent &&
+                    <TicEventattsL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleTicEventattsLDialogClose={handleTicEventattsLDialogClose}
+                        setTicEventattsLVisible={setTicEventattsLVisible}
+                        setVisible={setVisible}
+                        dialog={true}
+                        lookUp={false}
+                    />}
             </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventagendaList}
@@ -502,16 +514,16 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && 
-                  <TicEventcenatpL 
-                    parameter={'inputTextValue'} 
-                    ticEvent={ticEvent} 
-                    handleTicEventcenatpLDialogClose={handleTicEventcenatpLDialogClose} 
-                    setTicEventcenatpLVisible={setTicEventcenatpLVisible} 
-                    dialog={true} 
-                    lookUp={false} 
-                  />}
-            </Dialog>            
+                {showMyComponent &&
+                    <TicEventcenatpL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleTicEventcenatpLDialogClose={handleTicEventcenatpLDialogClose}
+                        setTicEventcenatpLVisible={setTicEventcenatpLVisible}
+                        dialog={true}
+                        lookUp={false}
+                    />}
+            </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventartList}
                 visible={ticEventartLVisible}
@@ -521,17 +533,17 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && 
-                  <TicEventrtL 
-                    parameter={'inputTextValue'} 
-                    ticEvent={ticEvent} 
-                    //setTicArtLVisible={setTicArtLVisible} 
-                    setTicEventartLVisible={setTicEventartLVisible} 
-                    dialog={true} 
-                    lookUp={true} 
-                    eventArt={true}
-                  />}
-            </Dialog>    
+                {showMyComponent &&
+                    <TicEventrtL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventartLVisible={setTicEventartLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
+                    />}
+            </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventobjList}
                 visible={ticEventobjLVisible}
@@ -541,17 +553,17 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && 
-                  <TicEventobjL 
-                    parameter={'inputTextValue'} 
-                    ticEvent={ticEvent} 
-                    //setTicArtLVisible={setTicArtLVisible} 
-                    setTicEventobjLVisible={setTicEventobjLVisible} 
-                    dialog={true} 
-                    lookUp={true} 
-                    eventArt={true}
-                  />}
-            </Dialog>                     
+                {showMyComponent &&
+                    <TicEventobjL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventobjLVisible={setTicEventobjLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
+                    />}
+            </Dialog>
         </div>
     );
 }
