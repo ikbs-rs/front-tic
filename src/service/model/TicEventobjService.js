@@ -21,6 +21,40 @@ export class TicEventobjService {
         }
       }
 
+      async getCmnTpLista(uObjname) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.CMN_BACK_URL}/cmn/x/${uObjname}/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async getCmnLista(objName, objTpId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.CMN_BACK_URL}/cmn/x/${objName}/getall/tp/${objTpId}/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.items||response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getTicEventobjs() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/eventobj/?sl=${selectedLanguage}`;

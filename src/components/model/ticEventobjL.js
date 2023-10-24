@@ -7,8 +7,8 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventlocService } from "../../service/model/TicEventlocService";
-import TicEventloc from './ticEventloc';
+import { TicEventobjService } from "../../service/model/TicEventobjService";
+import TicEventobj from './ticEventobj';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -16,24 +16,24 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicEventlocL(props) {
+export default function TicEventobjL(props) {
 
-  const objName = "tic_eventloc"
+  const objName = "tic_eventobj"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventloc = EmptyEntities[objName]
-  emptyTicEventloc.event = props.ticEvent.id
+  const emptyTicEventobj = EmptyEntities[objName]
+  emptyTicEventobj.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventlocs, setTicEventlocs] = useState([]);
-  const [ticEventloc, setTicEventloc] = useState(emptyTicEventloc);
+  const [ticEventobjs, setTicEventobjs] = useState([]);
+  const [ticEventobj, setTicEventobj] = useState(emptyTicEventobj);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventlocTip, setEventlocTip] = useState('');
+  const [eventobjTip, setEventobjTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventlocLVisible(false);
+    props.setTicEventobjLVisible(false);
   };
 
   useEffect(() => {
@@ -41,9 +41,9 @@ export default function TicEventlocL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticEventlocService = new TicEventlocService();
-          const data = await ticEventlocService.getLista(props.ticEvent.id);
-          setTicEventlocs(data);
+          const ticEventobjService = new TicEventobjService();
+          const data = await ticEventobjService.getLista(props.ticEvent.id);
+          setTicEventobjs(data);
 
           initFilters();
         }
@@ -58,30 +58,30 @@ export default function TicEventlocL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticEventlocs = [...ticEventlocs];
-    let _ticEventloc = { ...localObj.newObj.obj };
+    let _ticEventobjs = [...ticEventobjs];
+    let _ticEventobj = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventlocTip === "CREATE") {
-      _ticEventlocs.push(_ticEventloc);
-    } else if (localObj.newObj.eventlocTip === "UPDATE") {
+    if (localObj.newObj.eventobjTip === "CREATE") {
+      _ticEventobjs.push(_ticEventobj);
+    } else if (localObj.newObj.eventobjTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventlocs[index] = _ticEventloc;
-    } else if ((localObj.newObj.eventlocTip === "DELETE")) {
-      _ticEventlocs = ticEventlocs.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventloc Delete', life: 3000 });
+      _ticEventobjs[index] = _ticEventobj;
+    } else if ((localObj.newObj.eventobjTip === "DELETE")) {
+      _ticEventobjs = ticEventobjs.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventobj Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventloc ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventobj ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventlocTip}`, life: 3000 });
-    setTicEventlocs(_ticEventlocs);
-    setTicEventloc(emptyTicEventloc);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventobjTip}`, life: 3000 });
+    setTicEventobjs(_ticEventobjs);
+    setTicEventobj(emptyTicEventobj);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventlocs.length; i++) {
-      if (ticEventlocs[i].id === id) {
+    for (let i = 0; i < ticEventobjs.length; i++) {
+      if (ticEventobjs[i].id === id) {
         index = i;
         break;
       }
@@ -91,11 +91,11 @@ export default function TicEventlocL(props) {
   };
 
   const openNew = () => {
-    setTicEventlocDialog(emptyTicEventloc);
+    setTicEventobjDialog(emptyTicEventobj);
   };
 
   const onRowSelect = (event) => {
-    //ticEventloc.begda = event.data.begda
+    //ticEventobj.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -160,7 +160,7 @@ export default function TicEventlocL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventlocList}</b>
+        <b>{translations[selectedLanguage].EventobjList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -189,17 +189,17 @@ export default function TicEventlocL(props) {
   };
 
   // <--- Dialog
-  const setTicEventlocDialog = (ticEventloc) => {
+  const setTicEventobjDialog = (ticEventobj) => {
     setVisible(true)
-    setEventlocTip("CREATE")
-    setTicEventloc({ ...ticEventloc });
+    setEventobjTip("CREATE")
+    setTicEventobj({ ...ticEventobj });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const eventlocTemplate = (rowData) => {
+  const eventobjTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -208,8 +208,8 @@ export default function TicEventlocL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventlocDialog(rowData)
-            setEventlocTip("UPDATE")
+            setTicEventobjDialog(rowData)
+            setEventobjTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -245,9 +245,9 @@ export default function TicEventlocL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventloc}
+        selection={ticEventobj}
         loading={loading}
-        value={ticEventlocs}
+        value={ticEventobjs}
         header={header}
         showGridlines
         removableSort
@@ -260,26 +260,26 @@ export default function TicEventlocL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventloc(e.value)}
+        onSelectionChange={(e) => setTicEventobj(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={eventlocTemplate}
+          body={eventobjTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cloc"
+          field="cobj"
           header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "20%" }}
         ></Column>
         <Column
-          field="nloc"
+          field="nobj"
           header={translations[selectedLanguage].Text}
           sortable
           filter
@@ -312,14 +312,14 @@ export default function TicEventlocL(props) {
         }}
       >
         {showMyComponent && (
-          <TicEventloc
+          <TicEventobj
             parameter={"inputTextValue"}
-            ticEventloc={ticEventloc}
+            ticEventobj={ticEventobj}
             ticEvent={props.ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventlocTip={eventlocTip}
+            eventobjTip={eventobjTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

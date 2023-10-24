@@ -463,6 +463,15 @@ const EmptyEntities =
     "begda": "",
     "endda": ""
   },
+  "tic_eventobj": {
+		  "id": null,
+		  "site": null,
+		  "event": null,
+		  "objtp": null,
+		  "obj": null,
+		  "begda": "",
+		  "endda": ""
+	  },
   "tic_events": {
     "id": null,
     "selection_duration": "0000",

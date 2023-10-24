@@ -191,7 +191,7 @@ const TicEventatts = (props) => {
                         </div>
                     </div>
 
-                    <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-11">
                             <label htmlFor="value">{translations[selectedLanguage].Value}</label>
                             <InputText id="value" value={ticEventatts.value} onChange={(e) => onInputChange(e, 'text', 'value')} />
@@ -202,7 +202,7 @@ const TicEventatts = (props) => {
                             <label htmlFor="text">{translations[selectedLanguage].Descript}</label>
                             <InputText id="text" value={ticEventatts.text} onChange={(e) => onInputChange(e, 'text', 'text')} />
                         </div>
-                    </div>                    
+                    </div>                     */}
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>

@@ -21,6 +21,7 @@ import TicEventlocL from './ticEventlocL';
 import { SplitButton } from 'primereact/splitbutton';
 import TicEventrtL from './ticEventartL';
 import TicEventcenatpL from './ticEventcenatpL';
+import TicEventobjL from './ticEventobjL';
 
 export default function TicEventL(props) {
 
@@ -43,6 +44,7 @@ export default function TicEventL(props) {
     const [ticEventlocLVisible, setTicEventlocLVisible] = useState(false);
     const [ticEventcenatpLVisible, setTicEventcenatpLVisible] = useState(false);
     const [ticEventartLVisible, setTicEventartLVisible] = useState(false);
+    const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
 
     const copyItems = [
       {
@@ -177,6 +179,9 @@ export default function TicEventL(props) {
       setTicEventartDialog();
   };
 
+  const openEventobj = () => {
+    setTicEventobjDialog();
+};
     const onRowSelect = (event) => {
         toast.current.show({
             severity: 'info',
@@ -232,7 +237,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventobj} severity="info" text raised disabled={!ticEvent} />
                 </div>                
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Setings} icon="pi pi-table" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
@@ -345,7 +350,12 @@ export default function TicEventL(props) {
     const setTicEventartDialog = () => {
       setShowMyComponent(true);
       setTicEventartLVisible(true);
-  };    
+  };   
+
+  const setTicEventobjDialog = () => {
+    setShowMyComponent(true);
+    setTicEventobjLVisible(true);
+    };    
     //  Dialog --->
 
     const header = renderHeader();
@@ -520,7 +530,27 @@ export default function TicEventL(props) {
                     lookUp={true} 
                     eventArt={true}
                   />}
-            </Dialog>            
+            </Dialog>    
+            <Dialog
+                header={translations[selectedLanguage].EventobjList}
+                visible={ticEventobjLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicEventobjLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && 
+                  <TicEventobjL 
+                    parameter={'inputTextValue'} 
+                    ticEvent={ticEvent} 
+                    //setTicArtLVisible={setTicArtLVisible} 
+                    setTicEventobjLVisible={setTicEventobjLVisible} 
+                    dialog={true} 
+                    lookUp={true} 
+                    eventArt={true}
+                  />}
+            </Dialog>                     
         </div>
     );
 }

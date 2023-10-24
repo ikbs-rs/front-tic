@@ -661,6 +661,9 @@ export const translations = {
         Privilegecond: "Услови привилегијe",
         Setings: "Поставке",
         Channels: "Канали",
+        Channel: "Канал",
+        EventobjList: "Објекти листа",
+        Objtp: "Тип објекта",
     }
   };
   

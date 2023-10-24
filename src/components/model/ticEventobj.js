@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicEventlocService } from "../../service/model/TicEventlocService";
+import { TicEventobjService } from "../../service/model/TicEventobjService";
 import { TicEventService } from "../../service/model/TicEventService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
@@ -15,18 +15,23 @@ import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
 
-const TicEventloc = (props) => {
+const TicEventobj = (props) => {
     
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [ticEventloc, setTicEventloc] = useState(props.ticEventloc);
+    const [ticEventobj, setTicEventobj] = useState(props.ticEventobj);
     const [submitted, setSubmitted] = useState(false);
-    const [ddTicEventlocItem, setDdTicEventlocItem] = useState(null);
-    const [ddTicEventlocItems, setDdTicEventlocItems] = useState(null);
-    const [ticEventlocItem, setTicEventlocItem] = useState(null);
-    const [ticEventlocItems, setTicEventlocItems] = useState(null);
-    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.begda || props.ticEvent.begda)));
-    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.endda || props.ticEvent.endda)))
+    const [ddTicEventobjItem, setDdTicEventobjItem] = useState(null);
+    const [ddTicEventobjItems, setDdTicEventobjItems] = useState(null);
+    const [ticEventobjItem, setTicEventobjItem] = useState(null);
+    const [ticEventobjItems, setTicEventobjItems] = useState(null);
+
+    const [ddTicEventobjtpItem, setDdTicEventobjtpItem] = useState(null);
+    const [ddTicEventobjtpItems, setDdTicEventobjtpItems] = useState(null);
+    const [ticEventobjtpItem, setTicEventobjtpItem] = useState(null);
+    const [ticEventobjtpItems, setTicEventobjtpItems] = useState(null);    
+    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventobj.begda || props.ticEvent.begda)));
+    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventobj.endda || props.ticEvent.endda)))
 
     const calendarRef = useRef(null);
 
@@ -35,24 +40,17 @@ const TicEventloc = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                // const url = `${env.CMN_BACK_URL}/cmn/x/loc/?sl=${selectedLanguage}`;
-                // const tokenLocal = await Token.getTokensLS();
-                // const headers = {
-                //     Authorization: tokenLocal.token
-                // };
-                // const response = await axios.get(url, { headers });
-                // const data = response.data.items;
-                const ticEventService = new TicEventService();
-                const data = await ticEventService.getCmnObjXcsLista();                
-                setTicEventlocItems(data)
+                const ticEventobjService = new TicEventobjService();
+                const data = await ticEventobjService.getCmnTpLista('objtp');                
+                setTicEventobjtpItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdTicEventlocItems(dataDD);
-                setDdTicEventlocItem(dataDD.find((item) => item.code === props.ticEventloc.loc) || null);
-                if (props.ticEventloc.loc) {
-                    const foundItem = data.find((item) => item.id === props.ticEventloc.loc);
-                    setTicEventlocItem(foundItem || null);
-                    ticEventloc.cloc = foundItem.code
-                    ticEventloc.nloc = foundItem.textx
+                setDdTicEventobjtpItems(dataDD);
+                setDdTicEventobjtpItem(dataDD.find((item) => item.code === props.ticEventobj.objtp) || null);
+                if (props.ticEventobj.objtp) {
+                    const foundItem = data.find((item) => item.id === props.ticEventobj.objtp);
+                    setTicEventobjtpItem(foundItem || null);
+                    ticEventobj.cobjtp = foundItem.code
+                    ticEventobj.nobjtp = foundItem.textx
                 }
 
             } catch (error) {
@@ -62,6 +60,31 @@ const TicEventloc = (props) => {
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const tp = ticEventobj.objtp || -1
+                const ticEventobjService = new TicEventobjService();
+                const data = await ticEventobjService.getCmnLista('obj', tp);                
+                setTicEventobjItems(data)
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicEventobjItems(dataDD);
+                setDdTicEventobjItem(dataDD.find((item) => item.code === props.ticEventobj.obj) || null);
+                if (props.ticEventobj.obj) {
+                    const foundItem = data.find((item) => item.id === props.ticEventobj.obj);
+                    setTicEventobjItem(foundItem || null);
+                    ticEventobj.cobj = foundItem.code
+                    ticEventobj.nobj = foundItem.textx
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticEventobj.objtp]);
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -71,17 +94,17 @@ const TicEventloc = (props) => {
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            ticEventloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
-            const ticEventlocService = new TicEventlocService();
-            const data = await ticEventlocService.postTicEventloc(ticEventloc);
-            ticEventloc.id = data
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: props.eventlocTip });
+            ticEventobj.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            const ticEventobjService = new TicEventobjService();
+            const data = await ticEventobjService.postTicEventobj(ticEventobj);
+            ticEventobj.id = data
+            props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -91,17 +114,17 @@ const TicEventloc = (props) => {
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
-            ticEventloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
-            const ticEventlocService = new TicEventlocService();
+            ticEventobj.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
+            const ticEventobjService = new TicEventobjService();
 
-            await ticEventlocService.putTicEventloc(ticEventloc);
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: props.eventlocTip });
+            await ticEventobjService.putTicEventobj(ticEventobj);
+            props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -115,15 +138,15 @@ const TicEventloc = (props) => {
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticEventlocService = new TicEventlocService();
-            await ticEventlocService.deleteTicEventloc(ticEventloc);
-            props.handleDialogClose({ obj: ticEventloc, eventlocTip: 'DELETE' });
+            const ticEventobjService = new TicEventobjService();
+            await ticEventobjService.deleteTicEventobj(ticEventobj);
+            props.handleDialogClose({ obj: ticEventobj, eventobjTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicEventloc ",
+                summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -132,14 +155,28 @@ const TicEventloc = (props) => {
 
     const onInputChange = (e, type, name, a) => {
         let val = ''
+        let foundItem = ''
 
         if (type === "options") {
-            val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdTicEventlocItem(e.value);
-            const foundItem = ticEventlocItems.find((item) => item.id === val);
-            setTicEventlocItem(foundItem || null);
-            ticEventloc.nloc = e.value.name
-            ticEventloc.cloc = foundItem.code
+            val = (e.target && e.target.value && e.target.value.code) || ''; 
+            switch (name) {
+                case "objtp":
+                    setDdTicEventobjtpItem(e.value);
+                    foundItem = ticEventobjtpItems.find((item) => item.id === val);
+                    setTicEventobjtpItem(foundItem || null);
+                    ticEventobj.cobjtp = foundItem.code
+                    ticEventobj.nobjtp = e.value.name
+                    break;
+                case "obj":
+                    setDdTicEventobjItem(e.value);
+                    foundItem = ticEventobjItems.find((item) => item.id === val);
+                    setTicEventobjItem(foundItem || null);
+                    ticEventobj.cobj = foundItem.code
+                    ticEventobj.nobj = e.value.name
+                    break;
+                default:
+                    console.error("Pogresan naziv options polja")
+            }
         } else if (type === "Calendar") {
             const dateVal = DateFunction.dateGetValue(e.value)
             val = (e.target && e.target.value) || '';
@@ -156,9 +193,9 @@ const TicEventloc = (props) => {
         } else {
             val = (e.target && e.target.value) || '';
         }
-        let _ticEventloc = { ...ticEventloc };
-        _ticEventloc[`${name}`] = val;
-        setTicEventloc(_ticEventloc);
+        let _ticEventobj = { ...ticEventobj };
+        _ticEventobj[`${name}`] = val;
+        setTicEventobj(_ticEventobj);
     };
 
     const hideDeleteDialog = () => {
@@ -191,19 +228,34 @@ const TicEventloc = (props) => {
             </div>
             <div className="col-12">
                 <div className="card">
-                    <div className="p-fluid formgrid grid">
+                <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="loc">{translations[selectedLanguage].Location} *</label>
-                            <Dropdown id="loc"
-                                value={ddTicEventlocItem}
-                                options={ddTicEventlocItems}
-                                onChange={(e) => onInputChange(e, "options", 'loc')}
+                            <label htmlFor="objtp">{translations[selectedLanguage].Objtp} *</label>
+                            <Dropdown id="objtp"
+                                value={ddTicEventobjtpItem}
+                                options={ddTicEventobjtpItems}
+                                onChange={(e) => onInputChange(e, "options", 'objtp')}
                                 required                            
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticEventloc.loc })}
+                                className={classNames({ 'p-invalid': submitted && !ticEventobj.objtp })}
                             />
-                            {submitted && !ticEventloc.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticEventobj.objtp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>                    
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="obj">{translations[selectedLanguage].Obj} *</label>
+                            <Dropdown id="obj"
+                                value={ddTicEventobjItem}
+                                options={ddTicEventobjItems}
+                                onChange={(e) => onInputChange(e, "options", 'obj')}
+                                required                            
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEventobj.obj })}
+                            />
+                            {submitted && !ticEventobj.obj && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
@@ -241,7 +293,7 @@ const TicEventloc = (props) => {
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.eventlocTip === 'CREATE') ? (
+                            {(props.eventobjTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -250,7 +302,7 @@ const TicEventloc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.eventlocTip !== 'CREATE') ? (
+                            {(props.eventobjTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -259,7 +311,7 @@ const TicEventloc = (props) => {
                                     outlined
                                 />
                             ) : null}
-                            {(props.eventlocTip !== 'CREATE') ? (
+                            {(props.eventobjTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -274,8 +326,8 @@ const TicEventloc = (props) => {
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inTicEventloc="delete"
-                item={ticEventloc.roll}
+                inTicEventobj="delete"
+                item={ticEventobj.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -283,4 +335,4 @@ const TicEventloc = (props) => {
     );
 };
 
-export default TicEventloc;
+export default TicEventobj;
