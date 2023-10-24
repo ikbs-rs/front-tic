@@ -451,7 +451,7 @@ export const translations = {
         Taxes: "Порези",
         Territorial_administration: "Администрација територија",
         Territory: "Територија",
-        Text: "Текст",
+        Text: "Назив",
         Type: "Тип",
         Type_of_relationship: "Тип везе",
         Type_of_territory: "Тип територије",
@@ -664,7 +664,8 @@ export const translations = {
         Channel: "Канал",
         EventobjList: "Објекти листа",
         Objtp: "Тип објекта",
-        Organizer: "Организатор"
+        Organizer: "Организатор",
+        EventartcanaList: "Цена артикла Листа",
     }
   };
   

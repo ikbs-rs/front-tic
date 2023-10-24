@@ -113,20 +113,6 @@ const App = () => {
                     ]
                 },
                 {
-                    label: translations[selectedLanguage].Documents_administration,
-                    icon: 'pi pi-fw pi-bars',
-                    items: [
-                        { label: translations[selectedLanguage].Species_documents, icon: 'pi pi-fw pi-calendar' , to: '/docvr'},
-                        { label: translations[selectedLanguage].Document_types, icon: 'pi pi-fw pi-calendar' , to: '/doctp'}
-                    ]
-                }
-            ]
-        },
-        {
-            label: translations[selectedLanguage].Processing,
-            icon: 'pi pi-fw pi-bars',
-            items: [
-                {
                     label: translations[selectedLanguage].Processing_elements,
                     icon: 'pi pi-prime',
                     items: [
@@ -138,6 +124,20 @@ const App = () => {
                     ]
                 },
                 {
+                    label: translations[selectedLanguage].Documents_administration,
+                    icon: 'pi pi-fw pi-bars',
+                    items: [
+                        { label: translations[selectedLanguage].Species_documents, icon: 'pi pi-fw pi-calendar' , to: '/docvr'},
+                        { label: translations[selectedLanguage].Document_types, icon: 'pi pi-fw pi-calendar' , to: '/doctp'}
+                    ]
+                }
+            ]
+        },
+        {
+            // label: translations[selectedLanguage].Processing,
+            // icon: 'pi pi-fw pi-bars',
+            // items: [
+            //     {
                     label: translations[selectedLanguage].Event_processing,
                     icon: 'pi pi-prime',
                     items: [
@@ -145,8 +145,8 @@ const App = () => {
                         //{ label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
                         { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' }
                     ]
-                }
-            ]
+            //     }
+            // ]
         },
         {
             label: translations[selectedLanguage].Reporting,

@@ -7,35 +7,33 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventartService } from "../../service/model/TicEventartService";
-import TicEventart from './ticEventart';
+import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
+import TicEventartcena from './ticEventartcena';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
-import TicEventrtcenaL from './ticEventartcenaL';
 
 
-export default function TicEventartL(props) {
+export default function TicEventartcenaL(props) {
 
-  const objName = "tic_eventart"
+  const objName = "tic_eventartcena"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventart = EmptyEntities[objName]
-  emptyTicEventart.event = props.ticEvent.id
+  const emptyTicEventartcena = EmptyEntities[objName]
+  emptyTicEventartcena.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventarts, setTicEventarts] = useState([]);
-  const [ticEventart, setTicEventart] = useState(emptyTicEventart);
+  const [ticEventartcenas, setTicEventartcenas] = useState([]);
+  const [ticEventartcena, setTicEventartcena] = useState(emptyTicEventartcena);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventartTip, setEventartTip] = useState('');
-  const [ticEventartcenaLVisible, setTicEventartcenaLVisible] = useState(false);
+  const [eventartcenaTip, setEventartcenaTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventartLVisible(false);
+    props.setTicEventartcenaLVisible(false);
   };
 
   useEffect(() => {
@@ -43,9 +41,9 @@ export default function TicEventartL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticEventartService = new TicEventartService();
-          const data = await ticEventartService.getLista(props.ticEvent.id);
-          setTicEventarts(data);
+          const ticEventartcenaService = new TicEventartcenaService();
+          const data = await ticEventartcenaService.getLista(props.ticEvent.id);
+          setTicEventartcenas(data);
 
           initFilters();
         }
@@ -60,30 +58,30 @@ export default function TicEventartL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticEventarts = [...ticEventarts];
-    let _ticEventart = { ...localObj.newObj.obj };
+    let _ticEventartcenas = [...ticEventartcenas];
+    let _ticEventartcena = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventartTip === "CREATE") {
-      _ticEventarts.push(_ticEventart);
-    } else if (localObj.newObj.eventartTip === "UPDATE") {
+    if (localObj.newObj.eventartcenaTip === "CREATE") {
+      _ticEventartcenas.push(_ticEventartcena);
+    } else if (localObj.newObj.eventartcenaTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventarts[index] = _ticEventart;
-    } else if ((localObj.newObj.eventartTip === "DELETE")) {
-      _ticEventarts = ticEventarts.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventart Delete', life: 3000 });
+      _ticEventartcenas[index] = _ticEventartcena;
+    } else if ((localObj.newObj.eventartcenaTip === "DELETE")) {
+      _ticEventartcenas = ticEventartcenas.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventart ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartTip}`, life: 3000 });
-    setTicEventarts(_ticEventarts);
-    setTicEventart(emptyTicEventart);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartcenaTip}`, life: 3000 });
+    setTicEventartcenas(_ticEventartcenas);
+    setTicEventartcena(emptyTicEventartcena);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventarts.length; i++) {
-      if (ticEventarts[i].id === id) {
+    for (let i = 0; i < ticEventartcenas.length; i++) {
+      if (ticEventartcenas[i].id === id) {
         index = i;
         break;
       }
@@ -93,34 +91,11 @@ export default function TicEventartL(props) {
   };
 
   const openNew = () => {
-    setTicEventartDialog(emptyTicEventart);
+    setTicEventartcenaDialog(emptyTicEventartcena);
   };
 
-/*
-Event Prodaja *****************************************************************************************************
-*/
-const handleEventartcenaLClick = () => {
-      setTicEventartcenaLDialog();
-};
-
-const setTicEventartcenaLDialog = (destination) => {
-  setShowMyComponent(true);
-  setTicEventartcenaLVisible(true);
-}; 
-
-
-const handleTicEventCenaLDialogClose = (newObj) => {
-  setTicEventart(newObj);
-  // ticDocs.event = newObj.id;
-  // ticDocs.nevent = newObj.text;
-  // ticDocs.cevent = newObj.code;
-  //*******setTicEventCenaLVisible(false);
-};  
-/*
-Click Handle *****************************************************************************************************
-*/  
   const onRowSelect = (event) => {
-    //ticEventart.begda = event.data.begda
+    //ticEventartcena.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -141,11 +116,11 @@ Click Handle *******************************************************************
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ctp: {
+      ccena: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      ntp: {
+      ncena: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
       },
@@ -184,14 +159,8 @@ Click Handle *******************************************************************
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        <div className="flex flex-wrap gap-1">
-            <Button label={translations[selectedLanguage].Cena} icon="pi pi-dollar" onClick={handleEventartcenaLClick} severity="info" text raised />
-        </div>  
-        <div className="flex flex-wrap gap-1">
-            <Button label={translations[selectedLanguage].Link} icon="pi pi-link" onClick={handleEventartcenaLClick} severity="info" text raised />
-        </div>                
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventartList}</b>
+        <b>{translations[selectedLanguage].EventartcenaList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -220,17 +189,17 @@ Click Handle *******************************************************************
   };
 
   // <--- Dialog
-  const setTicEventartDialog = (ticEventart) => {
+  const setTicEventartcenaDialog = (ticEventartcena) => {
     setVisible(true)
-    setEventartTip("CREATE")
-    setTicEventart({ ...ticEventart });
+    setEventartcenaTip("CREATE")
+    setTicEventartcena({ ...ticEventartcena });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const eventartTemplate = (rowData) => {
+  const eventartcenaTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -239,8 +208,8 @@ Click Handle *******************************************************************
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventartDialog(rowData)
-            setEventartTip("UPDATE")
+            setTicEventartcenaDialog(rowData)
+            setEventartcenaTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -276,9 +245,9 @@ Click Handle *******************************************************************
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventart}
+        selection={ticEventartcena}
         loading={loading}
-        value={ticEventarts}
+        value={ticEventartcenas}
         header={header}
         showGridlines
         removableSort
@@ -291,45 +260,31 @@ Click Handle *******************************************************************
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventart(e.value)}
+        onSelectionChange={(e) => setTicEventartcena(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={eventartTemplate}
+          body={eventartcenaTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cart"
+          field="ccena"
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "10%" }}
+          style={{ width: "20%" }}
         ></Column>
         <Column
-          field="nart"
+          field="ncena"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "30%" }}
-        ></Column>   
-        <Column
-          field="discount"
-          header={translations[selectedLanguage].Discount}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>  
-        <Column
-          field="descript"
-          header={translations[selectedLanguage].Description}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>                 
+          style={{ width: "60%" }}
+        ></Column>      
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -357,14 +312,14 @@ Click Handle *******************************************************************
         }}
       >
         {showMyComponent && (
-          <TicEventart
+          <TicEventartcena
             parameter={"inputTextValue"}
-            ticEventart={ticEventart}
+            ticEventartcena={ticEventartcena}
             ticEvent={props.ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventartTip={eventartTip}
+            eventartcenaTip={eventartcenaTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
@@ -373,26 +328,6 @@ Click Handle *******************************************************************
           </button>
         </div>
       </Dialog>
-      <Dialog
-                header={translations[selectedLanguage].EventartcanaList}
-                visible={ticEventartcenaLVisible}
-                style={{ width: '90%' }}
-                onHide={() => {
-                  setTicEventartcenaLVisible(false);
-                    setShowMyComponent(false);
-                }}
-            >
-                {showMyComponent && 
-                  <TicEventrtcenaL 
-                    parameter={'inputTextValue'} 
-                    ticEventart={ticEventart} 
-                    //setTicArtLVisible={setTicArtLVisible} 
-                    setTicEventartcenaLVisible={setTicEventartcenaLVisible} 
-                    dialog={true} 
-                    lookUp={true} 
-                    eventArtcena={true}
-                  />}
-            </Dialog>       
     </div>
   );
 }

@@ -258,15 +258,15 @@ export default function TicEventL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Cenatp} icon="pi pi-dollar" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
-        */}             
+                    
                 <div className="flex flex-wrap gap-1">
-                    <SplitButton label={translations[selectedLanguage].Copy} /*icon="pi pi-copy" onClick={openEventloc}*/ model={copyItems} severity="info" raised text disabled={!ticEvent} />
+                    <SplitButton label={translations[selectedLanguage].Copy} /*icon="pi pi-copy" onClick={openEventloc}* model={copyItems} severity="info" raised text disabled={!ticEvent} />
                 </div> 
-        {/*               
+            */}   
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].CopyObj} icon="pi pi-map" onClick={openEventloc} text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
-                <div className="flex flex-wrap gap-1">
+         {/*        <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
         */}
@@ -418,7 +418,7 @@ export default function TicEventL(props) {
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
                 <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="nevent" header={translations[selectedLanguage].Event} sortable filter style={{ width: '15%' }}></Column>
+                <Column field="nevent" header={translations[selectedLanguage].ParentEvent} sortable filter style={{ width: '15%' }}></Column>
                 <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
                 <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                 <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
