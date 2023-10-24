@@ -22,6 +22,7 @@ import { SplitButton } from 'primereact/splitbutton';
 import TicEventrtL from './ticEventartL';
 import TicEventcenatpL from './ticEventcenatpL';
 import TicEventobjL from './ticEventobjL';
+import TicEventTmpL from './ticEventTmpL';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
@@ -46,6 +47,7 @@ export default function TicEventL(props) {
     const [ticEventcenatpLVisible, setTicEventcenatpLVisible] = useState(false);
     const [ticEventartLVisible, setTicEventartLVisible] = useState(false);
     const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
+    const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
 
     const copyItems = [
@@ -202,6 +204,10 @@ export default function TicEventL(props) {
     const openEventobj = () => {
         setTicEventobjDialog();
     };
+
+    const openEventTmp = () => {
+        setTicEventTmpDialog();
+    };    
     const onRowSelect = (event) => {
         toast.current.show({
             severity: 'info',
@@ -284,11 +290,11 @@ export default function TicEventL(props) {
                 </div> 
             */}
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="warning" onClick={openEventloc} text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="warning" onClick={openEventTmp} text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Activation} icon="pi pi-caret-right" severity="danger" onClick={handleActivationClick} text raised disabled={!ticEvent} />
-                </div>                
+                </div>
                 {/*        <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
@@ -379,6 +385,12 @@ export default function TicEventL(props) {
         setShowMyComponent(true);
         setTicEventobjLVisible(true);
     };
+
+    const setTicEventTmpDialog = () => {
+        setShowMyComponent(true);
+        setTicEventTmpLVisible(true);
+    };
+
     //  Dialog --->
 
     const header = renderHeader();
@@ -584,10 +596,30 @@ export default function TicEventL(props) {
                         eventArt={true}
                     />}
             </Dialog>
-            <ConfirmDialog 
-                visible={confirmDialogVisible} 
-                onHide={() => setConfirmDialogVisible(false)} 
-                onConfirm={handleConfirm} 
+            <Dialog
+                header={translations[selectedLanguage].EventTmpList}
+                visible={ticEventTmpLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicEventTmpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent &&
+                    <TicEventTmpL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventTmpLVisible={setTicEventTmpLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
+                    />}
+            </Dialog>
+            <ConfirmDialog
+                visible={confirmDialogVisible}
+                onHide={() => setConfirmDialogVisible(false)}
+                onConfirm={handleConfirm}
                 uPoruka={'Aktivacija događaja, da li ste sigurni?'}
             />
         </div>

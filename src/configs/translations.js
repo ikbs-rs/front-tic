@@ -672,6 +672,8 @@ export const translations = {
         Ncurr: "Валута",
         Activation: "Активација",
         Arhive: "Архивиран",
+        EventTmpList: "Копирање Листа",
+        CopyTemp: "Темплејта"
     }
   };
   

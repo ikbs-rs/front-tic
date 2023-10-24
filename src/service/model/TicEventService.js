@@ -20,6 +20,46 @@ export class TicEventService {
     }
   }
 
+  async getListaTmp(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventtmp_v&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+//console.log(url, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async postCopyEvent(objId, tmpId, begda, endda) {
+    try {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        if (objId === null || tmpId === null) {
+            throw new Error(
+                "objId or tmpId must be filled!"
+            );
+        }
+        const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_copyevent_s&objId1=${objId}&objId2=${tmpId}&begda=${begda}&endda=${endda}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': tokenLocal.token
+        };
+        //const jsonObj = JSON.stringify(newObj)
+        const response = await axios.post(url, {}, { headers });
+        return response.data.items;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
   async getProdajaLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     
