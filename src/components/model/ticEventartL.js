@@ -125,7 +125,7 @@ Click Handle *******************************************************************
       severity: "info",
       summary: "Action Selected",
       detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
+      life: 300,
     });
   };
 
@@ -134,7 +134,7 @@ Click Handle *******************************************************************
       severity: "warn",
       summary: "Action Unselected",
       detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
+      life: 300,
     });
   };
   // <heder za filter

@@ -17,12 +17,13 @@ import DateFunction from '../../utilities/DateFunction';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
-
+console.log("*********TicEventL*********", props)
     let i = 0;
     const objName = 'tic_event';
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const emptyTicEvent = EmptyEntities[objName];
     const [showMyComponent, setShowMyComponent] = useState(true);
+    const [submitted, setSubmitted] = useState(false);
     const [ticEvents, setTicEvents] = useState([]);
     const [ticEvent, setTicEvent] = useState(emptyTicEvent);
     const [filters, setFilters] = useState('');
@@ -73,15 +74,16 @@ export default function TicEventL(props) {
         setConfirmDialogVisible(true);
     };
 
+
     const handleConfirm = async () => {
         //console.log(props.ticEvent, "***********handleConfirm********************")
-        // setSubmitted(true);
-        // const ticEventattsService = new TicEventattsService();
-        // await ticEventattsService.postAutoEventatts(props.ticEvent.id);
-        // const data = await ticEventattsService.getLista(props.ticEvent.id);
-        // setTicEventattss(data);        
+        setSubmitted(true);
+        const ticEventService = new TicEventService();
+        await ticEventService.postCopyEvent(props.ticEvent.id, ticEvent.id, props.ticEvent.begda, props.ticEvent.endda);
+        const data = await ticEventService.getListaTmp();
+        setTicEvents(data);        
         //props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
-        //props.setVisible(false);
+        props.setTicEventTmpLVisible(false);
         //hideDeleteDialog();
         setConfirmDialogVisible(false);
     };

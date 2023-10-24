@@ -51,9 +51,10 @@ export class TicEventService {
             'Content-Type': 'application/json',
             'Authorization': tokenLocal.token
         };
+        console.log("************postCopyEvent****************", url)
         //const jsonObj = JSON.stringify(newObj)
         const response = await axios.post(url, {}, { headers });
-        return response.data.items;
+        return response.data.item;
     } catch (error) {
         console.error(error);
         throw error;
