@@ -53,7 +53,26 @@ console.log(url, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
       console.error(error);
       throw error;
     }
-  }  
+  } 
+  
+  
+  async getOrganizatorLista(objName, item, id) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/par/_v/listabytxt/?stm=cmn_par_tp_v&objName=${objName}&item=${item}&id=${id}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  } 
+
   async getCmnListaByItem( tab, route, view, item, objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;

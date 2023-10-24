@@ -22,6 +22,7 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 
 const TicEvent = (props) => {
     let i = 0
+    const parTp = 'XOR'
     const objName = "tic_events"
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicEvents = EmptyEntities[objName]
@@ -41,7 +42,9 @@ const TicEvent = (props) => {
     const [ddLocItem, setDdLocItem] = useState(null);
     const [ddLocItems, setDdLocItems] = useState(null);   
     const [ddEventItem, setDdEventItem] = useState(null);
-    const [ddEventItems, setDdEventItems] = useState(null);       
+    const [ddEventItems, setDdEventItems] = useState(null);   
+    const [ddOrganizatorItem, setDdOrganizatorItem] = useState(null);
+    const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);      
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.endda || DateFunction.currDate())))
@@ -160,14 +163,36 @@ const TicEvent = (props) => {
     }, []);
 
       
+    // useEffect(() => {
+    //     async function fetchData() {
+    //       try { 
+    //         const ticEventService = new TicEventService();
+    //         const data = await ticEventService.getLista();
+    //         const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+    //         setDdEventItems(dataDD);
+    //         setDdEventItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);            
+    //         setTicEvents(data);
+    //       } catch (error) {
+    //         console.error(error);
+    //         // Obrada greške ako je potrebna
+    //       }
+    //     }
+    //     fetchData();
+    //   }, []);      
+
+    // useEffect(() => {
+    //     setDropdownItems(items);
+    // }, []);
+
+      
     useEffect(() => {
         async function fetchData() {
           try { 
             const ticEventService = new TicEventService();
-            const data = await ticEventService.getLista();
+            const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
             const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            setDdEventItems(dataDD);
-            setDdEventItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);            
+            setDdOrganizatorItems(dataDD);
+            setDdOrganizatorItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);            
             setTicEvents(data);
           } catch (error) {
             console.error(error);
@@ -175,11 +200,7 @@ const TicEvent = (props) => {
           }
         }
         fetchData();
-      }, []);      
-
-    useEffect(() => {
-        setDropdownItems(items);
-    }, []);
+      }, []);
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -277,7 +298,11 @@ const TicEvent = (props) => {
                 setDdEventItem(e.value);
                 ticEvent.cevent = e.value.code
                 ticEvent.nevent = e.value.name
-            }else {
+            } else if (name == "par") {
+                setDdOrganizatorItem(e.value);
+                ticEvent.cpar = e.value.code
+                ticEvent.npar = e.value.name
+            } else {
                 setDropdownItem(e.value);
             }
             val = (e.target && e.target.value && e.target.value.code) || '';
@@ -317,7 +342,18 @@ const TicEvent = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                    <div className="field col-12 md:col-10">
+                        <div className="field col-12 md:col-10">
+                            <label htmlFor="par">{translations[selectedLanguage].Organizer}</label>
+                            <Dropdown id="par"
+                                value={ddOrganizatorItem}
+                                options={ddOrganizatorItems}
+                                onChange={(e) => onInputChange(e, "options", 'par')}
+                                filter
+                                optionLabel="name"
+                                placeholder="Select One"
+                            />
+                        </div>                         
+                        <div className="field col-12 md:col-10">
                             <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
                             <Dropdown id="event"
                                 value={ddEventItem}

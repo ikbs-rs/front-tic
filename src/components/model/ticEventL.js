@@ -413,6 +413,7 @@ export default function TicEventL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
+                <Column field="npar" header={translations[selectedLanguage].Organizer} sortable filter style={{ width: '20%' }}></Column>
                 <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
                 <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>

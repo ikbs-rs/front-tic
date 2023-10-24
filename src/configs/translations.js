@@ -664,6 +664,7 @@ export const translations = {
         Channel: "Канал",
         EventobjList: "Објекти листа",
         Objtp: "Тип објекта",
+        Organizer: "Организатор"
     }
   };
   
