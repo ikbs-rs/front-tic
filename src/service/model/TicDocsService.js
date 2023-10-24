@@ -118,7 +118,7 @@ export class TicDocsService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log("*#################", jsonObj, "****************")
+      //console.log("*#################", jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;

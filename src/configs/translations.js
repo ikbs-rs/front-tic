@@ -670,7 +670,8 @@ export const translations = {
         Nterr: "Teritorija",
         Ccurr: "Шифра валуте",
         Ncurr: "Валута",
-        Activation: "Активација"
+        Activation: "Активација",
+        Arhive: "Архивиран",
     }
   };
   

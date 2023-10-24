@@ -30,6 +30,10 @@ const TicEvent = (props) => {
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
+
+    const [dropdownTmpItem, setDropdownTmpItem] = useState(null);
+    const [dropdownTmpItems, setDropdownTmpItems] = useState(null);
+
     const [ticEvent, setTicEvent] = useState(props.ticEvent);
     const [ticEvents, setTicEvents] = useState(emptyTicEvents);
 
@@ -52,11 +56,21 @@ const TicEvent = (props) => {
     const toast = useRef(null);
     const items = [
         { name: `${translations[selectedLanguage].Active}`, code: '1' },
-        { name: `${translations[selectedLanguage].Inactive}`, code: '0' }
+        { name: `${translations[selectedLanguage].Inactive}`, code: '0' },
+        { name: `${translations[selectedLanguage].Arhive}`, code: '2' }
+    ];
+
+    const itemsTmp = [
+        { name: `${translations[selectedLanguage].Yes}`, code: '1' },
+        { name: `${translations[selectedLanguage].No}`, code: '0' },
     ];
 
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticEvent.status));
+    }, []);
+
+    useEffect(() => {
+        setDropdownTmpItem(findDropdownTmpItemByCode(props.ticEvent.tmp));
     }, []);
 
     useEffect(() => {
@@ -162,6 +176,9 @@ const TicEvent = (props) => {
         setDropdownItems(items);
     }, []);
 
+    useEffect(() => {
+        setDropdownTmpItems(itemsTmp);
+    }, []);
       
     // useEffect(() => {
     //     async function fetchData() {
@@ -204,6 +221,10 @@ const TicEvent = (props) => {
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
+    };
+
+    const findDropdownTmpItemByCode = (code) => {
+        return itemsTmp.find((item) => item.code === code) || null;
     };
 
     const updateEventsTip = (value) => {
@@ -302,6 +323,8 @@ const TicEvent = (props) => {
                 setDdOrganizatorItem(e.value);
                 ticEvent.cpar = e.value.code
                 ticEvent.npar = e.value.name
+            } else if (name == "tmp") {
+                setDropdownTmpItem(e.value);
             } else {
                 setDropdownItem(e.value);
             }
@@ -496,6 +519,19 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="tmp">{translations[selectedLanguage].Template}</label>
+                            <Dropdown id="tmp"
+                                value={dropdownTmpItem}
+                                options={dropdownTmpItems}
+                                onChange={(e) => onInputChange(e, "options", 'tmp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.tmp })}
+                            />
+                            {submitted && !ticEvent.tmp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
                     </div>
                     {/**/}
                     <div className="card">
