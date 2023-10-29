@@ -23,6 +23,7 @@ import EventCtg from './components/model/ticEventctgL';
 import EventTP from './components/model/ticEventtpL';
 import AgendaTp from './components/model/ticAgendatpL';
 import Agenda from './components/model/ticAgendaL';
+import Season from './components/model/ticSeasonL';
 import Art from './components/model/ticArtL';
 import ArtGrp from './components/model/ticArtgrpL';
 import ArtTp from './components/model/ticArttpL';
@@ -109,7 +110,8 @@ const App = () => {
                         { label: translations[selectedLanguage].Event_type, icon: 'pi pi-fw pi-table', to: '/eventtp' },
                         { label: translations[selectedLanguage].Properties_event, icon: 'pi pi-fw pi-align-right', to: '/eventatt'  },
                         { label: translations[selectedLanguage].Agenda_type, icon: 'pi pi-fw pi-table' , to: '/agendatp'},
-                        { label: translations[selectedLanguage].Agenda, icon: 'pi pi-fw pi-align-justify' , to: '/agenda'}
+                        { label: translations[selectedLanguage].Agenda, icon: 'pi pi-fw pi-align-justify' , to: '/agenda'},
+                        { label: translations[selectedLanguage].Season, icon: 'pi pi-fw pi-sun' , to: '/season'}
                     ]
                 },
                 {
@@ -504,6 +506,7 @@ const App = () => {
                         <Route path="/eventatt" element={<EventAtt />} />
                         <Route path="/agendatp" element={<AgendaTp />} />
                         <Route path="/agenda" element={<Agenda />} />
+                        <Route path="/season" element={<Season />} /> 
                         <Route path="/art" element={<Art />} />
                         <Route path="/artgrp" element={<ArtGrp />} />
                         <Route path="/arttp" element={<ArtTp />} />

@@ -673,7 +673,9 @@ export const translations = {
         Activation: "Активација",
         Arhive: "Архивиран",
         EventTmpList: "Копирање Листа",
-        CopyTemp: "Темплејта"
+        CopyTemp: "Темплејта",
+        Season: "Сезона",
+        SeasonList: "Сезоне Листа",
     }
   };
   

@@ -2,10 +2,10 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicSeasoneService {
-  async getTicSeasones() {
+export class TicSeasonService {
+  async getTicSeasons() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/seasone/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/season/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -20,9 +20,9 @@ export class TicSeasoneService {
     }
   }
 
-  async getTicSeasone(objId) {
+  async getTicSeason(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/seasone/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/season/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -38,7 +38,7 @@ export class TicSeasoneService {
   }
 
 
-  async postTicSeasone(newObj) {
+  async postTicSeason(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -46,7 +46,7 @@ export class TicSeasoneService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/seasone/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/season/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export class TicSeasoneService {
 
   }
 
-  async putTicSeasone(newObj) {
+  async putTicSeason(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -71,7 +71,7 @@ export class TicSeasoneService {
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/x/seasone/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/season/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -88,9 +88,9 @@ export class TicSeasoneService {
 
   }
 
-  async deleteTicSeasone(newObj) {
+  async deleteTicSeason(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/x/seasone/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/season/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token
