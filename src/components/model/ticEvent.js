@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventService } from "../../service/model/TicEventService";
+import { TicSeasonService } from "../../service/model/TicSeasonService";
 import { TicEventsService } from "../../service/model/TicEventsService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
@@ -44,11 +45,13 @@ const TicEvent = (props) => {
     const [ddCtgItems, setDdCtgItems] = useState(null);
     const [eventsTip, setEventsTip] = useState(false);
     const [ddLocItem, setDdLocItem] = useState(null);
-    const [ddLocItems, setDdLocItems] = useState(null);   
+    const [ddLocItems, setDdLocItems] = useState(null);
+    const [ddSeasonItem, setDdSeasonItem] = useState(null);
+    const [ddSeasonItems, setDdSeasonItems] = useState(null);    
     const [ddEventItem, setDdEventItem] = useState(null);
-    const [ddEventItems, setDdEventItems] = useState(null);   
+    const [ddEventItems, setDdEventItems] = useState(null);
     const [ddOrganizatorItem, setDdOrganizatorItem] = useState(null);
-    const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);      
+    const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.endda || DateFunction.currDate())))
@@ -121,16 +124,16 @@ const TicEvent = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                    const ticEventsService = new TicEventsService();
-                    const data = await ticEventsService.getTicEvents(props.ticEvent.id);
-                    if (data) {
-                        setTicEvents(data)
-                        updateEventsTip(true)
-                    } else {
-                        emptyTicEvents.id = null
-                        setTicEvents(emptyTicEvents)
-                        updateEventsTip(false)
-                    }
+                const ticEventsService = new TicEventsService();
+                const data = await ticEventsService.getTicEvents(props.ticEvent.id);
+                if (data) {
+                    setTicEvents(data)
+                    updateEventsTip(true)
+                } else {
+                    emptyTicEvents.id = null
+                    setTicEvents(emptyTicEvents)
+                    updateEventsTip(false)
+                }
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -141,36 +144,52 @@ const TicEvent = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-          try { 
-            const ticEventService = new TicEventService();
-            const data = await ticEventService.getCmnObjXcsLista();
-            const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            setDdLocItems(dataDD);
-            setDdLocItem(dataDD.find((item) => item.code === props.ticEvent.loc) || null);
-          } catch (error) {
-            console.error(error);
-            // Obrada greške ako je potrebna
-          }
+            try {
+                const ticSeasonService = new TicSeasonService();
+                const data = await ticSeasonService.getTicSeasons();
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdSeasonItems(dataDD);
+                setDdSeasonItem(dataDD.find((item) => item.code === props.ticEvent.season) || null);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
         }
         fetchData();
-      }, []);  
-      
-      useEffect(() => {
+    }, []);
+
+    useEffect(() => {
         async function fetchData() {
-          try { 
-            const ticEventService = new TicEventService();
-            const data = await ticEventService.getLista();
-            const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            setDdEventItems(dataDD);
-            setDdEventItem(dataDD.find((item) => item.code === props.ticEvent.event) || null);            
-            setTicEvents(data);
-          } catch (error) {
-            console.error(error);
-            // Obrada greške ako je potrebna
-          }
+            try {
+                const ticEventService = new TicEventService();
+                const data = await ticEventService.getCmnObjXcsLista();
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdLocItems(dataDD);
+                setDdLocItem(dataDD.find((item) => item.code === props.ticEvent.loc) || null);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
         }
         fetchData();
-      }, []);      
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticEventService = new TicEventService();
+                const data = await ticEventService.getLista();
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdEventItems(dataDD);
+                setDdEventItem(dataDD.find((item) => item.code === props.ticEvent.event) || null);
+                setTicEvents(data);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
 
     useEffect(() => {
         setDropdownItems(items);
@@ -179,7 +198,7 @@ const TicEvent = (props) => {
     useEffect(() => {
         setDropdownTmpItems(itemsTmp);
     }, []);
-      
+
     // useEffect(() => {
     //     async function fetchData() {
     //       try { 
@@ -201,23 +220,23 @@ const TicEvent = (props) => {
     //     setDropdownItems(items);
     // }, []);
 
-      
+
     useEffect(() => {
         async function fetchData() {
-          try { 
-            const ticEventService = new TicEventService();
-            const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
-            const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-            setDdOrganizatorItems(dataDD);
-            setDdOrganizatorItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);            
-            setTicEvents(data);
-          } catch (error) {
-            console.error(error);
-            // Obrada greške ako je potrebna
-          }
+            try {
+                const ticEventService = new TicEventService();
+                const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdOrganizatorItems(dataDD);
+                setDdOrganizatorItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);
+                setTicEvents(data);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
         }
         fetchData();
-      }, []);
+    }, []);
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -229,7 +248,7 @@ const TicEvent = (props) => {
 
     const updateEventsTip = (value) => {
         setEventsTip(value);
-      };
+    };
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -315,6 +334,10 @@ const TicEvent = (props) => {
                 setDdLocItem(e.value);
                 ticEvent.cloc = e.value.code
                 ticEvent.nloc = e.value.name
+            } else if (name == "season") {
+                setDdSeasonItem(e.value);
+                ticEvent.cseason = e.value.code
+                ticEvent.nseason = e.value.name                
             } else if (name == "event") {
                 setDdEventItem(e.value);
                 ticEvent.cevent = e.value.code
@@ -375,7 +398,20 @@ const TicEvent = (props) => {
                                 optionLabel="name"
                                 placeholder="Select One"
                             />
-                        </div>                         
+                        </div>
+                        <div className="field col-12 md:col-2">
+                            <label htmlFor="season">{translations[selectedLanguage].Season} *</label>
+                            <Dropdown id="season"
+                                value={ddSeasonItem}
+                                options={ddSeasonItems}
+                                onChange={(e) => onInputChange(e, "options", 'season')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.season })}
+                            />
+                            {submitted && !ticEvent.season && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
                         <div className="field col-12 md:col-10">
                             <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
                             <Dropdown id="event"
@@ -386,7 +422,7 @@ const TicEvent = (props) => {
                                 optionLabel="name"
                                 placeholder="Select One"
                             />
-                        </div>                         
+                        </div>
                         <div className="field col-12 md:col-4">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
@@ -408,7 +444,7 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.loc })}
                             />
                             {submitted && !ticEvent.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                        </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
@@ -531,7 +567,7 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.tmp })}
                             />
                             {submitted && !ticEvent.tmp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                        </div>
                     </div>
                     {/**/}
                     <div className="card">
