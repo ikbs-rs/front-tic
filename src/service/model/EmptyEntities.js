@@ -382,7 +382,8 @@ const EmptyEntities =
     "ctg": null,
     "loc": null,
 		"par": null,
-		"tmp": 0
+		"tmp": 0,
+		"season": null
   },
   "tic_eventagenda": {
     "id": null,
@@ -641,6 +642,21 @@ const EmptyEntities =
     "text": "",
     "tp": null,
     "valid": "1"
+  },
+  "tic_season": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "tic_seasonx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
   },
   "tic_seatloc": {
     "id": null,
