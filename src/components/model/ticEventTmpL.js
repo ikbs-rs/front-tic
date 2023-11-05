@@ -17,7 +17,11 @@ import DateFunction from '../../utilities/DateFunction';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
+<<<<<<< Updated upstream
 console.log("*********TicEventL*********", props)
+=======
+console.log(props, "********************TicEventLTmp*********************************")
+>>>>>>> Stashed changes
     let i = 0;
     const objName = 'tic_event';
     const selectedLanguage = localStorage.getItem('sl') || 'en';

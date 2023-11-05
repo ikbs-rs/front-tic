@@ -39,6 +39,7 @@ export class TicEventService {
 
   async postCopyEvent(objId, tmpId, begda, endda) {
     try {
+      console.log("*****************postCopyEvent************************", begda)
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         if (objId === null || tmpId === null) {
             throw new Error(
@@ -53,6 +54,7 @@ export class TicEventService {
         };
         console.log("************postCopyEvent****************", url)
         //const jsonObj = JSON.stringify(newObj)
+        console.log("****************url******************", url)
         const response = await axios.post(url, {}, { headers });
         return response.data.item;
     } catch (error) {
