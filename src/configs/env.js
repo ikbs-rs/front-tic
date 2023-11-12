@@ -7,6 +7,7 @@ const env = {
     ADM_BACK_URL: 'http://localhost:8302/badm',
     CMN_BACK_URL: 'http://localhost:8303/bcmn',
     TIC_BACK_URL: 'http://localhost:8304/btic',
+    IMG_BACK_URL: 'http://localhost:8305/bimg',
   };
   
   export default env;
