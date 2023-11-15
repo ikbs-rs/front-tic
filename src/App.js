@@ -36,6 +36,7 @@ import Atest from './components/model/1test';
 import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
 import Transaction from './components/model/ticTransactionL';
+import Delivery from './components/model/ticDocdeliveryL';
 import EmptyPage from './pages/EmptyPage';
 
 import PrimeReact from 'primereact/api';
@@ -117,7 +118,7 @@ const App = () => {
                 },
                 {
                     label: translations[selectedLanguage].Processing_elements,
-                    icon: 'pi pi-prime',
+                    icon: 'pi pi-wrench',
                     items: [
                         { label: translations[selectedLanguage].Item_type, icon: 'pi pi-database', to: '/arttp' },
                         { label: translations[selectedLanguage].Groups_of_items, icon: 'pi pi-fw pi-clone', to: '/artgrp' },
@@ -146,7 +147,8 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
                         { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
-                        { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-clone', to: '/transaction' },
+                        { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-book', to: '/transaction' },
+                        { label: translations[selectedLanguage].Delivery, icon: 'pi pi-fw pi-truck', to: '/delivery' },
                     ]
             //     }
             // ]
@@ -157,16 +159,16 @@ const App = () => {
             items: [
                 {
                     label: translations[selectedLanguage].Reports,
-                    icon: 'pi pi-prime',
+                    icon: 'pi pi-file-pdf',
                     items: [
                         { label: translations[selectedLanguage].Test, icon: 'pi pi-database', to: '/atest' }
                     ]
                 },
                 {
                     label: translations[selectedLanguage].Reports,
-                    icon: 'pi pi-prime',
+                    icon: 'pi pi-chart-bar',
                     items: [
-                        { label: translations[selectedLanguage].Report, icon: 'pi pi-database', to: '/izv2' }
+                        { label: translations[selectedLanguage].Report, icon: 'pi pi-chart-bar', to: '/izv2' }
                     ]
                 }
             ]
@@ -515,6 +517,7 @@ const App = () => {
                         <Route path="/cenatp" element={<CenaTp />} />
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/transaction" element={<Transaction />} />
+                        <Route path="/delivery" element={<Delivery />} />
 
                         <Route path="/atest" element={<Atest />} />
                     </Routes>

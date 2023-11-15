@@ -68,11 +68,12 @@ export default function TicDocL(props) {
     fetchData();
   }, [ddTicDocvrItem, ticDoc]);
 
-  async function fetchDoc(uId) {
+  async function fetchDoc(rowData) {
     try {
       const ticDocService = new TicDocService();
-      const data = await ticDocService.getTicDoc(uId);
+      const data = await ticDocService.getTicDoc(rowData.id);
       //console.log(uId, "*-*-*************fetchDoc*************-*", data)
+      Object.assign(data, rowData);
       return data;
     } catch (error) {
       console.error(error);
@@ -327,8 +328,8 @@ export default function TicDocL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={async () => {
-            const rowDoc = await fetchDoc (rowData.id)
-            console.log(rowData.id, "***************rowData****************", rowDoc)
+            const rowDoc = await fetchDoc (rowData)
+            console.log(rowData, "***************rowData****************", rowDoc)
             setTicDocDialog(rowDoc)
             setDocTip("UPDATE")
             setTicDocobj(rowDoc.docobj)
@@ -391,8 +392,8 @@ export default function TicDocL(props) {
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="nusr"
-          header={translations[selectedLanguage].nusr}
+          field="npar"
+          header={translations[selectedLanguage].npar}
           sortable
           filter
           style={{ width: "10%" }}

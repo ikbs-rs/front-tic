@@ -682,7 +682,9 @@ export const translations = {
         PaymentList: "Листа плаћања",
         Amount: "Износ",
         Specification: "Спецификација",
-        Paymenttp: "Тип плаћања"
+        Paymenttp: "Тип плаћања",
+        DocdeliveryList: "Испорука Листа",
+        Delivery: "Испорука",
     }
   };
   

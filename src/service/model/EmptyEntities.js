@@ -288,7 +288,9 @@ const EmptyEntities =
 		"amount": null,
 		"dat": "string",
 		"datdelivery": "",
-		"status": ""
+		"status": "",
+    "note": "",
+    "parent": null
 	},  
 	"tic_docpayment": {
 			"id": null,

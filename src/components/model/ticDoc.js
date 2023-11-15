@@ -18,6 +18,7 @@ import { Dialog } from 'primereact/dialog';
 import CmnParL from './remoteComponentContainer';
 import CmnPar from './remoteComponentContainer';
 import TicDocpaymentL from './ticDocpaymentL';
+import TicDocdeliveryL from './ticDocdeliveryL';
 import env from "../../configs/env"
 
 const TicDoc = (props) => {
@@ -43,6 +44,8 @@ const TicDoc = (props) => {
     const [cmnParVisible, setCmnParVisible] = useState(false);
     const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
     const [ticPayment, setTicPayment] = useState(null);
+    const [ticDocdeliveryLVisible, setTicDocdeliveryLVisible] = useState(false);
+    const [ticDocdelivery, setTicDocdelivery] = useState(null);
 
 
     const [date, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDoc.date || DateFunction.currDate())));
@@ -244,6 +247,20 @@ const TicDoc = (props) => {
         }
     };
 
+    const handleDocdeliveryLClick = async (e) => {
+        try {
+            setTicDocdeliveryLVisible(true);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch cmnPar data",
+                life: 3000,
+            });
+        }
+    };
+
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
     };
@@ -333,7 +350,10 @@ const TicDoc = (props) => {
         setTicPayment(newObj);
         setTicPaymentLVisible(false)
     };    
-
+    const handleTicDocdeliveryLDialogClose = (newObj) => {
+        setTicDocdelivery(newObj);
+        setTicDocdeliveryLVisible(false)
+    }; 
     // <--- Dialog
     const setCmnParLDialog = () => {
         setCmnParLVisible(true)
@@ -345,7 +365,10 @@ const TicDoc = (props) => {
 
     const setTicPaymentLDialog = () => {
         setTicPaymentLVisible(true)
-    }    
+    }   
+    const setTicDocdeliveryLDialog = () => {
+        setTicDocdeliveryLVisible(true)
+    }      
     //  Dialog --->
     return (
         <div className="grid">
@@ -527,10 +550,19 @@ const TicDoc = (props) => {
                                 <Button
                                     label={translations[selectedLanguage].Payment}
                                     icon="pi pi-check"
+                                    className="p-button-warning"
                                     onClick={handlePaymentClick}
                                     severity="success"
                                     outlined
                                 />
+                                <Button
+                                    label={translations[selectedLanguage].Delivery}
+                                    icon="pi pi-check"
+                                    className="p-button-warning"
+                                    onClick={handleDocdeliveryLClick}
+                                    severity="success"
+                                    outlined
+                                />                                
                                 </>                                
                             ) : null}
                             {(docTip == 'CREATE') ? (
@@ -654,7 +686,27 @@ const TicDoc = (props) => {
                         lookUp={true}
                     />
                 )}
-            </Dialog>               
+            </Dialog>     
+            <Dialog
+                header={translations[selectedLanguage].DocdeliveryList}
+                visible={ticDocdeliveryLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicDocdeliveryLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticDocdeliveryLVisible && (
+                    <TicDocdeliveryL
+                        parameter={"inputTextValue"}
+                        ticDoc={ticDoc}
+                        handleTicDocdeliveryLDialogClose={handleTicDocdeliveryLDialogClose}
+                        setTicDocdeliveryLVisible={setTicDocdeliveryLVisible}
+                        dialog={true}
+                        lookUp={true}
+                    />
+                )}
+            </Dialog>                       
         </div>
     );
 };
