@@ -17,10 +17,11 @@ import { Dialog } from 'primereact/dialog';
 //import CmnParL from './cmnParL';
 import CmnParL from './remoteComponentContainer';
 import CmnPar from './remoteComponentContainer';
+import TicDocpaymentL from './ticDocpaymentL';
 import env from "../../configs/env"
 
 const TicDoc = (props) => {
-    console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************")
+    console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************", props)
     const objName = "tic_docs"
     const domen = env.DOMEN
     const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -40,6 +41,8 @@ const TicDoc = (props) => {
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(null);
     const [cmnParVisible, setCmnParVisible] = useState(false);
+    const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
+    const [ticPayment, setTicPayment] = useState(null);
 
 
     const [date, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDoc.date || DateFunction.currDate())));
@@ -225,8 +228,21 @@ const TicDoc = (props) => {
                 life: 5000,
             });
         }
+    }; 
+
+    const handlePaymentClick = async (e) => {
+        try {
+            setTicPaymentLVisible(true);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to fetch cmnPar data",
+                life: 3000,
+            });
+        }
     };
-    
 
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
@@ -313,6 +329,10 @@ const TicDoc = (props) => {
         setCmnPar(newObj);
         setCmnParVisible(false)
     };
+    const handleTicPaymentLDialogClose = (newObj) => {
+        setTicPayment(newObj);
+        setTicPaymentLVisible(false)
+    };    
 
     // <--- Dialog
     const setCmnParLDialog = () => {
@@ -322,6 +342,10 @@ const TicDoc = (props) => {
     const setCmnParDialog = () => {
         setCmnParVisible(true)
     }
+
+    const setTicPaymentLDialog = () => {
+        setTicPaymentLVisible(true)
+    }    
     //  Dialog --->
     return (
         <div className="grid">
@@ -492,6 +516,7 @@ const TicDoc = (props) => {
                                 />
                             ) : null}
                             {(docTip !== 'CREATE') ? (
+                                <>
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -499,6 +524,14 @@ const TicDoc = (props) => {
                                     severity="success"
                                     outlined
                                 />
+                                <Button
+                                    label={translations[selectedLanguage].Payment}
+                                    icon="pi pi-check"
+                                    onClick={handlePaymentClick}
+                                    severity="success"
+                                    outlined
+                                />
+                                </>                                
                             ) : null}
                             {(docTip == 'CREATE') ? (
                                 <Button
@@ -601,7 +634,27 @@ const TicDoc = (props) => {
                         originUrl={`${domen}`}
                     />
                 )}
-            </Dialog>        
+            </Dialog>     
+            <Dialog
+                header={translations[selectedLanguage].PaymentList}
+                visible={ticPaymentLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicPaymentLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticPaymentLVisible && (
+                    <TicDocpaymentL
+                        parameter={"inputTextValue"}
+                        ticDoc={ticDoc}
+                        handleTicPaymentLDialogClose={handleTicPaymentLDialogClose}
+                        setTicPaymentLVisible={setTicPaymentLVisible}
+                        dialog={true}
+                        lookUp={true}
+                    />
+                )}
+            </Dialog>               
         </div>
     );
 };

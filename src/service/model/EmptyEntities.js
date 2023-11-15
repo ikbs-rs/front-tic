@@ -279,10 +279,10 @@ const EmptyEntities =
     "doc2": null,
     "time": ""
   },
-	"tic_docpaydelivery ": {
+	"tic_docdelivery ": {
 		"id": null,
 		"site": null,
-		"docpayment": null,
+		"doc": null,
 		"courier": null,
 		"delivery_adress": "",
 		"amount": null,

@@ -676,6 +676,13 @@ export const translations = {
         CopyTemp: "Темплејта",
         Season: "Сезона",
         SeasonList: "Сезоне Листа",
+        Transaction: "Трансакције",
+        TransactionList: "Трансакције Листа",
+        Payment: "Плаћање",
+        PaymentList: "Листа плаћања",
+        Amount: "Износ",
+        Specification: "Спецификација",
+        Paymenttp: "Тип плаћања"
     }
   };
   

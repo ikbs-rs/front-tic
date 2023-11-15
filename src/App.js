@@ -35,6 +35,7 @@ import Atest from './components/model/1test';
 
 import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
+import Transaction from './components/model/ticTransactionL';
 import EmptyPage from './pages/EmptyPage';
 
 import PrimeReact from 'primereact/api';
@@ -144,8 +145,8 @@ const App = () => {
                     icon: 'pi pi-prime',
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
-                        //{ label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
-                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' }
+                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
+                        { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-clone', to: '/transaction' },
                     ]
             //     }
             // ]
@@ -513,6 +514,7 @@ const App = () => {
                         <Route path="/cena" element={<Cena />} />
                         <Route path="/cenatp" element={<CenaTp />} />
                         <Route path="/docvr" element={<DocVr />} />
+                        <Route path="/transaction" element={<Transaction />} />
 
                         <Route path="/atest" element={<Atest />} />
                     </Routes>
