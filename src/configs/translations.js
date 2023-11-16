@@ -685,6 +685,12 @@ export const translations = {
         Paymenttp: "Тип плаћања",
         DocdeliveryList: "Испорука Листа",
         Delivery: "Испорука",
+        Courier: "Курир",
+        delivery_adress: "Адреса испоруке",
+        dat: "Датум",
+        datdelivery: "Датум испоруке",  
+        note: "Напомена",
+        parent: "Надређена",
     }
   };
   

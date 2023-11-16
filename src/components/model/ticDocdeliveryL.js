@@ -61,7 +61,7 @@ export default function TicDocpaymentL(props) {
     });
     const selRow = document.querySelectorAll('.p-selectable-row');
     selRow.forEach((row) => {
-      console.log("*-*-*************row.row.classList*************-*", row.classList)
+      //console.log("*-*-*************row.row.classList*************-*", row.classList)
       row.classList.remove('p-selectable-row');
     });   
 

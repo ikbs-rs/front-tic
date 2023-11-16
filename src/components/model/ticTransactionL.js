@@ -27,8 +27,10 @@ export default function TicDocL(props) {
   //console.log(docVr, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
   let i = 0
   const objName = "tic_doc"
+
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDoc = EmptyEntities[objName]
+
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocs, setTicDocs] = useState([]);
   const [ticDoc, setTicDoc] = useState(emptyTicDoc);
@@ -329,7 +331,7 @@ export default function TicDocL(props) {
           style={{ width: '24px', height: '24px' }}
           onClick={async () => {
             const rowDoc = await fetchDoc (rowData)
-            console.log(rowData, "***************rowData****************", rowDoc)
+            //console.log(rowData, "***************rowData****************", rowDoc)
             setTicDocDialog(rowDoc)
             setDocTip("UPDATE")
             setTicDocobj(rowDoc.docobj)
