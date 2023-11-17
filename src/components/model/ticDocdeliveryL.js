@@ -7,8 +7,8 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
-import TicDocpayment from './ticDocpayment';
+import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
+import TicDocdelivery from './ticDocdelivery';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -16,21 +16,26 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicDocpaymentL(props) {
+export default function TicDocdeliveryL(props) {
 
-  const objName = "tic_docpayment"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicDocpayment = EmptyEntities[objName]
+  const objName = "tic_docdelivery"
+  const objPar = "cmn_par"
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
+  const emptyTicDocdelivery = EmptyEntities[objName]
+  const emptyPar = EmptyEntities[objPar]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticDocpayments, setTicDocpayments] = useState([]);
-  const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
+  const [ticDocdeliverys, setTicDocdeliverys] = useState([]);
+  const [ticDocdelivery, setTicDocdelivery] = useState(emptyTicDocdelivery);
+  const [cmnPar, setCmnPar] = useState(emptyPar);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [docpaymentTip, setDocpaymentTip] = useState('');
+  const [docdeliveryTip, setDocdeliveryTip] = useState('');
+  const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);
   let i = 0
+  
   const handleCancelClick = () => {
     props.setTicPaymentLVisible(false);
   };
@@ -40,9 +45,9 @@ export default function TicDocpaymentL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticDocpaymentService = new TicDocpaymentService();
-          const data = await ticDocpaymentService.getLista();
-          setTicDocpayments(data);
+          const ticDocdeliveryService = new TicDocdeliveryService();
+          const data = await ticDocdeliveryService.getLista();
+          setTicDocdeliverys(data);
 
           initFilters();
         }
@@ -63,43 +68,43 @@ export default function TicDocpaymentL(props) {
     selRow.forEach((row) => {
       //console.log("*-*-*************row.row.classList*************-*", row.classList)
       row.classList.remove('p-selectable-row');
-    });   
+    });
 
     //console.log(rowData.docvr == '1683550594276921344', "****************rowData************************", rowData)
-    return rowData.docvr == '1683550594276921344'
+    return rowData.doc == '1683550594276921344'
       ? 'highlight-row-blue'
       : rowData.docvr == '1683550132932841472'
-      ? 'highlight-row-green'
-      : '';
+        ? 'highlight-row-green'
+        : '';
   };
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticDocpayments = [...ticDocpayments];
-    let _ticDocpayment = { ...localObj.newObj.obj };
+    let _ticDocdeliverys = [...ticDocdeliverys];
+    let _ticDocdelivery = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.docpaymentTip === "CREATE") {
-      _ticDocpayments.push(_ticDocpayment);
-    } else if (localObj.newObj.docpaymentTip === "UPDATE") {
+    if (localObj.newObj.docdeliveryTip === "CREATE") {
+      _ticDocdeliverys.push(_ticDocdelivery);
+    } else if (localObj.newObj.docdeliveryTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticDocpayments[index] = _ticDocpayment;
-    } else if ((localObj.newObj.docpaymentTip === "DELETE")) {
-      _ticDocpayments = ticDocpayments.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocpayment Delete', life: 3000 });
+      _ticDocdeliverys[index] = _ticDocdelivery;
+    } else if ((localObj.newObj.docdeliveryTip === "DELETE")) {
+      _ticDocdeliverys = ticDocdeliverys.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocpayment ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docpaymentTip}`, life: 3000 });
-    setTicDocpayments(_ticDocpayments);
-    setTicDocpayment(emptyTicDocpayment);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docdeliveryTip}`, life: 3000 });
+    setTicDocdeliverys(_ticDocdeliverys);
+    setTicDocdelivery(emptyTicDocdelivery);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticDocpayments.length; i++) {
-      if (ticDocpayments[i].id === id) {
+    for (let i = 0; i < ticDocdeliverys.length; i++) {
+      if (ticDocdeliverys[i].id === id) {
         index = i;
         break;
       }
@@ -109,11 +114,11 @@ export default function TicDocpaymentL(props) {
   };
 
   const openNew = () => {
-    setTicDocpaymentDialog(emptyTicDocpayment);
+    setTicDocdeliveryDialog(emptyTicDocdelivery);
   };
 
   const onRowSelect = (event) => {
-    //ticDocpayment.begda = event.data.begda
+    //ticDocdelivery.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -140,16 +145,16 @@ export default function TicDocpaymentL(props) {
       },
       code: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       text: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      }
     });
     setGlobalFilterValue("");
   };
@@ -207,17 +212,17 @@ export default function TicDocpaymentL(props) {
   };
 
   // <--- Dialog
-  const setTicDocpaymentDialog = (ticDocpayment) => {
+  const setTicDocdeliveryDialog = (ticDocdelivery) => {
     setVisible(true)
-    setDocpaymentTip("CREATE")
-    setTicDocpayment({ ...ticDocpayment });
+    setDocdeliveryTip("CREATE")
+    setTicDocdelivery({ ...ticDocdelivery });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const docpaymentTemplate = (rowData) => {
+  const docdeliveryTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -226,8 +231,8 @@ export default function TicDocpaymentL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicDocpaymentDialog(rowData)
-            setDocpaymentTip("UPDATE")
+            setTicDocdeliveryDialog(rowData)
+            setDocdeliveryTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -243,9 +248,9 @@ export default function TicDocpaymentL(props) {
         dataKey="id"
         rowClassName={rowClass}
         selectionMode="single"
-        selection={ticDocpayment}
+        selection={ticDocdelivery}
         loading={loading}
-        value={ticDocpayments}
+        value={ticDocdeliverys}
         header={header}
         showGridlines
         removableSort
@@ -258,38 +263,73 @@ export default function TicDocpaymentL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicDocpayment(e.value)}
+        onSelectionChange={(e) => setTicDocdelivery(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={docpaymentTemplate}
+          body={docdeliveryTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cpaymenttp"
-          header={translations[selectedLanguage].Code}
+          field="doc"
+          header={translations[selectedLanguage].Transaction}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="cpar"
+          header={translations[selectedLanguage].cpar}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="npar"
+          header={translations[selectedLanguage].npar}
           sortable
           filter
           style={{ width: "25%" }}
         ></Column>
         <Column
-          field="npaymenttp"
-          header={translations[selectedLanguage].Text}
-          sortable
-          filter
-          style={{ width: "45%" }}
-        ></Column>
-        <Column
-          field="amount"
-          header={translations[selectedLanguage].Amount}
+          field="delivery_adress"
+          header={translations[selectedLanguage].delivery_adress}
           sortable
           filter
           style={{ width: "20%" }}
-        ></Column>  
+        ></Column>
+        <Column
+          field="dat"
+          header={translations[selectedLanguage].dat}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="potrazuje"
+          header={translations[selectedLanguage].potrazuje}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="ncourier"
+          header={translations[selectedLanguage].ncourier}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="parent"
+          header={translations[selectedLanguage].parent}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Payment}
@@ -301,14 +341,16 @@ export default function TicDocpaymentL(props) {
         }}
       >
         {showMyComponent && (
-          <TicDocpayment
+          <TicDocdelivery
             parameter={"inputTextValue"}
-            ticDocpayment={ticDocpayment}
+            ticDocdelivery={ticDocdelivery}
             ticDoc={props.ticDoc}
+            cmnPar={cmnPar}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
+            setTicDocdeliveryVisible={setTicDocdeliveryVisible}
             dialog={true}
-            docpaymentTip={docpaymentTip}
+            docdeliveryTip={docdeliveryTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

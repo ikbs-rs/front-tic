@@ -574,6 +574,7 @@ export default function TicEventattsL(props) {
                 />
                 <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '25%' }}></Column>
+                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable filter style={{ width: '25%' }}></Column>
                 <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter style={{ width: '10%' }}></Column>
                 <Column

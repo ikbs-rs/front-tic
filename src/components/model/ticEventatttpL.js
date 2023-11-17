@@ -8,35 +8,35 @@ import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import './index.css';
-import { TicEventattService } from "../../service/model/TicEventattService";
-import TicEventatt from './ticEventatt';
+import { TicEventatttpService } from "../../service/model/TicEventatttpService";
+import TicEventatttp from './ticEventatttp';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
 
-export default function TicEventattL(props) {
+export default function TicEventatttpL(props) {
   let i = 0
-  const objName = "tic_eventatt"
+  const objName = "tic_eventatttp"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventatt = EmptyEntities[objName]
+  const emptyTicEventatttp = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventatts, setTicEventatts] = useState([]);
-  const [ticEventatt, setTicEventatt] = useState(emptyTicEventatt);
+  const [ticEventatttps, setTicEventatttps] = useState([]);
+  const [ticEventatttp, setTicEventatttp] = useState(emptyTicEventatttp);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventattTip, setEventattTip] = useState('');
+  const [eventatttpTip, setEventatttpTip] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
         if (i<2) {  
-        const ticEventattService = new TicEventattService();
-        const data = await ticEventattService.getLista();
-        setTicEventatts(data);
+        const ticEventatttpService = new TicEventatttpService();
+        const data = await ticEventatttpService.getTicEventatttps();
+        setTicEventatttps(data);
         initFilters();
         }
       } catch (error) {
@@ -50,31 +50,31 @@ export default function TicEventattL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticEventatts = [...ticEventatts];
-    let _ticEventatt = { ...localObj.newObj.obj };
+    let _ticEventatttps = [...ticEventatttps];
+    let _ticEventatttp = { ...localObj.newObj.obj };
 
     //setSubmitted(true);
-    if (localObj.newObj.eventattTip === "CREATE") {
-      _ticEventatts.push(_ticEventatt);
-    } else if (localObj.newObj.eventattTip === "UPDATE") {
+    if (localObj.newObj.eventatttpTip === "CREATE") {
+      _ticEventatttps.push(_ticEventatttp);
+    } else if (localObj.newObj.eventatttpTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventatts[index] = _ticEventatt;
-    } else if ((localObj.newObj.eventattTip === "DELETE")) {
-      _ticEventatts = ticEventatts.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatt Delete', life: 3000 });
+      _ticEventatttps[index] = _ticEventatttp;
+    } else if ((localObj.newObj.eventatttpTip === "DELETE")) {
+      _ticEventatttps = ticEventatttps.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatttp Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatt ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventatttp ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventattTip}`, life: 3000 });
-    setTicEventatts(_ticEventatts);
-    setTicEventatt(emptyTicEventatt);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventatttpTip}`, life: 3000 });
+    setTicEventatttps(_ticEventatttps);
+    setTicEventatttp(emptyTicEventatttp);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventatts.length; i++) {
-      if (ticEventatts[i].id === id) {
+    for (let i = 0; i < ticEventatttps.length; i++) {
+      if (ticEventatttps[i].id === id) {
         index = i;
         break;
       }
@@ -84,7 +84,7 @@ export default function TicEventattL(props) {
   };
 
   const openNew = () => {
-    setTicEventattDialog(emptyTicEventatt);
+    setTicEventatttpDialog(emptyTicEventatttp);
   };
 
   const onRowSelect = (event) => {
@@ -142,7 +142,7 @@ export default function TicEventattL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1" />
-        <b>{translations[selectedLanguage].EventAttsList}</b>
+        <b>{translations[selectedLanguage].EventatttpList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -194,10 +194,10 @@ export default function TicEventattL(props) {
   };
 
   // <--- Dialog
-  const setTicEventattDialog = (ticEventatt) => {
+  const setTicEventatttpDialog = (ticEventatttp) => {
     setVisible(true)
-    setEventattTip("CREATE")
-    setTicEventatt({ ...ticEventatt });
+    setEventatttpTip("CREATE")
+    setTicEventatttp({ ...ticEventatttp });
   }
   //  Dialog --->
 
@@ -213,8 +213,8 @@ export default function TicEventattL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventattDialog(rowData)
-            setEventattTip("UPDATE")
+            setTicEventatttpDialog(rowData)
+            setEventatttpTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -229,9 +229,9 @@ export default function TicEventattL(props) {
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventatt}
+        selection={ticEventatttp}
         loading={loading}
-        value={ticEventatts}
+        value={ticEventatttps}
         header={header}
         showGridlines
         removableSort
@@ -239,14 +239,14 @@ export default function TicEventattL(props) {
         scrollable
         sortField="code"        
         sortOrder={1}
-        scrollHeight="650px"
-        //virtualScrollerOptions={{ itemSize: 46 }}
+        scrollHeight="750px"
+        virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
-        rows={50}
+        rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventatt(e.value)}
+        onSelectionChange={(e) => setTicEventatttp(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
@@ -262,29 +262,15 @@ export default function TicEventattL(props) {
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "10%" }}
+          style={{ width: "25%" }}
         ></Column>
         <Column
-          field="text"
+          field="textx"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "55%" }}
+          style={{ width: "60%" }}
         ></Column>
-        <Column
-          field="ntp"
-          header={translations[selectedLanguage].ntp}
-          sortable
-          filter
-          style={{ width: "55%" }}
-        ></Column>        
-        <Column
-          field="ddlist"
-          header={translations[selectedLanguage].ddlist}
-          sortable
-          filter
-          style={{ width: "25%" }}
-        ></Column>        
         <Column
           field="valid"
           filterField="valid"
@@ -293,13 +279,13 @@ export default function TicEventattL(props) {
           sortable
           filter
           filterElement={validFilterTemplate}
-          style={{ width: "10%" }}
+          style={{ width: "15%" }}
           bodyClassName="text-center"
           body={validBodyTemplate}
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].EventAtt}
+        header={translations[selectedLanguage].Eventatttp}
         visible={visible}
         style={{ width: '50%' }}
         onHide={() => {
@@ -308,13 +294,13 @@ export default function TicEventattL(props) {
         }}
       >
         {showMyComponent && (
-          <TicEventatt
+          <TicEventatttp
             parameter={"inputTextValue"}
-            ticEventatt={ticEventatt}
+            ticEventatttp={ticEventatttp}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventattTip={eventattTip}
+            eventatttpTip={eventatttpTip}
           />
         )}
       </Dialog>

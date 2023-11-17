@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
+import { TicEventatttpService } from '../../service/model/TicEventatttpService';
 import { TicEventattService } from '../../service/model/TicEventattService';
 import './index.css';
 import { InputText } from 'primereact/inputtext';
@@ -21,6 +22,11 @@ const TicEventatt = (props) => {
     const [ddCmnInputtps, setDdCmnInputtpItems] = useState(null);
     const [cmnInputtpItem, setCmnInputtpItem] = useState(null);
     const [cmnInputtpItems, setCmnInputtpItems] = useState(null);
+
+    const [ddTicEventatttpItem, setDdTicEventatttpItem] = useState(null);
+    const [ddTicEventatttpItems, setDdTicEventatttpItems] = useState(null);
+    const [ticEventatttpItem, setTicEventatttpItem] = useState(null);
+    const [ticEventatttpItems, setTicEventatttpItems] = useState(null);
 
     const toast = useRef(null);
     const items = [
@@ -47,6 +53,32 @@ const TicEventatt = (props) => {
                     setCmnInputtpItem(foundItem || null);
                     ticEventatt.ctp = foundItem.code;
                     ticEventatt.ntp = foundItem.textx;
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticEventatttpService = new TicEventatttpService();
+                const data = await ticEventatttpService.getTicEventatttps();
+
+                setTicEventatttpItems(data)
+                //console.log("******************", ticEventatttpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicEventatttpItems(dataDD);
+                setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
+                if (props.ticEventatt.tp) {
+                    const foundItem = data.find((item) => item.id === props.ticEventatt.tp);
+                    setTicEventatttpItem(foundItem || null);
+                    ticEventatt.ctp = foundItem.code
+                    ticEventatt.ntp = foundItem.textx
                 }
             } catch (error) {
                 console.error(error);
@@ -133,6 +165,12 @@ const TicEventatt = (props) => {
                 setDdCmnInputtpItem(e.value);
                 ticEventatt.cinputtp = e.value.code;
                 ticEventatt.ninputtp = e.value.name;
+            } else if (name == "tp") {
+                setDdTicEventatttpItem(e.value);
+                const foundItem = ticEventatttpItems.find((item) => item.id === val);
+                setTicEventatttpItem(foundItem || null);
+                ticEventatt.ntp = e.value.name
+                ticEventatt.ctp = foundItem.code
             } else {
                 setDropdownItem(e.value);
             }
@@ -167,6 +205,19 @@ const TicEventatt = (props) => {
                             <InputText id="textx" value={ticEventatt.textx} onChange={(e) => onInputChange(e, 'text', 'textx')} required className={classNames({ 'p-invalid': submitted && !ticEventatt.textx })} />
                             {submitted && !ticEventatt.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+                            <Dropdown id="tp"
+                                value={ddTicEventatttpItem}
+                                options={ddTicEventatttpItems}
+                                onChange={(e) => onInputChange(e, "options", 'tp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEventatt.tp })}
+                            />
+                            {submitted && !ticEventatt.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                         <div className="field col-12 md:col-6">
                             <label htmlFor="inputtp">{translations[selectedLanguage].inputtp} *</label>
                             <Dropdown
@@ -183,12 +234,12 @@ const TicEventatt = (props) => {
                         </div>
                         <div className="field col-12 md:col-6">
                             <label htmlFor="ddlist">{translations[selectedLanguage].ddlist}</label>
-                            <InputText 
-                                id="ddlist" 
-                                value={ticEventatt.ddlist} 
-                                onChange={(e) => onInputChange(e, 'text', 'ddlist')} 
-                                />
-                        </div>                        
+                            <InputText
+                                id="ddlist"
+                                value={ticEventatt.ddlist}
+                                onChange={(e) => onInputChange(e, 'text', 'ddlist')}
+                            />
+                        </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">

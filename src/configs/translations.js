@@ -691,6 +691,14 @@ export const translations = {
         datdelivery: "Датум испоруке",  
         note: "Напомена",
         parent: "Надређена",
+        ncourier: "Курир",
+        potrazuje: "Износ",
+        Eventatt_type: "Тип поставке",
+        ntp: "Тип",
+        ForDelivery: "За испоруку",
+        InDelivery: "У испоруци",
+        Paid: "Плаћено",
+        Canceled: "Одуста",
     }
   };
   

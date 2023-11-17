@@ -2,18 +2,18 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class TicDocdeliveryService {
+export class TicEventatttpService {
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/docdelivery/_v/lista/?stm=tic_docdelivery_v&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/_v/lista/?stm=tic_eventatttp_v&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
 
     try {
-      //console.log("**********TicDocService*************",url)
       const response = await axios.get(url, { headers });
+      //console.log("KKKKKKK", url, response)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -21,9 +21,9 @@ export class TicDocdeliveryService {
     }
   }
 
-  async getTicDocdeliverys() {
+  async getTicEventatttps() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/docdelivery/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -38,14 +38,14 @@ export class TicDocdeliveryService {
     }
   }
 
-  async getTicDocdelivery(objId) {
+  async getTicEventatttp(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/docdelivery/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
-    
+
     try {
       const response = await axios.get(url, { headers });
       return response.data.items;
@@ -56,24 +56,23 @@ export class TicDocdeliveryService {
   }
 
 
-  async postTicDocdelivery(newObj) {
+  async postTicEventatttp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.courier  === null|| newObj.delivery_adress === null) {
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/docdelivery/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log(url, "**************"  , jsonObj, "****************")
       const response = await axios.post(url, jsonObj, { headers });
-      
+      //console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -82,22 +81,21 @@ export class TicDocdeliveryService {
 
   }
 
-  async putTicDocdelivery(newObj) {
+  async putTicEventatttp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.courier  === null|| newObj.delivery_adress === null) {
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
         throw new Error(
           "Items must be filled!"
         );
       }
-      const url = `${env.TIC_BACK_URL}/tic/docdelivery/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log(url, "**************"  , jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -108,9 +106,9 @@ export class TicDocdeliveryService {
 
   }
 
-  async deleteTicDocdelivery(newObj) {
+  async deleteTicEventatttp(newObj) {
     try {
-      const url = `${env.TIC_BACK_URL}/tic/docdelivery/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token
@@ -123,23 +121,5 @@ export class TicDocdeliveryService {
     }
 
   }
-
-  async getTicListaByItem(tab, route, view, item, objId) {
-    
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
-
-    try {
-      const response = await axios.get(url, { headers });
-      return response.data.item;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-  
 }
+

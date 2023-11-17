@@ -18,6 +18,7 @@ import Privilege from './components/model/ticPrivilegeL';
 import Doc from './components/model/ticDocL';
 import DocTp from './components/model/ticDoctpL';
 import DocVr from './components/model/ticDocvrL';
+import EventAtttp from './components/model/ticEventatttpL';
 import EventAtt from './components/model/ticEventattL';
 import EventCtg from './components/model/ticEventctgL';
 import EventTP from './components/model/ticEventtpL';
@@ -110,6 +111,7 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Eventctg, icon: 'pi pi-fw pi-th-large', to: '/eventctg' },
                         { label: translations[selectedLanguage].Event_type, icon: 'pi pi-fw pi-table', to: '/eventtp' },
+                        { label: translations[selectedLanguage].Eventatt_type, icon: 'pi pi-fw pi-table', to: '/eventatttp' },
                         { label: translations[selectedLanguage].Properties_event, icon: 'pi pi-fw pi-align-right', to: '/eventatt'  },
                         { label: translations[selectedLanguage].Agenda_type, icon: 'pi pi-fw pi-table' , to: '/agendatp'},
                         { label: translations[selectedLanguage].Agenda, icon: 'pi pi-fw pi-align-justify' , to: '/agenda'},
@@ -506,6 +508,7 @@ const App = () => {
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/eventtp" element={<EventTP />} />
                         <Route path="/eventctg" element={<EventCtg />} />
+                        <Route path="/eventatttp" element={<EventAtttp />} />
                         <Route path="/eventatt" element={<EventAtt />} />
                         <Route path="/agendatp" element={<AgendaTp />} />
                         <Route path="/agenda" element={<Agenda />} />

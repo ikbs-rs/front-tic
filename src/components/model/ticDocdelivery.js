@@ -22,9 +22,29 @@ const TicDocdelivery = (props) => {
     const [ddCmnSpedicijaItems, setDdCmnSpedicijaItems] = useState(null);
     const [cmnSpedicijaItem, setCmnSpedicijaItem] = useState(null);
     const [cmnSpedicijaItems, setCmnSpedicijaItems] = useState(null);
+    const [dropdownItem, setDropdownItem] = useState(null);
+    const [dropdownItems, setDropdownItems] = useState(null);
     const [dat, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.dat || DateFunction.currDate())));
     const [datdelivery, setDatdelivery] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.datdelivery || DateFunction.currDate())));
 
+    const statusItems = [
+        { name: `${translations[selectedLanguage].ForDelivery}`, code: '0' },
+        { name: `${translations[selectedLanguage].InDelivery}`, code: '1' },
+        { name: `${translations[selectedLanguage].Paid}`, code: '2' },
+        { name: `${translations[selectedLanguage].Canceled}`, code: '3' }
+    ];
+
+    useEffect(() => {
+        setDropdownItem(findDropdownItemByCode(props.ticDocdelivery.status));
+    }, []);
+
+    useEffect(() => {
+        setDropdownItems(statusItems);
+    }, []);
+
+    const findDropdownItemByCode = (code) => {
+        return statusItems.find((item) => item.code === code) || null;
+    };    
 
     const calendarRef = useRef(null);
 
@@ -86,7 +106,7 @@ const TicDocdelivery = (props) => {
     const handleSaveClick = async () => {
         try {
             ticDocdelivery.dat = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(dat));
-            ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));            
+            ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));
             const ticDocdeliveryService = new TicDocdeliveryService();
 
             await ticDocdeliveryService.putTicDocdelivery(ticDocdelivery);
@@ -131,11 +151,15 @@ const TicDocdelivery = (props) => {
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdCmnSpedicijaItem(e.value);
-            const foundItem = cmnSpedicijaItems.find((item) => item.id === val);
-            setCmnSpedicijaItem(foundItem || null);
-            ticDocdelivery.text = e.value.name
-            ticDocdelivery.code = foundItem.code
+            if (name == "courier") {
+                setDdCmnSpedicijaItem(e.value);
+                const foundItem = cmnSpedicijaItems.find((item) => item.id === val);
+                setCmnSpedicijaItem(foundItem || null);
+                ticDocdelivery.text = e.value.name
+                ticDocdelivery.code = foundItem.code
+            } else {
+                setDropdownItem(e.value);
+            }
         } else if (type === "Calendar") {
             val = (e.target && e.target.value) || '';
             switch (name) {
@@ -177,10 +201,10 @@ const TicDocdelivery = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
                             <InputText id="npar"
-                                value={props.cmnPar.text}
+                                value={props.cmnPar.text || props.ticDocdelivery.npar}
                                 disabled={true}
                             />
-                        </div>                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -237,20 +261,25 @@ const TicDocdelivery = (props) => {
                                 onChange={(e) => onInputChange(e, "Calendar", 'datdelivery', this)}
                                 showIcon
                                 dateFormat="dd.mm.yy"
-                            />                            
-                        </div>
-                    </div>
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="status">{translations[selectedLanguage].status} *</label>
-                            <InputText
-                                id="status"
-                                value={ticDocdelivery.status} onChange={(e) => onInputChange(e, "text", 'status')}
                             />
                         </div>
+
+                    <div className="field col-12 md:col-3">
+                        <label htmlFor="status">{translations[selectedLanguage].status} *</label>
+                        <Dropdown id="status"
+                            value={dropdownItem}
+                            options={dropdownItems}
+                            onChange={(e) => onInputChange(e, "options", 'status')}
+                            required
+                            optionLabel="name"
+                            placeholder="Select One"
+                            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.status })}
+                        />
+                        {submitted && !ticDocdelivery.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                    </div>
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
+                        <div className="field col-12 md:col-12">
                             <label htmlFor="note">{translations[selectedLanguage].note} *</label>
                             <InputText
                                 id="note"
