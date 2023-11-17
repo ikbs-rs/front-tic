@@ -12,7 +12,7 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************",url)
+      //console.log("**********TicDocService*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -30,7 +30,7 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************",url)
+      //console.log("**********TicDocService*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -69,7 +69,7 @@ export class TicDocService {
 
     try {
       const response = await axios.get(url, { headers });
-      return response.data.item;
+      return response.data.item||response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
@@ -225,6 +225,24 @@ export class TicDocService {
       console.log(url, "***************url**************")
       const response = await axios.get(url, { headers });
       return response.data; // Očekujemo da će ovo vratiti objekat sa ključevima 'code' i 'text'
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async  getCmnParById(parId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const url = `${env.CMN_BACK_URL}/cmn/x/par/${parId}?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+  
+    try {
+      console.log(url, "***************url**************")
+      const response = await axios.get(url, { headers });
+      return response.data; 
     } catch (error) {
       console.error(error);
       throw error;

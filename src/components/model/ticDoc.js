@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicDocService } from "../../service/model/TicDocService";
+import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
 import { TicFunctionService } from "../../service/model/TicFunctionService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
@@ -18,15 +19,18 @@ import { Dialog } from 'primereact/dialog';
 import CmnParL from './remoteComponentContainer';
 import CmnPar from './remoteComponentContainer';
 import TicDocpaymentL from './ticDocpaymentL';
-import TicDocdeliveryL from './ticDocdeliveryL';
+import TicDocdelivery from './ticDocdelivery';
 import env from "../../configs/env"
 
 const TicDoc = (props) => {
-    console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************", props)
+    //console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************", props)
     const objName = "tic_docs"
+    const objDelivery = "tic_docdelivery"
     const domen = env.DOMEN
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicEvents = EmptyEntities[objName]
+    const emptyTicDelivery = EmptyEntities[objDelivery]
+    emptyTicDelivery.doc = props.ticDoc.id
     const [showMyComponent, setShowMyComponent] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
@@ -34,6 +38,7 @@ const TicDoc = (props) => {
     const [ticDoc, setTicDoc] = useState(props.ticDoc);
     const [ticDocs, setTicDocs] = useState(props.ticDocs);
     const [submitted, setSubmitted] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const [ddCmnCurrItem, setDdCmnCurrItem] = useState(null);
     const [ddCmnCurrItems, setDdCmnCurrItems] = useState(null);
@@ -44,14 +49,15 @@ const TicDoc = (props) => {
     const [cmnParVisible, setCmnParVisible] = useState(false);
     const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
     const [ticPayment, setTicPayment] = useState(null);
-    const [ticDocdeliveryLVisible, setTicDocdeliveryLVisible] = useState(false);
-    const [ticDocdelivery, setTicDocdelivery] = useState(null);
+    const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);
+    const [ticDocdelivery, setTicDocdelivery] = useState(emptyTicDelivery);
 
 
     const [date, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDoc.date || DateFunction.currDate())));
     const [tm, setTm] = useState(DateFunction.formatDatetime(props.ticDoc.tm || DateFunction.currDatetime()));
 
     const [docTip, setDocTip] = useState(props.docTip);
+    const [docdeliveryTip, setDocdeliveryTip] = useState(props.docTip);
 
     const toast = useRef(null);
     const items = [
@@ -96,8 +102,8 @@ const TicDoc = (props) => {
                 let _ticDoc = { ...ticDoc }
                 const ticFunctionService = new TicFunctionService();
                 const data = await ticFunctionService.getParpopust(props.ticDoc.usr);
-                _ticDoc.parpopust = data.value||0
-            
+                _ticDoc.parpopust = data.value || 0
+
                 setTicDoc(_ticDoc)
                 //console.log(data.value, "Rezultat getParpopust", props.ticDoc.usr, " ********************:", _ticDoc);
                 setShowMyComponent(true)
@@ -109,7 +115,31 @@ const TicDoc = (props) => {
             }
         }
         fetchData();
-    }, []);    
+    }, []);
+
+
+    async function fetchPar() {
+        try {
+            const ticDocService = new TicDocService();
+            const data = await ticDocService.getCmnParById(ticDoc.usr);
+            console.log(ticDoc.usr, "*-*-*************getCmnParById*************-*", data)
+            return data;
+        } catch (error) {
+            console.error(error);
+            // Obrada greške ako je potrebna
+        }
+    }
+    async function fetchDocdelivery() {
+        try {
+            const ticDocService = new TicDocService();
+            const data = await ticDocService.getTicListaByItem('docdelivery', 'listabynum', 'tic_docdelivery_v', 'aa.doc', ticDoc.id);
+            //console.log(ticDoc.usr, "*-*-*************getCmnParById*************-*", data)
+            return data;
+        } catch (error) {
+            console.error(error);
+            // Obrada greške ako je potrebna
+        }
+    }
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -118,6 +148,10 @@ const TicDoc = (props) => {
     useEffect(() => {
         setDropdownItems(items);
     }, []);
+
+    const handleDialogClose = (newObj) => {
+        const localObj = { newObj };
+    }
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -134,7 +168,7 @@ const TicDoc = (props) => {
             console.error("Greška pri pozivanju getParpopust funkcije:", error);
         }
     };
-    
+
     const handleParLClick = async () => {
         try {
             // const cmnParCode = ticDoc.cpar; // Pretpostavljamo da je ovde kod za cmnPar
@@ -196,12 +230,12 @@ const TicDoc = (props) => {
             ticDoc.date = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(date));
             ticDoc.tm = DateFunction.formatDateTimeToDBFormat(tm);
             const ticDocService = new TicDocService();
-            if (event=='CREATE') {
+            if (event == 'CREATE') {
                 const data = await ticDocService.postTicDoc(ticDoc);
                 ticDoc.id = data
                 props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             } else {
-                await ticDocService.putTicDoc(ticDoc); 
+                await ticDocService.putTicDoc(ticDoc);
             }
             setDocTip('UPDATE');
         } catch (err) {
@@ -231,7 +265,7 @@ const TicDoc = (props) => {
                 life: 5000,
             });
         }
-    }; 
+    };
 
     const handlePaymentClick = async (e) => {
         try {
@@ -247,9 +281,19 @@ const TicDoc = (props) => {
         }
     };
 
-    const handleDocdeliveryLClick = async (e) => {
+    const handleDocdeliveryClick = async (e) => {
         try {
-            setTicDocdeliveryLVisible(true);
+            const rowPar = await fetchPar()
+            setCmnPar(rowPar.item)
+            const rowDocdelivery = await fetchDocdelivery()
+            console.log(rowPar, "***************rowDocdelivery************rowPar****", rowDocdelivery)
+            if (rowDocdelivery && rowDocdelivery.length > 0) {
+                setDocdeliveryTip("UPDATE");
+                setTicDocdelivery(rowDocdelivery[0])
+            } else {
+                setDocdeliveryTip("CREATE");
+            }
+            setTicDocdeliveryVisible(true);
         } catch (error) {
             console.error(error);
             toast.current.show({
@@ -322,7 +366,7 @@ const TicDoc = (props) => {
         setDeleteDialogVisible(false);
     };
 
-    
+
     const handleCmnParLDialogClose = async (newObj) => {
         if (newObj?.id) {
             setCmnPar(newObj);
@@ -333,8 +377,8 @@ const TicDoc = (props) => {
 
             const ticFunctionService = new TicFunctionService();
             const data = await ticFunctionService.getParpopust(newObj.id);
-            _ticDoc.parpopust = data.value||0
-            
+            _ticDoc.parpopust = data.value || 0
+
             setTicDoc(_ticDoc)
             // Ovde možete da obradite rezultat dobijen iz getParpopust funkcije
             console.log("Rezultat getParpopust:", data);
@@ -349,11 +393,11 @@ const TicDoc = (props) => {
     const handleTicPaymentLDialogClose = (newObj) => {
         setTicPayment(newObj);
         setTicPaymentLVisible(false)
-    };    
-    const handleTicDocdeliveryLDialogClose = (newObj) => {
+    };
+    const handleTicDocdeliveryDialogClose = (newObj) => {
         setTicDocdelivery(newObj);
-        setTicDocdeliveryLVisible(false)
-    }; 
+        setTicDocdeliveryVisible(false)
+    };
     // <--- Dialog
     const setCmnParLDialog = () => {
         setCmnParLVisible(true)
@@ -365,10 +409,10 @@ const TicDoc = (props) => {
 
     const setTicPaymentLDialog = () => {
         setTicPaymentLVisible(true)
-    }   
-    const setTicDocdeliveryLDialog = () => {
-        setTicDocdeliveryLVisible(true)
-    }      
+    }
+    const setTicDocdeliveryDialog = () => {
+        setTicDocdeliveryVisible(true)
+    }
     //  Dialog --->
     return (
         <div className="grid">
@@ -540,30 +584,30 @@ const TicDoc = (props) => {
                             ) : null}
                             {(docTip !== 'CREATE') ? (
                                 <>
-                                <Button
-                                    label={translations[selectedLanguage].Save}
-                                    icon="pi pi-check"
-                                    onClick={handleSaveClick}
-                                    severity="success"
-                                    outlined
-                                />
-                                <Button
-                                    label={translations[selectedLanguage].Payment}
-                                    icon="pi pi-check"
-                                    className="p-button-warning"
-                                    onClick={handlePaymentClick}
-                                    severity="success"
-                                    outlined
-                                />
-                                <Button
-                                    label={translations[selectedLanguage].Delivery}
-                                    icon="pi pi-check"
-                                    className="p-button-warning"
-                                    onClick={handleDocdeliveryLClick}
-                                    severity="success"
-                                    outlined
-                                />                                
-                                </>                                
+                                    <Button
+                                        label={translations[selectedLanguage].Save}
+                                        icon="pi pi-check"
+                                        onClick={handleSaveClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].Payment}
+                                        icon="pi pi-check"
+                                        className="p-button-warning"
+                                        onClick={handlePaymentClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].Delivery}
+                                        icon="pi pi-check"
+                                        className="p-button-warning"
+                                        onClick={handleDocdeliveryClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                </>
                             ) : null}
                             {(docTip == 'CREATE') ? (
                                 <Button
@@ -575,13 +619,13 @@ const TicDoc = (props) => {
                                 />
                             ) : (
                                 <Button
-                                label={translations[selectedLanguage].SaveSt}
-                                icon="pi pi-check"
-                                onClick={() => handleNextClick('UPDATE')}
-                                severity="success"
-                                outlined
+                                    label={translations[selectedLanguage].SaveSt}
+                                    icon="pi pi-check"
+                                    onClick={() => handleNextClick('UPDATE')}
+                                    severity="success"
+                                    outlined
                                 />
-                            )}                            
+                            )}
                         </div>
                     </div>
                 </div>
@@ -660,13 +704,13 @@ const TicDoc = (props) => {
             >
                 {cmnParVisible && (
                     <CmnPar
-                        remoteUrl= {`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        remoteUrl={`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
                         queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${domen}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParDialogClose}
                         originUrl={`${domen}`}
                     />
                 )}
-            </Dialog>     
+            </Dialog>
             <Dialog
                 header={translations[selectedLanguage].PaymentList}
                 visible={ticPaymentLVisible}
@@ -686,27 +730,32 @@ const TicDoc = (props) => {
                         lookUp={true}
                     />
                 )}
-            </Dialog>     
+            </Dialog>
             <Dialog
-                header={translations[selectedLanguage].DocdeliveryList}
-                visible={ticDocdeliveryLVisible}
+                header={translations[selectedLanguage].Docdelivery}
+                visible={ticDocdeliveryVisible}
                 style={{ width: '90%' }}
                 onHide={() => {
-                    setTicDocdeliveryLVisible(false);
+                    setTicDocdeliveryVisible(false);
                     setShowMyComponent(false);
                 }}
             >
-                {ticDocdeliveryLVisible && (
-                    <TicDocdeliveryL
+                {ticDocdeliveryVisible && (
+                    <TicDocdelivery
                         parameter={"inputTextValue"}
                         ticDoc={ticDoc}
-                        handleTicDocdeliveryLDialogClose={handleTicDocdeliveryLDialogClose}
-                        setTicDocdeliveryLVisible={setTicDocdeliveryLVisible}
+                        cmnPar={cmnPar}
+                        docdeliveryTip={docdeliveryTip}
+                        ticDocdelivery={ticDocdelivery}
+                        handleDialogClose={handleDialogClose}
+                        handleTicDocdeliveryDialogClose={handleTicDocdeliveryDialogClose}
+                        setTicDocdeliveryVisible={setTicDocdeliveryVisible}
                         dialog={true}
                         lookUp={true}
+                        setVisible={setVisible}
                     />
                 )}
-            </Dialog>                       
+            </Dialog>
         </div>
     );
 };

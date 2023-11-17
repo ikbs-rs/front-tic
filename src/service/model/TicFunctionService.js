@@ -13,7 +13,7 @@ export class TicFunctionService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(response.data.item, "****************************************************99999999999999999")
+      //console.log(response.data.item, "****************************************************99999999999999999")
       return response.data.item[0];
     } catch (error) {
       console.error(error);

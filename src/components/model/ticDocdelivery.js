@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
-import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
+import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
+import { TicDocService } from "../../service/model/TicDocService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -8,17 +9,42 @@ import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from "primereact/calendar";
+import DateFunction from "../../utilities/DateFunction"
 
-const TicDocpayment = (props) => {
-console.log(props, "*******************TicDocpayment***********************")
+const TicDocdelivery = (props) => {
+    //console.log(props, "*******************TicDocdelivery***********************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [ticDocpayment, setTicDocpayment] = useState(props.ticDocpayment);
+    const [ticDocdelivery, setTicDocdelivery] = useState(props.ticDocdelivery);
     const [submitted, setSubmitted] = useState(false);
-    const [ddCmnPaymenttpItem, setDdCmnPaymenttpItem] = useState(null);
-    const [ddCmnPaymenttpItems, setDdCmnPaymenttpItems] = useState(null);
-    const [cmnPaymenttpItem, setCmnPaymenttpItem] = useState(null);
-    const [cmnPaymenttpItems, setCmnPaymenttpItems] = useState(null);
+    const [ddCmnSpedicijaItem, setDdCmnSpedicijaItem] = useState(null);
+    const [ddCmnSpedicijaItems, setDdCmnSpedicijaItems] = useState(null);
+    const [cmnSpedicijaItem, setCmnSpedicijaItem] = useState(null);
+    const [cmnSpedicijaItems, setCmnSpedicijaItems] = useState(null);
+    const [dropdownItem, setDropdownItem] = useState(null);
+    const [dropdownItems, setDropdownItems] = useState(null);
+    const [dat, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.dat || DateFunction.currDate())));
+    const [datdelivery, setDatdelivery] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.datdelivery || DateFunction.currDate())));
+
+    const statusItems = [
+        { name: `${translations[selectedLanguage].ForDelivery}`, code: '0' },
+        { name: `${translations[selectedLanguage].InDelivery}`, code: '1' },
+        { name: `${translations[selectedLanguage].Paid}`, code: '2' },
+        { name: `${translations[selectedLanguage].Canceled}`, code: '3' }
+    ];
+
+    useEffect(() => {
+        setDropdownItem(findDropdownItemByCode(props.ticDocdelivery.status));
+    }, []);
+
+    useEffect(() => {
+        setDropdownItems(statusItems);
+    }, []);
+
+    const findDropdownItemByCode = (code) => {
+        return statusItems.find((item) => item.code === code) || null;
+    };    
 
     const calendarRef = useRef(null);
 
@@ -27,19 +53,18 @@ console.log(props, "*******************TicDocpayment***********************")
     useEffect(() => {
         async function fetchData() {
             try {
-                const ticDocpaymentService = new TicDocpaymentService();
-                const data = await ticDocpaymentService.getCmnPaymenttps();
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getTicListaByItem('docdelivery', 'listabytxt', 'cmn_spedicija_v', 'aa.code', 'SHP');
 
-                setCmnPaymenttpItems(data)
-                //console.log("******************", cmnPaymenttpItem)
+                setCmnSpedicijaItems(data)
 
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdCmnPaymenttpItems(dataDD);
-                setDdCmnPaymenttpItem(dataDD.find((item) => item.code === props.ticDocpayment.paymenttp) || null);
-                if (props.ticDocpayment.paymenttp) {
-                    const foundItem = data.find((item) => item.id === props.ticDocpayment.paymenttp);
-                    setCmnPaymenttpItem(foundItem || null);
-                    ticDocpayment.begda = foundItem.begda
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                setDdCmnSpedicijaItems(dataDD);
+                setDdCmnSpedicijaItem(dataDD.find((item) => item.code === props.ticDocdelivery.courier) || null);
+                if (props.ticDocdelivery.courier) {
+                    const foundItem = data.find((item) => item.id === props.ticDocdelivery.courier);
+                    setCmnSpedicijaItem(foundItem || null);
+                    //ticDocdelivery.begda = foundItem.begda
                 }
 
             } catch (error) {
@@ -53,22 +78,25 @@ console.log(props, "*******************TicDocpayment***********************")
 
     const handleCancelClick = () => {
         props.setVisible(false);
+        props.setTicDocdeliveryVisible(false)
     };
 
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            setSubmitted(true);
+            ticDocdelivery.dat = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(dat));
+            ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));
 
-            const ticDocpaymentService = new TicDocpaymentService();
-            const data = await ticDocpaymentService.postTicDocpayment(ticDocpayment);
-            ticDocpayment.id = data
-            props.handleDialogClose({ obj: ticDocpayment, docpaymentTip: props.docpaymentTip });
+            const ticDocdeliveryService = new TicDocdeliveryService();
+            const data = await ticDocdeliveryService.postTicDocdelivery(ticDocdelivery);
+            ticDocdelivery.id = data
+            props.handleDialogClose({ obj: ticDocdelivery, docdeliveryTip: props.docdeliveryTip });
             props.setVisible(false);
+            props.setTicDocdeliveryVisible(false)
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicDocpayment ",
+                summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -77,15 +105,18 @@ console.log(props, "*******************TicDocpayment***********************")
 
     const handleSaveClick = async () => {
         try {
-            const ticDocpaymentService = new TicDocpaymentService();
+            ticDocdelivery.dat = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(dat));
+            ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));
+            const ticDocdeliveryService = new TicDocdeliveryService();
 
-            await ticDocpaymentService.putTicDocpayment(ticDocpayment);
-            props.handleDialogClose({ obj: ticDocpayment, docpaymentTip: props.docpaymentTip });
+            await ticDocdeliveryService.putTicDocdelivery(ticDocdelivery);
+            props.handleDialogClose({ obj: ticDocdelivery, docdeliveryTip: props.docdeliveryTip });
             props.setVisible(false);
+            props.setTicDocdeliveryVisible(false)
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicDocpayment ",
+                summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
@@ -99,39 +130,55 @@ console.log(props, "*******************TicDocpayment***********************")
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
-            const ticDocpaymentService = new TicDocpaymentService();
-            await ticDocpaymentService.deleteTicDocpayment(ticDocpayment);
-            props.handleDialogClose({ obj: ticDocpayment, docpaymentTip: 'DELETE' });
+            const ticDocdeliveryService = new TicDocdeliveryService();
+            await ticDocdeliveryService.deleteTicDocdelivery(ticDocdelivery);
+            props.handleDialogClose({ obj: ticDocdelivery, docdeliveryTip: 'DELETE' });
             props.setVisible(false);
             hideDeleteDialog();
+            props.setTicDocdeliveryVisible(false)
         } catch (err) {
             toast.current.show({
                 severity: "error",
-                summary: "TicDocpayment ",
+                summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
                 life: 5000,
             });
         }
     };
 
-    const   onInputChange = (e, type, name, a) => {
+    const onInputChange = (e, type, name, a) => {
         let val = ''
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdCmnPaymenttpItem(e.value);
-            const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
-            setCmnPaymenttpItem(foundItem || null);
-            ticDocpayment.text = e.value.name
-            ticDocpayment.code = foundItem.code
-            ticDocpayment.begda = foundItem.begda                        
+            if (name == "courier") {
+                setDdCmnSpedicijaItem(e.value);
+                const foundItem = cmnSpedicijaItems.find((item) => item.id === val);
+                setCmnSpedicijaItem(foundItem || null);
+                ticDocdelivery.text = e.value.name
+                ticDocdelivery.code = foundItem.code
+            } else {
+                setDropdownItem(e.value);
+            }
+        } else if (type === "Calendar") {
+            val = (e.target && e.target.value) || '';
+            switch (name) {
+                case "dat":
+                    setDate(e.value)
+                    break;
+                case "datdelivery":
+                    setDatdelivery(e.value)
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
         } else {
             val = (e.target && e.target.value) || '';
         }
-        let _ticDocpayment = { ...ticDocpayment };
-        _ticDocpayment[`${name}`] = val;
+        let _ticDocdelivery = { ...ticDocdelivery };
+        _ticDocdelivery[`${name}`] = val;
 
-        setTicDocpayment(_ticDocpayment);
+        setTicDocdelivery(_ticDocdelivery);
     };
 
     const hideDeleteDialog = () => {
@@ -147,45 +194,105 @@ console.log(props, "*******************TicDocpayment***********************")
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Transaction}</label>
                             <InputText id="code"
-                                value={props.ticDocpayment.id}
+                                value={props.ticDocdelivery.doc}
                                 disabled={true}
                             />
                         </div>
-                        {/* <div className="field col-12 md:col-7">
-                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-                            <InputText
-                                id="text"
-                                value={props.ticDocpayment.text}
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
+                            <InputText id="npar"
+                                value={props.cmnPar.text || props.ticDocdelivery.npar}
                                 disabled={true}
                             />
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             </div>
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-7">
-                            <label htmlFor="paymenttp">{translations[selectedLanguage].Paymenttp} *</label>
-                            <Dropdown id="paymenttp"
-                                value={ddCmnPaymenttpItem}
-                                options={ddCmnPaymenttpItems}
-                                onChange={(e) => onInputChange(e, "options", 'paymenttp')}
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="paymenttp">{translations[selectedLanguage].Courier} *</label>
+                            <Dropdown id="courier"
+                                value={ddCmnSpedicijaItem}
+                                options={ddCmnSpedicijaItems}
+                                onChange={(e) => onInputChange(e, "options", 'courier')}
                                 required
                                 optionLabel="name"
                                 placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !ticDocpayment.paymenttp })}
+                                className={classNames({ 'p-invalid': submitted && !ticDocdelivery.courier })}
                             />
-                            {submitted && !ticDocpayment.paymenttp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocdelivery.courier && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
-
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
+                        <div className="field col-12 md:col-8">
+                            <label htmlFor="delivery_adress">{translations[selectedLanguage].delivery_adress} *</label>
+                            <InputText
+                                id="delivery_adress"
+                                value={ticDocdelivery.delivery_adress || props.cmnPar.adress}
+                                onChange={(e) => onInputChange(e, "text", 'delivery_adress')}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="amount">{translations[selectedLanguage].Amount} *</label>
                             <InputText
                                 id="amount"
-                                value={ticDocpayment.amount} onChange={(e) => onInputChange(e, "text", 'amount')}
+                                value={ticDocdelivery.amount} onChange={(e) => onInputChange(e, "text", 'amount')}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="dat">{translations[selectedLanguage].dat} *</label>
+                            <Calendar
+                                value={dat}
+                                onChange={(e) => onInputChange(e, "Calendar", 'dat', this)}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
+                        </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="datdelivery">{translations[selectedLanguage].datdelivery} *</label>
+                            <Calendar
+                                value={datdelivery}
+                                onChange={(e) => onInputChange(e, "Calendar", 'datdelivery', this)}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
+                        </div>
+
+                    <div className="field col-12 md:col-3">
+                        <label htmlFor="status">{translations[selectedLanguage].status} *</label>
+                        <Dropdown id="status"
+                            value={dropdownItem}
+                            options={dropdownItems}
+                            onChange={(e) => onInputChange(e, "options", 'status')}
+                            required
+                            optionLabel="name"
+                            placeholder="Select One"
+                            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.status })}
+                        />
+                        {submitted && !ticDocdelivery.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                    </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-12">
+                            <label htmlFor="note">{translations[selectedLanguage].note} *</label>
+                            <InputText
+                                id="note"
+                                value={ticDocdelivery.note} onChange={(e) => onInputChange(e, "text", 'note')}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="parent">{translations[selectedLanguage].parent} *</label>
+                            <InputText
+                                id="parent"
+                                value={ticDocdelivery.parent} onChange={(e) => onInputChange(e, "text", 'parent')}
                             />
                         </div>
                     </div>
@@ -201,7 +308,7 @@ console.log(props, "*******************TicDocpayment***********************")
                         ) : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {(props.docpaymentTip === 'CREATE') ? (
+                            {(props.docdeliveryTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -210,7 +317,7 @@ console.log(props, "*******************TicDocpayment***********************")
                                     outlined
                                 />
                             ) : null}
-                            {(props.docpaymentTip !== 'CREATE') ? (
+                            {(props.docdeliveryTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -219,7 +326,7 @@ console.log(props, "*******************TicDocpayment***********************")
                                     outlined
                                 />
                             ) : null}
-                            {(props.docpaymentTip !== 'CREATE') ? (
+                            {(props.docdeliveryTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Save}
                                     icon="pi pi-check"
@@ -234,8 +341,8 @@ console.log(props, "*******************TicDocpayment***********************")
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
-                inTicDocpayment="delete"
-                item={ticDocpayment.roll}
+                inTicDocdelivery="delete"
+                item={ticDocdelivery.roll}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
@@ -243,4 +350,4 @@ console.log(props, "*******************TicDocpayment***********************")
     );
 };
 
-export default TicDocpayment;
+export default TicDocdelivery;

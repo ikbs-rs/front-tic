@@ -3,6 +3,25 @@ import env from '../../configs/env';
 import Token from '../../utilities/Token';
 
 export class TicEventattService {
+
+    async getLista(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/x/eventatt/_v/lista/?stm=tic_eventatt_v&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            //console.log("**********TicDocService*************",url)
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getTicEventatts() {
         const selectedLanguage = localStorage.getItem('sl') || 'en';
         const url = `${env.TIC_BACK_URL}/tic/x/eventatt/?sl=${selectedLanguage}`;

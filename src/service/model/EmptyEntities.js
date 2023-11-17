@@ -14,6 +14,24 @@ const EmptyEntities =
     "endtm": "",
     "valid": "1"
   },
+  "cmn_par": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "tp": null,
+    "text": "",
+    "short": "",
+    "address": "",
+    "place": "",
+    "postcode": "",
+    "tel": "",
+    "activity": "",
+    "pib": "",
+    "idnum": "",
+    "pdvnum": "",
+    "begda": "",
+    "endda": ""
+  },
   "tic_agendatp": {
     "id": null,
     "site": null,
@@ -279,16 +297,16 @@ const EmptyEntities =
     "doc2": null,
     "time": ""
   },
-	"tic_docdelivery ": {
+	"tic_docdelivery": {
 		"id": null,
 		"site": null,
 		"doc": null,
 		"courier": null,
 		"delivery_adress": "",
 		"amount": null,
-		"dat": "string",
+		"dat": "",
 		"datdelivery": "",
-		"status": "",
+		"status": "0",
     "note": "",
     "parent": null
 	},  
@@ -298,7 +316,8 @@ const EmptyEntities =
 			"doc": null,
 			"paymenttp": null,
 			"amount": null,
-			"bcontent": null
+			"bcontent": null,
+      "ccard": null
 	},  
   "tic_docs": {
     "id": null,
@@ -424,7 +443,14 @@ const EmptyEntities =
 			"eventart1": null,
 			"eventart2": null,
 			"tp": "A"
-	},  
+	},
+  "tic_eventatttp": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },  
   "tic_eventatt": {
     "id": null,
     "site": null,
