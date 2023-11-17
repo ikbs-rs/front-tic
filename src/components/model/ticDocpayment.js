@@ -20,6 +20,11 @@ console.log(props, "*******************TicDocpayment***********************")
     const [cmnPaymenttpItem, setCmnPaymenttpItem] = useState(null);
     const [cmnPaymenttpItems, setCmnPaymenttpItems] = useState(null);
 
+    const [ddCmnCcardItem, setDdCmnCcardItem] = useState(null);
+    const [ddCmnCcardItems, setDdCmnCcardItems] = useState(null);
+    const [cmnCcardItem, setCmnCcardItem] = useState(null);
+    const [cmnCcardItems, setCmnCcardItems] = useState(null);    
+
     const calendarRef = useRef(null);
 
     const toast = useRef(null);
@@ -49,6 +54,33 @@ console.log(props, "*******************TicDocpayment***********************")
         }
         fetchData();
     }, []);
+
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocpaymentService = new TicDocpaymentService();
+                const data = await ticDocpaymentService.getCmnCcards();
+
+                setCmnCcardItems(data)
+                //console.log("******************", cmnPaymenttpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdCmnCcardItems(dataDD);
+                setDdCmnCcardItem(dataDD.find((item) => item.code === props.ticDocpayment.ccard) || null);
+                if (props.ticDocpayment.ccard) {
+                    const foundItem = data.find((item) => item.id === props.ticDocpayment.ccard);
+                    setCmnCcardItem(foundItem || null);
+                    ticDocpayment.begda = foundItem.begda
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);    
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -119,12 +151,21 @@ console.log(props, "*******************TicDocpayment***********************")
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdCmnPaymenttpItem(e.value);
-            const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
-            setCmnPaymenttpItem(foundItem || null);
-            ticDocpayment.text = e.value.name
-            ticDocpayment.code = foundItem.code
-            ticDocpayment.begda = foundItem.begda                        
+            if (name == "paymenttp") {
+                setDdCmnPaymenttpItem(e.value);
+                const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
+                setCmnPaymenttpItem(foundItem || null);
+                // ticDocpayment.text = e.value.name
+                // ticDocpayment.code = foundItem.code
+                // ticDocpayment.begda = foundItem.begda  
+            } else if (name == "ccard") {
+                setDdCmnCcardItem(e.value);
+                const foundItem = cmnCcardItems.find((item) => item.id === val);
+                setCmnCcardItem(foundItem || null);                
+            // }else {
+            //     setDropdownItem(e.value);
+            }            
+                      
         } else {
             val = (e.target && e.target.value) || '';
         }
@@ -189,6 +230,21 @@ console.log(props, "*******************TicDocpayment***********************")
                             />
                         </div>
                     </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="ccard">{translations[selectedLanguage].ccard} *</label>
+                            <Dropdown id="ccard"
+                                value={ddCmnCcardItem}
+                                options={ddCmnCcardItems}
+                                onChange={(e) => onInputChange(e, "options", 'ccard')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticDocpayment.ccard })}
+                            />
+                            {submitted && !ticDocpayment.ccard && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>                    
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button

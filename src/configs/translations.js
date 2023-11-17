@@ -699,6 +699,7 @@ export const translations = {
         InDelivery: "У испоруци",
         Paid: "Плаћено",
         Canceled: "Одуста",
+        ccard: "Тип картице",
     }
   };
   

@@ -55,6 +55,23 @@ export class TicDocpaymentService {
         }
     }
 
+    async getCmnCcards() {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.CMN_BACK_URL}/cmn/x/ccard/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getTicDocpayment(objId) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/docpayment/${objId}/?sl=${selectedLanguage}`;
