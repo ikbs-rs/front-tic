@@ -14,12 +14,13 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
+import ConfirmDialog from '../dialog/ConfirmDialog';
 
 
 export default function TicEventlocL(props) {
 
   const objName = "tic_eventloc"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventloc = EmptyEntities[objName]
   emptyTicEventloc.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
@@ -31,6 +32,8 @@ export default function TicEventlocL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [eventlocTip, setEventlocTip] = useState('');
+  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventlocLVisible(false);
@@ -54,6 +57,23 @@ export default function TicEventlocL(props) {
     }
     fetchData();
   }, []);
+
+  const handleAutoInputClick = () => {
+    setConfirmDialogVisible(true);
+  };
+
+  const handleConfirm = async () => {
+    //console.log(props.ticEvent, "***********handleConfirm********************")
+    setSubmitted(true);
+    const ticEventlocService = new TicEventlocService();
+    await ticEventlocService.postAutoEventatts(props.ticEvent.id);
+    const data = await ticEventlocService.getLista(props.ticEvent.id);
+    setTicEventloc(data);
+    props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
+    props.setVisible(false);
+    //hideDeleteDialog();
+    setConfirmDialogVisible(false);
+  };
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -122,16 +142,16 @@ export default function TicEventlocL(props) {
       },
       ntp: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       endda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      }
     });
     setGlobalFilterValue("");
   };
@@ -158,6 +178,9 @@ export default function TicEventlocL(props) {
         />
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
         </div>
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventlocList}</b>
@@ -238,7 +261,7 @@ export default function TicEventlocL(props) {
                 value={props.ticEvent.textx}
                 disabled={true}
               />
-            </div>           
+            </div>
           </div>
         </div>
       </div>
@@ -284,7 +307,7 @@ export default function TicEventlocL(props) {
           sortable
           filter
           style={{ width: "60%" }}
-        ></Column>      
+        ></Column>
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -292,7 +315,7 @@ export default function TicEventlocL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "begda")}
-        ></Column>  
+        ></Column>
         <Column
           field="endda"
           header={translations[selectedLanguage].Endda}
@@ -300,7 +323,7 @@ export default function TicEventlocL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>         
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}
@@ -328,6 +351,7 @@ export default function TicEventlocL(props) {
           </button>
         </div>
       </Dialog>
+      <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} />
     </div>
   );
 }
