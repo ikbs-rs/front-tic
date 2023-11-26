@@ -522,7 +522,9 @@ const EmptyEntities =
 		  "objtp": null,
 		  "obj": null,
 		  "begda": "",
-		  "endda": ""
+		  "endda": "",
+		  "begtm": "",
+		  "endtm": ""
 	  },
   "tic_events": {
     "id": null,

@@ -28,6 +28,7 @@ export default function TicDocL(props) {
   const objName = "tic_doc"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDoc = EmptyEntities[objName]
+  emptyTicDoc.docobj = 1;
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocs, setTicDocs] = useState([]);
   const [ticDoc, setTicDoc] = useState(emptyTicDoc);
@@ -45,7 +46,7 @@ export default function TicDocL(props) {
   const [ddTicDocvrItems, setDdTicDocvrItems] = useState(null);
 
   const [ticDocobjs, setTicDocobjs] = useState([]);
-  const [ticDocobj, setTicDocobj] = useState(null);
+  const [ticDocobj, setTicDocobj] = useState(1); // SETUJE SE PRIVREMENO DOK SE NE RAZVRSTA PO LOKACIJI
   const [ddTicDocobjItem, setDdTicDocobjItem] = useState(null);
   const [ddTicDocobjItems, setDdTicDocobjItems] = useState(null);
 
@@ -193,6 +194,7 @@ const hideDeleteDialog = () => {
             setTicDocvr(foundItem || null);
             _ticDoc.docvr = val;
             emptyTicDoc.docvr = val;
+            emptyTicDoc.docobj = 1;
         } else if (name == "docobj") {
             setDdTicDocobjItem(e.value);
             const foundItem = ticDocobjs.find((item) => item.id === val);
@@ -347,8 +349,8 @@ const hideDeleteDialog = () => {
             optionLabel="name"
             placeholder="Select One"
           />
-
         </div>
+{/* 
         <div className="field col-12 md:col-4">
           <label htmlFor="docobj">{translations[selectedLanguage].ndocobj}</label>
           <Dropdown id="docobj"
@@ -358,10 +360,9 @@ const hideDeleteDialog = () => {
             required
             optionLabel="name"
             placeholder="Select One"
-          //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
           />
-          {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
         </div>       
+         */}
       </div>
       <DataTable
         dataKey="id"

@@ -48,7 +48,7 @@ export const useFetchObjData = (...args) => {
                 const data = datas.find((item) => item.id === args[2]);
                 setItem(data || null);
 
-                const dataDDs = datas.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDDs = datas.map(({ text, id }) => ({ name: text, code: id }));
                 setDdItems(dataDDs);
                 if (data) {
                     const dataDD = { code: data.id, textx: data.itextxd };
@@ -119,7 +119,15 @@ export async function fetchObjData(...args) {
                 url = `${backend}/${args[0]}/${args[1]}/_v/lista/?stm=adm_usereventdd_v&sl=${selectedLanguage}`;
                 break;
             default:
-                url = `${backend}/${args[0]}/x/${args[1]}/?sl=${selectedLanguage}`;
+                if (args[2]) {
+                    if (`${args[0]}_${args[1]}`=='cmn_obj') {
+                        url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objsett_v&objid=${args[2]}&sl=${selectedLanguage}`;
+                        //console.log("******************* CODE PAR ***************************", url);
+                    }
+
+                } else {
+                    url = `${backend}/${args[0]}/x/${args[1]}/?sl=${selectedLanguage}`;
+                }
         }        
         const tokenLocal = await Token.getTokensLS();
         const headers = {
@@ -127,7 +135,8 @@ export async function fetchObjData(...args) {
         };
         const response = await axios.get(url, { headers });       
         const datas = response.data.items||response.data.item;
-        const items = datas.map(({ textx, id }) => ({ name: textx, code: id }));
+        const items = datas.map(({ text, id }) => ({ name: text, code: id }));
+       // console.log(items, "*******************************items*************************", datas, args[2])
 
         const data = datas.find((item) => item.id === args[2]);
 

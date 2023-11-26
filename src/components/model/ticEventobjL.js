@@ -19,7 +19,7 @@ import DateFunction from "../../utilities/DateFunction";
 export default function TicEventobjL(props) {
 
   const objName = "tic_eventobj"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventobj = EmptyEntities[objName]
   emptyTicEventobj.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
@@ -122,16 +122,16 @@ export default function TicEventobjL(props) {
       },
       ntp: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       endda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      }
     });
     setGlobalFilterValue("");
   };
@@ -188,6 +188,10 @@ export default function TicEventobjL(props) {
     return DateFunction.formatDate(rowData[field]);
   };
 
+  const formatTimeColumn = (rowData, field) => {
+    return DateFunction.convertTimeToDisplayFormat(rowData[field]);
+};  
+
   // <--- Dialog
   const setTicEventobjDialog = (ticEventobj) => {
     setVisible(true)
@@ -238,7 +242,7 @@ export default function TicEventobjL(props) {
                 value={props.ticEvent.textx}
                 disabled={true}
               />
-            </div>           
+            </div>
           </div>
         </div>
       </div>
@@ -284,7 +288,7 @@ export default function TicEventobjL(props) {
           sortable
           filter
           style={{ width: "60%" }}
-        ></Column>      
+        ></Column>
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -292,7 +296,7 @@ export default function TicEventobjL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "begda")}
-        ></Column>  
+        ></Column>
         <Column
           field="endda"
           header={translations[selectedLanguage].Endda}
@@ -300,7 +304,23 @@ export default function TicEventobjL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>         
+        ></Column>
+        <Column
+          field="begtm"
+          header={translations[selectedLanguage].BegTM}
+          sortable filter
+          style={{ width: '7%' }}
+          body={(rowData) => formatTimeColumn(rowData, 'begtm')}>
+        </Column>
+        <Column
+          field="endtm"
+          header={translations[selectedLanguage].EndTM}
+          sortable
+          filter
+          style={{ width: '10%' }}
+          body={(rowData) => formatTimeColumn(rowData, 'endtm')}>
+        </Column>
+
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}

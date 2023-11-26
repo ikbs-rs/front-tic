@@ -23,7 +23,7 @@ import TicDocdelivery from './ticDocdelivery';
 import env from "../../configs/env"
 
 const TicDoc = (props) => {
-    //console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************", props)
+    console.log("***********************************", `${env.DOMEN}?endpoint=parlend&sl=sr_cyr`, "***********************************", props)
     const objName = "tic_docs"
     const objDelivery = "tic_docdelivery"
     const domen = env.DOMEN

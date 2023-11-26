@@ -42,6 +42,9 @@ export default function EmpA() {
     const f1 = (param) => {
         console.log('Funkcija f1 je pozvana sa parametrom:', param);
         switch (param) {
+            case 4:
+                navigate('/sal');
+                break;            
             case 3:
                 navigate('/eventprodaja');
                 break;

@@ -33,6 +33,7 @@ import CenaTp from './components/model/ticCenatpL';
 import SeattpAtt from './components/model/ticSeattpattL';
 import SeatTp from './components/model/ticSeattpL';
 import Atest from './components/model/1test';
+import Sal from './components/model/ticSal';
 
 import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
@@ -523,6 +524,7 @@ const App = () => {
                         <Route path="/delivery" element={<Delivery />} />
 
                         <Route path="/atest" element={<Atest />} />
+                        <Route path="/sal" element={<Sal />} />
                     </Routes>
                 </div>
 

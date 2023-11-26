@@ -70,9 +70,12 @@ export default function TicEventattsL(props) {
                     updatedData = await Promise.all(
                         data.map(async (row) => {
                             if (row.inputtp === '3' && row.ddlist) {
-                                const [modul, tabela] = row.ddlist.split(',');
-                                const apsTabela = modul + `_` + tabela;
-                                const dataDD = await fetchObjData(modul, tabela); // Sačekaj izvršenje
+                                const [modul, tabela, code] = row.ddlist.split(',');
+                                let apsTabela = modul + `_` + tabela;
+                                if (code) {
+                                    apsTabela = apsTabela + `_${code}`
+                                }
+                                const dataDD = await fetchObjData(modul, tabela, code); // Sačekaj izvršenje
                                 updatedDropdownItems[apsTabela] = dataDD.ddItems;
                             }
                             return { ...row, isUploadPending: false }; // Dodaj novu kolonu sa statusom
@@ -428,8 +431,11 @@ export default function TicEventattsL(props) {
             case '2':
                 return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)} />;
             case '3':
-                const [modul, tabela] = rowData.ddlist.split(',');
-                const apsTabela = `${modul}_${tabela}`;
+                const [modul, tabela, code] = rowData.ddlist.split(',');
+                let apsTabela = `${modul}_${tabela}`;
+                if (code) {
+                    apsTabela= apsTabela + `_${code}`
+                }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
                 //console.log(selectedOptions, '******************selectedOptions*******', apsTabela, '*********WWWWW******', dropdownAllItems);
@@ -488,8 +494,11 @@ export default function TicEventattsL(props) {
 
     const valueTemplate = (rowData) => {
         if (rowData.inputtp === '3' && rowData.ddlist) {
-            const [modul, tabela] = rowData.ddlist.split(',');
-            const apsTabela = `${modul}_${tabela}`;
+            const [modul, tabela, code] = rowData.ddlist.split(',');
+            let apsTabela = `${modul}_${tabela}`;
+            if (code) {
+                apsTabela = apsTabela + `_${code}`
+            }
             const dropdownData = dropdownAllItems[apsTabela] || [];
             const dropdownValue = dropdownData.find((item) => item.code === rowData.value);
             if (dropdownValue) {

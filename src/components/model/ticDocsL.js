@@ -483,9 +483,9 @@ Click Handle *******************************************************************
                 {webMapVisible && (
                     <WebMap
                         remoteUrl= {`http://ws11.ems.local:3000/#/events/?docid=${props.ticDoc.id}&sl=sr_cyr`}
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://192.168.72.96:8354' }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleWebMapDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl="http://192.168.72.96:8353"
                     />
                 )}
             </Dialog>   

@@ -700,6 +700,8 @@ export const translations = {
         Paid: "Плаћено",
         Canceled: "Одуста",
         ccard: "Тип картице",
+        CreateAndAddNew: "Креирај и додај",
+        code: "Шифра"
     }
   };
   

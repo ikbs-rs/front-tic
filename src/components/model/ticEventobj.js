@@ -16,7 +16,7 @@ import axios from 'axios';
 import Token from "../../utilities/Token";
 
 const TicEventobj = (props) => {
-    
+
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventobj, setTicEventobj] = useState(props.ticEventobj);
@@ -29,9 +29,11 @@ const TicEventobj = (props) => {
     const [ddTicEventobjtpItem, setDdTicEventobjtpItem] = useState(null);
     const [ddTicEventobjtpItems, setDdTicEventobjtpItems] = useState(null);
     const [ticEventobjtpItem, setTicEventobjtpItem] = useState(null);
-    const [ticEventobjtpItems, setTicEventobjtpItems] = useState(null);    
+    const [ticEventobjtpItems, setTicEventobjtpItems] = useState(null);
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventobj.begda || props.ticEvent.begda)));
-    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventobj.endda || props.ticEvent.endda)))
+    const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventobj.endda || props.ticEvent.endda)));
+    ticEventobj.endtm = ticEventobj.endtm || props.ticEvent.endtm
+    ticEventobj.begtm = ticEventobj.begtm || props.ticEvent.begtm
 
     const calendarRef = useRef(null);
 
@@ -41,7 +43,7 @@ const TicEventobj = (props) => {
         async function fetchData() {
             try {
                 const ticEventobjService = new TicEventobjService();
-                const data = await ticEventobjService.getCmnTpLista('objtp');                
+                const data = await ticEventobjService.getCmnTpLista('objtp');
                 setTicEventobjtpItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventobjtpItems(dataDD);
@@ -66,7 +68,7 @@ const TicEventobj = (props) => {
             try {
                 const tp = ticEventobj.objtp || -1
                 const ticEventobjService = new TicEventobjService();
-                const data = await ticEventobjService.getCmnLista('obj', tp);                
+                const data = await ticEventobjService.getCmnLista('obj', tp);
                 setTicEventobjItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventobjItems(dataDD);
@@ -96,6 +98,8 @@ const TicEventobj = (props) => {
             setSubmitted(true);
             ticEventobj.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEventobj.begtm = DateFunction.convertTimeToDBFormat(ticEventobj.begtm)
+            ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
             const ticEventobjService = new TicEventobjService();
             const data = await ticEventobjService.postTicEventobj(ticEventobj);
             ticEventobj.id = data
@@ -111,11 +115,36 @@ const TicEventobj = (props) => {
         }
     };
 
+    const handleCreateAndAddNewClick = async () => {
+        try {
+            setSubmitted(true);
+            ticEventobj.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEventobj.begtm = DateFunction.convertTimeToDBFormat(ticEventobj.begtm)
+            ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
+            const ticEventobjService = new TicEventobjService();
+            const newTicEventobj = { ...ticEventobj, id: null};
+            const data = await ticEventobjService.postTicEventobj(newTicEventobj);
+            ticEventobj.id = data
+            props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
+            //props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "TicEventobj ",
+                detail: `${err.response.data.error}`,
+                life: 5000,
+            });
+        }
+    };
+
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
             ticEventobj.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
+            ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEventobj.begtm = DateFunction.convertTimeToDBFormat(ticEventobj.begtm)
+            ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
             const ticEventobjService = new TicEventobjService();
 
             await ticEventobjService.putTicEventobj(ticEventobj);
@@ -158,7 +187,7 @@ const TicEventobj = (props) => {
         let foundItem = ''
 
         if (type === "options") {
-            val = (e.target && e.target.value && e.target.value.code) || ''; 
+            val = (e.target && e.target.value && e.target.value.code) || '';
             switch (name) {
                 case "objtp":
                     setDdTicEventobjtpItem(e.value);
@@ -228,21 +257,21 @@ const TicEventobj = (props) => {
             </div>
             <div className="col-12">
                 <div className="card">
-                <div className="p-fluid formgrid grid">
+                    <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
                             <label htmlFor="objtp">{translations[selectedLanguage].Objtp} *</label>
                             <Dropdown id="objtp"
                                 value={ddTicEventobjtpItem}
                                 options={ddTicEventobjtpItems}
                                 onChange={(e) => onInputChange(e, "options", 'objtp')}
-                                required                            
+                                required
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !ticEventobj.objtp })}
                             />
                             {submitted && !ticEventobj.objtp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                    </div>                    
+                    </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
                             <label htmlFor="obj">{translations[selectedLanguage].Obj} *</label>
@@ -250,7 +279,7 @@ const TicEventobj = (props) => {
                                 value={ddTicEventobjItem}
                                 options={ddTicEventobjItems}
                                 onChange={(e) => onInputChange(e, "options", 'obj')}
-                                required                            
+                                required
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !ticEventobj.obj })}
@@ -269,6 +298,20 @@ const TicEventobj = (props) => {
                             />
 
                         </div>
+
+                        <div className="field col-12 md:col-2">
+                            <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
+                            <InputText
+                                id="begtm"
+                                mask="99:99"
+                                maskChar="0" // This will replace unfilled characters with '0'
+                                placeholder="HH:mm"
+                                value={DateFunction.convertTimeToDisplayFormat(ticEventobj.begtm)} onChange={(e) => onInputChange(e, "text", 'begtm')}
+                            // required
+                            // className={classNames({ 'p-invalid': submitted && !ticEventobj.begtm })}
+                            />
+                            {/* {submitted && !ticEventobj.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>} */}
+                        </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
@@ -279,6 +322,21 @@ const TicEventobj = (props) => {
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />
+                        </div>
+
+
+                        <div className="field col-12 md:col-2">
+                            <label htmlFor="endtm">{translations[selectedLanguage].EndTM}</label>
+                            <InputText
+                                id="endtm"
+                                mask="99:99"
+                                maskChar="0" // This will replace unfilled characters with '0'
+                                placeholder="HH:mm"
+                                value={DateFunction.convertTimeToDisplayFormat(ticEventobj.endtm)} onChange={(e) => onInputChange(e, "text", 'endtm')}
+                            //required
+                            //className={classNames({ 'p-invalid': submitted && !ticEventobj.endtm })}
+                            />
+                            {/* {submitted && !ticEventobj.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>} */}
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -294,13 +352,22 @@ const TicEventobj = (props) => {
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
                             {(props.eventobjTip === 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Create}
-                                    icon="pi pi-check"
-                                    onClick={handleCreateClick}
-                                    severity="success"
-                                    outlined
-                                />
+                                <>
+                                    <Button
+                                        label={translations[selectedLanguage].Create}
+                                        icon="pi pi-check"
+                                        onClick={handleCreateClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].CreateAndAddNew}
+                                        icon="pi pi-plus"
+                                        onClick={handleCreateAndAddNewClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                </>
                             ) : null}
                             {(props.eventobjTip !== 'CREATE') ? (
                                 <Button
