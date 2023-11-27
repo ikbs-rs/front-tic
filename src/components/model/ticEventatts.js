@@ -71,7 +71,7 @@ const TicEventatts = (props) => {
             setSubmitted(true);
             const ticEventattsService = new TicEventattsService();
             const data = await ticEventattsService.postTicEventatts(ticEventatts);
-            ticEventatts.id = data;
+            ticEventatts.id = data.id;
             props.handleDialogClose({ obj: ticEventatts, eventattsTip: props.eventattsTip });
             props.setVisible(false);
         } catch (err) {
@@ -84,6 +84,25 @@ const TicEventatts = (props) => {
         }
     };
 
+
+    const handleCreateAndAddNewClick = async () => {
+        try {
+            setSubmitted(true);
+            const ticEventattsService = new TicEventattsService();
+            const newTicEventobj = { ...ticEventatts, id: null};
+            const data = await ticEventattsService.postTicEventatts(newTicEventobj);
+            ticEventatts.id = data.id;
+            props.handleDialogClose({ obj: ticEventatts, eventattsTip: props.eventattsTip });
+            //props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "TicEventobj ",
+                detail: `${err.response.data.error}`,
+                life: 5000,
+            });
+        }
+    };    
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
@@ -223,7 +242,23 @@ const TicEventatts = (props) => {
                         {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {props.eventattsTip === 'CREATE' ? <Button label={translations[selectedLanguage].Create} icon="pi pi-check" onClick={handleCreateClick} severity="success" outlined /> : null}
+                            {props.eventattsTip === 'CREATE' ?
+                                <>
+                                    <Button label={translations[selectedLanguage].Create}
+                                        icon="pi pi-check"
+                                        onClick={handleCreateClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].CreateAndAddNew}
+                                        icon="pi pi-plus"
+                                        onClick={handleCreateAndAddNewClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                </>
+                                : null}
                             {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
                             {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
                         </div>

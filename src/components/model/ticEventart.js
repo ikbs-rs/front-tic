@@ -84,6 +84,27 @@ const TicEventart = (props) => {
         }
     };
 
+    const handleCreateAndAddNewClick = async () => {
+        try {
+            setSubmitted(true);
+            ticEventart.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEventart.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            const ticEventartService = new TicEventartService();
+            const newTicEventobj = { ...ticEventart, id: null};
+            const data = await ticEventartService.postTicEventart(newTicEventobj);
+            ticEventart.id = data;
+            props.handleDialogClose({ obj: ticEventart, eventartTip: props.eventartTip });
+            //props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "TicEventobj ",
+                detail: `${err.response.data.error}`,
+                life: 5000,
+            });
+        }
+    };     
+
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
@@ -141,7 +162,7 @@ const TicEventart = (props) => {
             console.log(e.value, "**************")
             val = (e.target && e.target.value) || '';
             switch (name) {
-                
+
                 case 'begda':
                     setBegda(e.value);
                     break;
@@ -225,7 +246,23 @@ const TicEventart = (props) => {
                         {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {props.eventartTip === 'CREATE' ? <Button label={translations[selectedLanguage].Create} icon="pi pi-check" onClick={handleCreateClick} severity="success" outlined /> : null}
+                            {props.eventartTip === 'CREATE' ?
+                                <>
+                                    <Button label={translations[selectedLanguage].Create}
+                                        icon="pi pi-check"
+                                        onClick={handleCreateClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].CreateAndAddNew}
+                                        icon="pi pi-plus"
+                                        onClick={handleCreateAndAddNewClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                </>
+                                : null}
                             {props.eventartTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
                             {props.eventartTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
                         </div>

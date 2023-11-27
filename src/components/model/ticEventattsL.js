@@ -50,6 +50,8 @@ export default function TicEventattsL(props) {
     const [dropdownItems, setDropdownItems] = useState(null);
     const [dropdownAllItems, setDropdownAllItems] = useState(null);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+    const [refresh, setRefresh] = useState(null);
+    const [componentKey, setComponentKey] = useState(0);
 
     let i = 0;
 
@@ -75,14 +77,14 @@ export default function TicEventattsL(props) {
                                 if (code) {
                                     apsTabela = apsTabela + `_${code}`
                                 }
-                                const dataDD = await fetchObjData(modul, tabela, code); // Sačekaj izvršenje
+                                const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent); // Sačekaj izvršenje
                                 updatedDropdownItems[apsTabela] = dataDD.ddItems;
                             }
                             return { ...row, isUploadPending: false }; // Dodaj novu kolonu sa statusom
                         })
                     );
-                    setTicEventattss(updatedData);
-                    setDropdownAllItems(updatedDropdownItems);
+                    await setTicEventattss  (updatedData);
+                    await setDropdownAllItems(updatedDropdownItems);
 
                     initFilters();
                 }
@@ -93,7 +95,7 @@ export default function TicEventattsL(props) {
         }
 
         fetchData();
-    }, []);
+    }, [refresh, componentKey]);
 
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
@@ -102,7 +104,9 @@ export default function TicEventattsL(props) {
         let _ticEventatts = { ...localObj.newObj.obj };
         //setSubmitted(true);
         if (localObj.newObj.eventattsTip === 'CREATE') {
-            _ticEventattss.push(_ticEventatts);
+            //_ticEventattss.push(_ticEventatts);
+            setRefresh(newObj.id);
+            setComponentKey((prevKey) => prevKey + 1);
         } else if (localObj.newObj.eventattsTip === 'UPDATE') {
             const index = findIndexById(localObj.newObj.obj.id);
             _ticEventattss[index] = _ticEventatts;
@@ -136,7 +140,7 @@ export default function TicEventattsL(props) {
         const ticEventattsService = new TicEventattsService();
         await ticEventattsService.postAutoEventatts(props.ticEvent.id);
         const data = await ticEventattsService.getLista(props.ticEvent.id);
-        setTicEventattss(data);        
+        setTicEventattss(data);
         props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
         props.setVisible(false);
         //hideDeleteDialog();
@@ -407,8 +411,8 @@ export default function TicEventattsL(props) {
         return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
     };
 
-    const valueEditor = (rowData, field) => {
-        //console.log(rowData, '************************rowData****************************');
+    const valueEditor = (rowData, field, e) => {
+        console.log(rowData, '************************rowData*************e***************', e);
         switch (rowData.inputtp) {
             case '4':
                 return (
@@ -434,7 +438,7 @@ export default function TicEventattsL(props) {
                 const [modul, tabela, code] = rowData.ddlist.split(',');
                 let apsTabela = `${modul}_${tabela}`;
                 if (code) {
-                    apsTabela= apsTabela + `_${code}`
+                    apsTabela = apsTabela + `_${code}`
                 }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
@@ -551,6 +555,7 @@ export default function TicEventattsL(props) {
                 </div>
             </div>
             <DataTable
+                key={componentKey}
                 dataKey="id"
                 selectionMode="single"
                 selection={ticEventatts}
@@ -592,7 +597,7 @@ export default function TicEventattsL(props) {
                     sortable
                     filter
                     style={{ width: '20%' }}
-                    editor={(props) => valueEditor(props.rowData, props.field)} // Dodali smo editor za editiranje value
+                    editor={(e) => valueEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
                     body={valueTemplate}
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
                 ></Column>
@@ -630,7 +635,16 @@ export default function TicEventattsL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && <TicEventatts parameter={'inputTextValue'} ticEventatts={ticEventatts} ticEvent={props.ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventattsTip={eventattsTip} />}
+                {showMyComponent &&
+                    <TicEventatts
+                        parameter={'inputTextValue'}
+                        ticEventatts={ticEventatts}
+                        ticEvent={props.ticEvent}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setVisible}
+                        dialog={true}
+                        eventattsTip={eventattsTip}
+                    />}
                 <div className="p-dialog-header-icons" style={{ display: 'none' }}>
                     <button className="p-dialog-header-close p-link">
                         <span className="p-dialog-header-close-icon pi pi-times"></span>

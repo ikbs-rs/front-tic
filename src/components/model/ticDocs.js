@@ -15,7 +15,7 @@ import axios from 'axios';
 import Token from '../../utilities/Token';
 import { Dialog } from 'primereact/dialog';
 //import TicArtL from './ticArtL';
-import TicEventstL from './ticEventstL';
+import TicEventartL from './ticEventartL';
 import TicArtW from './remoteComponentContainer';
 import TicEventProdajaL from './ticEventProdajaL';
 import CmnParL from './remoteComponentContainer';
@@ -28,17 +28,17 @@ const TicDocs = (props) => {
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [ticDoc, setTicDoc] = useState(props.ticDoc);    
+    const [ticDoc, setTicDoc] = useState(props.ticDoc);
     const [ticDocs, setTicDocs] = useState(props.ticDocs);
     const [submitted, setSubmitted] = useState(false);
     const [ddTpItem, setDdTpItem] = useState(1);
     const [ddTpItems, setDdTpItems] = useState(null);
-    const [ticArtLVisible, setTicEventstLVisible] = useState(false);
+    const [ticArtLVisible, setTicEventartLVisible] = useState(false);
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticArt, setTicArt] = useState(null);
 
-    const [ticEvent, setTicEvent] = useState(null);
+    const [ticEvent, setTicEvent] = useState(props.ticEvent);
     const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(null);
@@ -112,7 +112,20 @@ const TicDocs = (props) => {
             }
         }
         fetchData();
-    }, []);    
+    }, []);
+
+    // Dodajte sledeći useEffect blok iznad povratne vrednosti komponente (ispod svih drugih useEffect blokova)
+    useEffect(() => {
+        // Ažurirajte vrednost polja potrazuje kada se promeni output, price ili discount
+        const calculatePotrazuje = () => {
+            const newPotrazuje = ticDocs.output * ticDocs.price * (1 - ticDocs.discount * 0.01);
+            setTicDocs((prevTicDocs) => ({ ...prevTicDocs, potrazuje: newPotrazuje }));
+        };
+
+        // Pratite promene u poljima output, price i discount
+        calculatePotrazuje();
+    }, [ticDocs.output, ticDocs.price, ticDocs.discount]);
+
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -194,7 +207,7 @@ const TicDocs = (props) => {
     const setCmnParDialog = () => {
         setCmnParVisible(true)
     }
-    
+
     const setCmnParLDialog = () => {
         setCmnParLVisible(true)
     }
@@ -234,7 +247,7 @@ const TicDocs = (props) => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Action ',
-               // detail: `${err.response.data.error}`,
+                // detail: `${err.response.data.error}`,
                 life: 5000
             });
         }
@@ -294,10 +307,10 @@ const TicDocs = (props) => {
         ticDocs.nevent = newObj.text;
         ticDocs.cevent = newObj.code;
         setTicEventProdajaLVisible(false);
-      };        
+    };
 
-    
-      const handleCmnParLDialogClose = (newObj) => {
+
+    const handleCmnParLDialogClose = (newObj) => {
         if (newObj?.id) {
             setCmnPar(newObj);
             ticDocs.usr = newObj.id
@@ -310,30 +323,40 @@ const TicDocs = (props) => {
     const handleCmnParDialogClose = (newObj) => {
         setCmnPar(newObj);
         setCmnParVisible(false)
-    };      
+    };
 
     const setTicArtDialog = (destination) => {
-        setTicEventstLVisible (true);
+        
+        if (ticEvent && ticEvent.id !== undefined && ticEvent.id !== null) {
+            setTicEventartLVisible(true);
+        } else {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Action ',
+                detail: `Морате прво изабрати догађај`,
+                life: 5000
+            });
+        }
     };
 
     const setTicArtRemoteDialog = () => {
         setTicArtRemoteLVisible(true);
     };
-    
+
     const setTicEventProdajaLDialog = (destination) => {
         setTicEventProdajaLVisible(true);
-    };    
+    };
 
     const handleTicArtLDialogClose = (newObj) => {
-console.log(newObj, "111111111111111111111111111111111111111111111111111111111111111")
+        console.log(newObj, "111111111111111111111111111111111111111111111111111111111111111")
         setTicArt(newObj);
         ticDocs.art = newObj.art;
         ticDocs.nart = newObj.nart;
         ticDocs.cart = newObj.cart;
-        ticDocs.price = newObj.cena;
+        ticDocs.price = newObj.price;
         ticDocs.loc = newObj.loc1;
-        ticDocs.potrazuje = newObj.cena*ticDocs.output;
-        setTicEventstLVisible(false);
+        //ticDocs.potrazuje = newObj.cena * ticDocs.output;
+        setTicEventartLVisible(false);
     };
     /*
     const handleTicArtRemoteLDialogClose = (newObj) => {
@@ -350,13 +373,13 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                    <div className="field col-12 md:col-3">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="cevent">{translations[selectedLanguage].cevent}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cevent" autoFocus value={ticDocs.cevent} 
-                                onChange={(e) => onInputChange(e, 'text', 'cevent')} 
-                                required 
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.cevent })} 
+                                <InputText id="cevent" autoFocus value={ticDocs.cevent}
+                                    onChange={(e) => onInputChange(e, 'text', 'cevent')}
+                                    required
+                                    className={classNames({ 'p-invalid': submitted && !ticDocs.cevent })}
                                 />
                                 <Button icon="pi pi-search" onClick={(e) => handleEventProdajaClick(e)} className="p-button" />
                                 {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
@@ -365,20 +388,20 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
                         </div>
                         <div className="field col-12 md:col-9">
                             <label htmlFor="nevent">{translations[selectedLanguage].nevent}</label>
-                            <InputText id="nevent" value={ticDocs.nevent} 
-                            onChange={(e) => onInputChange(e, 'text', 'nevent')} 
-                            required 
-                            className={classNames({ 'p-invalid': submitted && !ticDocs.nevent })} 
+                            <InputText id="nevent" value={ticDocs.nevent}
+                                onChange={(e) => onInputChange(e, 'text', 'nevent')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticDocs.nevent })}
                             />
                             {submitted && !ticDocs.nevent && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
+                        </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="cart">{translations[selectedLanguage].cart}</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cart"  value={ticDocs.cart} 
-                                onChange={(e) => onInputChange(e, 'text', 'cart')} 
-                                required 
-                                className={classNames({ 'p-invalid': submitted && !ticDocs.cart })} />
+                                <InputText id="cart" value={ticDocs.cart}
+                                    onChange={(e) => onInputChange(e, 'text', 'cart')}
+                                    required
+                                    className={classNames({ 'p-invalid': submitted && !ticDocs.cart })} />
                                 <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
                                 {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
                             </div>
@@ -421,51 +444,51 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
                             <label htmlFor="price">{translations[selectedLanguage].price} *</label>
                             <InputText
                                 id="price"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.price)}
+                                value={ticDocs.price}
                                 onChange={(e) => onInputChange(e, 'text', 'price')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.price })}
                             />
                             {submitted && !ticDocs.price && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                           
+                        </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="output">{translations[selectedLanguage].output} *</label>
                             <InputText
                                 id="output"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.output)}
+                                value={ticDocs.output}
                                 onChange={(e) => onInputChange(e, 'text', 'output')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.output })}
                             />
                             {submitted && !ticDocs.output && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>   
+                        </div>
                         <div className="field col-12 md:col-2">
                             <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
                             <InputText
                                 id="discount"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.discount)}
+                                value={ticDocs.discount}
                                 onChange={(e) => onInputChange(e, 'text', 'discount')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.discount })}
                             />
                             {submitted && !ticDocs.discount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                                               
+                        </div>
                         <div className="field col-12 md:col-4">
                             <label htmlFor="potrazuje">{translations[selectedLanguage].Left} *</label>
                             <InputText
                                 id="potrazuje"
-                                value={DateFunction.convertTimeToDisplayFormat(ticDocs.potrazuje)}
+                                value={ticDocs.potrazuje}
                                 onChange={(e) => onInputChange(e, 'text', 'potrazuje')}
                                 required
                                 className={classNames({ 'p-invalid': submitted && !ticDocs.potrazuje })}
                             />
                             {submitted && !ticDocs.potrazuje && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                                            
+                        </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="cpar">{translations[selectedLanguage].cpar} *</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cpar" 
-                                    value={ticDocs.cpar} 
+                                <InputText id="cpar"
+                                    value={ticDocs.cpar}
                                     onChange={(e) => onInputChange(e, "text", 'cpar')}
                                 />
                                 <Button icon="pi pi-search" onClick={handleParLClick} className="p-button" />
@@ -479,7 +502,7 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
                                 value={props.ticDocs.npar}
                                 disabled={true}
                             />
-                        </div>                        
+                        </div>
                         <div className="field col-12 md:col-4">
                             <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
                             <InputText
@@ -537,23 +560,24 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
                 visible={ticArtLVisible}
                 style={{ width: '90%', height: '1400px' }}
                 onHide={() => {
-                    setTicEventstLVisible(false);
+                    setTicEventartLVisible(false);
                     setShowMyComponent(false);
                 }}
             >
-                {ticArtLVisible && 
-                    <TicEventstL 
-                        parameter={'inputTextValue'} 
-                        ticDocs={ticDocs} 
-                        onTaskComplete={handleTicArtLDialogClose} 
-                        setTicEventstLVisible ={setTicEventstLVisible } 
-                        dialog={true} 
-                        lookUp={true} 
+                {ticArtLVisible &&
+                    <TicEventartL
+                        parameter={'inputTextValue'}
+                        ticDocs={ticDocs}
+                        ticEvent={ticEvent}
+                        onTaskComplete={handleTicArtLDialogClose}
+                        setTicEventartLVisible={setTicEventartLVisible}
+                        dialog={true}
+                        lookUp={true}
                     />}
             </Dialog>
-{/** 
+            {/** 
  * Dialog za izbor Dogadjaja EventProdajaL.js 
- * */}            
+ * */}
             <Dialog
                 header={translations[selectedLanguage].EventList}
                 visible={ticEventProdajaLVisible}
@@ -563,17 +587,17 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
                     setShowMyComponent(false);
                 }}
             >
-                {ticEventProdajaLVisible && 
-                    <TicEventProdajaL 
-                        parameter={'inputTextValue'} 
-                        ticDocs={ticDocs} 
-                        ticDoc={props.ticDoc} 
-                        onTaskComplete={handleTicEventProdajaLDialogClose} 
-                        setTicEventProdajaLVisible={setTicEventProdajaLVisible} 
-                        dialog={true} 
-                        lookUp={true} 
+                {ticEventProdajaLVisible &&
+                    <TicEventProdajaL
+                        parameter={'inputTextValue'}
+                        ticDocs={ticDocs}
+                        ticDoc={props.ticDoc}
+                        onTaskComplete={handleTicEventProdajaLDialogClose}
+                        setTicEventProdajaLVisible={setTicEventProdajaLVisible}
+                        dialog={true}
+                        lookUp={true}
                     />}
-            </Dialog>    
+            </Dialog>
             <Dialog
                 header={translations[selectedLanguage].ParList}
                 visible={cmnParLVisible}
@@ -603,13 +627,13 @@ console.log(newObj, "11111111111111111111111111111111111111111111111111111111111
             >
                 {cmnParVisible && (
                     <CmnPar
-                        remoteUrl= {`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
+                        remoteUrl={`${env.CMN_URL}?endpoint=parend&objid=${ticDoc.usr}&sl=sr_cyr`}
                         queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: ticDoc, parentOrigin: `${env.DOMEN}` }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleCmnParDialogClose}
                         originUrl={`${env.DOMEN}`}
                     />
                 )}
-            </Dialog>                               
+            </Dialog>
         </div>
     );
 };

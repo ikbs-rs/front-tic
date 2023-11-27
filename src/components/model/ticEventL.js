@@ -49,6 +49,7 @@ export default function TicEventL(props) {
     const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
     const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
     const copyItems = [
         {
@@ -161,15 +162,13 @@ export default function TicEventL(props) {
     };
 
     const handleConfirm = async () => {
-        //console.log(props.ticEvent, "***********handleConfirm********************")
-        // setSubmitted(true);
-        // const ticEventattsService = new TicEventattsService();
-        // await ticEventattsService.postAutoEventatts(props.ticEvent.id);
-        // const data = await ticEventattsService.getLista(props.ticEvent.id);
-        // setTicEventattss(data);        
+        console.log(ticEvent, "***********handleConfirm********************")
+        setSubmitted(true);
+        const ticEventService = new TicEventService();
+        await ticEventService.postActivateEvent(ticEvent.id);       
         //props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
-        //props.setVisible(false);
-        //hideDeleteDialog();
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Догађај успешно активиран ?', life: 3000 });
+        setVisible(false);
         setConfirmDialogVisible(false);
     };
 
@@ -190,6 +189,7 @@ export default function TicEventL(props) {
     };
 
     const openEventloc = () => {
+        console.log("**********openEventloc************")
         setTicEventlocDialog();
     };
 
@@ -207,7 +207,7 @@ export default function TicEventL(props) {
 
     const openEventTmp = () => {
         setTicEventTmpDialog();
-    };    
+    };
     const onRowSelect = (event) => {
         toast.current.show({
             severity: 'info',
@@ -535,7 +535,15 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && <TicEventlocL parameter={'inputTextValue'} ticEvent={ticEvent} handleTicEventlocLDialogClose={handleTicEventlocLDialogClose} setTicEventlocLVisible={setTicEventlocLVisible} dialog={true} lookUp={false} />}
+                {showMyComponent &&
+                    <TicEventlocL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleTicEventlocLDialogClose={handleTicEventlocLDialogClose}
+                        setTicEventlocLVisible={setTicEventlocLVisible}
+                        dialog={true}
+                        lookUp={false}
+                    />}
             </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventcenatpList}

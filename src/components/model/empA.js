@@ -43,11 +43,11 @@ export default function EmpA() {
         console.log('Funkcija f1 je pozvana sa parametrom:', param);
         switch (param) {
             case 4:
-                navigate('/sal');
+                navigate('/eventprodaja');
                 break;            
             case 3:
-                navigate('/eventprodaja');
-                break;
+                navigate('/sal');
+                break;            
             case 2:
                 navigate('/doc?docVr=RC');
                 break;

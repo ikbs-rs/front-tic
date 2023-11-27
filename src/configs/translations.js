@@ -256,7 +256,7 @@ export const translations = {
         Processing_elements: "Obrada elemenata", 
         Procurement: "Nabavka",    
         Program_modules: "Programski moduli",
-        Properties_event: "Osobine događaja",
+        Properties_event: "Postavke",
         Properties_location: "Osobine lokacije",
         Properties_object: "Osobine objekta",
         Properties_partners: "Osobine partnera",
@@ -360,7 +360,7 @@ export const translations = {
         EventAtt: "Особина догађаја",
         EventAttsList: "Особине догађаја Листа",
         EventlinkLista: "Везе објекта Листа",
-        EventlocList: "Објекти догађаја Листа",
+        EventlocList: "Улази, капије Листа",
         EventTp: "Тип догађаја",
         EventTpList: "Типови догађаја Лоста",
         Events_administration: "Администрација догађаја",
@@ -414,7 +414,7 @@ export const translations = {
         Processing_elements: "Обрада елемената",
         Procurement: "Набавка",
         Program_modules: "Програмски модули",
-        Properties_event: "Особине догађаја",
+        Properties_event: "Поставке",
         Properties_location: "Особине локације",
         Properties_object: "Особине објекта",
         Properties_partners: "Особине партнера",  
@@ -701,7 +701,11 @@ export const translations = {
         Canceled: "Одуста",
         ccard: "Тип картице",
         CreateAndAddNew: "Креирај и додај",
-        code: "Шифра"
+        code: "Шифра",
+        quantity: "Количина",
+        amount: "Износ",
+        begtm: "Време од",
+        endtm: "Време до",
     }
   };
   

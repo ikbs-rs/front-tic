@@ -211,7 +211,9 @@ const TicDoc = (props) => {
             ticDoc.tm = DateFunction.formatDateTimeToDBFormat(tm);
             const ticDocService = new TicDocService();
             const data = await ticDocService.postTicDoc(ticDoc);
-            ticDoc.id = data
+            ticDoc.id = data.id
+            ticDoc.broj = data.broj
+            setTicDoc({ ...ticDoc });
             props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             props.setVisible(false);
         } catch (err) {
@@ -232,7 +234,9 @@ const TicDoc = (props) => {
             const ticDocService = new TicDocService();
             if (event == 'CREATE') {
                 const data = await ticDocService.postTicDoc(ticDoc);
-                ticDoc.id = data
+                ticDoc.id = data.id
+                ticDoc.broj = data.broj
+                setTicDoc({ ...ticDoc });                
                 props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             } else {
                 await ticDocService.putTicDoc(ticDoc);
@@ -428,14 +432,14 @@ const TicDoc = (props) => {
                                 disabled={true}
                             />
                         </div>
-                        <div className="field col-12 md:col-4">
+                        {/* <div className="field col-12 md:col-4">
                             <label htmlFor="ndocobj">{translations[selectedLanguage].ndocobj}</label>
                             <InputText
                                 id="ndocobj"
                                 value={props.ticDocobj.text}
                                 disabled={true}
                             />
-                        </div>
+                        </div> */}
                         <div className="field col-12 md:col-1">
                             <label htmlFor="year">{translations[selectedLanguage].year} *</label>
                             <InputText id="year"
@@ -445,10 +449,11 @@ const TicDoc = (props) => {
                             />
                             {submitted && !ticDoc.year && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-1">
+                        <div className="field col-12 md:col-2">
                             <label htmlFor="broj">{translations[selectedLanguage].broj} *</label>
                             <InputText id="broj"
                                 value={ticDoc.broj} onChange={(e) => onInputChange(e, "text", 'broj')}
+                                disabled={true}
                             />
                         </div>
                         <div className="field col-12 md:col-1">
