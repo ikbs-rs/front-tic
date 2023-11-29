@@ -11,6 +11,7 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
+import { ColorPicker } from 'primereact/colorpicker';
 import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
@@ -339,6 +340,13 @@ const TicEventobj = (props) => {
                             {/* {submitted && !ticEventobj.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>} */}
                         </div>
                     </div>
+                    <div className="field col-12 md:col-1">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                        </div>
+
+                    </div>                    
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button

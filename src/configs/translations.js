@@ -706,6 +706,12 @@ export const translations = {
         amount: "Износ",
         begtm: "Време од",
         endtm: "Време до",
+        GroupAtts: "Групни унос",
+        EventAttsgrpList: "Поставке групни унос Листа",
+        nttp: "Група",
+        ninputtp: "Врста уноса",
+        DeleteAll: "Обриши све",
+        color: "Боја",
     }
   };
   

@@ -9,6 +9,7 @@ import { Toast } from 'primereact/toast';
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from '../../configs/translations';
 import { Dropdown } from 'primereact/dropdown';
+import { ColorPicker } from 'primereact/colorpicker';
 import { Calendar } from 'primereact/calendar';
 import DateFunction from '../../utilities/DateFunction';
 import { useFetchObjData, useDropdown } from './customHook';
@@ -238,6 +239,13 @@ const TicEventatts = (props) => {
                             {submitted && !ticEventatts.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
+                    <div className="field col-12 md:col-1">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <ColorPicker format="hex" id="color" value={ticEventatts.color||'ffffff'} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                        </div>
+
+                    </div>                     
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
                         <div className="flex-grow-1"></div>

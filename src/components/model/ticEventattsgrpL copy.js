@@ -7,33 +7,34 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventlinkService } from "../../service/model/TicEventlinkService";
-import TicEventlink from './ticEventlink';
+import { TicEventattsService } from "../../service/model/TicEventattsService";
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction";
 
 
-export default function TicEventlinkL(props) {
+export default function TicEventattsgrpL(props) {
 
-  const objName = "tic_eventlink"
+  const objName = "tic_eventatts"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventlink = EmptyEntities[objName]
-  emptyTicEventlink.event2 = props.ticEvent.id
+  const emptyTicEventattsgrp = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventlinks, setTicEventlinks] = useState([]);
-  const [ticEventlink, setTicEventlink] = useState(emptyTicEventlink);
+  const [ticEventattsgrps, setTicEventattsgrps] = useState([]);
+  const [ticEventattsgrp, setTicEventattsgrp] = useState(emptyTicEventattsgrp);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventlinkTip, setEventlinkTip] = useState('');
+  const [eventattsgrpTip, setEventattsgrpTip] = useState('');
+  const [selectedAttss, setSelectedAttss] = useState(null);
+  const [selectedRowsData, setSelectedRowsData] = useState([]);
+  const [rowClick, setRowClick] = useState(true);
+
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventlinkLVisible(false);
+    props.setTicEventattsgrpLVisible(false);
   };
 
   useEffect(() => {
@@ -41,9 +42,9 @@ export default function TicEventlinkL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticEventlinkService = new TicEventlinkService();
-          const data = await ticEventlinkService.getLista(props.ticEvent.id);
-          setTicEventlinks(data);
+          const ticEventattsService = new TicEventattsService();
+          const data = await ticEventattsService.getLista(props.ticEvent.id);
+          setTicEventattsgrps(data);
 
           initFilters();
         }
@@ -58,30 +59,30 @@ export default function TicEventlinkL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticEventlinks = [...ticEventlinks];
-    let _ticEventlink = { ...localObj.newObj.obj };
+    let _ticEventattsgrps = [...ticEventattsgrps];
+    let _ticEventattsgrp = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventlinkTip === "CREATE") {
-      _ticEventlinks.push(_ticEventlink);
-    } else if (localObj.newObj.eventlinkTip === "UPDATE") {
+    if (localObj.newObj.eventattsgrpTip === "CREATE") {
+      _ticEventattsgrps.push(_ticEventattsgrp);
+    } else if (localObj.newObj.eventattsgrpTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventlinks[index] = _ticEventlink;
-    } else if ((localObj.newObj.eventlinkTip === "DELETE")) {
-      _ticEventlinks = ticEventlinks.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventlink Delete', life: 3000 });
+      _ticEventattsgrps[index] = _ticEventattsgrp;
+    } else if ((localObj.newObj.eventattsgrpTip === "DELETE")) {
+      _ticEventattsgrps = ticEventattsgrps.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventattsgrp Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventlink ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventattsgrp ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventlinkTip}`, life: 3000 });
-    setTicEventlinks(_ticEventlinks);
-    setTicEventlink(emptyTicEventlink);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventattsgrpTip}`, life: 3000 });
+    setTicEventattsgrps(_ticEventattsgrps);
+    setTicEventattsgrp(emptyTicEventattsgrp);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventlinks.length; i++) {
-      if (ticEventlinks[i].id === id) {
+    for (let i = 0; i < ticEventattsgrps.length; i++) {
+      if (ticEventattsgrps[i].id === id) {
         index = i;
         break;
       }
@@ -90,12 +91,18 @@ export default function TicEventlinkL(props) {
     return index;
   };
 
-  const openNew = () => {
-    setTicEventlinkDialog(emptyTicEventlink);
+  const handleGetSelectedRowsClick = () => {
+      console.log("Button Clicked!", selectedAttss); // Dodajte ovu liniju za isprint
+      // const selectedData = products.filter((product) =>
+      //   selectedProducts.includes(product.id)
+      // );
+      console.log(selectedAttss, "****");
+      // setSelectedRowsData(selectedData);    
+    setTicEventattsgrpDialog(selectedAttss);
   };
 
   const onRowSelect = (event) => {
-    //ticEventlink.begda = event.data.begda
+    //ticEventattsgrp.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -157,10 +164,10 @@ export default function TicEventlinkL(props) {
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+          <Button label={translations[selectedLanguage].Copy} icon="pi pi-plus" severity="success" onClick={handleGetSelectedRowsClick} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventlinkList}</b>
+        <b>{translations[selectedLanguage].EventattsgrpList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -184,39 +191,18 @@ export default function TicEventlinkL(props) {
     );
   };
 
-  const formatDateColumn = (rowData, field) => {
-    return DateFunction.formatDate(rowData[field]);
-  };
+
 
   // <--- Dialog
-  const setTicEventlinkDialog = (ticEventlink) => {
+  const setTicEventattsgrpDialog = (selectedAttss) => {
     setVisible(true)
-    setEventlinkTip("CREATE")
-    setTicEventlink({ ...ticEventlink });
+    //setEventattsgrpTip("CREATE")
+    setSelectedAttss({ ...selectedAttss });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
-
-  const eventlinkTemplate = (rowData) => {
-    return (
-      <div className="flex flex-wrap gap-1">
-
-        <Button
-          type="button"
-          icon="pi pi-pencil"
-          style={{ width: '24px', height: '24px' }}
-          onClick={() => {
-            setTicEventlinkDialog(rowData)
-            setEventlinkTip("UPDATE")
-          }}
-          text
-          raised ></Button>
-
-      </div>
-    );
-  };
 
   return (
     <div className="card">
@@ -243,34 +229,33 @@ export default function TicEventlinkL(props) {
         </div>
       </div>
       <DataTable
+        value={ticEventattsgrps}
+        selectionMode={rowClick ? null : "checkbox"}
+        selection={ticEventattsgrp}
+        onSelectionChange={(e) => setTicEventattsgrp(e.value)}
         dataKey="id"
-        selectionMode="single"
-        selection={ticEventlink}
-        loading={loading}
-        value={ticEventlinks}
-        header={header}
-        showGridlines
-        removableSort
-        filters={filters}
-        scrollable
-        scrollHeight="550px"
-        virtualScrollerOptions={{ itemSize: 46 }}
-        tableStyle={{ minWidth: "50rem" }}
-        metaKeySelection={false}
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventlink(e.value)}
-        onRowSelect={onRowSelect}
-        onRowUnselect={onRowUnselect}
+        //loading={loading}
+        
+        //header={header}
+        //showGridlines
+        //removableSort
+        //filters={filters}
+        //scrollable
+        //scrollHeight="550px"
+        //virtualScrollerOptions={{ itemSize: 46 }}
+        //tableStyle={{ minWidth: "50rem" }}
+        //metaKeySelection={false}
+       // paginator
+       // rows={50}
+       // rowsPerPageOptions={[5, 10, 25, 50]}
+        
+        // onRowSelect={onRowSelect}
+        // onRowUnselect={onRowUnselect}
       >
         <Column
-          //bodyClassName="text-center"
-          body={eventlinkTemplate}
-          exportable={false}
-          headerClassName="w-10rem"
-          style={{ minWidth: '4rem' }}
-        />
+          selectionMode="multiple"
+          headerStyle={{ width: "3rem" }}
+        ></Column>
         <Column
           field="code"
           header={translations[selectedLanguage].Code}
@@ -291,10 +276,19 @@ export default function TicEventlinkL(props) {
           sortable
           filter
           style={{ width: "20%" }}
-          body={(rowData) => formatDateColumn(rowData, "note")}
         ></Column>  
       </DataTable>
-      <Dialog
+      {selectedRowsData.length > 0 && (
+        <div className="mt-4">
+          <h5>Selected Rows Data:</h5>
+          <ul>
+            {selectedRowsData.map((row, index) => (
+              <li key={index}>{JSON.stringify(row)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {/* <Dialog
         header={translations[selectedLanguage].Link}
         visible={visible}
         style={{ width: '60%' }}
@@ -304,14 +298,14 @@ export default function TicEventlinkL(props) {
         }}
       >
         {showMyComponent && (
-          <TicEventlink
+          <TicEventattsgrp
             parameter={"inputTextValue"}
-            ticEventlink={ticEventlink}
+            ticEventattsgrp={ticEventattsgrp}
             ticEvent={props.ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventlinkTip={eventlinkTip}
+            eventattsgrpTip={eventattsgrpTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
@@ -319,7 +313,7 @@ export default function TicEventlinkL(props) {
             <span className="p-dialog-header-close-icon pi pi-times"></span>
           </button>
         </div>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }
