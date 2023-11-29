@@ -474,7 +474,7 @@ export default function TicEventL(props) {
             <Dialog
                 header={translations[selectedLanguage].Event}
                 visible={visible}
-                style={{ width: '50%' }}
+                style={{ width: '60%' }}
                 onHide={() => {
                     setVisible(false);
                     setShowMyComponent(false);

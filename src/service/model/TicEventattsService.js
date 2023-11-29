@@ -102,6 +102,30 @@ export class TicEventattsService {
         }
     }
 
+    async postGrpEventatts(objId,newObj) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_grpeventatts_s&objId1=${objId}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(jsonObj, "***************************postGrpEventatts*******************************", newObj)
+            const response = await axios.post(url, {jsonObj}, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async putTicEventatts(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'

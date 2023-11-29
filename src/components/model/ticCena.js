@@ -9,6 +9,7 @@ import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
+import { ColorPicker } from 'primereact/colorpicker';
 
 const TicCena = (props) => {
 
@@ -197,6 +198,13 @@ const TicCena = (props) => {
                             />
                             {submitted && !ticCena.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                    </div>
+                    <div className="field col-12 md:col-1">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <ColorPicker format="hex" id="color" value={ticCena.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                        </div>
+
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">

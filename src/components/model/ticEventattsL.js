@@ -29,7 +29,8 @@ import { FileUpload } from 'primereact/fileupload';
 import FileService from '../../service/FileService';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 import { Calendar } from 'primereact/calendar';
-import DateFunction from "../../utilities/DateFunction"
+import DateFunction from "../../utilities/DateFunction";
+import TicEventattsgrpL from './ticEventattsgrpL';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -50,13 +51,15 @@ export default function TicEventattsL(props) {
     const [dropdownItems, setDropdownItems] = useState(null);
     const [dropdownAllItems, setDropdownAllItems] = useState(null);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
-    const [refresh, setRefresh] = useState(null);
+    let [refresh, setRefresh] = useState(null);
     const [componentKey, setComponentKey] = useState(0);
+    const [ticEventattsgrpLVisible, setTicEventattsgrpLVisible] = useState(false);
 
     let i = 0;
 
     const handleCancelClick = () => {
         props.setTicEventattsLVisible(false);
+        
     };
 
     useEffect(() => {
@@ -97,6 +100,15 @@ export default function TicEventattsL(props) {
         fetchData();
     }, [refresh, componentKey]);
 
+    const openEventattsgrp = () => {
+        setTicEventattsgrpDialog();
+    };
+
+    const setTicEventattsgrpDialog = () => {
+        setShowMyComponent(true);
+        setTicEventattsgrpLVisible(true);
+    };
+
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
 
@@ -133,6 +145,13 @@ export default function TicEventattsL(props) {
     const handleAutoInputClick = () => {
         setConfirmDialogVisible(true);
     };
+
+    
+    const handleTicEventattsgrpLDialogClose = (newObj) => {
+        const localObj = { newObj };
+        console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+        setRefresh(++refresh);
+    }; 
 
     const handleConfirm = async () => {
         //console.log(props.ticEvent, "***********handleConfirm********************")
@@ -336,6 +355,9 @@ export default function TicEventattsL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
                 </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].GroupAtts} icon="pi pi-plus-circle" severity="warning" onClick={openEventattsgrp} text raised />
+                </div>                
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
                 <div className="flex-grow-1"></div>
@@ -651,6 +673,26 @@ export default function TicEventattsL(props) {
                     </button>
                 </div>
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].EventAttsgrpList}
+                visible={ticEventattsgrpLVisible}
+                style={{ width: '60%' }}
+                onHide={() => {
+                    setTicEventattsgrpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent &&
+                    <TicEventattsgrpL
+                        parameter={'inputTextValue'}
+                        ticEvent={props.ticEvent}
+                        handleTicEventattsgrpLDialogClose={handleTicEventattsgrpLDialogClose}
+                        setTicEventattsgrpLVisible={setTicEventattsgrpLVisible}
+                        setVisible={setVisible}
+                        dialog={true}
+                        lookUp={false}
+                    />}
+            </Dialog>            
             <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} />
         </div>
     );

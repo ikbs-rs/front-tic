@@ -36,6 +36,7 @@ export default function TicEventattL(props) {
         if (i<2) {  
         const ticEventattService = new TicEventattService();
         const data = await ticEventattService.getLista();
+        console.log(data, "***************************************TicEventattL*****************************************")
         setTicEventatts(data);
         initFilters();
         }

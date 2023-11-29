@@ -67,7 +67,9 @@ const EmptyEntities =
     "eancode": "",
     "qrcode": "",
     "valid": "1",
-    "grp": null
+    "grp": null,
+    "color": "",
+    "icon": ""
   },
   "tic_artcena": {
     "id": null,
@@ -157,7 +159,9 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": "1"
+    "valid": "1",
+    "color": "",
+    "icon": ""
   },
   "tic_cenatp": {
     "id": null,
@@ -422,7 +426,9 @@ const EmptyEntities =
   "begda": "",
   "endda":  "",
   "discount": 0,  
-  "nart": "string"
+  "nart": "string",
+  "color": "",
+    "icon": ""
   },
 	"tic_eventartcena": {
 		"id": null,
@@ -467,7 +473,9 @@ const EmptyEntities =
     "att": null,
     "value": "",
     "valid": "0",
-    "text": ""
+    "text": "",
+    "color": "",
+    "icon": ""
   },
   "tic_eventattx": {
     "id": null,
@@ -513,7 +521,9 @@ const EmptyEntities =
     "event": null,
     "loc": null,
     "begda": "",
-    "endda": ""
+    "endda": "",
+    "color": "",
+    "icon": ""
   },
   "tic_eventobj": {
 		  "id": null,
@@ -524,7 +534,9 @@ const EmptyEntities =
 		  "begda": "",
 		  "endda": "",
 		  "begtm": "",
-		  "endtm": ""
+		  "endtm": "",
+      "color": "",
+    "icon": ""
 	  },
   "tic_events": {
     "id": null,
