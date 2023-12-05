@@ -712,6 +712,21 @@ export const translations = {
         ninputtp: "Врста уноса",
         DeleteAll: "Обриши све",
         color: "Боја",
+        Preparation: "Припрема",
+        AdmEntrance: "Админ. улаза ",
+        LocationsScene: "Место одржавања",
+        LocationsSector: "Сектори",
+        LocationsSeatBlock: "Улазни блокови седења",
+        Gafic: "Графика",
+        Sector: "Сектор",
+        ObjectsXPK: "Продајни канал",
+        ObjectsXPM: "Продајна мрежа",
+        ObjectsXORG: "Орг. структура",
+        ObjectsXTCTP: "Тип улазнице",
+        ObjectsXDOC: "ИД документа",
+        drawing: "Цртање",
+        Map: "Мапа",
+        EventWList: "Припрема догађаја",        
     }
   };
   

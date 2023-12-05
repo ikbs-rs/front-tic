@@ -22,6 +22,7 @@ import { SplitButton } from 'primereact/splitbutton';
 import TicEventrtL from './ticEventartL';
 import TicEventcenatpL from './ticEventcenatpL';
 import TicEventobjL from './ticEventobjL';
+import TicEventWL from './ticEventWL';
 import TicEventTmpL from './ticEventTmpL';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
@@ -47,6 +48,7 @@ export default function TicEventL(props) {
     const [ticEventcenatpLVisible, setTicEventcenatpLVisible] = useState(false);
     const [ticEventartLVisible, setTicEventartLVisible] = useState(false);
     const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
+    const [ticEventWLVisible, setTicEventWLVisible] = useState(false);
     const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -205,6 +207,10 @@ export default function TicEventL(props) {
         setTicEventobjDialog();
     };
 
+    const openEventW = () => {
+        setTicEventoWDialog();
+    };
+    
     const openEventTmp = () => {
         setTicEventTmpDialog();
     };
@@ -263,6 +269,9 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
                 <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Preparation} icon="pi pi-map" onClick={openEventW} severity="info" text raised disabled={!ticEvent} />
+                </div>                
+                <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventobj} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
@@ -275,7 +284,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Loc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].AdmEntrance} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
@@ -386,15 +395,26 @@ export default function TicEventL(props) {
         setTicEventobjLVisible(true);
     };
 
+    const setTicEventoWDialog = () => {
+        setShowMyComponent(true);
+        setTicEventWLVisible(true);
+    };
+    
     const setTicEventTmpDialog = () => {
         setShowMyComponent(true);
         setTicEventTmpLVisible(true);
     };
 
+
+    const handleWebMapDialogClose = (newObj) => {
+        setTicEventWLVisible(false);
+    };    
     //  Dialog --->
 
     const header = renderHeader();
     // heder za filter/>
+
+
 
     const actionTemplate = (rowData) => {
         return (
@@ -604,6 +624,30 @@ export default function TicEventL(props) {
                         eventArt={true}
                     />}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].EventWList}
+                visible={ticEventWLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicEventWLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent &&
+                    <TicEventWL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventWLVisible={setTicEventWLVisible}
+                        setTicEventobjLVisible={setTicEventobjLVisible}
+                        setTicEventartLVisible={setTicEventartLVisible}
+                        setTicEventattsLVisible={setTicEventattsLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
+                        onTaskComplete={handleWebMapDialogClose}
+                    />}
+            </Dialog>            
             <Dialog
                 header={translations[selectedLanguage].EventTmpList}
                 visible={ticEventTmpLVisible}

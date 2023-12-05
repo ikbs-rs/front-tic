@@ -243,6 +243,9 @@ export default function TicDocL(props) {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Map} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+        </div>        
+        <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />
         </div>
 

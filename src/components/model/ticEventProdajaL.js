@@ -16,6 +16,7 @@ import { translations } from '../../configs/translations';
 import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
 import WebMap from './remoteComponentContainer';
+import WebSalMap from './ticDocW';
 
 export default function TicEventL(props) {
     console.log(props, '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
@@ -93,7 +94,7 @@ export default function TicEventL(props) {
 
     const handleTaskComplete = () => {
         console.log(ticEvent, '**********************handleTaskComplete**************************');
-        if (ticEvent ) {
+        if (ticEvent) {
             props.onTaskComplete(ticEvent);
         } else {
             toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
@@ -179,7 +180,7 @@ export default function TicEventL(props) {
                 </div>
                 */}
                 <div className="flex flex-wrap gap-1">
-                {props.dialog && <Button label={translations[selectedLanguage].Confirm} icon="pi pi-table" onClick={handleTaskComplete} severity="info" text raised disabled={!ticEvent} />}
+                    {props.dialog && <Button label={translations[selectedLanguage].Confirm} icon="pi pi-table" onClick={handleTaskComplete} severity="info" text raised disabled={!ticEvent} />}
                 </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].EventsList}</b>
@@ -233,9 +234,9 @@ export default function TicEventL(props) {
         setTicEvent({ ...ticEvent });
     };
 
-/*
-Web Map *********************************************************************************************************
-*/
+    /*
+    Web Map *********************************************************************************************************
+    */
     const handleWebMapClick = async (rowData) => {
         try {
             setTicEvent(rowData)
@@ -275,10 +276,11 @@ Web Map ************************************************************************
                     type="button"
                     icon="pi pi-map"
                     style={{ width: '24px', height: '24px' }}
+                    className="p-button-outlined p-button-danger"
                     onClick={() => {
                         //setTicEventDialog(rowData);
                         handleWebMapClick(rowData)
-                        setEventTip('UPDATE');
+                        setEventTip('SAL');
                     }}
                     text
                     raised
@@ -286,6 +288,25 @@ Web Map ************************************************************************
             </div>
         );
     };
+    const webTemplate = (rowData) => {
+        return (
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-palette"
+                    style={{ width: '24px', height: '24px' }}
+                    className="p-button-warning"
+                    onClick={() => {
+                        //setTicEventDialog(rowData);
+                        handleWebMapClick(rowData)
+                        setEventTip('WEB');
+                    }}
+                    text
+                    raised
+                ></Button>
+            </div>
+        );
+    };    
 
     return (
         <div className="card">
@@ -321,6 +342,13 @@ Web Map ************************************************************************
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
+                <Column
+                    //bodyClassName="text-center"
+                    body={webTemplate}
+                    exportable={false}
+                    headerClassName="w-10rem"
+                    style={{ minWidth: '4rem' }}
+                />                
                 <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
                 <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
@@ -341,7 +369,15 @@ Web Map ************************************************************************
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && <TicEvent parameter={'inputTextValue'} ticEvent={ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventTip={eventTip} />}
+                {showMyComponent && 
+                    <TicEvent 
+                        parameter={'inputTextValue'} 
+                        ticEvent={ticEvent} 
+                        handleDialogClose={handleDialogClose} 
+                        setVisible={setVisible} 
+                        dialog={true} 
+                        eventTip={eventTip} 
+                    />}
             </Dialog>
             <Dialog
                 header={translations[selectedLanguage].webMap}
@@ -353,14 +389,25 @@ Web Map ************************************************************************
                 }}
             >
                 {webMapVisible && (
+                    <WebSalMap
+                    parameter={'inputTextValue'} 
+                    ticEvent={ticEvent} 
+                    handleDialogClose={handleDialogClose} 
+                    setVisible={setVisible} 
+                    dialog={true} 
+                    eventTip={eventTip}                     
+                    onTaskComplete={handleWebMapDialogClose}
+                    />
+                )}
+                {/* {webMapVisible && (
                     <WebMap
                         remoteUrl= {`http://ws11.ems.local:3000/#/seatmap/${ticEvent.id}?docid=${docId}&sl=sr_cyr`}
                         queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://192.168.72.96:8354' }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleWebMapDialogClose}
                         originUrl="http://192.168.72.96:8353"
                     />
-                )}
-            </Dialog>             
+                )} */}
+            </Dialog>
         </div>
     );
 }
