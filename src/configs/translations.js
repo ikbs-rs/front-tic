@@ -633,7 +633,7 @@ export const translations = {
         Bill: "Рачуни",
         Reservation: "Резервације",
         Sales: "Продаја",
-        Tmp: "Остало",
+        Tmp: "Преглед догађаја",
         Image: "Слика",
         Confirm: "Потврди",
         CreateSt: "Креирај даље",
