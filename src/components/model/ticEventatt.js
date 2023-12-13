@@ -45,14 +45,14 @@ const TicEventatt = (props) => {
                 const data = await ticEventattService.getCmnInputtps();
 
                 setCmnInputtpItems(data);
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdCmnInputtpItems(dataDD);
                 setDdCmnInputtpItem(dataDD.find((item) => item.code === props.ticEventatt.inputtp) || null);
                 if (props.ticEventatt.att) {
                     const foundItem = data.find((item) => item.id === props.ticEventatt.inputtp);
                     setCmnInputtpItem(foundItem || null);
                     ticEventatt.ctp = foundItem.code;
-                    ticEventatt.ntp = foundItem.textx;
+                    ticEventatt.ntp = foundItem.text;
                 }
             } catch (error) {
                 console.error(error);
@@ -71,14 +71,14 @@ const TicEventatt = (props) => {
                 setTicEventatttpItems(data)
                 //console.log("******************", ticEventatttpItem)
 
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTicEventatttpItems(dataDD);
                 setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
                 if (props.ticEventatt.tp) {
                     const foundItem = data.find((item) => item.id === props.ticEventatt.tp);
                     setTicEventatttpItem(foundItem || null);
                     ticEventatt.ctp = foundItem.code
-                    ticEventatt.ntp = foundItem.textx
+                    ticEventatt.ntp = foundItem.text
                 }
             } catch (error) {
                 console.error(error);
@@ -180,7 +180,7 @@ const TicEventatt = (props) => {
 
         let _ticEventatt = { ...ticEventatt };
         _ticEventatt[`${name}`] = val;
-        if (name === `textx`) _ticEventatt[`text`] = val;
+        if (name === `text`) _ticEventatt[`text`] = val;
 
         setTicEventatt(_ticEventatt);
     };
@@ -201,9 +201,15 @@ const TicEventatt = (props) => {
                             {submitted && !ticEventatt.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
-                            <InputText id="textx" value={ticEventatt.textx} onChange={(e) => onInputChange(e, 'text', 'textx')} required className={classNames({ 'p-invalid': submitted && !ticEventatt.textx })} />
-                            {submitted && !ticEventatt.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
+                            <InputText 
+                                id="text" 
+                                value={ticEventatt.text} 
+                                onChange={(e) => onInputChange(e, 'text', 'text')} 
+                                required 
+                                className={classNames({ 'p-invalid': submitted && !ticEventatt.text })} 
+                                />
+                            {submitted && !ticEventatt.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
