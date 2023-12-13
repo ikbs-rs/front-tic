@@ -7,37 +7,33 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
-import TicEventartcena from './ticEventartcena';
-import { EmptyEntities } from '../../service/model/EmptyEntities';
+import { CmnParattsService } from "../../../service/model/cmn/CmnParattsService";
+import CmnParatts from './cmnParatts';
+import { EmptyEntities } from '../../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
-import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction";
+import { translations } from "../../../configs/translations";
+import DateFunction from "../../../utilities/DateFunction";
 
 
-export default function TicEventartcenaL(props) {
-console.log(props, "-----------------------------------------------------------------------")
-  const objName = "tic_eventartcena"
+export default function CmnParattsL(props) {
+
+  const objName = "cmn_paratts"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventartcena = EmptyEntities[objName]
-  emptyTicEventartcena.eventart = props.ticEventart.id
-  emptyTicEventartcena.event = props.ticEventart.event
-  emptyTicEventartcena.art = props.ticEventart.art
-  emptyTicEventartcena.begda = props.ticEventart.begda
-  emptyTicEventartcena.endda = props.ticEventart.endda
+  const emptyCmnParatts = EmptyEntities[objName]
+  emptyCmnParatts.par = props.cmnPar.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventartcenas, setTicEventartcenas] = useState([]);
-  const [ticEventartcena, setTicEventartcena] = useState(emptyTicEventartcena);
+  const [cmnParattss, setCmnParattss] = useState([]);
+  const [cmnParatts, setCmnParatts] = useState(emptyCmnParatts);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventartcenaTip, setEventartcenaTip] = useState('');
+  const [parattsTip, setParattsTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventartcenaLVisible(false);
+    props.setCmnParattsLVisible(false);
   };
 
   useEffect(() => {
@@ -45,10 +41,9 @@ console.log(props, "------------------------------------------------------------
       try {
         ++i
         if (i < 2) {
-          const ticEventartcenaService = new TicEventartcenaService();
-          const data = await ticEventartcenaService.getLista(props.ticEventart.id);
-          console.log(data, "############################################")
-          setTicEventartcenas(data);
+          const cmnParattsService = new CmnParattsService();
+          const data = await cmnParattsService.getLista(props.cmnPar.id);
+          setCmnParattss(data);
 
           initFilters();
         }
@@ -62,33 +57,31 @@ console.log(props, "------------------------------------------------------------
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
-    console.log(newObj, "*******************************************************----------------")
-    props.handleRefresh(newObj.obj.id+newObj.obj.value);
 
-    let _ticEventartcenas = [...ticEventartcenas];
-    let _ticEventartcena = { ...localObj.newObj.obj };
+    let _cmnParattss = [...cmnParattss];
+    let _cmnParatts = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventartcenaTip === "CREATE") {
-      _ticEventartcenas.push(_ticEventartcena);
-    } else if (localObj.newObj.eventartcenaTip === "UPDATE") {
+    if (localObj.newObj.parattsTip === "CREATE") {
+      _cmnParattss.push(_cmnParatts);
+    } else if (localObj.newObj.parattsTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventartcenas[index] = _ticEventartcena;
-    } else if ((localObj.newObj.eventartcenaTip === "DELETE")) {
-      _ticEventartcenas = ticEventartcenas.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena Delete', life: 3000 });
+      _cmnParattss[index] = _cmnParatts;
+    } else if ((localObj.newObj.parattsTip === "DELETE")) {
+      _cmnParattss = cmnParattss.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnParatts Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnParatts ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartcenaTip}`, life: 3000 });
-    setTicEventartcenas(_ticEventartcenas);
-    setTicEventartcena(emptyTicEventartcena);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.parattsTip}`, life: 3000 });
+    setCmnParattss(_cmnParattss);
+    setCmnParatts(emptyCmnParatts);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventartcenas.length; i++) {
-      if (ticEventartcenas[i].id === id) {
+    for (let i = 0; i < cmnParattss.length; i++) {
+      if (cmnParattss[i].id === id) {
         index = i;
         break;
       }
@@ -98,11 +91,11 @@ console.log(props, "------------------------------------------------------------
   };
 
   const openNew = () => {
-    setTicEventartcenaDialog(emptyTicEventartcena);
+    setCmnParattsDialog(emptyCmnParatts);
   };
 
   const onRowSelect = (event) => {
-    //ticEventartcena.begda = event.data.begda
+    //cmnParatts.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -123,11 +116,11 @@ console.log(props, "------------------------------------------------------------
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ccena: {
+      ctp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      ncena: {
+      ntp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
       },
@@ -167,7 +160,7 @@ console.log(props, "------------------------------------------------------------
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventartcenaList}</b>
+        <b>{translations[selectedLanguage].ParattsList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -196,17 +189,17 @@ console.log(props, "------------------------------------------------------------
   };
 
   // <--- Dialog
-  const setTicEventartcenaDialog = (ticEventartcena) => {
+  const setCmnParattsDialog = (cmnParatts) => {
     setVisible(true)
-    setEventartcenaTip("CREATE")
-    setTicEventartcena({ ...ticEventartcena });
+    setParattsTip("CREATE")
+    setCmnParatts({ ...cmnParatts });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const eventartcenaTemplate = (rowData) => {
+  const parattsTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -215,8 +208,8 @@ console.log(props, "------------------------------------------------------------
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventartcenaDialog(rowData)
-            setEventartcenaTip("UPDATE")
+            setCmnParattsDialog(rowData)
+            setParattsTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -234,7 +227,7 @@ console.log(props, "------------------------------------------------------------
             <div className="field col-12 md:col-6">
               <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticEventart.code}
+                value={props.cmnPar.code}
                 disabled={true}
               />
             </div>
@@ -242,7 +235,7 @@ console.log(props, "------------------------------------------------------------
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticEventart.text}
+                value={props.cmnPar.textx}
                 disabled={true}
               />
             </div>           
@@ -252,9 +245,9 @@ console.log(props, "------------------------------------------------------------
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventartcena}
+        selection={cmnParatts}
         loading={loading}
-        value={ticEventartcenas}
+        value={cmnParattss}
         header={header}
         showGridlines
         removableSort
@@ -267,66 +260,38 @@ console.log(props, "------------------------------------------------------------
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventartcena(e.value)}
+        onSelectionChange={(e) => setCmnParatts(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={eventartcenaTemplate}
+          body={parattsTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="ccena"
+          field="ctp"
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "10%" }}
+          style={{ width: "15%" }}
         ></Column>
         <Column
-          field="ncena"
+          field="ntp"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "299%" }}
-        ></Column>    
-        <Column
-          field="cterr"
-          header={translations[selectedLanguage].Cterr}
-          sortable
-          filter
-          style={{ width: "10%" }}
+          style={{ width: "35%" }}
         ></Column>
         <Column
-          field="nterr"
-          header={translations[selectedLanguage].Nterr}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>  
-        <Column
-          field="ccurr"
-          header={translations[selectedLanguage].Ccurr}
-          sortable
-          filter
-          style={{ width: "10%" }}
-        ></Column>
-        <Column
-          field="ncurr"
-          header={translations[selectedLanguage].Ncurr}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>  
-        <Column
-          field="value"
+          field="text"
           header={translations[selectedLanguage].Value}
           sortable
           filter
-          style={{ width: "10%" }}
-        ></Column>                        
+          style={{ width: "20%" }}
+        ></Column>        
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -345,7 +310,7 @@ console.log(props, "------------------------------------------------------------
         ></Column>         
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Cena}
+        header={translations[selectedLanguage].Link}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -354,14 +319,14 @@ console.log(props, "------------------------------------------------------------
         }}
       >
         {showMyComponent && (
-          <TicEventartcena
+          <CmnParatts
             parameter={"inputTextValue"}
-            ticEventartcena={ticEventartcena}
-            ticEventart={props.ticEventart}
+            cmnParatts={cmnParatts}
+            cmnPar={props.cmnPar}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventartcenaTip={eventartcenaTip}
+            parattsTip={parattsTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

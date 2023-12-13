@@ -70,7 +70,7 @@ export class TicEventattService {
             };
             const jsonObj = JSON.stringify(newObj);
             const response = await axios.post(url, jsonObj, { headers });
-            //console.log("**************"  , response, "****************")
+            console.log("**************"  , jsonObj, "****************")
             return response.data.items;
         } catch (error) {
             console.error(error);

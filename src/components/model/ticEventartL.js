@@ -15,6 +15,7 @@ import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import TicEventrtcenaL from './ticEventartcenaL';
+import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
 
 
 export default function TicEventartL(props) {
@@ -33,20 +34,46 @@ export default function TicEventartL(props) {
   const [visible, setVisible] = useState(false);
   const [eventartTip, setEventartTip] = useState('');
   const [ticEventartcenaLVisible, setTicEventartcenaLVisible] = useState(false);
+  const [refreshForm, setRefreshForm] = useState('');
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventartLVisible(false);
   };
 
+  const handleRefresh = (uId) => {
+    setRefreshForm(uId);
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
-        ++i
+        ++i;
         if (i < 2) {
           const ticEventartService = new TicEventartService();
           const data = await ticEventartService.getLista(props.ticEvent.id);
-          setTicEventarts(data);
-
+  
+          // Kreiraj niz obećanja za dohvat cena
+          const pricePromises = data.map(async (item) => {
+            const ticEventartcenaService = new TicEventartcenaService();
+            const prices = await ticEventartcenaService.getLista(item.id);
+            return prices.map((price) => ({
+              ccurr: price.ccurr,
+              ncena: price.ncena,
+              value: price.value, // Prilagodite kako konvertujete cenu
+              begda: price.begda,
+            }));
+          });
+  
+          // Sačekaj da sva obećanja budu ispunjena
+          const pricesArray = await Promise.all(pricePromises);
+  
+          // Dodajte polje 'products' u svaki red podataka sa vrednostima proizvoda
+          const updatedData = data.map((item, index) => ({
+            ...item,
+            products: pricesArray[index],
+          }));
+  console.log(updatedData, "************************************************************")
+          setTicEventarts(updatedData);
           initFilters();
         }
       } catch (error) {
@@ -54,8 +81,47 @@ export default function TicEventartL(props) {
         // Obrada greške ako je potrebna
       }
     }
+  
     fetchData();
-  }, []);
+  }, [refreshForm]);
+  
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       ++i
+  //       if (i < 2) {
+  //         const ticEventartService = new TicEventartService();
+  //         const data = await ticEventartService.getLista(props.ticEvent.id);
+  //     // Dodajte polje 'products' u svaki red podataka sa vrednostima proizvoda
+  //     const updatedData = data.map((item) => ({
+  //       ...item,
+  //       products: [
+  //         {
+  //           id: '1029',
+  //           code: 'gwuby345v',
+  //           name: '1500'
+  //         },
+  //         {
+  //           id: '1027',
+  //           code: 'acvx872gc',
+  //           name: '750'
+  //         }
+  //       ],
+  //     }));
+
+  //     setTicEventarts(updatedData);          
+  //         //setTicEventarts(data);
+
+  //         initFilters();
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       // Obrada greške ako je potrebna
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
   const handleConfirmClick = () => {
     console.log(ticEventart, "7777777777777777777777777777777777777777777777777777")
     if (ticEventart) {
@@ -266,6 +332,35 @@ export default function TicEventartL(props) {
     );
   };
 
+
+  const cenaTemplate = (rowData) => {
+    // Proveri da li postoji niz proizvoda
+    if (rowData.products && rowData.products.length > 0) {
+      return (
+        <div>
+          <table className="p-datatable" style={{ minWidth: "20rem" }}>
+            <tbody>
+              {rowData.products.map((product) => (
+                <tr key={product.id}>
+                  <td style={{ width: '50%' }}>{product.ncena}</td>
+                  <td style={{ width: '30%' }}>{product.value}</td>
+                  <td style={{ width: '20%' }}>{DateFunction.formatDate(product.begda)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      // Ako nema proizvoda, možete prikazati odgovarajuću poruku ili ništa
+      return null;
+    }
+  };
+  
+  
+  
+  
+
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -345,7 +440,7 @@ export default function TicEventartL(props) {
           header={translations[selectedLanguage].Description}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{}}
         ></Column>
         <Column
           field="begda"
@@ -362,7 +457,16 @@ export default function TicEventartL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>
+        ></Column>        
+        <Column
+          //bodyClassName="text-center"
+          header={translations[selectedLanguage].Cena}
+          body={cenaTemplate}
+          exportable={false}
+          // headerClassName="w-10rem"
+          style={{ width: "20%" }}
+        />
+
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}
@@ -408,6 +512,7 @@ export default function TicEventartL(props) {
             dialog={true}
             lookUp={true}
             eventArtcena={true}
+            handleRefresh={handleRefresh}
           />}
       </Dialog>
     </div>

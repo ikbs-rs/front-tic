@@ -7,37 +7,33 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
-import TicEventartcena from './ticEventartcena';
-import { EmptyEntities } from '../../service/model/EmptyEntities';
+import { CmnTerrlocService } from "../../../service/model/cmn/CmnTerrlocService";
+import CmnTerrloc from './cmnTerrloc';
+import { EmptyEntities } from '../../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
-import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction";
+import { translations } from "../../../configs/translations";
+import DateFunction from "../../../utilities/DateFunction";
 
 
-export default function TicEventartcenaL(props) {
-console.log(props, "-----------------------------------------------------------------------")
-  const objName = "tic_eventartcena"
+export default function CmnTerrlocL(props) {
+
+  const objName = "cmn_terrloc"
   const selectedLanguage = localStorage.getItem('sl')||'en'
-  const emptyTicEventartcena = EmptyEntities[objName]
-  emptyTicEventartcena.eventart = props.ticEventart.id
-  emptyTicEventartcena.event = props.ticEventart.event
-  emptyTicEventartcena.art = props.ticEventart.art
-  emptyTicEventartcena.begda = props.ticEventart.begda
-  emptyTicEventartcena.endda = props.ticEventart.endda
+  const emptyCmnTerrloc = EmptyEntities[objName]
+  emptyCmnTerrloc.loc = props.cmnLoc.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticEventartcenas, setTicEventartcenas] = useState([]);
-  const [ticEventartcena, setTicEventartcena] = useState(emptyTicEventartcena);
+  const [cmnTerrlocs, setCmnTerrlocs] = useState([]);
+  const [cmnTerrloc, setCmnTerrloc] = useState(emptyCmnTerrloc);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [eventartcenaTip, setEventartcenaTip] = useState('');
+  const [terrlocTip, setLocartTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.setTicEventartcenaLVisible(false);
+    props.setCmnTerrlocLVisible(false);
   };
 
   useEffect(() => {
@@ -45,10 +41,10 @@ console.log(props, "------------------------------------------------------------
       try {
         ++i
         if (i < 2) {
-          const ticEventartcenaService = new TicEventartcenaService();
-          const data = await ticEventartcenaService.getLista(props.ticEventart.id);
-          console.log(data, "############################################")
-          setTicEventartcenas(data);
+          const cmnTerrlocService = new CmnTerrlocService();
+          const data = await cmnTerrlocService.getLocterrLista(props.cmnLoc.id);
+          console.log("Link podaci", data)
+          setCmnTerrlocs(data);
 
           initFilters();
         }
@@ -62,33 +58,31 @@ console.log(props, "------------------------------------------------------------
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
-    console.log(newObj, "*******************************************************----------------")
-    props.handleRefresh(newObj.obj.id+newObj.obj.value);
 
-    let _ticEventartcenas = [...ticEventartcenas];
-    let _ticEventartcena = { ...localObj.newObj.obj };
+    let _cmnTerrlocs = [...cmnTerrlocs];
+    let _cmnTerrloc = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.eventartcenaTip === "CREATE") {
-      _ticEventartcenas.push(_ticEventartcena);
-    } else if (localObj.newObj.eventartcenaTip === "UPDATE") {
+    if (localObj.newObj.terrlocTip === "CREATE") {
+      _cmnTerrlocs.push(_cmnTerrloc);
+    } else if (localObj.newObj.terrlocTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticEventartcenas[index] = _ticEventartcena;
-    } else if ((localObj.newObj.eventartcenaTip === "DELETE")) {
-      _ticEventartcenas = ticEventartcenas.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena Delete', life: 3000 });
+      _cmnTerrlocs[index] = _cmnTerrloc;
+    } else if ((localObj.newObj.terrlocTip === "DELETE")) {
+      _cmnTerrlocs = cmnTerrlocs.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnTerrloc Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicEventartcena ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnTerrloc ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartcenaTip}`, life: 3000 });
-    setTicEventartcenas(_ticEventartcenas);
-    setTicEventartcena(emptyTicEventartcena);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.terrlocTip}`, life: 3000 });
+    setCmnTerrlocs(_cmnTerrlocs);
+    setCmnTerrloc(emptyCmnTerrloc);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticEventartcenas.length; i++) {
-      if (ticEventartcenas[i].id === id) {
+    for (let i = 0; i < cmnTerrlocs.length; i++) {
+      if (cmnTerrlocs[i].id === id) {
         index = i;
         break;
       }
@@ -98,11 +92,11 @@ console.log(props, "------------------------------------------------------------
   };
 
   const openNew = () => {
-    setTicEventartcenaDialog(emptyTicEventartcena);
+    setCmnTerrlocDialog(emptyCmnTerrloc);
   };
 
   const onRowSelect = (event) => {
-    //ticEventartcena.begda = event.data.begda
+    //cmnTerrloc.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -123,11 +117,11 @@ console.log(props, "------------------------------------------------------------
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ccena: {
+      ctp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      ncena: {
+      ntp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
       },
@@ -167,7 +161,7 @@ console.log(props, "------------------------------------------------------------
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].EventartcenaList}</b>
+        <b>{translations[selectedLanguage].LocartList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -196,17 +190,17 @@ console.log(props, "------------------------------------------------------------
   };
 
   // <--- Dialog
-  const setTicEventartcenaDialog = (ticEventartcena) => {
+  const setCmnTerrlocDialog = (cmnTerrloc) => {
     setVisible(true)
-    setEventartcenaTip("CREATE")
-    setTicEventartcena({ ...ticEventartcena });
+    setLocartTip("CREATE")
+    setCmnTerrloc({ ...cmnTerrloc });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const eventartcenaTemplate = (rowData) => {
+  const terrlocTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -215,8 +209,8 @@ console.log(props, "------------------------------------------------------------
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicEventartcenaDialog(rowData)
-            setEventartcenaTip("UPDATE")
+            setCmnTerrlocDialog(rowData)
+            setLocartTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -234,7 +228,7 @@ console.log(props, "------------------------------------------------------------
             <div className="field col-12 md:col-6">
               <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticEventart.code}
+                value={props.cmnLoc.code}
                 disabled={true}
               />
             </div>
@@ -242,7 +236,7 @@ console.log(props, "------------------------------------------------------------
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticEventart.text}
+                value={props.cmnLoc.textx}
                 disabled={true}
               />
             </div>           
@@ -252,9 +246,9 @@ console.log(props, "------------------------------------------------------------
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticEventartcena}
+        selection={cmnTerrloc}
         loading={loading}
-        value={ticEventartcenas}
+        value={cmnTerrlocs}
         header={header}
         showGridlines
         removableSort
@@ -267,66 +261,31 @@ console.log(props, "------------------------------------------------------------
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicEventartcena(e.value)}
+        onSelectionChange={(e) => setCmnTerrloc(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={eventartcenaTemplate}
+          body={terrlocTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="ccena"
+          field="cterr"
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "10%" }}
-        ></Column>
-        <Column
-          field="ncena"
-          header={translations[selectedLanguage].Text}
-          sortable
-          filter
-          style={{ width: "299%" }}
-        ></Column>    
-        <Column
-          field="cterr"
-          header={translations[selectedLanguage].Cterr}
-          sortable
-          filter
-          style={{ width: "10%" }}
+          style={{ width: "20%" }}
         ></Column>
         <Column
           field="nterr"
-          header={translations[selectedLanguage].Nterr}
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "20%" }}
-        ></Column>  
-        <Column
-          field="ccurr"
-          header={translations[selectedLanguage].Ccurr}
-          sortable
-          filter
-          style={{ width: "10%" }}
-        ></Column>
-        <Column
-          field="ncurr"
-          header={translations[selectedLanguage].Ncurr}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>  
-        <Column
-          field="value"
-          header={translations[selectedLanguage].Value}
-          sortable
-          filter
-          style={{ width: "10%" }}
-        ></Column>                        
+          style={{ width: "60%" }}
+        ></Column>       
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -345,7 +304,7 @@ console.log(props, "------------------------------------------------------------
         ></Column>         
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Cena}
+        header={translations[selectedLanguage].Link}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -354,14 +313,14 @@ console.log(props, "------------------------------------------------------------
         }}
       >
         {showMyComponent && (
-          <TicEventartcena
+          <CmnTerrloc
             parameter={"inputTextValue"}
-            ticEventartcena={ticEventartcena}
-            ticEventart={props.ticEventart}
+            cmnTerrloc={cmnTerrloc}
+            cmnLoc={props.cmnLoc}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            eventartcenaTip={eventartcenaTip}
+            terrlocTip={terrlocTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

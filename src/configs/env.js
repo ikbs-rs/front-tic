@@ -1,14 +1,14 @@
 const env = {
-    DOMEN: 'http://ws10.ems.local:8351',
-    START_URL: 'http://ws10.ems.local:8351/start/',
-    ADM_URL: 'http://ws10.ems.local:8352/adm/',
-    CMN_URL: 'http://ws10.ems.local:8353/cmn/',
-    TIC_URL: 'http://ws10.ems.local:8354/tic/',
-    JWT_BACK_URL: 'http://ws10.ems.local:8302/badm',
-    ADM_BACK_URL: 'http://ws10.ems.local:8302/badm',
-    CMN_BACK_URL: 'http://ws10.ems.local:8303/bcmn',
-    TIC_BACK_URL: 'http://ws10.ems.local:8304/btic',
-    IMG_BACK_URL: 'http://ws10.ems.local:8305/img',
+    DOMEN: 'http://192.168.72.96',
+    START_URL: 'http://192.168.72.96/start/',
+    ADM_URL: 'http://192.168.72.96/adm/',
+    CMN_URL: 'http://192.168.72.96/cmn/',
+    TIC_URL: 'http://192.168.72.96/tic/',
+    JWT_BACK_URL: 'http://192.168.72.96/badm',
+    ADM_BACK_URL: 'http://192.168.72.96/badm',
+    CMN_BACK_URL: 'http://192.168.72.96/bcmn',
+    TIC_BACK_URL: 'http://192.168.72.96/btic',
+    IMG_BACK_URL: 'http://192.168.72.96/bimg',
   };
   
   export default env;

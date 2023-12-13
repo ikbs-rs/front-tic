@@ -1,0 +1,17 @@
+.p-dialog .p-dialog-header .p-dialog-header-icons {
+  display: none;
+}
+
+.p-datatable .p-datatable-tbody .editing-row {
+  background: rgb(194, 198, 230)   !important;
+  /* Dodajte ostale stilove prema potrebi */
+}
+
+.highlight-row-green {
+  background-color: #8EF6A6 !important; /* Dodajte svoju željenu boju za zelenu */
+}
+
+.highlight-row-blue {
+  background-color: #8E95F6 !important; /* Dodajte svoju željenu boju za plavu */
+}
+

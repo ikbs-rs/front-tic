@@ -726,7 +726,10 @@ export const translations = {
         ObjectsXDOC: "ИД документа",
         drawing: "Цртање",
         Map: "Мапа",
-        EventWList: "Припрема догађаја",        
+        EventWList: "Припрема догађаја",   
+        Venue: "Место дешавања",  
+        VenueList: "Место одржавања Листа",   
+        art: "Артикли",
     }
   };
   

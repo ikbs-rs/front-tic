@@ -1,11 +1,11 @@
 import axios from 'axios';
-import env from "../../configs/env"
-import Token from "../../utilities/Token";
+import env from "../../../configs/env"
+import Token from "../../../utilities/Token";
 
-export class CmnPartpService {
-  async getCmnPartps() {
+export class CmnLoctpService {
+  async getCmnLoctps() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+    const url = `${env.CMN_BACK_URL}/cmn/x/loctp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -20,9 +20,9 @@ export class CmnPartpService {
     }
   }
 
-  async getCmnPartp(objId) {
+  async getCmnLoctp(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/partp/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.CMN_BACK_URL}/cmn/x/loctp/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -37,8 +37,7 @@ export class CmnPartpService {
     }
   }
 
-
-  async postCmnPartp(newObj) {
+  async postCmnLoctp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -46,13 +45,14 @@ export class CmnPartpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+      const url = `${env.CMN_BACK_URL}/cmn/x/loctp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
+
       const response = await axios.post(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -63,7 +63,7 @@ export class CmnPartpService {
 
   }
 
-  async putCmnPartp(newObj) {
+  async putCmnLoctp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -71,7 +71,7 @@ export class CmnPartpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+      const url = `${env.CMN_BACK_URL}/cmn/x/loctp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -88,9 +88,9 @@ export class CmnPartpService {
 
   }
 
-  async deleteCmnPartp(newObj) {
+  async deleteCmnLoctp(newObj) {
     try {
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/${newObj.id}`;
+      const url = `${env.CMN_BACK_URL}/cmn/x/loctp/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token
@@ -103,5 +103,24 @@ export class CmnPartpService {
     }
 
   }
+
+  async getIdByItem(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/loctp/getid/code/${objId}/?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+    
+    try {
+      console.log(url, "***************getIdByItem*******************")
+      const response = await axios.get(url, { headers });
+      return response.data.items||response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+ 
 }
 

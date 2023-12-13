@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventService } from "../../service/model/TicEventService";
 import { TicSeasonService } from "../../service/model/TicSeasonService";
-import { TicEventsService } from "../../service/model/TicEventsService";
+import { CmnLocService } from "../../service/model/cmn/CmnLocService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -16,10 +16,12 @@ import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
 import { Calendar } from "primereact/calendar";
-import TicEvents from './ticEvents';
+import CmnLocL from './cmn/cmnLocL';
 import TicEventctg from './ticEventctg';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
-
+import { AutoComplete } from "primereact/autocomplete";
+import { Dialog } from 'primereact/dialog';
+import CmnParL from './cmn/cmnParL';
 
 const TicEvent = (props) => {
     let i = 0
@@ -47,11 +49,29 @@ const TicEvent = (props) => {
     const [ddLocItem, setDdLocItem] = useState(null);
     const [ddLocItems, setDdLocItems] = useState(null);
     const [ddSeasonItem, setDdSeasonItem] = useState(null);
-    const [ddSeasonItems, setDdSeasonItems] = useState(null);    
+    const [ddSeasonItems, setDdSeasonItems] = useState(null);
     const [ddEventItem, setDdEventItem] = useState(null);
     const [ddEventItems, setDdEventItems] = useState(null);
-    const [ddOrganizatorItem, setDdOrganizatorItem] = useState(null);
-    const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);
+    // const [ddOrganizatorItem, setDdOrganizatorItem] = useState(null);
+    // const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);
+
+    /************************AUTOCOMPLIT**************************** */
+    const [cmnParLVisible, setCmnParLVisible] = useState(false);
+    const [allPara, setAllPars] = useState([]);
+    const [parValue, setParValue] = useState(props.ticEvent.cpar);
+    const [filteredPars, setFilteredPars] = useState([]);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const [selectedPar, setSelectedPar] = useState(null);
+    /************************AUTOCOMPLIT**************************** */
+    const [cmnLocLVisible, setCmnLocLVisible] = useState(false);
+    const [allLoc, setAllLocs] = useState([]);
+    const [locValue, setLocValue] = useState(props.ticEvent.cloc);
+    const [filteredLocs, setFilteredLocs] = useState([]);
+    const [debouncedLocSearch, setDebouncedLocSearch] = useState("");
+    //const [searchLocTimeout, setSearchLocTimeout] = useState(null);
+    const [selectedLoc, setSelectedLoc] = useState(null);
+    /************************AUTOCOMPLIT**************************** */
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.endda || DateFunction.currDate())))
@@ -75,7 +95,7 @@ const TicEvent = (props) => {
     useEffect(() => {
         setDropdownTmpItem(findDropdownTmpItemByCode(props.ticEvent.tmp));
     }, []);
-
+    // **** TIP DOGADJAJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
             try {
@@ -98,7 +118,7 @@ const TicEvent = (props) => {
         }
         fetchData();
     }, []);
-
+    // **** KATEGORIJA DOGADJAJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
             try {
@@ -120,28 +140,28 @@ const TicEvent = (props) => {
         }
         fetchData();
     }, []);
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const ticEventsService = new TicEventsService();
-                const data = await ticEventsService.getTicEvents(props.ticEvent.id);
-                if (data) {
-                    setTicEvents(data)
-                    updateEventsTip(true)
-                } else {
-                    emptyTicEvents.id = null
-                    setTicEvents(emptyTicEvents)
-                    updateEventsTip(false)
-                }
-            } catch (error) {
-                console.error(error);
-                // Obrada greške ako je potrebna
-            }
-        }
-        fetchData();
-    }, [props.ticEvent, eventsTip]);
-
+    // **** DOGADJAJ-S  DROPDOWN ne znam da li se ovo upotrebljava ?????
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         try {
+    //             const ticEventsService = new TicEventsService();
+    //             const data = await ticEventsService.getTicEvents(props.ticEvent.id);
+    //             if (data) {
+    //                 setTicEvents(data)
+    //                 updateEventsTip(true)
+    //             } else {
+    //                 emptyTicEvents.id = null
+    //                 setTicEvents(emptyTicEvents)
+    //                 updateEventsTip(false)
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //             // Obrada greške ako je potrebna
+    //         }
+    //     }
+    //     fetchData();
+    // }, [props.ticEvent, eventsTip]);
+    // **** SEZONA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
             try {
@@ -157,7 +177,7 @@ const TicEvent = (props) => {
         }
         fetchData();
     }, []);
-
+    // **** MESTO DESAVANJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
             try {
@@ -173,7 +193,7 @@ const TicEvent = (props) => {
         }
         fetchData();
     }, []);
-
+    // **** NADREDJENI DOGADJAJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
             try {
@@ -220,23 +240,23 @@ const TicEvent = (props) => {
     //     setDropdownItems(items);
     // }, []);
 
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const ticEventService = new TicEventService();
-                const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdOrganizatorItems(dataDD);
-                setDdOrganizatorItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);
-                setTicEvents(data);
-            } catch (error) {
-                console.error(error);
-                // Obrada greške ako je potrebna
-            }
-        }
-        fetchData();
-    }, []);
+    // **** ORGANIZATOR  DROPDOWN
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         try {
+    //             const ticEventService = new TicEventService();
+    //             const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
+    //             const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+    //             setDdOrganizatorItems(dataDD);
+    //             setDdOrganizatorItem(dataDD.find((item) => item.code === props.ticEvent.par) || null);
+    //             setTicEvents(data);
+    //         } catch (error) {
+    //             console.error(error);
+    //             // Obrada greške ako je potrebna
+    //         }
+    //     }
+    //     fetchData();
+    // }, []);
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -246,9 +266,156 @@ const TicEvent = (props) => {
         return itemsTmp.find((item) => item.code === code) || null;
     };
 
-    const updateEventsTip = (value) => {
-        setEventsTip(value);
+    // EVENT-S ????????
+    // const updateEventsTip = (value) => {
+    //     setEventsTip(value);
+    // };
+
+    /*************************AUTOCOMPLIT*******************************************LOC****** */
+    /**************** */
+    useEffect(() => {
+        async function fetchData() {
+            const cmnLocService = new CmnLocService();
+            const data = await cmnLocService.getListaLL('XSC');
+            setAllLocs(data);
+            //setParValue(data.find((item) => item.id === props.ticEvent.par) || null);
+        }
+        fetchData();
+    }, []);
+    /**************** */
+    useEffect(() => {
+        if (debouncedLocSearch && selectedLoc === null) {
+            console.log("9999999999999999999999999debouncedLocSearch9999999999999999999999999999", debouncedLocSearch, "***********")
+            // Filtrirajte podatke na osnovu trenutnog unosa
+            const query = debouncedLocSearch.toLowerCase();
+            const filtered = allLoc.filter(
+                (item) =>
+                    item.textx.toLowerCase().includes(query) ||
+                    item.code.toLowerCase().includes(query) ||
+                    item.id.toLowerCase().includes(query)
+            );
+
+            setSelectedLoc(null);
+            setFilteredLocs(filtered);
+        }
+    }, [debouncedLocSearch, allLoc]);
+    /*** */
+
+    useEffect(() => {
+        // Samo kada je izabrani element `null`, izvršavamo `onChange`
+        console.log(locValue, "*********************parValue*****************@@@@@@@@@***********")
+        setLocValue(locValue);
+    }, [locValue, selectedLoc]);
+
+    const handleLocSelect = (e) => {
+        // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
+        setSelectedLoc(e.value.code);
+        setLocValue(e.value.code);
     };
+    /************************** */
+    const handleLocLClick = async (e, destination) => {
+        try {
+            console.log(destination, "*********************handleParLClick****************************")
+            if (destination === 'local') setCmnLocLDialog();
+            else setCmnLocLDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnLoc data',
+                life: 3000
+            });
+        }
+    };
+    const setCmnLocLDialog = (destination) => {
+        setCmnLocLVisible(true);
+    };
+    /************************** */
+    const handleCmnLocLDialogClose = (newObj) => {
+        console.log(newObj, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
+        setLocValue(newObj.code);
+        ticEvent.loc = newObj.id;
+        ticEvent.nloc = newObj.textx;
+        ticEvent.cloc = newObj.code;
+        setTicEvent(ticEvent)
+        //ticDocs.potrazuje = newObj.cena * ticDocs.output;
+        setCmnLocLVisible(false);
+    };
+    /**************************AUTOCOMPLIT***********************************LOC************* */
+
+    /*************************AUTOCOMPLIT************************************PAR************* */
+    /**************** */
+    useEffect(() => {
+        async function fetchData() {
+            const ticEventService = new TicEventService();
+            const data = await ticEventService.getOrganizatorLista('cmn_par', 't.code', parTp);
+            setAllPars(data);
+            //setParValue(data.find((item) => item.id === props.ticEvent.par) || null);
+        }
+        fetchData();
+    }, []);
+    /**************** */
+    useEffect(() => {
+        if (debouncedSearch && selectedPar === null) {
+            // Filtrirajte podatke na osnovu trenutnog unosa
+            console.log("9999999999999999999999999debouncedLocSearch9999999999999999999999999999", debouncedSearch, "=============================")
+            const query = debouncedSearch.toLowerCase();
+            const filtered = allPara.filter(
+                (item) =>
+                    item.textx.toLowerCase().includes(query) ||
+                    item.code.toLowerCase().includes(query) ||
+                    item.id.toLowerCase().includes(query)
+            );
+
+            setSelectedPar(null);
+            setFilteredPars(filtered);
+        }
+    }, [debouncedSearch, allPara]);
+    /*** */
+
+    useEffect(() => {
+        // Samo kada je izabrani element `null`, izvršavamo `onChange`
+        console.log(parValue, "*********************parValue*****************@@@@@@@@@***********")
+        setParValue(parValue);
+    }, [parValue, selectedPar]);
+
+    const handleSelect = (e) => {
+        // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
+        setSelectedPar(e.value.code);
+        setParValue(e.value.code);
+    };
+    /************************** */
+    const handleParLClick = async (e, destination) => {
+        try {
+            console.log(destination, "*********************handleParLClick****************************")
+            if (destination === 'local') setCmnParDialog();
+            else setCmnParDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+    const setCmnParDialog = (destination) => {
+        setCmnParLVisible(true);
+    };
+    /************************** */
+    const handleCmnParLDialogClose = (newObj) => {
+        console.log(newObj, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
+        setParValue(newObj.code);
+        ticEvent.par = newObj.id;
+        ticEvent.npar = newObj.textx;
+        ticEvent.cpar = newObj.code;
+        setTicEvent(ticEvent)
+        //ticDocs.potrazuje = newObj.cena * ticDocs.output;
+        setCmnParLVisible(false);
+    };
+    /**************************AUTOCOMPLIT************************************************ */
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -337,16 +504,16 @@ const TicEvent = (props) => {
             } else if (name == "season") {
                 setDdSeasonItem(e.value);
                 ticEvent.cseason = e.value.code
-                ticEvent.nseason = e.value.name                
+                ticEvent.nseason = e.value.name
             } else if (name == "event") {
                 setDdEventItem(e.value);
                 ticEvent.cevent = e.value.code
                 ticEvent.nevent = e.value.name
-            } else if (name == "par") {
+            } /*else if (name == "par") {
                 setDdOrganizatorItem(e.value);
                 ticEvent.cpar = e.value.code
                 ticEvent.npar = e.value.name
-            } else if (name == "tmp") {
+            }*/ else if (name == "tmp") {
                 setDropdownTmpItem(e.value);
             } else {
                 setDropdownItem(e.value);
@@ -367,6 +534,50 @@ const TicEvent = (props) => {
                 default:
                     console.error("Pogresan naziv polja")
             }
+        } else if (type === "auto") {
+            let timeout = null
+            switch (name) {
+                case "par":
+                    if (selectedPar === null) {
+                        setParValue(e.target.value.textx || e.target.value);
+                    } else {
+                        setSelectedPar(null);
+                        setParValue(e.target.value.textx || e.target.value.textx);
+                    }
+                    console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", e.target.value)
+                    ticEvent.par = e.target.value.id
+                    ticEvent.npar = e.target.value.textx
+                    ticEvent.cpar = e.target.value.code
+                    // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
+                    clearTimeout(searchTimeout);
+                    timeout = setTimeout(() => {
+                        setDebouncedSearch(e.target.value);
+                    }, 400);
+                    break;
+                case "loc":
+                    if (selectedLoc === null) {
+                        setLocValue(e.target.value.textx || e.target.value);
+                    } else {
+                        setSelectedLoc(null);
+                        setLocValue(e.target.value.textx || e.target.value.textx);
+                    }
+                    console.log(e.target, "###########################-auto-##################setDebouncedLocSearch############", e.target.value)
+                    ticEvent.loc = e.target.value.id
+                    ticEvent.nloc = e.target.value.textx
+                    ticEvent.cloc = e.target.value.code
+                    // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
+                    clearTimeout(searchTimeout);
+                    timeout = setTimeout(() => {
+                        setDebouncedLocSearch(e.target.value);
+                    }, 400);                    
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
+
+
+            setSearchTimeout(timeout);
+            val = (e.target && e.target.value && e.target.value.id) || '';
         } else {
             val = (e.target && e.target.value) || '';
         }
@@ -382,21 +593,81 @@ const TicEvent = (props) => {
         setDeleteDialogVisible(false);
     };
 
+
+    const itemTemplate = (item) => {
+        return (
+            <>
+                <div>
+                    {item.textx}
+                    {` `}
+                    {item.code}
+                </div>
+                <div>
+                    {item.id}
+                </div>
+            </>
+        );
+    };
+    const locTemplate = (item) => {
+        return (
+            <>
+                <div>
+                    {item.textx}
+                    {` `}
+                    {item.code}
+                </div>
+                <div>
+                    {item.id}
+                </div>
+            </>
+        );
+    };
     return (
         <div className="grid">
             <Toast ref={toast} />
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-10">
-                            <label htmlFor="par">{translations[selectedLanguage].Organizer}</label>
-                            <Dropdown id="par"
-                                value={ddOrganizatorItem}
-                                options={ddOrganizatorItems}
-                                onChange={(e) => onInputChange(e, "options", 'par')}
-                                filter
-                                optionLabel="name"
-                                placeholder="Select One"
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
+                            <InputText id="code" autoFocus
+                                value={ticEvent.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.code })}
+                            />
+                            {submitted && !ticEvent.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-9">
+                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
+                            <InputText
+                                id="textx"
+                                value={ticEvent.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.textx })}
+                            />
+                            {submitted && !ticEvent.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="par">{translations[selectedLanguage].Organizer} *</label>
+                            <div className="p-inputgroup flex-1">
+                                <AutoComplete
+                                    value={parValue}
+                                    suggestions={filteredPars}
+                                    completeMethod={() => { }}
+                                    onSelect={handleSelect}
+                                    onChange={(e) => onInputChange(e, "auto", 'par')}
+                                    itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
+                                    placeholder="Pretraži"
+                                />
+                                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" />
+                            </div>
+                        </div>
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="par">...</label>
+                            <InputText
+                                id="npar"
+                                value={ticEvent.npar}
+                                required
                             />
                         </div>
                         <div className="field col-12 md:col-2">
@@ -411,29 +682,45 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.season })}
                             />
                             {submitted && !ticEvent.season && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                        
-                        <div className="field col-12 md:col-10">
-                            <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
-                            <Dropdown id="event"
-                                value={ddEventItem}
-                                options={ddEventItems}
-                                onChange={(e) => onInputChange(e, "options", 'event')}
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        {/* <div className="field col-12 md:col-10">
+                            <label htmlFor="par">{translations[selectedLanguage].Organizer}</label>
+                            <Dropdown id="par"
+                                value={ddOrganizatorItem}
+                                options={ddOrganizatorItems}
+                                onChange={(e) => onInputChange(e, "options", 'par')}
                                 filter
                                 optionLabel="name"
                                 placeholder="Select One"
                             />
-                        </div>
+                        </div> */}
                         <div className="field col-12 md:col-4">
-                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-                            <InputText id="code" autoFocus
-                                value={ticEvent.code} onChange={(e) => onInputChange(e, "text", 'code')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticEvent.code })}
-                            />
-                            {submitted && !ticEvent.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            <label htmlFor="loc">{translations[selectedLanguage].Venue} *</label>
+                            <div className="p-inputgroup flex-1">
+                                <AutoComplete
+                                    value={locValue}
+                                    suggestions={filteredLocs}
+                                    completeMethod={() => { }}
+                                    onSelect={handleLocSelect}
+                                    onChange={(e) => onInputChange(e, "auto", 'loc')}
+                                    itemTemplate={locTemplate} // Koristite itemTemplate za prikazivanje objekata
+                                    placeholder="Pretraži"
+                                />
+                                <Button icon="pi pi-search" onClick={(e) => handleLocLClick(e, "local")} className="p-button" />
+                            </div>
                         </div>
-                        <div className="field col-12 md:col-8">
-                            <label htmlFor="loc">{translations[selectedLanguage].Location} *</label>
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="loc">...</label>
+                            <InputText
+                                id="nloc"
+                                value={ticEvent.nloc}
+                                required
+                            />
+                        </div>
+                        {/* <div className="field col-12 md:col-6">
+                            <label htmlFor="loc">{translations[selectedLanguage].Venue} *</label>
                             <Dropdown id="loc"
                                 value={ddLocItem}
                                 options={ddLocItems}
@@ -444,17 +731,20 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.loc })}
                             />
                             {submitted && !ticEvent.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
-                        <div className="field col-12 md:col-12">
-                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
-                            <InputText
-                                id="textx"
-                                value={ticEvent.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
-                                required
-                                className={classNames({ 'p-invalid': submitted && !ticEvent.textx })}
+                        </div> */}
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
+                            <Dropdown id="event"
+                                value={ddEventItem}
+                                options={ddEventItems}
+                                onChange={(e) => onInputChange(e, "options", 'event')}
+                                filter
+                                optionLabel="name"
+                                placeholder="Select One"
                             />
-                            {submitted && !ticEvent.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+
+
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Descript}</label>
                             <InputText
@@ -490,7 +780,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
                             <Calendar
                                 value={begda}
@@ -500,7 +790,7 @@ const TicEvent = (props) => {
                             />
 
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="roenddal">{translations[selectedLanguage].Endda} *</label>
                             <Calendar
                                 value={endda}
@@ -509,7 +799,7 @@ const TicEvent = (props) => {
                                 dateFormat="dd.mm.yy"
                             />
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
                             <InputText
                                 id="begtm"
@@ -522,7 +812,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="endtm">{translations[selectedLanguage].EndTM}</label>
                             <InputText
                                 id="endtm"
@@ -638,6 +928,47 @@ const TicEvent = (props) => {
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
+            <Dialog
+                header={translations[selectedLanguage].ParList}
+                visible={cmnParLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setCmnParLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParLVisible &&
+                    <CmnParL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        onTaskComplete={handleCmnParLDialogClose}
+                        setCmnParLVisible={setCmnParLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        parentData={true}
+                    />}
+            </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].VenueList}
+                visible={cmnLocLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setCmnLocLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnLocLVisible &&
+                    <CmnLocL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        onTaskComplete={handleCmnLocLDialogClose}
+                        setCmnLocLVisible={setCmnLocLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        parentData={true}
+                        loctpId={'XSC'}
+                    />}
+            </Dialog>
         </div>
     );
 };

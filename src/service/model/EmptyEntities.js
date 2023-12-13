@@ -464,7 +464,8 @@ const EmptyEntities =
     "text": "",
     "valid": "1",
     "inputp": null,
-    "ddlist": ""
+    "ddlist": "",
+    "tp": null    
   },
   "tic_eventatts": {
     "id": null,
@@ -771,6 +772,100 @@ const EmptyEntities =
     "site": null,
     "docs": null,
     "time": ""
+  },
+  "cmn_loc": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "longtext": "",
+    "tp": null,
+    "valid": "1",
+    "color": "",
+    "icon": ""
+  },
+  "cmn_locatt": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "cmn_locatts": {
+    "id": null,
+    "site": null,
+    "loc": null,
+    "locatt": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_locattx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
+  },
+  "cmn_loclink": {
+    "id": null,
+    "site": null,
+    "tp": 1,
+    "loctp1": null,
+    "loc1": null,
+    "loctp2": null,
+    "loc2": null,
+    "val": "",
+    "begda": "",
+    "endda": "99991231",
+    "hijerarhija": null,
+    "onoff": null,
+    "color": "",
+    "icon": ""
+  },
+  "cmn_par": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "tp": null,
+    "text": "",
+    "short": "",
+    "address": "",
+    "place": "",
+    "postcode": "",
+    "tel": "",
+    "activity": "",
+    "pib": "",
+    "idnum": "",
+    "pdvnum": "",
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_parlink": {
+    "id": null,
+    "site": null,
+    "par1": null,
+    "par2": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_terrloc": {
+    "id": null,
+    "terr": null,
+    "loc": null,
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_paratts": {
+    "id": null,
+    "site": null,
+    "par": null,
+    "att": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
   }
 }
 
