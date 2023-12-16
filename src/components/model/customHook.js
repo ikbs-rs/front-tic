@@ -96,7 +96,7 @@ export const useDropdown = (...args) => {
 };
 
 export async function fetchObjData(...args) {
-    console.log(args, "****************************fetchObjData***********************!!!!!!!!!!****")
+    // console.log(args, args[0], "****************************coostomHook***********************!!!!!!!!!!****")
     const obj = args[3] 
     try {
         let backend = '';
@@ -138,6 +138,7 @@ export async function fetchObjData(...args) {
         const headers = {
             Authorization: tokenLocal.token
         };
+        // console.log(url, "************************************URL************************************")
         const response = await axios.get(url, { headers });
         const datas = response.data.items || response.data.item;
         const items = datas.map(({ text, id }) => ({ name: text, code: id }));

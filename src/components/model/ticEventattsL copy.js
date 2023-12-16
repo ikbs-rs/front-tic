@@ -49,9 +49,10 @@ export default function TicEventattsL(props) {
     const [eventattsTip, setEventattsTip] = useState('');
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
-    const [dropdownItemText, setDropdownItemText] = useState(null);
-    const [dropdownItemsText, setDropdownItemsText] = useState(null);
+    const [dropdownItem1, setDropdownItem1] = useState(null);
+    const [dropdownItems1, setDropdownItems1] = useState(null);
     const [dropdownAllItems, setDropdownAllItems] = useState(null);
+    const [dropdownAllItems1, setDropdownAllItems1] = useState(null);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
     let [refresh, setRefresh] = useState(null);
     const [componentKey, setComponentKey] = useState(0);
@@ -61,19 +62,69 @@ export default function TicEventattsL(props) {
 
     const handleCancelClick = () => {
         props.setTicEventattsLVisible(false);
+
     };
+
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         try {
+    //             ++i;
+    //             if (i < 2) {
+    //                 let updatedData = {};
+    //                 const ticEventattsService = new TicEventattsService();
+    //                 const data = await ticEventattsService.getLista(props.ticEvent.id);
+    //                 // Proširivanje dropdownData niza za svaki red sa inputtp === "3"
+    //                 const updatedDropdownItems = { ...dropdownAllItems };
+    //                 updatedData = await Promise.all(
+    //                     data.map(async (row) => {
+    //                         if (row.inputtp === '3' && row.ddlist) {
+    //                             const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
+    //                             let apsTabela = modul + `_` + tabela;
+    //                             if (code) {
+    //                                 apsTabela = apsTabela + `_${code}`
+    //                             }
+    //                             const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent); // Sačekaj izvršenje
+    //                             updatedDropdownItems[apsTabela] = dataDD.ddItems;
+    //                             if (modul1) {
+    //                                 console.log(modul1, table1, code1, "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--")
+    //                                 let apsTabela1 = modul1 + `_` + table1;
+    //                                 if (code1) {
+    //                                     apsTabela1 = apsTabela1 + `_${code1}`
+    //                                 }
+    //                                 const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent); // Sačekaj izvršenje
+    //                                 updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
+    //                             }
+    //                         }
+    //                         return { ...row, isUploadPending: false }; // Dodaj novu kolonu sa statusom
+    //                     })
+    //                 );
+    //                 await setTicEventattss(updatedData);
+    //                 await setDropdownAllItems(updatedDropdownItems);
+    //                 console.log(updatedDropdownItems, "---------------------------------------------------")
+
+    //                 initFilters();
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //             // Obrada greške ako je potrebna
+    //         }
+    //     }
+
+    //     fetchData();
+    // }, [refresh, componentKey]);
 
     useEffect(() => {
         async function fetchData() {
-            console.log("************fetchData**********", i)
             try {
                 ++i;
                 if (i < 2) {
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id);
                     const updatedDropdownItems = { ...dropdownAllItems };
-                    const promisesDD = data.map(async (row) => {
-                        if (row.inputtp === '3' && row.ddlist) {
+                    const updatedDropdownItems1 = { ...dropdownAllItems1 };
+    
+                    const promises = data.map(async (row) => {
+                        if (row.inputtp === '3'  && row.ddlist) {
                             const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
                             let apsTabela = modul + `_` + tabela;
                             if (code) {
@@ -81,7 +132,7 @@ export default function TicEventattsL(props) {
                             }
                             const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
                             updatedDropdownItems[apsTabela] = dataDD.ddItems;
-
+    
                         }
                         if (row.inputtp === '6' && row.ddlist) {
                             const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
@@ -91,7 +142,7 @@ export default function TicEventattsL(props) {
                             }
                             const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
                             updatedDropdownItems[apsTabela] = dataDD.ddItems;
-
+    
                             if (modul1) {
                                 let apsTabela1 = modul1 + `_` + table1;
                                 if (code1) {
@@ -100,13 +151,15 @@ export default function TicEventattsL(props) {
                                 const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
                                 updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
                             }
-                        }
+                        }                        
                         return { ...row, isUploadPending: false };
                     });
-
-                    const updatedData = await Promise.all(promisesDD);
+    
+                    const updatedData = await Promise.all(promises);
                     setTicEventattss(updatedData);
                     setDropdownAllItems(updatedDropdownItems);
+                    console.log(updatedDropdownItems, "-----------------------updatedDropdownItems----------------------------");
+    
                     initFilters();
                 }
             } catch (error) {
@@ -114,10 +167,10 @@ export default function TicEventattsL(props) {
                 // Obrada greške ako je potrebna
             }
         }
-
+    
         fetchData();
     }, [refresh, componentKey]);
-
+    
 
     const openEventattsgrp = () => {
         setTicEventattsgrpDialog();
@@ -168,7 +221,7 @@ export default function TicEventattsL(props) {
 
     const handleTicEventattsgrpLDialogClose = (newObj) => {
         const localObj = { newObj };
-        //console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+        console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
         setRefresh(++refresh);
     };
 
@@ -185,134 +238,143 @@ export default function TicEventattsL(props) {
         setConfirmDialogVisible(false);
     };
 
+    // const handleDropdownChange = async (e, rowData, apsTabela) => {
+    //     rowData.value = e.value.code;
+    //     const val = (e.target && e.target.value && e.target.value.code) || '';
+    //     setDropdownItem(e.value);
+
+    //     let _ticEventatts = { ...ticEventatts };
+    //     _ticEventatts[`value`] = val;
+    //     setTicEventatts(_ticEventatts);
+    //     // Ažuriramo podatke u bazi bez submita
+    //     await updateDataInDatabase(_ticEventatts);
+    // };
+
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
         let val = '';
         let _ticEventatts = {}
-        if (name === 'valid') {
+        if (name === 'value') {
+            switch (type) {
+                case 'input':
+                    val = (e.target && e.target.value) || '';
+                    rowData.value = e.target.value;
+                    setTicEventattss([...ticEventattss]);
+                    break;
+                case 'checkbox':
+                    rowData.value = e.checked ? '1' : '0';
+                    setTicEventattss([...ticEventattss]);
+                    val = e.checked ? 1 : 0;
+                    break;
+                case 'options':
+                    rowData.value = e.value.code;
+                    val = (e.target && e.target.value && e.target.value.code) || '';
+                    setDropdownItem(e.value);
+                    break;
+                case 'fileUpload':
+                    try {
+                        console.log('Custom upload started Bravo:', e);
+                        const originalFileExtension = e.files[0].name.split('.').pop();
+                        const newFileName = `${ticEventatts.event}.${originalFileExtension}`;
+                        console.log('Modified file name:', newFileName);
+
+                        rowData.isUploadPending = false;
+                        const relPath = 'public/tic/event/';
+                        const file = e.files[0];
+                        const fileService = new FileService();
+                        const data = await fileService.uploadFile(file, newFileName, relPath);
+                        rowData.isUploadPending = true;
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
+                        e.options.clear();
+                        val = relPath + newFileName;
+                        rowData.value = val;
+                        const rowIndex = ticEventattss.findIndex((row) => row.id === rowData.id);
+
+                        // Ažurirajte reda sa novim podacima
+                        const updatedTicEventattss = [...ticEventattss];
+                        updatedTicEventattss[rowIndex] = rowData;
+
+                        // Postavljanje novog niza kao stanje za ticEventattss
+                        setTicEventattss(updatedTicEventattss);
+                        //setTicEventattss([...ticEventattss]);
+                    } catch (error) {
+                        console.error(error);
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error uploading file' });
+                    }
+                    break;
+                case 'calendar':
+                    val = await DateFunction.formatDateToDBFormat(DateFunction.dateGetValue((e.target && e.target.value) || ''))
+                    rowData.value = val
+                    break;
+                default:
+                    val = '';
+                    break;
+            }
+
+            // Napravite kopiju trenutnog niza
+            const updatedTicEventattss = [...ticEventattss];
+
+            // Pronađite indeks trenutnog reda
+            const rowIndex = updatedTicEventattss.findIndex((row) => row.id === rowData.id);
+
+            // Ažurirajte samo trenutni red sa novim podacima
+            updatedTicEventattss[rowIndex] = rowData;
+
+            // Postavljanje novog niza kao stanje za ticEventattss
+            setTicEventattss(updatedTicEventattss);
+
+        } else if (name === 'valid') {
             rowData.valid = e.checked ? 1 : 0;
             setTicEventattss([...ticEventattss]);
             val = e.checked ? 1 : 0;
+        } else if (name === 'text') {
+            switch (type) {
+                case 'input':
+                    val = (e.target && e.target.value) || '';
+                    rowData.text = e.target.value;
+                    setTicEventattss([...ticEventattss]);
+                    break;                    
+                case 'options':
+                    rowData.text = e.value.code;
+                    val = (e.target && e.target.value && e.target.value.code) || '';
+                    setDropdownItem1(e.value);
+                    break;
+                default:
+                    val = '';
+                    break;
+            } 
+            // Napravite kopiju trenutnog niza
+            const updatedTicEventattss = [...ticEventattss];
+
+            // Pronađite indeks trenutnog reda
+            const rowIndex = updatedTicEventattss.findIndex((row) => row.id === rowData.id);
+
+            // Ažurirajte samo trenutni red sa novim podacima
+            console.log(rowData, "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
+            updatedTicEventattss[rowIndex] = rowData;
+
+            // Postavljanje novog niza kao stanje za ticEventattss
+            setTicEventattss(updatedTicEventattss);                       
         }
+        console.log('val:', val);
+        console.log('e.target.value:', e.target.value);
+        console.log('name:', name);
+        console.log('rowData.value:', rowData.value);
+        
         _ticEventatts = { ...ticEventatts };
         _ticEventatts[`${name}`] = val;
         setTicEventatts(_ticEventatts);
         await updateDataInDatabase(_ticEventatts);
-    };
 
-    const onInputTextChange = async (e, type, name, rowData, apsTabela) => {
-        //console(type, "***name***", name, "+++apsTabela+++", apsTabela, "****rowData*****")
-        let val = '';
-        let _ticEventatts = {}
-        switch (type) {
-            case 'input':
-                val = (e.target && e.target.value) || '';
-                rowData.text = e.target.value;
-                setTicEventattss([...ticEventattss]);
-                break;
-            case 'options':
-                rowData.text = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
-                setDropdownItemText(e.value);
-                break;
-            default:
-                val = '';
-                break;
-        }
-        // Napravite kopiju trenutnog niza
-        const updatedTicEventattss = [...ticEventattss];
+        // Ažurirajte stanje komponente nakon ažuriranja podataka
+        // const updatedTicEventattss = ticEventattss.map((row) => {
+        //     if (row.id === rowData.id) {
+        //         return { ...rowData };
+        //     }
+        //     return row;
+        // });
+        // console.log(updatedTicEventattss, "*****************LOG POSLE U********************")
+        // setTicEventattss(updatedTicEventattss);
 
-        // Pronađite indeks trenutnog reda
-        const rowIndex = updatedTicEventattss.findIndex((row) => row.id === rowData.id);
-
-        // Ažurirajte samo trenutni red sa novim podacima
-        updatedTicEventattss[rowIndex] = rowData;
-
-        // Postavljanje novog niza kao stanje za ticEventattss
-        setTicEventattss(updatedTicEventattss);
-        _ticEventatts = { ...ticEventatts };
-        _ticEventatts[`${name}`] = val;
-        setTicEventatts(_ticEventatts);
-        console.log(updatedTicEventattss[rowIndex], "*****Text**********************updatedTicEventattss***************************", _ticEventatts)
-        await updateDataInDatabase(_ticEventatts);
-    };
-
-    const onInputValueChange = async (e, type, name, rowData, apsTabela) => {
-        let val = '';
-        let _ticEventatts = {}
-
-        switch (type) {
-            case 'input':
-                val = (e.target && e.target.value) || '';
-                rowData.value = e.target.value;
-                await setTicEventattss([...ticEventattss]);
-                break;
-            case 'checkbox':
-                rowData.value = e.checked ? '1' : '0';
-                await setTicEventattss([...ticEventattss]);
-                val = e.checked ? 1 : 0;
-                break;
-            case 'options':
-                rowData.value = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
-                await setDropdownItem(e.value);
-                console.log(dropdownItem, "***Value********options***", dropdownItemText, "*")
-                break;
-            case 'fileUpload':
-                try {
-                    // console.log('Custom upload started Bravo:', e);
-                    const originalFileExtension = e.files[0].name.split('.').pop();
-                    const newFileName = `${ticEventatts.event}.${originalFileExtension}`;
-                    // console.log('Modified file name:', newFileName);
-
-                    rowData.isUploadPending = false;
-                    const relPath = 'public/tic/event/';
-                    const file = e.files[0];
-                    const fileService = new FileService();
-                    const data = await fileService.uploadFile(file, newFileName, relPath);
-                    rowData.isUploadPending = true;
-                    toast.current.show({ severity: 'success', summary: 'Success', detail: data.message });
-                    e.options.clear();
-                    val = relPath + newFileName;
-                    rowData.value = val;
-                    const rowIndex = ticEventattss.findIndex((row) => row.id === rowData.id);
-
-                    // Ažurirajte reda sa novim podacima
-                    const updatedTicEventattss = [...ticEventattss];
-                    updatedTicEventattss[rowIndex] = rowData;
-
-                    // Postavljanje novog niza kao stanje za ticEventattss
-                    await setTicEventattss(updatedTicEventattss);
-                    //setTicEventattss([...ticEventattss]);
-                } catch (error) {
-                    console.error(error);
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error uploading file' });
-                }
-                break;
-            case 'calendar':
-                val = await DateFunction.formatDateToDBFormat(DateFunction.dateGetValue((e.target && e.target.value) || ''))
-                rowData.value = val
-                break;
-            default:
-                val = '';
-                break;
-        }
-
-        // Napravite kopiju trenutnog niza
-        const updatedTicEventattss = [...ticEventattss];
-
-        // Pronađite indeks trenutnog reda
-        const rowIndex = await updatedTicEventattss.findIndex((row) => row.id === rowData.id);
-
-        // Ažurirajte samo trenutni red sa novim podacima
-        updatedTicEventattss[rowIndex] = rowData;
-        console.log(dropdownItem, "***Value********dropdownItem***", dropdownItemText, "*************updatedTicEventattss***************************", e.value)
-        // Postavljanje novog niza kao stanje za ticEventattss
-        await setTicEventattss(updatedTicEventattss);
-
-        _ticEventatts = { ...ticEventatts };
-        _ticEventatts[`${name}`] = val;
-        await setTicEventatts(_ticEventatts);
-        await updateDataInDatabase(_ticEventatts);
     };
 
     const updateDataInDatabase = async (rowData) => {
@@ -464,22 +526,25 @@ export default function TicEventattsL(props) {
 
     // funkcije
     const textEditor = (rowData, field, e) => {
-        console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
+        //return <InputText value={rowData.text || ''} onChange={(e) => onInputChange(e, 'text', 'text', rowData, null)} />;
+        console.log(rowData, '************************text*************rowData.inputtp***************', e);
         switch (rowData.inputtp) {
             case '6':
-                const [modul0, tabela0, code0, modul, tabela, code] = rowData.ddlist.split(',');
-                let apsTabelaText = `${modul}_${tabela}`;
-                if (code) {
-                    apsTabelaText = apsTabelaText + `_${code}`
+                const [modul, tabela, code, modul1, tabela1, code1] = rowData.ddlist.split(',');
+                let apsTabela1 = `${modul1}_${tabela1}`;
+                if (code1) {
+                    apsTabela1 = apsTabela1 + `_${code1}`
                 }
 
-                const selectedOptionsText = dropdownAllItems[apsTabelaText] || [];
-                setDropdownItemsText(selectedOptionsText);
-                const selectedOptionText = selectedOptionsText.find((option) => option.code === rowData.text);
-                setDropdownItemText(selectedOptionText);
-                return <Dropdown id={rowData.id} value={selectedOptionText} options={selectedOptionsText} onChange={(e) => onInputTextChange(e, 'options', 'text', rowData, apsTabelaText)} placeholder="Select One" optionLabel="name" />;
+                const selectedOptions1 = dropdownAllItems[apsTabela1] || [];
+                //console.log(selectedOptions1, '******************selectedOptions111*******', apsTabela1, '*********QQQQQ******', dropdownAllItems);
+                setDropdownItems1(selectedOptions1);
+                const selectedOption1 = selectedOptions1.find((option) => option.code === rowData.text);
+                setDropdownItem1(selectedOption1);
+
+                return <Dropdown id={rowData.id} value={selectedOption1} options={selectedOptions1} onChange={(e) => onInputChange(e, 'options', 'text', rowData, apsTabela1)} placeholder="Select One" optionLabel="name" />;
             default:
-                return <InputText value={rowData.text || ''} onChange={(e) => onInputTextChange(e, 'input', 'text', rowData, null)} />;
+                return <InputText value={rowData.text || ''} onChange={(e) => onInputChange(e, 'input', 'text', rowData, null)} />;
         }
 
     };
@@ -490,7 +555,7 @@ export default function TicEventattsL(props) {
     };
 
     const valueEditor = (rowData, field, e) => {
-        //console.log(rowData, '************************rowData*************e***************', e);
+        console.log(rowData, '************************rowData*************e***************', e);
         switch (rowData.inputtp) {
             case '4':
                 return (
@@ -513,6 +578,20 @@ export default function TicEventattsL(props) {
             case '2':
                 return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)} />;
             case '6':
+                const [modul1, tabela1, code1, modul2, tabela2, code2] = rowData.ddlist.split(',');
+                let apsTabela1 = `${modul1}_${tabela1}`;
+                if (code1) {
+                    apsTabela1 = apsTabela1 + `_${code1}`
+                }
+
+                const selectedOptions1 = dropdownAllItems[apsTabela1] || [];
+                console.log(rowData.ddlist, '******************selectedOptions000000*******', apsTabela1, '*********WWWWW******', dropdownAllItems);
+                setDropdownItems(selectedOptions1);
+                const selectedOption1 = dropdownAllItems[apsTabela1].find((option) => option.code === rowData.value);
+                setDropdownItem(selectedOption1);
+
+                return <Dropdown id={rowData.id} value={selectedOption1} options={selectedOptions1} onChange={(e) => onInputChange(e, 'options', 'value', rowData, apsTabela1)} placeholder="Select One" optionLabel="name" />;
+
             case '3':
                 const [modul, tabela, code] = rowData.ddlist.split(',');
                 let apsTabela = `${modul}_${tabela}`;
@@ -521,12 +600,12 @@ export default function TicEventattsL(props) {
                 }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
-                console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
+                //console.log(selectedOptions, '******************selectedOptions*******', apsTabela, '*********WWWWW******', dropdownAllItems);
                 setDropdownItems(selectedOptions);
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
-                console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
-                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
+
+                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
             case '5': // Za kalendar
                 return (
                     <Calendar
@@ -576,8 +655,7 @@ export default function TicEventattsL(props) {
     };
 
     const valueTemplate = (rowData) => {
-
-        if (((rowData.inputtp === '3') || (rowData.inputtp === '6')) && rowData.ddlist) {
+        if ((rowData.inputtp === '3'||rowData.inputtp === '6') && rowData.ddlist) {
             const [modul, tabela, code] = rowData.ddlist.split(',');
             let apsTabela = `${modul}_${tabela}`;
             if (code) {
@@ -610,33 +688,26 @@ export default function TicEventattsL(props) {
                 <span>{value}</span>
             );
         }
+
+        // Prikazujemo ili "value" ili default vrednost
         return rowData.value;
     };
 
     const textTemplate = (rowData) => {
         if (rowData.inputtp === '6' && rowData.ddlist) {
-            const [modul0, tabela0, code0, modul, tabela, code] = rowData.ddlist.split(',');
-            let apsTabela = `${modul}_${tabela}`;
-            if (code) {
-                apsTabela = apsTabela + `_${code}`
+            const [modul, tabela, code, modul1, tabela1, code1] = rowData.ddlist.split(',');
+            let apsTabela1 = `${modul1}_${tabela1}`;
+            if (code1) {
+                apsTabela1 = apsTabela1 + `_${code1}`
             }
-            const dropdownData = dropdownAllItems[apsTabela] || [];
-            const dropdownValue = dropdownData.find((item) => item.code === rowData.text);
+            const dropdownData = dropdownAllItems[apsTabela1] || [];
+            const dropdownValue = dropdownData.find((item) => item.code1 === rowData.value);
             if (dropdownValue) {
                 return <span>{dropdownValue.name}</span>;
             }
-        }      
-        // if (rowData.inputtp === '1') {
-        //     let val = ''
-        //     if (rowData.value) {
-        //         val = DateFunction.formatDate(rowData.value)
-        //     }
-        //     return (
-        //         <span>{val}</span>
-        //     );
-        // }          
+        }
         // Prikazujemo ili "value" ili default vrednost
-        return rowData.text;
+        return rowData.value;
     };
     // Funkcije
 
@@ -677,7 +748,7 @@ export default function TicEventattsL(props) {
                 //metaKeySelection={false}
                 paginator
                 rows={75}
-                rowsPerPageOptions={[50, 75, 125]}
+                rowsPerPageOptions={[25, 50, 75]}
                 onSelectionChange={(e) => setTicEventatts(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
