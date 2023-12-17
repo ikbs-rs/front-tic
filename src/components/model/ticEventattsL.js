@@ -186,6 +186,7 @@ export default function TicEventattsL(props) {
     };
 
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
+        console.log(type, "***type!!!********input!!!***", e.target.value, "*")
         let val = '';
         let _ticEventatts = {}
         if (name === 'valid') {
@@ -239,7 +240,6 @@ export default function TicEventattsL(props) {
     const onInputValueChange = async (e, type, name, rowData, apsTabela) => {
         let val = '';
         let _ticEventatts = {}
-
         switch (type) {
             case 'input':
                 val = (e.target && e.target.value) || '';
@@ -255,7 +255,6 @@ export default function TicEventattsL(props) {
                 rowData.value = e.value.code;
                 val = (e.target && e.target.value && e.target.value.code) || '';
                 await setDropdownItem(e.value);
-                console.log(dropdownItem, "***Value********options***", dropdownItemText, "*")
                 break;
             case 'fileUpload':
                 try {
@@ -500,7 +499,7 @@ export default function TicEventattsL(props) {
                             name="Fajl"
                             accept="image/*"
                             maxFileSize={1000000}
-                            uploadHandler={(event) => onInputChange(event, 'fileUpload', 'value', rowData, null)}
+                            uploadHandler={(event) => onInputValueChange(event, 'fileUpload', 'value', rowData, null)}
                             onSelect={onTemplateSelect}
                             customUpload={true}
                             chooseLabel="Browse"
@@ -509,9 +508,9 @@ export default function TicEventattsL(props) {
                     </div>
                 );
             case '1':
-                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)} />;
             case '2':
-                return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputChange(e, 'checkbox', 'value', rowData, null)} />;
+                return <Checkbox checked={rowData.value === '1'} onChange={(e) => onInputValueChange(e, 'checkbox', 'value', rowData, null)} />;
             case '6':
             case '3':
                 const [modul, tabela, code] = rowData.ddlist.split(',');
@@ -533,11 +532,11 @@ export default function TicEventattsL(props) {
                         showIcon
                         dateFormat="dd.mm.yy"
                         value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
-                        onChange={async (e) => onInputChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
+                        onChange={async (e) => onInputValueChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
                     />
                 );
             default:
-                return <InputText value={rowData.value || ''} onChange={(e) => onInputChange(e, 'input', 'value', rowData, null)} />;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)} />;
         }
     };
 
@@ -610,6 +609,15 @@ export default function TicEventattsL(props) {
                 <span>{value}</span>
             );
         }
+        // if (rowData.inputtp === '1') {
+        //     let val = ''
+        //     if (rowData.value) {
+        //         val = DateFunction.formatDate(rowData.value)
+        //     }
+        //     return (
+        //         <span>{val}</span>
+        //     );
+        // }        
         return rowData.value;
     };
 
@@ -640,6 +648,30 @@ export default function TicEventattsL(props) {
     };
     // Funkcije
 
+    const rowClass = (rowData) => {
+        const tableRow = document.querySelectorAll('.p-datatable-tbody');
+        tableRow.forEach((row) => {
+          //row.classList.remove('p-datatable-tbody');
+        });
+        const selRow = document.querySelectorAll('.p-selectable-row');
+        selRow.forEach((row) => {
+          console.log("*-*-*************row.row.classList*************-*", row.classList)
+          row.classList.remove('p-selectable-row');
+        });   
+    
+        //console.log(rowData.docvr == '1683550594276921344', "****************rowData************************", rowData)
+        return rowData.cttp == '1'
+          ? 'highlight-row-1'
+          : rowData.cttp == '2'
+          ? 'highlight-row-2'
+          : rowData.cttp == '3'
+          ? 'highlight-row-3'     
+          : rowData.cttp == '4'
+          ? 'highlight-row-4'
+          : rowData.cttp == '5'
+          ? 'highlight-row-5'                            
+          : '';
+      };
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -666,9 +698,20 @@ export default function TicEventattsL(props) {
                 value={ticEventattss}
                 header={header}
                 showGridlines
+                sortField="nttp" sortOrder={1}
                 removableSort
                 //editMode="cell"
-                rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
+                //rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
+                rowClassName={(rowData) => {
+                    const isEditing = rowData === ticEventatts;
+                    const customClass = rowClass(rowData);
+                    
+                    return {
+                      'editing-row': isEditing,
+                      [customClass]: customClass !== '',
+                    };
+                  }}
+                  
                 filters={filters}
                 scrollable
                 scrollHeight="550px"

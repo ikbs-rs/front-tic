@@ -14,14 +14,15 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../../configs/translations";
 import DateFunction from "../../../utilities/DateFunction";
+import ColorPickerWrapper from './ColorPickerWrapper';
 
 
 export default function CmnLoclinkL(props) {
-  console.log(props, "*********props*********************CmnLoclinkL***********************************")
+  console.log(props, "*********props*********************CmnLoclinkL!!!!!!!!!***********************************")
   const objName = "cmn_loclink"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyCmnLoclink = EmptyEntities[objName]
-  emptyCmnLoclink.loc2 = props.cmnLoc.id
+  emptyCmnLoclink.loc2 = props.cmnLoc.id|| props.ticEvent.loc
   emptyCmnLoclink.loctp2 = props.cmnLoc.tp
   emptyCmnLoclink.loctp1 = props.cmnLoctpId
   const [showMyComponent, setShowMyComponent] = useState(true);
@@ -45,7 +46,7 @@ export default function CmnLoclinkL(props) {
         if (i < 2) {
           const loctpCode = props.loctpCode ? props.loctpCode : props.cmnLoc.loctpCode
           const cmnLoclinkService = new CmnLoclinkService();
-          console.log(props.loctpCode, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
+          //console.log(props.cmnLoc.id, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
           const data = await cmnLoclinkService.getListaLL(props.cmnLoc.id, loctpCode);
           setCmnLoclinks(data);
           initFilters();
@@ -264,6 +265,15 @@ export default function CmnLoclinkL(props) {
     );
   };
 
+  const colorBodyTemplate = (rowData) => {
+    return (
+      <>
+        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+      </>
+    );
+  };
+
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -383,6 +393,12 @@ export default function CmnLoclinkL(props) {
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
         ></Column>
+        <Column
+          field="color"
+          header={translations[selectedLanguage].Color}
+          body={colorBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>        
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Loclink}

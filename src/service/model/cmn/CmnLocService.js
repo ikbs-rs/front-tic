@@ -83,6 +83,7 @@ export class CmnLocService {
 
     try {
       const response = await axios.get(url, { headers });
+      console.log(response.data.items||response.data.item, "*****************getCmnLoc!!!!!!@@@@@@*****************", url)
       return response.data.items||response.data.item;
     } catch (error) {
       console.error(error);

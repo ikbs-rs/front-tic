@@ -18,11 +18,13 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import TicEventobjL from './ticEventobjL';
 import TicEventattsL from './ticEventattsL';
 import TicEventrtL from './ticEventartL';
+import CmnLoclinkL from './cmn/cmnLoclinkL';
 import SaleEvent from './ticSalEvent'
+import { CmnLocService } from "../../service/model/cmn/CmnLocService";
 
 
 export default function TicEventWL(props) {
-  console.log("***************************************************************************************************")
+  console.log(props, "***************************************************************************************************")
   const objName = "tic_eventobj"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventobj = EmptyEntities[objName]
@@ -30,16 +32,36 @@ export default function TicEventWL(props) {
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticEventobjs, setTicEventobjs] = useState([]);
   const [ticEventobj, setTicEventobj] = useState(emptyTicEventobj);
+  const [cmnLoc, setCmnLoc] = useState({});
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [eventobjTip, setEventobjTip] = useState('');
+  const LOCATION_CODE = "-1"
+
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventobjLVisible(false);
   };
+
+  useEffect(() => {
+    console.log("##########################################useEffect activated with ticEvent:", props.ticEvent);
+    async function fetchData() {
+      try {
+        const cmnLocService = new CmnLocService();
+        cmnLoc.id = props.ticEvent.loc
+        await setCmnLoc(cmnLoc);
+        const data = await cmnLocService.getCmnLoc(props.ticEvent.loc);
+        await setCmnLoc(data);
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
 
   const renderHeader = () => {
     return (
@@ -73,29 +95,39 @@ export default function TicEventWL(props) {
   return (
     <>
       {/* <div className="card"> */}
-        <div className="flex card-container">
-          {/* <Button onClick={() => handleTaskComplete()} label={translations[selectedLanguage].Confirm} text raised icon="pi pi-table" /> */}
-          <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
-        </div>
-        <TabView>
+      <div className="flex card-container">
+        {/* <Button onClick={() => handleTaskComplete()} label={translations[selectedLanguage].Confirm} text raised icon="pi pi-table" /> */}
+        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
+      </div>
+      <TabView>
 
-          <TabPanel header={translations[selectedLanguage].Channels}>
-            <TicEventobjL key={"XSCT"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventobjLVisible={props.setTicEventobjLVisible} />
-          </TabPanel>
 
-          <TabPanel header={translations[selectedLanguage].Setings}>
-            <TicEventattsL key={"I"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventattsLVisible={props.setTicEventattsLVisible} />
-          </TabPanel>
 
-          <TabPanel header={translations[selectedLanguage].Art}>
-            <TicEventrtL key={"II"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventartLVisible={props.setTicEventartLVisible} />
-          </TabPanel>
+        <TabPanel header={translations[selectedLanguage].Channels}>
+          <TicEventobjL key={"XSCT"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventobjLVisible={props.setTicEventobjLVisible} />
+        </TabPanel>
+        <TabPanel header={translations[selectedLanguage].Sectors}>
+          <CmnLoclinkL key={"LL"} 
+          loctpCode={LOCATION_CODE}
+          ticEvent={props.ticEvent} 
+          cmnLoc={cmnLoc} 
+          TabView={true} 
+          dialog={true} 
+          setTicEventobjLVisible={props.setTicEventobjLVisible} />
+        </TabPanel>
+        <TabPanel header={translations[selectedLanguage].Setings}>
+          <TicEventattsL key={"I"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventattsLVisible={props.setTicEventattsLVisible} />
+        </TabPanel>
 
-          <TabPanel header={translations[selectedLanguage].drawing}>
-            <SaleEvent key={"II"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventartLVisible={props.setTicEventartLVisible} />
-          </TabPanel>
+        <TabPanel header={translations[selectedLanguage].Art}>
+          <TicEventrtL key={"II"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventartLVisible={props.setTicEventartLVisible} />
+        </TabPanel>
 
-        </TabView>
+        <TabPanel header={translations[selectedLanguage].drawing}>
+          <SaleEvent key={"II"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventartLVisible={props.setTicEventartLVisible} />
+        </TabPanel>
+
+      </TabView>
       {/* </div> */}
     </>
   );

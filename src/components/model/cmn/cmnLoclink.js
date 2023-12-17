@@ -15,6 +15,7 @@ import axios from 'axios';
 import Token from "../../../utilities/Token";
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../../utilities/DateFunction.js"
+import { ColorPicker } from 'primereact/colorpicker';
 
 const CmnLoclink = (props) => {
     console.log(props, "********************CmnLoclink********************")
@@ -356,6 +357,13 @@ const CmnLoclink = (props) => {
                                 />
                             </div>
                         </div>
+                        <div className="field col-12 md:col-1">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <ColorPicker format="hex" id="color" value={cmnLoclink.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                        </div>
+
+                    </div>  
                     </div>
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (

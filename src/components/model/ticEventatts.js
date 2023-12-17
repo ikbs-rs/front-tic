@@ -104,6 +104,24 @@ const TicEventatts = (props) => {
             });
         }
     };    
+    const handleCopyAndAddNewClick = async () => {
+        try {
+            setSubmitted(true);
+            const ticEventattsService = new TicEventattsService();
+            const newTicEventobj = { ...ticEventatts, id: null, value:'', text:''};
+            const data = await ticEventattsService.postTicEventatts(newTicEventobj);
+            ticEventatts.id = data.id;
+            props.handleDialogClose({ obj: ticEventatts, eventattsTip: 'CREATE' });
+            //props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "TicEventobj ",
+                detail: `${err.response.data.error}`,
+                life: 5000,
+            });
+        }
+    };         
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
@@ -211,13 +229,13 @@ const TicEventatts = (props) => {
                         </div>
                     </div>
 
-                    {/* <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-11">
-                            <label htmlFor="value">{translations[selectedLanguage].Value}</label>
-                            <InputText id="value" value={ticEventatts.value} onChange={(e) => onInputChange(e, 'text', 'value')} />
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="ddlist">{translations[selectedLanguage].ddlist}</label>
+                            <InputText id="ddlist" value={ticEventatts.ddlist} onChange={(e) => onInputChange(e, 'text', 'ddlist')} />
                         </div>
                     </div>
-                    <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-11">
                             <label htmlFor="text">{translations[selectedLanguage].Descript}</label>
                             <InputText id="text" value={ticEventatts.text} onChange={(e) => onInputChange(e, 'text', 'text')} />
@@ -269,6 +287,7 @@ const TicEventatts = (props) => {
                                 : null}
                             {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
                             {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
+                            {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" onClick={handleCopyAndAddNewClick} severity="warrning" className=" p-button-warning"outlined /> : null}
                         </div>
                     </div>
                 </div>

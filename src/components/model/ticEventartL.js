@@ -16,7 +16,7 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import TicEventrtcenaL from './ticEventartcenaL';
 import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
-
+import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 export default function TicEventartL(props) {
 
@@ -359,6 +359,14 @@ export default function TicEventartL(props) {
   
   
   
+  const colorBodyTemplate = (rowData) => {
+    return (
+      <>
+        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+      </>
+    );
+  };
   
 
   return (
@@ -466,7 +474,12 @@ export default function TicEventartL(props) {
           // headerClassName="w-10rem"
           style={{ width: "20%" }}
         />
-
+        <Column
+          field="color"
+          header={translations[selectedLanguage].Color}
+          body={colorBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}

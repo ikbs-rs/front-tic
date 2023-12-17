@@ -9,11 +9,13 @@ import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import { TicEventobjService } from "../../service/model/TicEventobjService";
 import TicEventobj from './ticEventobj';
+import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
+import { ColorPicker } from 'primereact/colorpicker';
 
 
 export default function TicEventobjL(props) {
@@ -190,7 +192,7 @@ export default function TicEventobjL(props) {
 
   const formatTimeColumn = (rowData, field) => {
     return DateFunction.convertTimeToDisplayFormat(rowData[field]);
-};  
+  };
 
   // <--- Dialog
   const setTicEventobjDialog = (ticEventobj) => {
@@ -219,6 +221,15 @@ export default function TicEventobjL(props) {
           raised ></Button>
 
       </div>
+    );
+  };
+
+  const colorBodyTemplate = (rowData) => {
+    return (
+      <>
+        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+      </>
     );
   };
 
@@ -320,7 +331,12 @@ export default function TicEventobjL(props) {
           style={{ width: '10%' }}
           body={(rowData) => formatTimeColumn(rowData, 'endtm')}>
         </Column>
-
+        <Column
+          field="color"
+          header={translations[selectedLanguage].Color}
+          body={colorBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}
