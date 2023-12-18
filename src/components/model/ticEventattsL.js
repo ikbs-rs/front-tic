@@ -520,7 +520,7 @@ export default function TicEventattsL(props) {
                 }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
-                console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
+                //console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
                 setDropdownItems(selectedOptions);
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);

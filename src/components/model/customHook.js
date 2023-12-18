@@ -138,7 +138,7 @@ export async function fetchObjData(...args) {
         const headers = {
             Authorization: tokenLocal.token
         };
-        // console.log(url, "************************************URL************************************")
+         console.log(url, "************************************URL************************************")
         const response = await axios.get(url, { headers });
         const datas = response.data.items || response.data.item;
         const items = datas.map(({ text, id }) => ({ name: text, code: id }));

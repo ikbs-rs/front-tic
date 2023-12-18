@@ -69,7 +69,8 @@ const EmptyEntities =
     "valid": "1",
     "grp": null,
     "color": "",
-    "icon": ""
+    "icon": "",
+    "amount": ""
   },
   "tic_artcena": {
     "id": null,
@@ -476,7 +477,8 @@ const EmptyEntities =
     "valid": "0",
     "text": "",
     "color": "",
-    "icon": ""
+    "icon": "",
+    "condition": ""
   },
   "tic_eventattx": {
     "id": null,
