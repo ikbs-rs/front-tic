@@ -40,6 +40,7 @@ import EventProdaja from './components/model/ticEventProdajaL';
 import Transaction from './components/model/ticTransactionL';
 import Delivery from './components/model/ticDocdeliveryL';
 import EmptyPage from './pages/EmptyPage';
+import ObjW from './components/model/ticCmnW';
 
 import PrimeReact from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
@@ -119,7 +120,7 @@ const App = () => {
                         { action: 'objattMenu', label: translations[selectedLanguage].Properties_object, icon: 'pi pi-fw pi-clone', to: '/objatt' },
                         { action: 'objatttpMenu', label: translations[selectedLanguage].Group_of_properties, icon: 'pi pi-fw pi-clone', to: '/objatttp' },
                         //{ action: 'linkMenu', label: translations[selectedLanguage].Type_of_relationship, icon: 'pi pi-fw pi-exclamation-triangle', to: '/link' },
-                        { action: 'objtreeMenu', label: translations[selectedLanguage].ObjectsTree, icon: 'pi pi-fw pi-clone', to: '/objtree' },
+                        //{ action: 'objtreeMenu', label: translations[selectedLanguage].ObjectsTree, icon: 'pi pi-fw pi-clone', to: '/objtree' },
                         // { action: 'objconMenu', label: translations[selectedLanguage].ObjCon, icon: 'pi pi-fw pi-clone', to: '/objcon' },
                         // { action: 'objdMenu', label: translations[selectedLanguage].ObjectsD, icon: 'pi pi-fw pi-clone', to: '/objd' },
                     ]
@@ -517,6 +518,16 @@ const App = () => {
                         <Route path="/privilege" element={<Privilege />} />
                         <Route path="/discount" element={<Discount />} />
                         <Route path="/condtp" element={<Condtp />} />
+
+                        <Route path="/objtp" element={<ObjW endpoint="objtpend" />} />
+                        <Route path="/objpk/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objpm/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objorg/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objtctp/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objdoc/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/obj/:objtpCode" element={<ObjW endpoint="objend" />} />   
+                        <Route path="/objatt" element={<ObjW endpoint="objattend" />} />  
+                        <Route path="/objatttp" element={<ObjW endpoint="objatttpend" />} />                       
 
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />
