@@ -102,7 +102,7 @@ export class TicEventattsService {
         }
     }
 
-    async postGrpEventatts(objId,newObj) {
+    async postGrpEventatts(objId,newObj, addItems) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
             if (objId === null ) {
@@ -110,14 +110,14 @@ export class TicEventattsService {
                     "objId must be filled!"
                 );
             }
-            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_grpeventatts_s&objId1=${objId}&sl=${selectedLanguage}`;
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_grpeventatts_s&objId1=${objId}&par1=${addItems}&sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(jsonObj, "***************************postGrpEventatts*******************************", newObj)
+            console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
             const response = await axios.post(url, {jsonObj}, { headers });
             return response.data.items;
         } catch (error) {

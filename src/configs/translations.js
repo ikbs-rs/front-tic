@@ -731,6 +731,7 @@ export const translations = {
         Venue: "Место дешавања",  
         VenueList: "Место одржавања Листа",   
         art: "Артикли",
+        Add: "Додај",
     }
   };
   

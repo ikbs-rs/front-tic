@@ -28,6 +28,8 @@ export default function TicEventattsgrpL(props) {
   const [submitted, setSubmitted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [addItems, setAddItems] = useState(true);
+  
 
   // useEffect(() => {
   //   ProductService.getProductsMini().then((data) => setProducts(data));
@@ -58,9 +60,16 @@ export default function TicEventattsgrpL(props) {
     props.setTicEventattsgrpLVisible(false);
   };
 
-  const handleGetSelectedRowsClick = () => {
+  const handleGetSelectedRowsClick = async () => {
     setConfirmDialogVisible(true);
+    await setAddItems(false)
   };
+
+  const handleGetSelectedAddRowsClick = async () => {
+    setConfirmDialogVisible(true);
+    await setAddItems(true)
+  };
+  
 
   const initFilters = () => {
     setFilters({
@@ -90,7 +99,7 @@ export default function TicEventattsgrpL(props) {
     console.log(selectedProducts, "***********handleConfirm********************")
     setSubmitted(true);
     const ticEventattsService = new TicEventattsService(selectedProducts);
-    await ticEventattsService.postGrpEventatts(props.ticEvent.id, selectedProducts);
+    await ticEventattsService.postGrpEventatts(props.ticEvent.id, selectedProducts, addItems);
     props.handleTicEventattsgrpLDialogClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Поставке успешно копиране ?', life: 3000 });
     setVisible(false);
@@ -143,13 +152,12 @@ export default function TicEventattsgrpL(props) {
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
-
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Copy} icon="pi pi-plus"  severity="warning" onClick={handleGetSelectedRowsClick} text raised />
+          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy"  severity="danger" onClick={handleGetSelectedRowsClick} text raised />
         </div>
-        {/* <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].DeleteAll} icon="pi pi-trash" onClick={showDeleteDialog} severity="danger" text raised />
-        </div> */}
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Add} icon="pi pi-plus" onClick={handleGetSelectedAddRowsClick} severity="warning" text raised />
+        </div> 
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventattsgrpList}</b>
         <div className="flex-grow-1"></div>

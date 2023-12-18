@@ -655,7 +655,6 @@ export default function TicEventattsL(props) {
         });
         const selRow = document.querySelectorAll('.p-selectable-row');
         selRow.forEach((row) => {
-          console.log("*-*-*************row.row.classList*************-*", row.classList)
           row.classList.remove('p-selectable-row');
         });   
     
@@ -669,7 +668,21 @@ export default function TicEventattsL(props) {
           : rowData.cttp == '4'
           ? 'highlight-row-4'
           : rowData.cttp == '5'
-          ? 'highlight-row-5'                            
+          ? 'highlight-row-5'  
+          : rowData.cttp == '6'
+          ? 'highlight-row-6'     
+          : rowData.cttp == '7'
+          ? 'highlight-row-7'
+          : rowData.cttp == '8'
+          ? 'highlight-row-8' 
+          : rowData.cttp == '9'
+          ? 'highlight-row-9'  
+          : rowData.cttp == '10'
+          ? 'highlight-row-10'     
+          : rowData.cttp == '11'
+          ? 'highlight-row-11'
+          : rowData.cttp == '12'
+          ? 'highlight-row-12'                                              
           : '';
       };
     return (
