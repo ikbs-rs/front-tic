@@ -193,6 +193,10 @@ export default function TicEventattsL(props) {
             rowData.valid = e.checked ? 1 : 0;
             setTicEventattss([...ticEventattss]);
             val = e.checked ? 1 : 0;
+        } else {
+            val = (e.target && e.target.value) || '';
+            rowData.condition = e.target.value;
+            setTicEventattss([...ticEventattss]);
         }
         _ticEventatts = { ...ticEventatts };
         _ticEventatts[`${name}`] = val;
@@ -482,7 +486,14 @@ export default function TicEventattsL(props) {
         }
 
     };
+    const conditionEditor = (rowData, field, e) => {
+        console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
+        return <InputText
+            value={rowData.condition || ''}
+            onChange={(e) => onInputChange(e, 'input', 'condition', rowData, null)}
+        />;
 
+    };
     const validEditor = (rowData, field) => {
         return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
 
@@ -633,7 +644,7 @@ export default function TicEventattsL(props) {
             if (dropdownValue) {
                 return <span>{dropdownValue.name}</span>;
             }
-        }      
+        }
         // if (rowData.inputtp === '1') {
         //     let val = ''
         //     if (rowData.value) {
@@ -651,40 +662,40 @@ export default function TicEventattsL(props) {
     const rowClass = (rowData) => {
         const tableRow = document.querySelectorAll('.p-datatable-tbody');
         tableRow.forEach((row) => {
-          //row.classList.remove('p-datatable-tbody');
+            //row.classList.remove('p-datatable-tbody');
         });
         const selRow = document.querySelectorAll('.p-selectable-row');
         selRow.forEach((row) => {
-          row.classList.remove('p-selectable-row');
-        });   
-    
+            row.classList.remove('p-selectable-row');
+        });
+
         //console.log(rowData.docvr == '1683550594276921344', "****************rowData************************", rowData)
         return rowData.cttp == '1'
-          ? 'highlight-row-1'
-          : rowData.cttp == '2'
-          ? 'highlight-row-2'
-          : rowData.cttp == '3'
-          ? 'highlight-row-3'     
-          : rowData.cttp == '4'
-          ? 'highlight-row-4'
-          : rowData.cttp == '5'
-          ? 'highlight-row-5'  
-          : rowData.cttp == '6'
-          ? 'highlight-row-6'     
-          : rowData.cttp == '7'
-          ? 'highlight-row-7'
-          : rowData.cttp == '8'
-          ? 'highlight-row-8' 
-          : rowData.cttp == '9'
-          ? 'highlight-row-9'  
-          : rowData.cttp == '10'
-          ? 'highlight-row-10'     
-          : rowData.cttp == '11'
-          ? 'highlight-row-11'
-          : rowData.cttp == '12'
-          ? 'highlight-row-12'                                              
-          : '';
-      };
+            ? 'highlight-row-1'
+            : rowData.cttp == '2'
+                ? 'highlight-row-2'
+                : rowData.cttp == '3'
+                    ? 'highlight-row-3'
+                    : rowData.cttp == '4'
+                        ? 'highlight-row-4'
+                        : rowData.cttp == '5'
+                            ? 'highlight-row-5'
+                            : rowData.cttp == '6'
+                                ? 'highlight-row-6'
+                                : rowData.cttp == '7'
+                                    ? 'highlight-row-7'
+                                    : rowData.cttp == '8'
+                                        ? 'highlight-row-8'
+                                        : rowData.cttp == '9'
+                                            ? 'highlight-row-9'
+                                            : rowData.cttp == '10'
+                                                ? 'highlight-row-10'
+                                                : rowData.cttp == '11'
+                                                    ? 'highlight-row-11'
+                                                    : rowData.cttp == '12'
+                                                        ? 'highlight-row-12'
+                                                        : '';
+    };
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -718,13 +729,13 @@ export default function TicEventattsL(props) {
                 rowClassName={(rowData) => {
                     const isEditing = rowData === ticEventatts;
                     const customClass = rowClass(rowData);
-                    
+
                     return {
-                      'editing-row': isEditing,
-                      [customClass]: customClass !== '',
+                        'editing-row': isEditing,
+                        [customClass]: customClass !== '',
                     };
-                  }}
-                  
+                }}
+
                 filters={filters}
                 scrollable
                 scrollHeight="550px"
@@ -752,7 +763,7 @@ export default function TicEventattsL(props) {
                 <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter style={{ width: '10%' }}></Column>
                 <Column
                     field="value"
-                    header={translations[selectedLanguage].Value}
+                    header={translations[selectedLanguage].condition1}
                     sortable
                     filter
                     style={{ width: '20%' }}
@@ -762,7 +773,7 @@ export default function TicEventattsL(props) {
                 ></Column>
                 <Column
                     field="text"
-                    header={translations[selectedLanguage].Descript}
+                    header={translations[selectedLanguage].condition2}
                     sortable
                     filter
                     style={{ width: '10%' }}
@@ -771,7 +782,17 @@ export default function TicEventattsL(props) {
                     body={textTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
-
+                <Column
+                    field="condition"
+                    header={translations[selectedLanguage].condition3}
+                    sortable
+                    filter
+                    style={{ width: '10%' }}
+                    //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                    editor={(e) => conditionEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                    //body={conditionTemplate}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>
                 <Column
                     field="valid"
                     filterField="valid"

@@ -16,7 +16,7 @@ import Token from "../../utilities/Token";
 import { ColorPicker } from 'primereact/colorpicker';
 
 const TicArt = (props) => {
-    
+console.log(props, "*********************************props**************************************************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticArt, setTicArt] = useState(props.ticArt);
@@ -46,9 +46,12 @@ const TicArt = (props) => {
     const [ddCmnTgpItems, setDdCmnTgpItems] = useState(null);
     const [cmnTgpItem, setCmnTgpItem] = useState(null);
     const [cmnTgpItems, setCmnTgpItems] = useState(null);
-    
+
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
+
+    const [ddAmountItem, setDdAmountItem] = useState(null);
+    const [ddAmountItems, setDdAmountItems] = useState(null);
 
     const calendarRef = useRef(null);
 
@@ -60,6 +63,10 @@ const TicArt = (props) => {
 
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticArt.valid));
+    }, []);
+
+    useEffect(() => {
+        setDdAmountItem(findDdAmountItemByCode(props.ticArt.amount));
     }, []);
 
     useEffect(() => {
@@ -105,15 +112,15 @@ const TicArt = (props) => {
                     setTicArttpItem(foundItem || null);
                     ticArt.ctp = foundItem.code
                     ticArt.ntp = foundItem.textx
-                }               
+                }
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
         }
         fetchData();
-    }, []);  
-    
+    }, []);
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -141,8 +148,8 @@ const TicArt = (props) => {
             }
         }
         fetchData();
-    }, []);    
-    
+    }, []);
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -158,10 +165,10 @@ const TicArt = (props) => {
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventItems(dataDD);
                 let targetEvent = props.ticArt.event ? props.ticArt.event : props.ticEventId;
-                setDdTicEventItem(dataDD.find((item) => item.code === targetEvent) || null);                
+                setDdTicEventItem(dataDD.find((item) => item.code === targetEvent) || null);
                 //setDdTicEventItem(dataDD.find((item) => item.code === props.ticArt.event  || item.code === props.ticEventId));
                 if (props.ticArt.event || props.ticEventId) {
-                    const foundItem = data.find((item) => item.id === targetEvent) || null ;
+                    const foundItem = data.find((item) => item.id === targetEvent) || null;
                     setTicEventItem(foundItem || null);
                     ticArt.cevent = foundItem.code
                     ticArt.nevent = foundItem.textx
@@ -172,8 +179,8 @@ const TicArt = (props) => {
             }
         }
         fetchData();
-    }, []);  
-    
+    }, []);
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -194,22 +201,30 @@ const TicArt = (props) => {
                     setCmnTgpItem(foundItem || null);
                     ticArt.ctgp = foundItem.code
                     ticArt.ntgp = foundItem.textx
-                }              
+                }
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
         }
         fetchData();
-    }, []);     
+    }, []);
     // Autocomplit>
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
 
+    const findDdAmountItemByCode = (code) => {
+        return items.find((item) => item.code === code) || null;
+    };
+
     useEffect(() => {
         setDropdownItems(items);
+    }, []);
+
+    useEffect(() => {
+        setDdAmountItems(items);
     }, []);
 
     const handleCancelClick = () => {
@@ -310,6 +325,8 @@ const TicArt = (props) => {
                 setCmnTgpItem(foundItem || null);
                 ticArt.ntgp = e.value.name
                 ticArt.ctgp = foundItem.code
+            } else if (name == "amount") {
+                setDdAmountItem(e.value);
             } else {
                 setDropdownItem(e.value);
             }
@@ -376,7 +393,7 @@ const TicArt = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticArt.grp })}
                             />
                             {submitted && !ticArt.grp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>  
+                        </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
                             <Dropdown id="event"
@@ -389,7 +406,7 @@ const TicArt = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticArt.event })}
                             />
                             {submitted && !ticArt.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>                         
+                        </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="um">{translations[selectedLanguage].Um} *</label>
                             <Dropdown id="um"
@@ -402,7 +419,7 @@ const TicArt = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticArt.um })}
                             />
                             {submitted && !ticArt.um && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>  
+                        </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="tgp">{translations[selectedLanguage].Tgp} *</label>
                             <Dropdown id="tgp"
@@ -415,14 +432,29 @@ const TicArt = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticArt.tgp })}
                             />
                             {submitted && !ticArt.tgp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>   
+                        </div>
                         <div className="field col-12 md:col-1">
                             <div className="flex-2 flex flex-column align-items-left">
                                 <label htmlFor="color">{translations[selectedLanguage].color}</label>
-                                <ColorPicker format="hex" id="color" value={ticArt.color} onChange={(e) => onInputChange(e, 'text', 'color')}  />
+                                <ColorPicker format="hex" id="color" value={ticArt.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
                             </div>
 
-                        </div>                                                                  
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="amount">{translations[selectedLanguage].amount}</label>
+                            <Dropdown id="amount"
+                                value={ddAmountItem}
+                                options={ddAmountItems}
+                                onChange={(e) => onInputChange(e, "options", 'amount')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticArt.amount })}
+                            />
+                            {submitted && !ticArt.amount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">

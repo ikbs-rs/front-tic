@@ -70,7 +70,7 @@ const EmptyEntities =
     "grp": null,
     "color": "",
     "icon": "",
-    "amount": ""
+    "amount": "1"
   },
   "tic_artcena": {
     "id": null,

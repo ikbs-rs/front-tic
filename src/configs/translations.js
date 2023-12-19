@@ -732,6 +732,10 @@ export const translations = {
         VenueList: "Место одржавања Листа",   
         art: "Артикли",
         Add: "Додај",
+        amount: "Износ",
+        condition1: "Услов",
+        condition2: "Додатни",
+        condition3: "Посебни",
     }
   };
   
