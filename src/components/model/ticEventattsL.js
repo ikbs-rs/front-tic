@@ -756,7 +756,7 @@ export default function TicEventattsL(props) {
                 value={ticEventattss}
                 header={header}
                 showGridlines
-                sortField="nttp" sortOrder={1}
+                sortField="ctp" sortOrder={1}
                 removableSort
                 //editMode="cell"
                 //rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}

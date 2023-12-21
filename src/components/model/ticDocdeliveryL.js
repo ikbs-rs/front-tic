@@ -296,8 +296,8 @@ export default function TicDocdeliveryL(props) {
           style={{ width: "25%" }}
         ></Column>
         <Column
-          field="delivery_adress"
-          header={translations[selectedLanguage].delivery_adress}
+          field="adress"
+          header={translations[selectedLanguage].adress}
           sortable
           filter
           style={{ width: "20%" }}
