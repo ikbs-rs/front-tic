@@ -307,13 +307,16 @@ const EmptyEntities =
 		"site": null,
 		"doc": null,
 		"courier": null,
-		"delivery_adress": "",
+		"adress": "",
 		"amount": null,
 		"dat": "",
 		"datdelivery": "",
 		"status": "0",
     "note": "",
-    "parent": null
+    "parent": null,
+    "country": null,
+    "zip": "",
+    "city": null    
 	},  
 	"tic_docpayment": {
 			"id": null,

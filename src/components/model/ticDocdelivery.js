@@ -227,11 +227,11 @@ const TicDocdelivery = (props) => {
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-8">
-                            <label htmlFor="delivery_adress">{translations[selectedLanguage].delivery_adress} *</label>
+                            <label htmlFor="adress">{translations[selectedLanguage].adress} *</label>
                             <InputText
-                                id="delivery_adress"
-                                value={ticDocdelivery.delivery_adress || props.cmnPar.adress}
-                                onChange={(e) => onInputChange(e, "text", 'delivery_adress')}
+                                id="adress"
+                                value={ticDocdelivery.adress || props.cmnPar.adress}
+                                onChange={(e) => onInputChange(e, "text", 'adress')}
                             />
                         </div>
                     </div>
