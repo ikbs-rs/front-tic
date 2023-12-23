@@ -63,6 +63,7 @@ export default function TicEventattsL(props) {
     const [ddTicEventatttpItems, setDdTicEventatttpItems] = useState(null);
     const [ticEventatttp, setTicEventatttp] = useState({});
     const [ticEventatttps, setTicEventatttps] = useState([]);
+    const multiSelectRef = useRef(null);
 
     let i = 0;
 
@@ -269,6 +270,10 @@ export default function TicEventattsL(props) {
         await updateDataInDatabase(_ticEventatts);
     };
 
+    const onInputValueChange1 = async (e, type, name, rowData, apsTabela) => {
+        console.log(e, rowData, "######################################")
+    }
+
     const onInputValueChange = async (e, type, name, rowData, apsTabela) => {
         let val = '';
         let _ticEventatts = {}
@@ -289,10 +294,12 @@ export default function TicEventattsL(props) {
                 await setDropdownItem(e.value);
                 break;
             case 'multiselect':
+                /*
                 console.log(e, "multiselectmultiselectmultiselectmultiselectmultiselectmultiselect", rowData)
                 rowData.value = e.value.code;
                 val = (e.target && e.target.value && e.target.value.code) || '';
                 await setDropdownItem(e.value);
+                */
                 break;
             case 'fileUpload':
                 try {
@@ -622,17 +629,45 @@ export default function TicEventattsL(props) {
                 const selectedOptionM = dropdownAllItems[apsTabelaM].find((option) => option.code === rowData.value);
                 //setDropdownItem(selectedOptionM);
                 console.log(selectedOptionsM, '*J***********************7*************MultiSelect**************SS*', selectedOptionM);
-        
+
 
                 return <MultiSelect
                     id={rowData.id}
                     value={[selectedOptionM]}
                     options={selectedOptionsM}
-                    onChange={(e) => onInputValueChange(e, 'multiselect', 'value', rowData, apsTabelaM)}
+                    onMouseDown={(e) => {
+                        // Sprečavanje zadane radnje (ako postoji)
+                        e.preventDefault();
+                        // Dodajte svoj kod ovdje za dodatne manipulacije
+                      }}
+                    //onChange={(e) => onInputValueChange1(e, 'multiselect', 'value', rowData, apsTabelaM)}
+                    // onMouseDown={() => {
+                    //     console.log("9999999999999999999    ");
+                    //     // Vrati fokus na MultiSelect
+                    //     if (multiSelectRef.current) {
+                    //         multiSelectRef.current.focus();
+                    //     }
+                    // }}
+                    onMouseUp={(e) => {
+                        // Sprečavanje zadane radnje (ako postoji)
+                        e.preventDefault();
+                        // Dodajte svoj kod ovdje za dodatne manipulacije
+                      }}
+                      onChange={(e) => {
+                        // Sprečavanje zadane radnje (ako postoji)
+                        e.preventDefault();
+                        // Dodajte svoj kod ovdje za dodatne manipulacije
+                      }} 
+                      onClick={(e) => {
+                        // Sprečavanje zadane radnje (ako postoji)
+                        e.preventDefault();
+                        // Dodajte svoj kod ovdje za dodatne manipulacije
+                      }}                                          
                     optionLabel="name"
                     placeholder="Select One"
                     maxSelectedLabels={3}
                     className="w-full md:w-20rem"
+                    ref={multiSelectRef}
                 />
             // return <Dropdown
             //     id={rowData.id}
