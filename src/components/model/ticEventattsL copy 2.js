@@ -32,7 +32,6 @@ import { Calendar } from 'primereact/calendar';
 import DateFunction from "../../utilities/DateFunction";
 import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
-import { MultiSelect } from "primereact/multiselect";
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -72,12 +71,12 @@ export default function TicEventattsL(props) {
 
     useEffect(() => {
         async function fetchData() {
-
+            
             try {
                 ++i;
                 if (i < 2) {
-                    const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
-                    console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
+                    const pTp = ticEventatttp ? ticEventatttp.id||"-1" : "-1";  
+                    console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)                                      
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
                     const updatedDropdownItems = { ...dropdownAllItems };
@@ -204,7 +203,7 @@ export default function TicEventattsL(props) {
         //console.log(props.ticEvent, "***********handleConfirm********************")
         setSubmitted(true);
         const ticEventattsService = new TicEventattsService();
-        await ticEventattsService.postAutoEventatts(props.ticEvent.id, ticEventatttp.id || -1);
+        await ticEventattsService.postAutoEventatts(props.ticEvent.id, ticEventatttp.id||-1);
         const data = await ticEventattsService.getLista(props.ticEvent.id);
         setTicEventattss(data);
         props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
@@ -284,12 +283,6 @@ export default function TicEventattsL(props) {
                 val = e.checked ? 1 : 0;
                 break;
             case 'options':
-                rowData.value = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
-                await setDropdownItem(e.value);
-                break;
-            case 'multiselect':
-                console.log(e, "multiselectmultiselectmultiselectmultiselectmultiselectmultiselect", rowData)
                 rowData.value = e.value.code;
                 val = (e.target && e.target.value && e.target.value.code) || '';
                 await setDropdownItem(e.value);
@@ -453,7 +446,7 @@ export default function TicEventattsL(props) {
                         value={ddTicEventatttpItem}
                         options={ddTicEventatttpItems}
                         onChange={(e) => onEventatttpChange(e)}
-                        showClear
+                        showClear 
                         optionLabel="name"
                         placeholder="Select One"
                     />
@@ -543,7 +536,6 @@ export default function TicEventattsL(props) {
         }
 
     };
-
     const conditionEditor = (rowData, field, e) => {
         console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
         return <InputText
@@ -558,7 +550,7 @@ export default function TicEventattsL(props) {
     };
 
     const valueEditor = (rowData, field, e) => {
-        console.log(rowData, '************************valueEditor*************e**************e*', e);
+        //console.log(rowData, '************************rowData*************e***************', e);
         switch (rowData.inputtp) {
             case '4':
                 return (
@@ -594,59 +586,18 @@ export default function TicEventattsL(props) {
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
                 console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
-                return <Dropdown
-                    id={rowData.id}
-                    value={selectedOption}
-                    options={selectedOptions}
-                    onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)}
-                    placeholder="Select One"
-                    optionLabel="name"
-                />;
+                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
             case '5': // Za kalendar
-                return <Calendar
-                    showIcon
-                    dateFormat="dd.mm.yy"
-                    value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
-                    onChange={async (e) => onInputValueChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
-                />;
-            case '7':
-                const [modulM, tabelaM, codeM] = rowData.ddlist.split(',');
-                let apsTabelaM = `${modulM}_${tabelaM}`;
-                if (codeM) {
-                    apsTabelaM = apsTabelaM + `_${codeM}`
-                }
-
-                const selectedOptionsM = dropdownAllItems[apsTabelaM] || [];
-                //console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
-                //setDropdownItems(selectedOptionsM);
-                const selectedOptionM = dropdownAllItems[apsTabelaM].find((option) => option.code === rowData.value);
-                //setDropdownItem(selectedOptionM);
-                console.log(selectedOptionsM, '*J***********************7*************MultiSelect**************SS*', selectedOptionM);
-        
-
-                return <MultiSelect
-                    id={rowData.id}
-                    value={[selectedOptionM]}
-                    options={selectedOptionsM}
-                    onChange={(e) => onInputValueChange(e, 'multiselect', 'value', rowData, apsTabelaM)}
-                    optionLabel="name"
-                    placeholder="Select One"
-                    maxSelectedLabels={3}
-                    className="w-full md:w-20rem"
-                />
-            // return <Dropdown
-            //     id={rowData.id}
-            //     value={selectedOptionM}
-            //     options={selectedOptionsM}
-            //     onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabelaM)}
-            //     placeholder="Select One"
-            //     optionLabel="name"
-            // />;
+                return (
+                    <Calendar
+                        showIcon
+                        dateFormat="dd.mm.yy"
+                        value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
+                        onChange={async (e) => onInputValueChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
+                    />
+                );
             default:
-                return <InputText
-                    value={rowData.value || ''}
-                    onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)}
-                />;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)} />;
         }
     };
 
@@ -719,18 +670,15 @@ export default function TicEventattsL(props) {
                 <span>{value}</span>
             );
         }
-        if ((rowData.inputtp === '7') && rowData.ddlist) {
-            const [modulM, tabelaM, codeM] = rowData.ddlist.split(',');
-            let apsTabelaM = `${modulM}_${tabelaM}`;
-            if (codeM) {
-                apsTabelaM = apsTabelaM + `_${codeM}`
-            }
-            const dropdownDataM = dropdownAllItems[apsTabelaM] || [];
-            const dropdownValueM = dropdownDataM.find((item) => item.code === rowData.value);
-            if (dropdownValueM) {
-                return <span>{dropdownValueM.name}</span>;
-            }
-        }
+        // if (rowData.inputtp === '1') {
+        //     let val = ''
+        //     if (rowData.value) {
+        //         val = DateFunction.formatDate(rowData.value)
+        //     }
+        //     return (
+        //         <span>{val}</span>
+        //     );
+        // }        
         return rowData.value;
     };
 

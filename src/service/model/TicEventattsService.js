@@ -4,9 +4,10 @@ import Token from "../../utilities/Token";
 
 export class TicEventattsService {
 
-    async getLista(objId) {
+    async getLista(objId, par1) {
+        console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
         const selectedLanguage = localStorage.getItem('sl') || 'en'
-        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventatts_v&objid=${objId}&sl=${selectedLanguage}`;
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventattstp_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
           Authorization: tokenLocal.token
