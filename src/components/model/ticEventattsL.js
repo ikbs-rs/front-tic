@@ -32,7 +32,6 @@ import { Calendar } from 'primereact/calendar';
 import DateFunction from "../../utilities/DateFunction";
 import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
-import { MultiSelect } from "primereact/multiselect";
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -63,7 +62,6 @@ export default function TicEventattsL(props) {
     const [ddTicEventatttpItems, setDdTicEventatttpItems] = useState(null);
     const [ticEventatttp, setTicEventatttp] = useState({});
     const [ticEventatttps, setTicEventatttps] = useState([]);
-    const multiSelectRef = useRef(null);
 
     let i = 0;
 
@@ -78,7 +76,7 @@ export default function TicEventattsL(props) {
                 ++i;
                 if (i < 2) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
-                    console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
+                    // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
                     const updatedDropdownItems = { ...dropdownAllItems };
@@ -137,7 +135,7 @@ export default function TicEventattsL(props) {
                 setTicEventatttps(data)
                 //console.log("******************", ticEventatttpItem)
 
-                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventatttpItems(dataDD);
                 //setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
             } catch (error) {
@@ -214,6 +212,13 @@ export default function TicEventattsL(props) {
         setConfirmDialogVisible(false);
     };
 
+    const handleCopy = async (e, rowData) => {
+        setSubmitted(true);
+        const ticEventattsService = new TicEventattsService();
+        const data = await ticEventattsService.postCopyEventatts(props.ticEvent.id, rowData);
+        setRefresh(++refresh);
+    };
+
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
         console.log(type, "***type!!!********input!!!***", e.target.value, "*")
         let val = '';
@@ -248,6 +253,10 @@ export default function TicEventattsL(props) {
                 val = (e.target && e.target.value && e.target.value.code) || '';
                 setDropdownItemText(e.value);
                 break;
+            case 'calendar':
+                val = await DateFunction.formatDateToDBFormat(DateFunction.dateGetValue((e.target && e.target.value) || ''))
+                rowData.text = val              
+                break;
             default:
                 val = '';
                 break;
@@ -270,10 +279,6 @@ export default function TicEventattsL(props) {
         await updateDataInDatabase(_ticEventatts);
     };
 
-    const onInputValueChange1 = async (e, type, name, rowData, apsTabela) => {
-        console.log(e, rowData, "######################################")
-    }
-
     const onInputValueChange = async (e, type, name, rowData, apsTabela) => {
         let val = '';
         let _ticEventatts = {}
@@ -292,14 +297,6 @@ export default function TicEventattsL(props) {
                 rowData.value = e.value.code;
                 val = (e.target && e.target.value && e.target.value.code) || '';
                 await setDropdownItem(e.value);
-                break;
-            case 'multiselect':
-                /*
-                console.log(e, "multiselectmultiselectmultiselectmultiselectmultiselectmultiselect", rowData)
-                rowData.value = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
-                await setDropdownItem(e.value);
-                */
                 break;
             case 'fileUpload':
                 try {
@@ -489,6 +486,17 @@ export default function TicEventattsL(props) {
         );
     };
 
+    const cmdBodyTemplate = (rowData) => {
+        const valid = rowData.valid == 1 ? true : false;
+        return (
+            < >
+                <Button type="button" icon="pi pi-copy" severity="secondary" rounded raised
+                    onClick={(e) => handleCopy(e, rowData)}
+                ></Button>
+            </>
+        );
+    };
+
     const validFilterTemplate = (options) => {
         return (
             <div className="flex align-items-center gap-2">
@@ -545,14 +553,21 @@ export default function TicEventattsL(props) {
                 const selectedOptionText = selectedOptionsText.find((option) => option.code === rowData.text);
                 setDropdownItemText(selectedOptionText);
                 return <Dropdown id={rowData.id} value={selectedOptionText} options={selectedOptionsText} onChange={(e) => onInputTextChange(e, 'options', 'text', rowData, apsTabelaText)} placeholder="Select One" optionLabel="name" />;
+            case '8': // Za kalendar
+                return (
+                    <Calendar
+                        showIcon
+                        dateFormat="dd.mm.yy"
+                        value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
+                        onChange={async (e) => onInputTextChange(e, 'calendar', 'text', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
+                    />
+                );
             default:
                 return <InputText value={rowData.text || ''} onChange={(e) => onInputTextChange(e, 'input', 'text', rowData, null)} />;
         }
 
     };
-
     const conditionEditor = (rowData, field, e) => {
-        console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
         return <InputText
             value={rowData.condition || ''}
             onChange={(e) => onInputChange(e, 'input', 'condition', rowData, null)}
@@ -565,7 +580,7 @@ export default function TicEventattsL(props) {
     };
 
     const valueEditor = (rowData, field, e) => {
-        console.log(rowData, '************************valueEditor*************e**************e*', e);
+        //console.log(rowData, '************************rowData*************e***************', e);
         switch (rowData.inputtp) {
             case '4':
                 return (
@@ -601,87 +616,19 @@ export default function TicEventattsL(props) {
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
                 console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
-                return <Dropdown
-                    id={rowData.id}
-                    value={selectedOption}
-                    options={selectedOptions}
-                    onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)}
-                    placeholder="Select One"
-                    optionLabel="name"
-                />;
+                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
             case '5': // Za kalendar
-                return <Calendar
-                    showIcon
-                    dateFormat="dd.mm.yy"
-                    value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
-                    onChange={async (e) => onInputValueChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
-                />;
-            case '7':
-                const [modulM, tabelaM, codeM] = rowData.ddlist.split(',');
-                let apsTabelaM = `${modulM}_${tabelaM}`;
-                if (codeM) {
-                    apsTabelaM = apsTabelaM + `_${codeM}`
-                }
-
-                const selectedOptionsM = dropdownAllItems[apsTabelaM] || [];
-                //console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
-                //setDropdownItems(selectedOptionsM);
-                const selectedOptionM = dropdownAllItems[apsTabelaM].find((option) => option.code === rowData.value);
-                //setDropdownItem(selectedOptionM);
-                console.log(selectedOptionsM, '*J***********************7*************MultiSelect**************SS*', selectedOptionM);
-
-
-                return <MultiSelect
-                    id={rowData.id}
-                    value={[selectedOptionM]}
-                    options={selectedOptionsM}
-                    onMouseDown={(e) => {
-                        // Sprečavanje zadane radnje (ako postoji)
-                        e.preventDefault();
-                        // Dodajte svoj kod ovdje za dodatne manipulacije
-                      }}
-                    //onChange={(e) => onInputValueChange1(e, 'multiselect', 'value', rowData, apsTabelaM)}
-                    // onMouseDown={() => {
-                    //     console.log("9999999999999999999    ");
-                    //     // Vrati fokus na MultiSelect
-                    //     if (multiSelectRef.current) {
-                    //         multiSelectRef.current.focus();
-                    //     }
-                    // }}
-                    onMouseUp={(e) => {
-                        // Sprečavanje zadane radnje (ako postoji)
-                        e.preventDefault();
-                        // Dodajte svoj kod ovdje za dodatne manipulacije
-                      }}
-                      onChange={(e) => {
-                        // Sprečavanje zadane radnje (ako postoji)
-                        e.preventDefault();
-                        // Dodajte svoj kod ovdje za dodatne manipulacije
-                      }} 
-                      onClick={(e) => {
-                        // Sprečavanje zadane radnje (ako postoji)
-                        e.preventDefault();
-                        // Dodajte svoj kod ovdje za dodatne manipulacije
-                      }}                                          
-                    optionLabel="name"
-                    placeholder="Select One"
-                    maxSelectedLabels={3}
-                    className="w-full md:w-20rem"
-                    ref={multiSelectRef}
-                />
-            // return <Dropdown
-            //     id={rowData.id}
-            //     value={selectedOptionM}
-            //     options={selectedOptionsM}
-            //     onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabelaM)}
-            //     placeholder="Select One"
-            //     optionLabel="name"
-            // />;
+            case '8': // Za kalendar
+                return (
+                    <Calendar
+                        showIcon
+                        dateFormat="dd.mm.yy"
+                        value={DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())}
+                        onChange={async (e) => onInputValueChange(e, 'calendar', 'value', rowData, null)} // Dodajte funkciju za rukovanje promenama na kalendaru
+                    />
+                );
             default:
-                return <InputText
-                    value={rowData.value || ''}
-                    onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)}
-                />;
+                return <InputText value={rowData.value || ''} onChange={(e) => onInputValueChange(e, 'input', 'value', rowData, null)} />;
         }
     };
 
@@ -745,7 +692,7 @@ export default function TicEventattsL(props) {
                 ></i>
             );
         }
-        if (rowData.inputtp === '5') {
+        if ((rowData.inputtp === '5') || (rowData.inputtp === '8')) {
             let value = ''
             if (rowData.value) {
                 value = DateFunction.formatDate(rowData.value)
@@ -754,18 +701,15 @@ export default function TicEventattsL(props) {
                 <span>{value}</span>
             );
         }
-        if ((rowData.inputtp === '7') && rowData.ddlist) {
-            const [modulM, tabelaM, codeM] = rowData.ddlist.split(',');
-            let apsTabelaM = `${modulM}_${tabelaM}`;
-            if (codeM) {
-                apsTabelaM = apsTabelaM + `_${codeM}`
-            }
-            const dropdownDataM = dropdownAllItems[apsTabelaM] || [];
-            const dropdownValueM = dropdownDataM.find((item) => item.code === rowData.value);
-            if (dropdownValueM) {
-                return <span>{dropdownValueM.name}</span>;
-            }
-        }
+        // if (rowData.inputtp === '1') {
+        //     let val = ''
+        //     if (rowData.value) {
+        //         val = DateFunction.formatDate(rowData.value)
+        //     }
+        //     return (
+        //         <span>{val}</span>
+        //     );
+        // }        
         return rowData.value;
     };
 
@@ -781,6 +725,15 @@ export default function TicEventattsL(props) {
             if (dropdownValue) {
                 return <span>{dropdownValue.name}</span>;
             }
+        }
+        if (rowData.inputtp === '8') {
+            let text = ''
+            if (rowData.text) {
+                text = DateFunction.formatDate(rowData.text)
+            }
+            return (
+                <span>{text}</span>
+            );
         }
         // if (rowData.inputtp === '1') {
         //     let val = ''
@@ -971,11 +924,17 @@ export default function TicEventattsL(props) {
                     sortable
                     filter
                     filterElement={validFilterTemplate}
-                    style={{ width: '10%' }}
+                    style={{ width: '5%' }}
                     bodyClassName="text-center"
                     body={validBodyTemplate}
                     editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
+                ></Column>
+                <Column
+                    //header={translations[selectedLanguage].Valid}
+                    style={{ width: '5%' }}
+                    bodyClassName="text-center"
+                    body={cmdBodyTemplate}
                 ></Column>
             </DataTable>
             <Dialog

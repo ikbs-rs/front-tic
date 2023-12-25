@@ -9,6 +9,7 @@ import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
 import TicEventartcena from './ticEventartcena';
+import TicEventartcenaT from './ticEventartcenaT';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -29,12 +30,15 @@ console.log(props, "------------------------------------------------------------
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticEventartcenas, setTicEventartcenas] = useState([]);
   const [ticEventartcena, setTicEventartcena] = useState(emptyTicEventartcena);
+  const [ticEventartcenaT, setTicEventartcenaT] = useState(emptyTicEventartcena);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [visibleT, setVisibleT] = useState(false);
   const [eventartcenaTip, setEventartcenaTip] = useState('');
+  const [eventartcenaTTip, setEventartcenaTTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventartcenaLVisible(false);
@@ -82,6 +86,7 @@ console.log(props, "------------------------------------------------------------
     toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.eventartcenaTip}`, life: 3000 });
     setTicEventartcenas(_ticEventartcenas);
     setTicEventartcena(emptyTicEventartcena);
+    setTicEventartcenaT(emptyTicEventartcena);
   };
 
   const findIndexById = (id) => {
@@ -100,6 +105,10 @@ console.log(props, "------------------------------------------------------------
   const openNew = () => {
     setTicEventartcenaDialog(emptyTicEventartcena);
   };
+
+  const openNewT = () => {
+    setTicEventartcenaTDialog(emptyTicEventartcena);
+  };  
 
   const onRowSelect = (event) => {
     //ticEventartcena.begda = event.data.begda
@@ -166,6 +175,9 @@ console.log(props, "------------------------------------------------------------
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].CenaT} icon="pi pi-clock" severity="success"  onClick={openNewT} text raised />
+        </div>          
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventartcenaList}</b>
         <div className="flex-grow-1"></div>
@@ -201,6 +213,13 @@ console.log(props, "------------------------------------------------------------
     setEventartcenaTip("CREATE")
     setTicEventartcena({ ...ticEventartcena });
   }
+
+  const setTicEventartcenaTDialog = (ticEventartcena) => {
+    setVisibleT(true)
+    setEventartcenaTTip("CREATE")
+    setTicEventartcenaT({ ...ticEventartcena });
+  }  
+  
   //  Dialog --->
 
   const header = renderHeader();
@@ -225,6 +244,24 @@ console.log(props, "------------------------------------------------------------
     );
   };
 
+  const eventartcenaTTemplate = (rowData) => {
+    return (
+      <div className="flex flex-wrap gap-1">
+
+        <Button
+          type="button"
+          icon="pi pi-pencil"
+          style={{ width: '24px', height: '24px' }}
+          onClick={() => {
+            setTicEventartcenaTDialog(rowData)
+            setEventartcenaTTip("UPDATE")
+          }}
+          text
+          raised ></Button>
+
+      </div>
+    );
+  };  
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -370,6 +407,33 @@ console.log(props, "------------------------------------------------------------
           </button>
         </div>
       </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].CenaT}
+        visible={visibleT}
+        style={{ width: '60%' }}
+        onHide={() => {
+          setVisibleT(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicEventartcenaT
+            parameter={"inputTextValue"}
+            ticEventartcena={ticEventartcena}
+            ticEventart={props.ticEventart}
+            handleDialogClose={handleDialogClose}
+            setVisible={setVisibleT}
+            dialog={true}
+            eventartcenaTip={eventartcenaTip}
+          />
+        )}
+        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+          <button className="p-dialog-header-close p-link">
+            <span className="p-dialog-header-close-icon pi pi-times"></span>
+          </button>
+        </div>
+      </Dialog>
+
     </div>
   );
 }

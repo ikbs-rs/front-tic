@@ -736,6 +736,8 @@ export const translations = {
         condition1: "Услов",
         condition2: "Додатни",
         condition3: "Посебни",
+        CenaT: "Цена Т",
+        AddNew: "Додај"
     }
   };
   

@@ -45,14 +45,14 @@ const TicEventatt = (props) => {
                 const data = await ticEventattService.getCmnInputtps();
 
                 setCmnInputtpItems(data);
-                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnInputtpItems(dataDD);
                 setDdCmnInputtpItem(dataDD.find((item) => item.code === props.ticEventatt.inputtp) || null);
                 if (props.ticEventatt.att) {
                     const foundItem = data.find((item) => item.id === props.ticEventatt.inputtp);
                     setCmnInputtpItem(foundItem || null);
                     ticEventatt.ctp = foundItem.code;
-                    ticEventatt.ntp = foundItem.text;
+                    ticEventatt.ntp = foundItem.textx;
                 }
             } catch (error) {
                 console.error(error);
@@ -69,9 +69,8 @@ const TicEventatt = (props) => {
                 const data = await ticEventatttpService.getTicEventatttps();
 
                 setTicEventatttpItems(data)
-                //console.log("******************", ticEventatttpItem)
 
-                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventatttpItems(dataDD);
                 setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
                 if (props.ticEventatt.tp) {

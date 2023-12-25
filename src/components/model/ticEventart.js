@@ -89,11 +89,14 @@ const TicEventart = (props) => {
             setSubmitted(true);
             ticEventart.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             ticEventart.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            
             const ticEventartService = new TicEventartService();
-            const newTicEventobj = { ...ticEventart, id: null};
+            const newTicEventobj = { ...ticEventart, id: null, products: {} };
+            
             const data = await ticEventartService.postTicEventart(newTicEventobj);
-            ticEventart.id = data;
-            props.handleDialogClose({ obj: ticEventart, eventartTip: props.eventartTip });
+            newTicEventobj.id = data;
+
+            props.handleDialogClose({ obj: newTicEventobj, eventartTip: "CREATE" });
             //props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -103,7 +106,7 @@ const TicEventart = (props) => {
                 life: 5000,
             });
         }
-    };     
+    };
 
     const handleSaveClick = async () => {
         try {
@@ -264,7 +267,21 @@ const TicEventart = (props) => {
                                 </>
                                 : null}
                             {props.eventartTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
-                            {props.eventartTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
+                            {props.eventartTip !== 'CREATE' ?
+                                <>
+                                    <Button label={translations[selectedLanguage].Save}
+                                        icon="pi pi-check"
+                                        onClick={handleSaveClick}
+                                        severity="success"
+                                        outlined />
+                                    <Button label={translations[selectedLanguage].AddNew}
+                                        icon="pi pi-check"
+                                        onClick={handleCreateAndAddNewClick}
+                                        severity="success"
+                                        outlined />
+                                </>
+                                : null
+                            }
                         </div>
                     </div>
                 </div>

@@ -15,7 +15,7 @@ import axios from 'axios';
 import Token from "../../utilities/Token";
 
 const TicEventartcena = (props) => {
-
+    console.log(props, "*props***********************************TicEventartcena*******************************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventartcena, setTicEventartcena] = useState(props.ticEventartcena);
@@ -35,6 +35,11 @@ const TicEventartcena = (props) => {
     const [ddTicEventartcenacurrItems, setDdTicEventartcenacurrItems] = useState(null);
     const [ticEventartcenacurrItem, setTicEventartcenacurrItem] = useState(null);
     const [ticEventartcenacurrItems, setTicEventartcenacurrItems] = useState(null);
+
+    const [ddTicEventartcenaTItem, setDdTicEventartcenaTItem] = useState(null);
+    const [ddTicEventartcenaTItems, setDdTicEventartcenaTItems] = useState(null);
+    const [ticEventartcenaTItem, setTicEventartcenaTItem] = useState(null);
+    const [ticEventartcenaTItems, setTicEventartcenaTItems] = useState(null);
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventartcena.begda || props.ticEventart.begda)));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventartcena.endda || props.ticEventart.endda)))
@@ -64,6 +69,31 @@ const TicEventartcena = (props) => {
                     ticEventartcena.ccena = foundItem.code
                     ticEventartcena.ncena = foundItem.textx
                 }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const url = `${env.TIC_BACK_URL}/tic/eventartcena/_v/lista/?stm=tic_eventartcenat_v&objid=${props.ticEventart.event}&par1=XO01&sl=${selectedLanguage}`;
+                const tokenLocal = await Token.getTokensLS();
+                const headers = {
+                    Authorization: tokenLocal.token
+                };
+                const response = await axios.get(url, { headers });
+                const data = response.data.items||response.data.item
+                //console.log(data, "datadatadatadatadatadatadatadatadatadatadatadatadatadata")
+                await setTicEventartcenaTItems(data)
+                const dataDD = await data.map(({ value, id }) => ({ name: DateFunction.formatDate(value), code: id }));
+                //console.log(dataDD, "datadatadataDDDDDDDDdatadatadatadatadatadatadatadatadatadatadata")
+                await setDdTicEventartcenaTItems(dataDD);
+                // setDdTicEventartcenaItem(dataDD.find((item) => item.code === props.ticEventartcena.cena) || null);
 
             } catch (error) {
                 console.error(error);
@@ -152,7 +182,7 @@ const TicEventartcena = (props) => {
                 severity: "error",
                 summary: "TicEventartcena ",
                 detail: `${err.response.data.error}`,
-                life: 2000,
+                life: 5000,
             });
         }
     };
@@ -233,6 +263,11 @@ const TicEventartcena = (props) => {
                     setTicEventartcenaItem(foundItem || null);
                     ticEventartcena.ncena = e.value.name
                     ticEventartcena.ccena = foundItem.code
+                    break;
+                case "cenat":
+                    setDdTicEventartcenaTItem(e.value);
+                    foundItem = ticEventartcenaTItems.find((item) => item.id === val);
+                    setTicEventartcenaTItem(foundItem || null);
                     break;
                 case "terr":
                     setDdTicEventartcenaterrItem(e.value);
@@ -355,6 +390,19 @@ const TicEventartcena = (props) => {
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
+                            <label htmlFor="cenat">{translations[selectedLanguage].CenaT}</label>
+                            <Dropdown id="cena"
+                                value={ddTicEventartcenaTItem}
+                                options={ddTicEventartcenaTItems}
+                                onChange={(e) => onInputChange(e, "options", 'cenat')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
                             <Calendar
                                 value={begda}
@@ -417,20 +465,20 @@ const TicEventartcena = (props) => {
                             ) : null}
                             {(props.eventartcenaTip !== 'CREATE') ? (
                                 <>
-                                <Button
-                                    label={translations[selectedLanguage].Save}
-                                    icon="pi pi-check"
-                                    onClick={handleSaveClick}
-                                    severity="success"
-                                    outlined
-                                />
+                                    <Button
+                                        label={translations[selectedLanguage].Save}
+                                        icon="pi pi-check"
+                                        onClick={handleSaveClick}
+                                        severity="success"
+                                        outlined
+                                    />
                                     <Button
                                         label={translations[selectedLanguage].AddNew}
                                         icon="pi pi-check"
                                         onClick={handleCreateAndAddNewClick}
                                         severity="success"
                                         outlined
-                                    />                                
+                                    />
                                 </>
                             ) : null}
                         </div>

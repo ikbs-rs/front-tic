@@ -13,7 +13,6 @@ export class TicEventatttpService {
 
     try {
       const response = await axios.get(url, { headers });
-      //console.log("KKKKKKK", url, response)
       return response.data.item;
     } catch (error) {
       console.error(error);
