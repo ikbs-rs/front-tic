@@ -7,6 +7,7 @@ import { Button } from 'primereact/button';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
+import { defaultValue } from "../../configs/defaultValue";
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
@@ -16,14 +17,15 @@ import Token from "../../utilities/Token";
 
 const TicEventartcena = (props) => {
     console.log(props, "*props***********************************TicEventartcena*******************************")
+    const site = defaultValue["tmp"].site
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventartcena, setTicEventartcena] = useState(props.ticEventartcena);
     const [submitted, setSubmitted] = useState(false);
 
-    const [ddTicEventartcenaItem, setDdTicEventartcenaItem] = useState(null);
+    const [ddTicEventartcenaItem, setDdTicEventartcenaItem] = useState();
     const [ddTicEventartcenaItems, setDdTicEventartcenaItems] = useState(null);
-    const [ticEventartcenaItem, setTicEventartcenaItem] = useState(null);
+    const [ticEventartcenaItem, setTicEventartcenaItem] = useState(defaultValue[site].cena);
     const [ticEventartcenaItems, setTicEventartcenaItems] = useState(null);
 
     const [ddTicEventartcenaterrItem, setDdTicEventartcenaterrItem] = useState(null);
@@ -51,21 +53,23 @@ const TicEventartcena = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
+                const pCena = props.ticEventartcena.cena||defaultValue[site].cena
                 const url = `${env.TIC_BACK_URL}/tic/x/cena/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
                 };
-
+console.log(defaultValue[site].cena, "**************************defaultValue[site].cena***************************")
                 const response = await axios.get(url, { headers });
                 const data = response.data.items;
                 setTicEventartcenaItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventartcenaItems(dataDD);
-                setDdTicEventartcenaItem(dataDD.find((item) => item.code === props.ticEventartcena.cena) || null);
-                if (props.ticEventartcena.cena) {
-                    const foundItem = data.find((item) => item.id === props.ticEventartcena.cena);
-                    setTicEventartcenaItem(foundItem || null);
+                setDdTicEventartcenaItem(dataDD.find((item) => item.code === pCena));
+                
+                if (pCena) {
+                    const foundItem = data.find((item) => item.id === pCena);
+                    setTicEventartcenaItem(foundItem);
                     ticEventartcena.ccena = foundItem.code
                     ticEventartcena.ncena = foundItem.textx
                 }
@@ -106,6 +110,9 @@ const TicEventartcena = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
+                let pTerr = props.ticEventartcena.terr||defaultValue[site].terr
+                pTerr= (pTerr=="-1")?defaultValue[site].terr:pTerr
+                console.log(pTerr, "#######################AAAA############################################")
                 const url = `${env.CMN_BACK_URL}/cmn/x/terr/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
@@ -117,9 +124,9 @@ const TicEventartcena = (props) => {
                 setTicEventartcenaterrItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventartcenaterrItems(dataDD);
-                setDdTicEventartcenaterrItem(dataDD.find((item) => item.code === props.ticEventartcena.terr) || null);
-                if (props.ticEventartcena.terrv) {
-                    const foundItem = data.find((item) => item.id === props.ticEventartcena.terr);
+                setDdTicEventartcenaterrItem(dataDD.find((item) => item.code === pTerr) || null);
+                if (pTerr) {
+                    const foundItem = data.find((item) => item.id === pTerr);
                     setTicEventartcenaterrItem(foundItem || null);
                     ticEventartcena.cterr = foundItem.code
                     ticEventartcena.vterr = foundItem.textx
@@ -132,9 +139,12 @@ const TicEventartcena = (props) => {
         }
         fetchData();
     }, []);
+
     useEffect(() => {
         async function fetchData() {
             try {
+                let pCurr = props.ticEventartcena.curr||defaultValue[site].curr
+                pCurr= (pCurr=="-1")?defaultValue[site].curr:pCurr
                 const url = `${env.CMN_BACK_URL}/cmn/x/curr/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
@@ -146,9 +156,9 @@ const TicEventartcena = (props) => {
                 setTicEventartcenacurrItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventartcenacurrItems(dataDD);
-                setDdTicEventartcenacurrItem(dataDD.find((item) => item.code === props.ticEventartcena.curr) || null);
-                if (props.ticEventartcena.curr) {
-                    const foundItem = data.find((item) => item.id === props.ticEventartcena.curr);
+                setDdTicEventartcenacurrItem(dataDD.find((item) => item.code === pCurr) || null);
+                if (pCurr) {
+                    const foundItem = data.find((item) => item.id === pCurr);
                     setTicEventartcenacurrItem(foundItem || null);
                     ticEventartcena.ccurr = foundItem.code
                     ticEventartcena.ncurr = foundItem.textx
@@ -253,7 +263,7 @@ const TicEventartcena = (props) => {
     const onInputChange = (e, type, name, a) => {
         let val = ''
         let foundItem = ''
-
+        console.log("****************************foundItem*******************************")
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
             switch (name) {
@@ -265,9 +275,16 @@ const TicEventartcena = (props) => {
                     ticEventartcena.ccena = foundItem.code
                     break;
                 case "cenat":
+                    console.log("****************************foundItem!!!*******************************")
                     setDdTicEventartcenaTItem(e.value);
                     foundItem = ticEventartcenaTItems.find((item) => item.id === val);
                     setTicEventartcenaTItem(foundItem || null);
+                    console.log(foundItem, "****************************foundItem*******************************")
+                    if (foundItem) {
+                        console.log(foundItem.value, "****************************foundItem*******************************", foundItem.text)
+                        setBegda(new Date(DateFunction.formatJsDate(foundItem.value)));
+                        setEndda(new Date(DateFunction.formatJsDate(foundItem.text)));
+                    }
                     break;
                 case "terr":
                     setDdTicEventartcenaterrItem(e.value);
