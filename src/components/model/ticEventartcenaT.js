@@ -54,12 +54,13 @@ const TicEventartcena = (props) => {
         async function fetchData() {
             try {
                 const pCena = props.ticEventartcena.cena||defaultValue[site].cena
+                ticEventartcena.cena = pCena
                 const url = `${env.TIC_BACK_URL}/tic/x/cena/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
                 };
-console.log(defaultValue[site].cena, "**************************defaultValue[site].cena***************************")
+//console.log(defaultValue[site].cena, "**************************defaultValue[site].cena***************************")
                 const response = await axios.get(url, { headers });
                 const data = response.data.items;
                 setTicEventartcenaItems(data)
@@ -112,7 +113,8 @@ console.log(defaultValue[site].cena, "**************************defaultValue[sit
             try {
                 let pTerr = props.ticEventartcena.terr||defaultValue[site].terr
                 pTerr= (pTerr=="-1")?defaultValue[site].terr:pTerr
-                console.log(pTerr, "#######################AAAA############################################")
+                ticEventartcena.terr = pTerr
+                //console.log(pTerr, "#######################AAAA##############pTerr##############################")
                 const url = `${env.CMN_BACK_URL}/cmn/x/terr/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
@@ -145,6 +147,7 @@ console.log(defaultValue[site].cena, "**************************defaultValue[sit
             try {
                 let pCurr = props.ticEventartcena.curr||defaultValue[site].curr
                 pCurr= (pCurr=="-1")?defaultValue[site].curr:pCurr
+                ticEventartcena.curr = pCurr               
                 const url = `${env.CMN_BACK_URL}/cmn/x/curr/?sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
@@ -263,7 +266,7 @@ console.log(defaultValue[site].cena, "**************************defaultValue[sit
     const onInputChange = (e, type, name, a) => {
         let val = ''
         let foundItem = ''
-        console.log("****************************foundItem*******************************")
+        //console.log("****************************foundItem*******************************")
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
             switch (name) {
@@ -275,13 +278,13 @@ console.log(defaultValue[site].cena, "**************************defaultValue[sit
                     ticEventartcena.ccena = foundItem.code
                     break;
                 case "cenat":
-                    console.log("****************************foundItem!!!*******************************")
+                    //console.log("****************************foundItem!!!*******************************")
                     setDdTicEventartcenaTItem(e.value);
                     foundItem = ticEventartcenaTItems.find((item) => item.id === val);
                     setTicEventartcenaTItem(foundItem || null);
-                    console.log(foundItem, "****************************foundItem*******************************")
+                    //console.log(foundItem, "****************************foundItem*******************************")
                     if (foundItem) {
-                        console.log(foundItem.value, "****************************foundItem*******************************", foundItem.text)
+                        //console.log(foundItem.value, "****************************foundItem*******************************", foundItem.text)
                         setBegda(new Date(DateFunction.formatJsDate(foundItem.value)));
                         setEndda(new Date(DateFunction.formatJsDate(foundItem.text)));
                     }
@@ -290,6 +293,7 @@ console.log(defaultValue[site].cena, "**************************defaultValue[sit
                     setDdTicEventartcenaterrItem(e.value);
                     foundItem = ticEventartcenaterrItems.find((item) => item.id === val);
                     setTicEventartcenaterrItem(foundItem || null);
+                    console.log(foundItem, "*terr***************************foundItem******************************terr*", e.value.name)
                     ticEventartcena.nterr = e.value.name
                     ticEventartcena.cterr = foundItem.code
                     break;
