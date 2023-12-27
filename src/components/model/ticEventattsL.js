@@ -76,9 +76,11 @@ export default function TicEventattsL(props) {
                 ++i;
                 if (i < 2) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
-                    // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
+                    console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
+                    
+                    console.log(data, "*********************data**************************", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
                     const promisesDD = data.map(async (row) => {
                         if (row.inputtp === '3' && row.ddlist) {
