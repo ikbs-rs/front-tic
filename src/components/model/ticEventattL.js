@@ -17,7 +17,7 @@ import { translations } from "../../configs/translations";
 export default function TicEventattL(props) {
   let i = 0
   const objName = "tic_eventatt"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventatt = EmptyEntities[objName]
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticEventatts, setTicEventatts] = useState([]);
@@ -33,12 +33,12 @@ export default function TicEventattL(props) {
     async function fetchData() {
       try {
         ++i
-        if (i<2) {  
-        const ticEventattService = new TicEventattService();
-        const data = await ticEventattService.getLista();
-        console.log(data, "***************************************TicEventattL*****************************************")
-        setTicEventatts(data);
-        initFilters();
+        if (i < 2) {
+          const ticEventattService = new TicEventattService();
+          const data = await ticEventattService.getLista();
+          console.log(data, "***************************************TicEventattL*****************************************")
+          setTicEventatts(data);
+          initFilters();
         }
       } catch (error) {
         console.error(error);
@@ -105,6 +105,21 @@ export default function TicEventattL(props) {
       life: 3000,
     });
   };
+
+
+  const handleConfirmClick = () => {
+    if (ticEventatt) {
+      props.onTaskComplete(ticEventatt);
+    } else {
+      toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
+    }
+  };
+
+  const handleCancelClick = () => {
+    props.setTicEventattLVisible(false);
+    if (props.ticEventatt) props.setTicEventttLVisible(false);
+  };
+
   // <heder za filter
   const initFilters = () => {
     setFilters({
@@ -139,6 +154,14 @@ export default function TicEventattL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
+        {props.lookUp && (
+          <>
+            <div className="flex flex-wrap gap-1" />
+            <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
+            <div className="flex flex-wrap gap-1" />
+            <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised disabled={!ticEventatt} />
+          </>
+        )}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
@@ -168,7 +191,7 @@ export default function TicEventattL(props) {
   };
 
   const validBodyTemplate = (rowData) => {
-    const valid = rowData.valid == 1?true:false
+    const valid = rowData.valid == 1 ? true : false
     return (
       <i
         className={classNames("pi", {
@@ -183,7 +206,7 @@ export default function TicEventattL(props) {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Valid}
+          {translations[selectedLanguage].Valid}
         </label>
         <TriStateCheckbox
           inputId="verified-filter"
@@ -238,7 +261,7 @@ export default function TicEventattL(props) {
         removableSort
         filters={filters}
         scrollable
-        sortField="code"        
+        sortField="code"
         sortOrder={1}
         scrollHeight="650px"
         //virtualScrollerOptions={{ itemSize: 46 }}
@@ -257,7 +280,7 @@ export default function TicEventattL(props) {
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
-        />        
+        />
         <Column
           field="code"
           header={translations[selectedLanguage].Code}
@@ -278,14 +301,14 @@ export default function TicEventattL(props) {
           sortable
           filter
           style={{ width: "55%" }}
-        ></Column>        
+        ></Column>
         <Column
           field="ddlist"
           header={translations[selectedLanguage].ddlist}
           sortable
           filter
           style={{ width: "25%" }}
-        ></Column>        
+        ></Column>
         <Column
           field="valid"
           filterField="valid"

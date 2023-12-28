@@ -66,7 +66,7 @@ console.log(props, "------------------------------------------------------------
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
-    console.log(newObj, "*******************************************************----------------")
+    console.log(newObj, "***************************************handleDialogClose****************----------------")
     props.handleRefresh(newObj.obj.id+newObj.obj.value);
 
     let _ticEventartcenas = [...ticEventartcenas];
@@ -424,7 +424,7 @@ console.log(props, "------------------------------------------------------------
             handleDialogClose={handleDialogClose}
             setVisible={setVisibleT}
             dialog={true}
-            eventartcenaTip={eventartcenaTip}
+            eventartcenaTip={"CREATE"}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

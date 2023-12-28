@@ -186,8 +186,10 @@ const TicEventartcena = (props) => {
             ticEventartcena.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             ticEventartcena.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             const ticEventartcenaService = new TicEventartcenaService();
+            ticEventartcena.id = null
             const data = await ticEventartcenaService.postTicEventartcena(ticEventartcena);
             ticEventartcena.id = data
+            console.log("handleCreateClick***********************************************")
             props.handleDialogClose({ obj: ticEventartcena, eventartcenaTip: props.eventartcenaTip });
             props.setVisible(false);
         } catch (err) {
@@ -209,6 +211,7 @@ const TicEventartcena = (props) => {
             const newTicEventobj = { ...ticEventartcena, id: null };
             const data = await ticEventartcenaService.postTicEventartcena(newTicEventobj);
             ticEventartcena.id = data;
+            console.log("handleCreateAndAddNewClick***********************************************")
             props.handleDialogClose({ obj: ticEventartcena, eventartcenaTip: "CREATE" });
             //props.setVisible(false);
         } catch (err) {

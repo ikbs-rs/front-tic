@@ -737,7 +737,10 @@ export const translations = {
         condition2: "Додатни",
         condition3: "Посебни",
         CenaT: "Цена Т",
-        AddNew: "Додај"
+        AddNew: "Додај",
+        ctp: "Код",
+        ntp: "Поставка",
+        EventattList: "Поставке Листа",
     }
   };
   
