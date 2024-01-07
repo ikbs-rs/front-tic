@@ -741,6 +741,7 @@ export const translations = {
         ctp: "Код",
         ntp: "Поставка",
         EventattList: "Поставке Листа",
+        ObjectsXBL: "Црне листе посетилаца",
     }
   };
   

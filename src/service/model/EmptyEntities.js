@@ -351,8 +351,8 @@ const EmptyEntities =
     "status": 1,
     "fee": 0,
 		"par": null,
-		"descript": "string"
-
+		"descript": "string",
+    "storno": 0
   },
   "tic_docslink": {
     "id": null,

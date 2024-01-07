@@ -14,7 +14,14 @@ export const defaultValue = {
         cena: "1683472665803100160"
     },
     tmp: {
-        site: "tic",
+        site: "ikbs",
+        curr: "1",
+        terr: "1682866515650940928",
+        lang: "sr_cyr",
+        cena: ""
+    },
+    def: {
+        site: "ikbs",
         curr: "1",
         terr: "1682866515650940928",
         lang: "sr_cyr",
