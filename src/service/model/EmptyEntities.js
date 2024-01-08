@@ -628,7 +628,11 @@ const EmptyEntities =
     "text": "",
     "tp": null,
     "limitirano": "1",
-    "valid": "1"
+    "valid": "1",
+		"popust": null,
+		"vrednost": "0",
+		"uslov": "0",
+		"domen": null
   },
   "tic_privilegecond": {
     "id": null,

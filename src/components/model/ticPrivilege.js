@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicPrivilegeService } from "../../service/model/TicPrivilegeService";
 import { TicPrivilegetpService } from "../../service/model/TicPrivilegetpService";
+import { TicDiscounttpService } from "../../service/model/TicDiscounttpService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -16,12 +17,23 @@ console.log("*******************", props)
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticPrivilege, setTicPrivilege] = useState(props.ticPrivilege);
     const [submitted, setSubmitted] = useState(false);
+
     const [ddTicPrivilegetpItem, setDdTicPrivilegetpItem] = useState(null);
     const [ddTicPrivilegetpItems, setDdTicPrivilegetpItems] = useState(null);
     const [ticPrivilegetpItem, setTicPrivilegetpItem] = useState(null);
     const [ticPrivilegetpItems, setTicPrivilegetpItems] = useState(null);
+    
+    const [ddTicDiscounttpItem, setDdTicDiscounttpItem] = useState(null);
+    const [ddTicDiscounttpItems, setDdTicDiscounttpItems] = useState(null);
+    const [ticDiscounttpItem, setTicDiscounttpItem] = useState(null);
+    const [ticDiscounttpItems, setTicDiscounttpItems] = useState(null);
+
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
+    const [dropdownUslovItem, setDropdownUslovItem] = useState(null);
+    const [dropdownUslovItems, setDropdownUslovItems] = useState(null);
+    const [dropdownDomenItem, setDropdownDomenItem] = useState(null);
+    const [dropdownDomenItems, setDropdownDomenItems] = useState(null);
 
     const calendarRef = useRef(null);
 
@@ -30,9 +42,21 @@ console.log("*******************", props)
         { name: `${translations[selectedLanguage].Yes}`, code: '1' },
         { name: `${translations[selectedLanguage].No}`, code: '0' }
     ];
-
+    const domens = [
+        { name: `${translations[selectedLanguage].All}`, code: '0' },
+        { name: `${translations[selectedLanguage].Prodact}`, code: '1' },
+        { name: `${translations[selectedLanguage].Service}`, code: '2' }
+    ];
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticPrivilege.valid));
+    }, []);
+
+    useEffect(() => {
+        setDropdownUslovItem(findDropdownItemByCode(props.ticPrivilege.uslov));
+    }, []);
+
+    useEffect(() => {
+        setDropdownDomenItem(findDropdownDomenByCode(props.ticPrivilege.domen));
     }, []);
 
     useEffect(() => {
@@ -60,14 +84,53 @@ console.log("*******************", props)
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDiscounttpService = new TicDiscounttpService();
+                const data = await ticDiscounttpService.getTicDiscounttps();
+
+                setTicDiscounttpItems(data)
+                //console.log("******************", ticPrivilegetpItem)
+
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicDiscounttpItems(dataDD);
+                setDdTicDiscounttpItem(dataDD.find((item) => item.code === props.ticPrivilege.popust) || null);
+                if (props.ticPrivilege.popust) {
+                    const foundItem = data.find((item) => item.id === props.ticPrivilege.popust);
+                    setTicDiscounttpItem(foundItem || null);
+                    //ticPrivilege.ctp = foundItem.code
+                    ticPrivilege.ntp = foundItem.textx
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
     // Autocomplit>
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
     };
 
+    const findDropdownDomenByCode = (code) => {
+        return domens.find((item) => item.code === code) || null;
+    };
+
     useEffect(() => {
         setDropdownItems(items);
+    }, []);
+
+    useEffect(() => {
+        setDropdownUslovItems(items);
+    }, []);
+
+    useEffect(() => {
+        setDropdownDomenItems(domens);
     }, []);
 
     const handleCancelClick = () => {
@@ -143,7 +206,17 @@ console.log("*******************", props)
                 setTicPrivilegetpItem(foundItem || null);
                 ticPrivilege.ntp = e.value.name
                 ticPrivilege.ctp = foundItem.code
-            } else {
+            } else if (name == "popust") {
+                setDdTicDiscounttpItem(e.value);
+                const foundItem = ticDiscounttpItems.find((item) => item.id === val);
+                setTicDiscounttpItem(foundItem || null);
+                ticPrivilege.npopust = e.value.name
+                ticPrivilege.cpopust = foundItem.code
+            } else if (name == "uslov") {
+                setDropdownUslovItem(e.value);
+            } else if (name == "domen") {
+                setDropdownDomenItem(e.value);
+            }  else {
                 setDropdownItem(e.value);
             }
 
@@ -197,12 +270,60 @@ console.log("*******************", props)
                             />
                             {submitted && !ticPrivilege.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="popust">{translations[selectedLanguage].popust} *</label>
+                            <Dropdown id="popust"
+                                value={ddTicDiscounttpItem}
+                                options={ddTicDiscounttpItems}
+                                onChange={(e) => onInputChange(e, "options", 'popust')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticPrivilege.popust })}
+                            />
+                            {submitted && !ticPrivilege.popust && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="limitirano">{translations[selectedLanguage].Vrednost}</label>
+                            <InputText id="limitirano"
+                                value={ticPrivilege.vrednost} onChange={(e) => onInputChange(e, "text", 'vrednost')}
+                            />
+                        </div>                        
                         <div className="field col-12 md:col-6">
                             <label htmlFor="limitirano">{translations[selectedLanguage].Limit}</label>
                             <InputText id="limitirano"
                                 value={ticPrivilege.limitirano} onChange={(e) => onInputChange(e, "text", 'limitirano')}
                             />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="domen">{translations[selectedLanguage].domen}</label>
+                            <Dropdown id="domen"
+                                value={dropdownDomenItem}
+                                options={dropdownDomenItems}
+                                onChange={(e) => onInputChange(e, "options", 'domen')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticPrivilege.domen })}
+                            />
+                            {submitted && !ticPrivilege.domen && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>                    
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="uslov">{translations[selectedLanguage].uslov}</label>
+                            <Dropdown id="uslov"
+                                value={dropdownUslovItem}
+                                options={dropdownUslovItems}
+                                onChange={(e) => onInputChange(e, "options", 'uslov')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticPrivilege.uslov })}
+                            />
+                            {submitted && !ticPrivilege.uslov && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">

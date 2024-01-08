@@ -742,6 +742,12 @@ export const translations = {
         ntp: "Поставка",
         EventattList: "Поставке Листа",
         ObjectsXBL: "Црне листе посетилаца",
+        popust: "Попуст",
+        uslov: "Неопходан услов",
+        Prodact: "Производ",
+        Service: "Услуга",
+        domen: "Домен",
+        Vrednost: "Вредност",
     }
   };
   
