@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
 import { TicEventattService } from '../../service/model/TicEventattService';
+import { CmnPaymenttpService } from '../../service/model/cmn/CmnPaymenttpService';
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -33,10 +34,31 @@ const TicEventatt = (props) => {
         { name: `${translations[selectedLanguage].Yes}`, code: '1' },
         { name: `${translations[selectedLanguage].No}`, code: '0' }
     ];
+    const linktpValues = [
+        { name: `${translations[selectedLanguage].No_connection}`, code: '0' },
+        { name: `${translations[selectedLanguage].Paymenttp}`, code: '1' },
+        { name: `${translations[selectedLanguage].Sales_channels}`, code: '2' }
+      //  { name: 'Option 3', code: '3' }
+    ];
+
+    const [linktpItem, setLinktpItem] = useState(null);
+    const [linktpItems, setLinktpItems] = useState([]);
+
+    const [showDdCmnLinkItem, setShowDdCmnLinkItem] = useState(false);
+    const [ddCmnLink, setDdCmnLink] = useState(null);
+    const [ddCmnLinks, setDdCmnLinks] = useState(null);    
+    const [ddCmnLinkItem, setDdCmnLinkItem] = useState(null);
+    const [ddCmnLinkItems, setDdCmnLinkItems] = useState([]);
+
+
+    useEffect(() => {
+        console.log(props.ticEventatt.linktp, "@@@@@@@@@@@")
+        setLinktpItem(findLinktpItemByCode(props.ticEventatt.linktp));
+    }, []);
 
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticEventatt.valid));
-    }, []);
+    }, []);    
 
     useEffect(() => {
         async function fetchData() {
@@ -86,6 +108,49 @@ const TicEventatt = (props) => {
         }
         fetchData();
     }, []);
+    const findLinktpItemByCode = (code) => {
+        return linktpValues.find((item) => item.code === code) || null;
+    };
+
+    useEffect(() => {
+        setLinktpItems(linktpValues);
+    }, []);
+    
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                if (linktpItem.code != '0') {
+                    console.log(linktpItem.code, "############################linktpItem###############################")
+                    let data
+                    if (linktpItem.code == '1') {
+                        const ticEventattService = new CmnPaymenttpService();
+                        data = await ticEventattService.getCmnPaymenttps();
+                    } else if (linktpItem.code == '2') {
+                        const ticEventattService = new TicEventattService();
+                        data = await ticEventattService.getCmnObjs('XPK');
+                    } else if (linktpItem.code == '3') {
+                        const ticEventattService = new TicEventattService();
+                        data = await ticEventattService.getCmnInputtps();                        
+                    }
+                    setDdCmnLinks(data);
+                    const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                    setDdCmnLinkItems(dataDD);
+                    setDdCmnLinkItem(dataDD.find((item) => item.code === props.ticEventatt.link) || null);
+                    // if (props.ticEventatt.att) {
+                    //     const foundItem = data.find((item) => item.id === props.ticEventatt.inputtp);
+                    //     setCmnInputtpItem(foundItem || null);
+                    //     ticEventatt.ctp = foundItem.code;
+                    //     ticEventatt.ntp = foundItem.textx;
+                    // }                    
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [linktpItem]);
+
 
     const findDropdownItemByCode = (code) => {
         return items.find((item) => item.code === code) || null;
@@ -170,6 +235,11 @@ const TicEventatt = (props) => {
                 setTicEventatttpItem(foundItem || null);
                 ticEventatt.ntp = e.value.name
                 ticEventatt.ctp = foundItem.code
+            } else if (name == "linktp") {
+                setLinktpItem(e.value);
+            } else if (name == "link") {
+                console.log("########################link#############################", e.value)
+                setDdCmnLinkItem(e.value);
             } else {
                 setDropdownItem(e.value);
             }
@@ -201,13 +271,13 @@ const TicEventatt = (props) => {
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-                            <InputText 
-                                id="text" 
-                                value={ticEventatt.text} 
-                                onChange={(e) => onInputChange(e, 'text', 'text')} 
-                                required 
-                                className={classNames({ 'p-invalid': submitted && !ticEventatt.text })} 
-                                />
+                            <InputText
+                                id="text"
+                                value={ticEventatt.text}
+                                onChange={(e) => onInputChange(e, 'text', 'text')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticEventatt.text })}
+                            />
                             {submitted && !ticEventatt.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-7">
@@ -245,6 +315,41 @@ const TicEventatt = (props) => {
                                 onChange={(e) => onInputChange(e, 'text', 'ddlist')}
                             />
                         </div>
+
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="linktp">{translations[selectedLanguage].select_connection}</label>
+                            <Dropdown
+                                id="linktp"
+                                value={linktpItem}
+                                options={linktpItems}
+                                onChange={(e) => {
+                                    onInputChange(e, 'options', 'linktp');
+                                    const selectedValue = e.value.code;
+                                    setShowDdCmnLinkItem(selectedValue !== '0');
+                                    setDdCmnLinkItem(null);
+                                }
+                                }
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEventatt.linktp })}
+                            />
+                            {submitted && !ticEventatt.linktp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        {(showDdCmnLinkItem || ddCmnLinkItem) && (
+                            <div className="field col-12 md:col-6">
+                                <label htmlFor="link">{translations[selectedLanguage].Link}</label>
+                                <Dropdown
+                                    id="link"
+                                    value={ddCmnLinkItem}
+                                    options={ddCmnLinkItems}
+                                    onChange={(e) => onInputChange(e, 'options', 'link')}
+                                    optionLabel="name"
+                                    placeholder="Select One"
+                                    className={classNames({ 'p-invalid': submitted && !ticEventatt.link })}
+                                />
+                                {submitted && !ticEventatt.link && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            </div>
+                        )}
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">

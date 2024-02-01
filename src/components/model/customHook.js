@@ -127,7 +127,7 @@ export async function fetchObjData(...args) {
                 if (args[2]) {
                     if (`${args[0]}_${args[1]}` == 'cmn_obj') {
                         url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objsett_v&objid=${args[2]}&sl=${selectedLanguage}`;
-                        //console.log("******************* CODE PAR ***************************", url);
+                        console.log("******************* CODE PAR ***************************", url);
                     }
 
                 } else {
