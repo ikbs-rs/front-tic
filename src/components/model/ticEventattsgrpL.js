@@ -207,14 +207,13 @@ export default function TicEventattsgrpL(props) {
         onSelectionChange={(e) => setSelectedProducts(e.value)}
         dataKey="id"
         tableStyle={{ minWidth: "50rem" }}
+        sortField="code" sortOrder={1}
         header={header}
         scrollable
         scrollHeight="650px"
         showGridlines
         removableSort
         filters={filters}
-        sortField="text"
-        sortOrder={1}
         loading={loading}
       >
         <Column
