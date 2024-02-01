@@ -18,6 +18,7 @@ import Token from "../../utilities/Token";
 const TicEventartcena = (props) => {
     console.log(props, "*props***********************************TicEventartcena*******************************")
     const site = defaultValue["tmp"].site
+    console.log(site, "************************************defaultValue*******************************", defaultValue["tmp"])
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventartcena, setTicEventartcena] = useState(props.ticEventartcena);

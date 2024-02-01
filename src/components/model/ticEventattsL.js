@@ -76,11 +76,11 @@ export default function TicEventattsL(props) {
                 ++i;
                 if (i < 2) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
-                    console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
+                    // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
                     
-                    console.log(data, "*********************data**************************", pTp)
+                    console.log(data, "*********************data**************************#####################", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
                     const promisesDD = data.map(async (row) => {
                         if (row.inputtp === '3' && row.ddlist) {
@@ -443,9 +443,9 @@ export default function TicEventattsL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
                 </div>
-                <div className="flex flex-wrap gap-1">
+                {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
-                </div>
+                </div> */}
 
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].GroupAtts} icon="pi pi-plus-circle" severity="warning" onClick={openEventattsgrp} text raised />
@@ -752,6 +752,7 @@ export default function TicEventattsL(props) {
     // Funkcije
 
     const rowClass = (rowData) => {
+        // console.log(rowData.cttp, "************************************************rowData.cttp****************************************************")
         const tableRow = document.querySelectorAll('.p-datatable-tbody');
         tableRow.forEach((row) => {
             //row.classList.remove('p-datatable-tbody');
@@ -761,23 +762,23 @@ export default function TicEventattsL(props) {
             row.classList.remove('p-selectable-row');
         });
 
-        return rowData.cttp == '1'
+        return rowData.cttp == '01'
             ? 'highlight-row-1'
-            : rowData.cttp == '2'
+            : rowData.cttp == '02'
                 ? 'highlight-row-2'
-                : rowData.cttp == '3'
+                : rowData.cttp == '03'
                     ? 'highlight-row-3'
-                    : rowData.cttp == '4'
+                    : rowData.cttp == '04'
                         ? 'highlight-row-4'
-                        : rowData.cttp == '5'
+                        : rowData.cttp == '05'
                             ? 'highlight-row-5'
-                            : rowData.cttp == '6'
+                            : rowData.cttp == '06'
                                 ? 'highlight-row-6'
-                                : rowData.cttp == '7'
+                                : rowData.cttp == '07'
                                     ? 'highlight-row-7'
-                                    : rowData.cttp == '8'
+                                    : rowData.cttp == '08'
                                         ? 'highlight-row-8'
-                                        : rowData.cttp == '9'
+                                        : rowData.cttp == '09'
                                             ? 'highlight-row-9'
                                             : rowData.cttp == '10'
                                                 ? 'highlight-row-10'

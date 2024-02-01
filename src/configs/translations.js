@@ -748,6 +748,9 @@ export const translations = {
         Service: "Услуга",
         domen: "Домен",
         Vrednost: "Вредност",
+        select_connection: "Изаберите везу",
+        No_connection: "Без везе",
+        Paymenttp: "Врста плаћања",
     }
   };
   

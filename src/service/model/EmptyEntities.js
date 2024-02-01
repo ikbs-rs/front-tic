@@ -469,7 +469,9 @@ const EmptyEntities =
     "valid": "1",
     "inputp": null,
     "ddlist": "",
-    "tp": null    
+    "tp": null,
+		"link": null,
+		"linktp": null   
   },
   "tic_eventatts": {
     "id": null,
@@ -481,7 +483,8 @@ const EmptyEntities =
     "text": "",
     "color": "",
     "icon": "",
-    "condition": ""
+    "condition": "",
+		"link": null 
   },
   "tic_eventattx": {
     "id": null,
