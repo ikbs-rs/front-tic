@@ -87,7 +87,7 @@ const TicEventartcena = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const url = `${env.TIC_BACK_URL}/tic/eventartcena/_v/lista/?stm=tic_eventartcenat_v&objid=${props.ticEventart.event}&par1=XO01&sl=${selectedLanguage}`;
+                const url = `${env.TIC_BACK_URL}/tic/eventartcena/_v/lista/?stm=tic_eventartcenat_v&objid=${props.ticEventart.event}&par1=01.04.&sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
