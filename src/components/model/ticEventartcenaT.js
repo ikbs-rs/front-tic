@@ -87,14 +87,16 @@ const TicEventartcena = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
+                console.log("##################------------##########################")
                 const url = `${env.TIC_BACK_URL}/tic/eventartcena/_v/lista/?stm=tic_eventartcenat_v&objid=${props.ticEventart.event}&par1=01.04.&sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
                 };
+                console.log(URL, "datadatadata###########!!!!!!############datadatadatadatadatadata")
                 const response = await axios.get(url, { headers });
                 const data = response.data.items||response.data.item
-                //console.log(data, "datadatadatadatadatadatadatadatadatadatadatadatadatadata")
+                console.log(data, "datadatadatadatadatadatadatadatadatadatadatadatadatadata")
                 await setTicEventartcenaTItems(data)
                 const dataDD = await data.map(({ value, id }) => ({ name: DateFunction.formatDate(value), code: id }));
                 //console.log(dataDD, "datadatadataDDDDDDDDdatadatadatadatadatadatadatadatadatadatadata")
