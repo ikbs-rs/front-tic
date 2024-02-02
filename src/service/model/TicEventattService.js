@@ -13,7 +13,7 @@ export class TicEventattService {
         };
 
         try {
-            //console.log("**********TicDocService*************",url)
+            console.log("**********TicDocService*************",url)
             const response = await axios.get(url, { headers });
             return response.data.item;
         } catch (error) {

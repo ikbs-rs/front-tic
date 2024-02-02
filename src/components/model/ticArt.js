@@ -53,6 +53,9 @@ console.log(props, "*********************************props**********************
     const [ddAmountItem, setDdAmountItem] = useState(null);
     const [ddAmountItems, setDdAmountItems] = useState(null);
 
+    const [ddCombiningItem, setDdCombiningItem] = useState(null);
+    const [ddCombiningItems, setDdCombiningItems] = useState(null);
+    
     const calendarRef = useRef(null);
 
     const toast = useRef(null);
@@ -67,6 +70,10 @@ console.log(props, "*********************************props**********************
 
     useEffect(() => {
         setDdAmountItem(findDdAmountItemByCode(props.ticArt.amount));
+    }, []);
+
+    useEffect(() => {
+        setDdCombiningItem(findDdCombiningItemByCode(props.ticArt.combining));
     }, []);
 
     useEffect(() => {
@@ -219,12 +226,20 @@ console.log(props, "*********************************props**********************
         return items.find((item) => item.code === code) || null;
     };
 
+    const findDdCombiningItemByCode = (code) => {
+        return items.find((item) => item.code === code) || null;
+    };
+
     useEffect(() => {
         setDropdownItems(items);
     }, []);
 
     useEffect(() => {
         setDdAmountItems(items);
+    }, []);
+
+    useEffect(() => {
+        setDdCombiningItems(items);
     }, []);
 
     const handleCancelClick = () => {
@@ -327,6 +342,8 @@ console.log(props, "*********************************props**********************
                 ticArt.ctgp = foundItem.code
             } else if (name == "amount") {
                 setDdAmountItem(e.value);
+            } else if (name == "combining") {
+                setDdCombiningItem(e.value);
             } else {
                 setDropdownItem(e.value);
             }
@@ -456,6 +473,21 @@ console.log(props, "*********************************props**********************
                             {submitted && !ticArt.amount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="combining">{translations[selectedLanguage].combining}</label>
+                            <Dropdown id="combining"
+                                value={ddCombiningItem}
+                                options={ddCombiningItems}
+                                onChange={(e) => onInputChange(e, "options", 'combining')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticArt.combining })}
+                            />
+                            {submitted && !ticArt.combining && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>                    
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>

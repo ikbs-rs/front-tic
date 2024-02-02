@@ -222,16 +222,20 @@ export default function TicEventattsL(props) {
     };
 
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
-        console.log(type, "***type!!!********input!!!***", e.target.value, "*")
+        //console.log(name, "***type!!!********input!!!***", e.target.value, "*")
         let val = '';
         let _ticEventatts = {}
         if (name === 'valid') {
             rowData.valid = e.checked ? 1 : 0;
             setTicEventattss([...ticEventattss]);
             val = e.checked ? 1 : 0;
-        } else {
+        } else if (name === 'condition') {
             val = (e.target && e.target.value) || '';
             rowData.condition = e.target.value;
+            setTicEventattss([...ticEventattss]);
+        } else {
+            val = (e.target && e.target.value) || '';
+            rowData.minfee = e.target.value;
             setTicEventattss([...ticEventattss]);
         }
         _ticEventatts = { ...ticEventatts };
@@ -360,7 +364,7 @@ export default function TicEventattsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            //console.log(rowData, "***********updateDataInDatabase************", rowData.value)
+            console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
             const ticEventattsService = new TicEventattsService();
             await ticEventattsService.putTicEventatts(rowData);
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
@@ -576,6 +580,13 @@ export default function TicEventattsL(props) {
         />;
 
     };
+    const minfeeEditor = (rowData, field, e) => {
+        return <InputText
+            value={rowData.minfee || ''}
+            onChange={(e) => onInputChange(e, 'input', 'minfee', rowData, null)}
+        />;
+
+    };    
     const validEditor = (rowData, field) => {
         return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
 
@@ -919,6 +930,17 @@ export default function TicEventattsL(props) {
                     //body={conditionTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
+                <Column
+                    field="minfee"
+                    header={translations[selectedLanguage].minfee}
+                    sortable
+                    filter
+                    style={{ width: '10%' }}
+                    //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                    editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                    //body={conditionTemplate}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>                
                 <Column
                     field="valid"
                     filterField="valid"

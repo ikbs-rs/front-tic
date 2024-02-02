@@ -97,7 +97,7 @@ export const useDropdown = (...args) => {
 
 export async function fetchObjData(...args) {
     // console.log(args, args[0], "****************************coostomHook***********************!!!!!!!!!!****")
-    const obj = args[3] 
+    const obj = args[3]
     try {
         let backend = '';
         let url = '';
@@ -120,14 +120,19 @@ export async function fetchObjData(...args) {
             case 'user':
                 url = `${backend}/${args[0]}/${args[1]}/_v/lista/?stm=adm_usereventdd_v&sl=${selectedLanguage}`;
                 break;
-            case 'event':      
+            case 'event':
                 url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdd_v&objid=${obj.id}&sl=${selectedLanguage}`;
                 break;
             default:
                 if (args[2]) {
                     if (`${args[0]}_${args[1]}` == 'cmn_obj') {
-                        url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objsett_v&objid=${args[2]}&sl=${selectedLanguage}`;
-                        console.log("******************* CODE PAR ***************************", url);
+                        if (`${args[2]}` == 'XPK') {
+                            url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objevent_v&objid=${args[2]}&id=${obj.id}&sl=${selectedLanguage}`;
+                            console.log("******************* CODE PAR XPK***************************", url);
+                        } else {
+                            url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objsett_v&objid=${args[2]}&sl=${selectedLanguage}`;
+                            console.log("******************* CODE PAR ***************************", url);
+                        }
                     }
 
                 } else {
@@ -138,7 +143,7 @@ export async function fetchObjData(...args) {
         const headers = {
             Authorization: tokenLocal.token
         };
-         console.log(url, "************************************URL************************************")
+        console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
         const response = await axios.get(url, { headers });
         const datas = response.data.items || response.data.item;
         const items = datas.map(({ text, id }) => ({ name: text, code: id }));

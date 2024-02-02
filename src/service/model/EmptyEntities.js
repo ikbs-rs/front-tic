@@ -70,7 +70,8 @@ const EmptyEntities =
     "grp": null,
     "color": "",
     "icon": "",
-    "amount": "1"
+    "amount": "1",
+    "combining": "1"
   },
   "tic_artcena": {
     "id": null,
@@ -484,7 +485,8 @@ const EmptyEntities =
     "color": "",
     "icon": "",
     "condition": "",
-		"link": null 
+		"link": null,
+    "limit": null
   },
   "tic_eventattx": {
     "id": null,
@@ -836,24 +838,24 @@ const EmptyEntities =
     "color": "",
     "icon": ""
   },
-  "cmn_par": {
-    "id": null,
-    "site": null,
-    "code": "",
-    "tp": null,
-    "text": "",
-    "short": "",
-    "address": "",
-    "place": "",
-    "postcode": "",
-    "tel": "",
-    "activity": "",
-    "pib": "",
-    "idnum": "",
-    "pdvnum": "",
-    "begda": "",
-    "endda": ""
-  },
+  // "cmn_par": {
+  //   "id": null,
+  //   "site": null,
+  //   "code": "",
+  //   "tp": null,
+  //   "text": "",
+  //   "short": "",
+  //   "address": "",
+  //   "place": "",
+  //   "postcode": "",
+  //   "tel": "",
+  //   "activity": "",
+  //   "pib": "",
+  //   "idnum": "",
+  //   "pdvnum": "",
+  //   "begda": "",
+  //   "endda": ""
+  // },
   "cmn_parlink": {
     "id": null,
     "site": null,
