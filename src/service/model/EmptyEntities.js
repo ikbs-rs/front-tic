@@ -486,7 +486,7 @@ const EmptyEntities =
     "icon": "",
     "condition": "",
 		"link": null,
-    "limit": null
+    "minfee": null
   },
   "tic_eventattx": {
     "id": null,
