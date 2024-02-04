@@ -32,7 +32,11 @@
     },
     "scripts": {
         "start": "copy .\\src\\configs\\env.test.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
-        "dev": "copy .\\src\\configs\\env.dev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start ",
+        "dev": "copy .\\src\\configs\\env.dev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
+        "local": "copy .\\src\\configs\\env.local.local .\\src\\configs\\env.js && set PORT=8351 && react-scripts start /start/",
+        "bdev": "copy .\\src\\configs\\env.bdev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
+        "sdev": "copy .\\src\\configs\\env.sdev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
+        "boban": "copy .\\src\\configs\\env.boban.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
         "prod": "copy .\\src\\configs\\env.prod.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
         "build": "copy .\\src\\configs\\env.prod.local .\\src\\configs\\env.js && set GENERATE_SOURCEMAP=false && react-scripts build",
         "test": "react-scripts test",

@@ -205,7 +205,7 @@ const TicArtcena = (props) => {
                 }
             }
         } else if (type === 'Calendar') {
-            const dateVal = DateFunction.dateGetValue(e.value);
+            //const dateVal = DateFunction.dateGetValue(e.value);
             //console.log(dateVal, '***********************************');
             val = (e.target && e.target.value) || '';
             switch (name) {

@@ -12,6 +12,25 @@ export class TicDocService {
     };
 
     try {
+      //console.log("**********TicDocService*************",url)
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTransactionLista(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transaction_v&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      //console.log("**********TicDocService*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -50,7 +69,7 @@ export class TicDocService {
 
     try {
       const response = await axios.get(url, { headers });
-      return response.data.item;
+      return response.data.item||response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
@@ -102,7 +121,7 @@ export class TicDocService {
 
     try {
       const response = await axios.get(url, { headers });
-      return response.data.items;
+      return response.data.items||response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
@@ -126,7 +145,7 @@ export class TicDocService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      //console.log("**************"  , response, "****************")
+      console.log("***response.data.items***********"  , response.data.items, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -150,7 +169,7 @@ export class TicDocService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log("*#################", jsonObj, "****************")
+      //console.log("*#################", jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -206,6 +225,24 @@ export class TicDocService {
       console.log(url, "***************url**************")
       const response = await axios.get(url, { headers });
       return response.data; // Očekujemo da će ovo vratiti objekat sa ključevima 'code' i 'text'
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async  getCmnParById(parId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const url = `${env.CMN_BACK_URL}/cmn/x/par/${parId}?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+  
+    try {
+      console.log(url, "***************url**************")
+      const response = await axios.get(url, { headers });
+      return response.data; 
     } catch (error) {
       console.error(error);
       throw error;

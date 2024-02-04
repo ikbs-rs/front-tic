@@ -14,6 +14,24 @@ const EmptyEntities =
     "endtm": "",
     "valid": "1"
   },
+  "cmn_par": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "tp": null,
+    "text": "",
+    "short": "",
+    "address": "",
+    "place": "",
+    "postcode": "",
+    "tel": "",
+    "activity": "",
+    "pib": "",
+    "idnum": "",
+    "pdvnum": "",
+    "begda": "",
+    "endda": ""
+  },
   "tic_agendatp": {
     "id": null,
     "site": null,
@@ -49,7 +67,11 @@ const EmptyEntities =
     "eancode": "",
     "qrcode": "",
     "valid": "1",
-    "grp": null
+    "grp": null,
+    "color": "",
+    "icon": "",
+    "amount": "1",
+    "combining": "1"
   },
   "tic_artcena": {
     "id": null,
@@ -139,7 +161,9 @@ const EmptyEntities =
     "code": "",
     "text": "",
     "tp": null,
-    "valid": "1"
+    "valid": "1",
+    "color": "",
+    "icon": ""
   },
   "tic_cenatp": {
     "id": null,
@@ -279,16 +303,21 @@ const EmptyEntities =
     "doc2": null,
     "time": ""
   },
-	"tic_docpaydelivery ": {
+	"tic_docdelivery": {
 		"id": null,
 		"site": null,
-		"docpayment": "number",
-		"courier": "number",
-		"delivery_adress": "string",
-		"amount": "number",
-		"dat": "string",
-		"datdelivery": "string",
-		"status": "string"
+		"doc": null,
+		"courier": null,
+		"adress": "",
+		"amount": null,
+		"dat": "",
+		"datdelivery": "",
+		"status": "0",
+    "note": "",
+    "parent": null,
+    "country": null,
+    "zip": "",
+    "city": null    
 	},  
 	"tic_docpayment": {
 			"id": null,
@@ -296,7 +325,8 @@ const EmptyEntities =
 			"doc": null,
 			"paymenttp": null,
 			"amount": null,
-			"bcontent": null
+			"bcontent": null,
+      "ccard": null
 	},  
   "tic_docs": {
     "id": null,
@@ -322,8 +352,9 @@ const EmptyEntities =
     "status": 1,
     "fee": 0,
 		"par": null,
-		"descript": "string"
-
+		"descript": "string",
+    "storno": 0,
+		"nart": ""
   },
   "tic_docslink": {
     "id": null,
@@ -375,12 +406,15 @@ const EmptyEntities =
     "endda": "",
     "begtm": "",
     "endtm": "",
-    "status": "1",
+    "status": "0",
     "descript": "",
     "note": "",
     "event": null,
     "ctg": null,
-    "loc": null
+    "loc": null,
+		"par": null,
+		"tmp": 0,
+		"season": null
   },
   "tic_eventagenda": {
     "id": null,
@@ -394,11 +428,41 @@ const EmptyEntities =
   "site": null,
   "event": null,
   "art": null,
-  "discount": 0,
   "descript": "",
   "begda": "",
-  "endda":  ""
+  "endda":  "",
+  "discount": 0,  
+  "nart": "string",
+  "color": "",
+    "icon": ""
   },
+	"tic_eventartcena": {
+		"id": null,
+		"site": null,
+		"event": null,
+		"art": null,
+		"cena": null,
+		"value": 0,
+		"terr": -1,
+		"begda": "",
+		"endda": "",
+		"curr": -1,
+		"eventart": null
+	},  
+	"tic_eventartlink": {
+			"id": null,
+			"site": null,
+			"eventart1": null,
+			"eventart2": null,
+			"tp": "A"
+	},
+  "tic_eventatttp": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },  
   "tic_eventatt": {
     "id": null,
     "site": null,
@@ -406,7 +470,10 @@ const EmptyEntities =
     "text": "",
     "valid": "1",
     "inputp": null,
-    "ddlist": ""
+    "ddlist": "",
+    "tp": null,
+		"link": null,
+		"linktp": null   
   },
   "tic_eventatts": {
     "id": null,
@@ -415,7 +482,12 @@ const EmptyEntities =
     "att": null,
     "value": "",
     "valid": "0",
-    "text": ""
+    "text": "",
+    "color": "",
+    "icon": "",
+    "condition": "",
+		"link": null,
+    "minfee": null
   },
   "tic_eventattx": {
     "id": null,
@@ -461,8 +533,23 @@ const EmptyEntities =
     "event": null,
     "loc": null,
     "begda": "",
-    "endda": ""
+    "endda": "",
+    "color": "",
+    "icon": ""
   },
+  "tic_eventobj": {
+		  "id": null,
+		  "site": null,
+		  "event": null,
+		  "objtp": null,
+		  "obj": null,
+		  "begda": "",
+		  "endda": "",
+		  "begtm": "",
+		  "endtm": "",
+      "color": "",
+    "icon": ""
+	  },
   "tic_events": {
     "id": null,
     "selection_duration": "0000",
@@ -547,7 +634,11 @@ const EmptyEntities =
     "text": "",
     "tp": null,
     "limitirano": "1",
-    "valid": "1"
+    "valid": "1",
+		"popust": null,
+		"vrednost": "0",
+		"uslov": "0",
+		"domen": null
   },
   "tic_privilegecond": {
     "id": null,
@@ -609,6 +700,21 @@ const EmptyEntities =
     "text": "",
     "tp": null,
     "valid": "1"
+  },
+  "tic_season": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "tic_seasonx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
   },
   "tic_seatloc": {
     "id": null,
@@ -681,6 +787,100 @@ const EmptyEntities =
     "site": null,
     "docs": null,
     "time": ""
+  },
+  "cmn_loc": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "longtext": "",
+    "tp": null,
+    "valid": "1",
+    "color": "",
+    "icon": ""
+  },
+  "cmn_locatt": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
+  "cmn_locatts": {
+    "id": null,
+    "site": null,
+    "loc": null,
+    "locatt": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_locattx": {
+    "id": null,
+    "site": null,
+    "tableid": null,
+    "lang": "",
+    "grammcase": "1",
+    "text": ""
+  },
+  "cmn_loclink": {
+    "id": null,
+    "site": null,
+    "tp": 1,
+    "loctp1": null,
+    "loc1": null,
+    "loctp2": null,
+    "loc2": null,
+    "val": "",
+    "begda": "",
+    "endda": "99991231",
+    "hijerarhija": null,
+    "onoff": null,
+    "color": "",
+    "icon": ""
+  },
+  // "cmn_par": {
+  //   "id": null,
+  //   "site": null,
+  //   "code": "",
+  //   "tp": null,
+  //   "text": "",
+  //   "short": "",
+  //   "address": "",
+  //   "place": "",
+  //   "postcode": "",
+  //   "tel": "",
+  //   "activity": "",
+  //   "pib": "",
+  //   "idnum": "",
+  //   "pdvnum": "",
+  //   "begda": "",
+  //   "endda": ""
+  // },
+  "cmn_parlink": {
+    "id": null,
+    "site": null,
+    "par1": null,
+    "par2": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_terrloc": {
+    "id": null,
+    "terr": null,
+    "loc": null,
+    "begda": "",
+    "endda": ""
+  },
+  "cmn_paratts": {
+    "id": null,
+    "site": null,
+    "par": null,
+    "att": null,
+    "text": "",
+    "begda": "",
+    "endda": ""
   }
 }
 

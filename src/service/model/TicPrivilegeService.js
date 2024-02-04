@@ -95,8 +95,9 @@ export class TicPrivilegeService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
+            console.log("****jsonObj**********"  , newObj, "*********newObj*******")
       const response = await axios.put(url, jsonObj, { headers });
-      //console.log("**************"  , response, "****************")
+
       return response.data.items;
     } catch (error) {
       console.error(error);

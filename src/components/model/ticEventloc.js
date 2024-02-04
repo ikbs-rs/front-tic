@@ -43,7 +43,7 @@ const TicEventloc = (props) => {
                 // const response = await axios.get(url, { headers });
                 // const data = response.data.items;
                 const ticEventService = new TicEventService();
-                const data = await ticEventService.getCmnObjXcsLista();                
+                const data = await ticEventService.getCmnObjXcsDDLista(props.ticEvent);                
                 setTicEventlocItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventlocItems(dataDD);

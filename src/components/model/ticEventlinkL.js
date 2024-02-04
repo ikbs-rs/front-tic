@@ -286,12 +286,12 @@ export default function TicEventlinkL(props) {
           style={{ width: "45%" }}
         ></Column>
         <Column
-          field="begda"
-          header={translations[selectedLanguage].Begda}
+          field="note"
+          header={translations[selectedLanguage].Note}
           sortable
           filter
           style={{ width: "20%" }}
-          body={(rowData) => formatDateColumn(rowData, "begda")}
+          body={(rowData) => formatDateColumn(rowData, "note")}
         ></Column>  
       </DataTable>
       <Dialog

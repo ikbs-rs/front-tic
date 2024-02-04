@@ -21,14 +21,17 @@ import DeleteDialog from '../dialog/DeleteDialog';
 
 export default function TicDocsL(props) {
 
- console.log(props,"*******************TicDocsL************************")
+ //console.log(props,"*******************TicDocsL************************")
   const objName = "tic_docs"
+  const objName2 = "tic_event"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyTicDocs = EmptyEntities[objName]
+  const emptyTicEvent = EmptyEntities[objName2]
   emptyTicDocs.doc = props.ticDoc.id
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocss, setTicDocss] = useState([]);
   const [ticDocs, setTicDocs] = useState(emptyTicDocs);
+  const [ticEvent, setTicEvent] = useState(emptyTicEvent);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -280,6 +283,8 @@ Click Handle *******************************************************************
   const setTicDocsDialog = (ticDocs) => {
     setVisible(true)
     setDocsTip("CREATE")
+    ticEvent.id = ticDocs.event
+    setTicEvent({ ...ticEvent });
     setTicDocs({ ...ticDocs });
   }
   //  Dialog --->
@@ -333,25 +338,18 @@ Click Handle *******************************************************************
       >
         <Column
           //bodyClassName="text-center"
-          body={docsTemplate}
+          body={docsTemplate} 
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
-        <Column
+        {/* <Column
           field="cart"
           header={translations[selectedLanguage].cart}
           sortable
           //filter
           style={{ width: "5%" }}
-        ></Column>
-        <Column
-          field="nart"
-          header={translations[selectedLanguage].nart}
-          sortable
-          //filter
-          style={{ width: "20%" }}
-        ></Column> 
+        ></Column> */}
         {/* 
         <Column
           field="cloc"
@@ -362,12 +360,26 @@ Click Handle *******************************************************************
         ></Column>
   */}
         <Column
+          field="nevent"
+          header={translations[selectedLanguage].nevent}
+          sortable
+          //filter
+          style={{ width: "15%" }}
+        ></Column>   
+        <Column
           field="nloc"
           header={translations[selectedLanguage].nloc}
           sortable
           //filter
           style={{ width: "15%" }}
-        ></Column>  
+        ></Column> 
+        <Column
+          field="nart"
+          header={translations[selectedLanguage].nart}
+          sortable
+          //filter
+          style={{ width: "15%" }}
+        ></Column>          
         <Column
           field="price"
           header={translations[selectedLanguage].price}
@@ -375,13 +387,13 @@ Click Handle *******************************************************************
           //filter
           style={{ width: "10%" }}
         ></Column>   
-        <Column
+        {/* <Column
           field="taxrate"
           header={translations[selectedLanguage].taxrate}
           sortable
           //filter
           style={{ width: "5%" }}
-        ></Column>  
+        ></Column>   */}
         <Column
           field="fee"
           header={translations[selectedLanguage].fee}
@@ -416,7 +428,21 @@ Click Handle *******************************************************************
           sortable
           //filter
           style={{ width: "15%" }}
-        ></Column>                                             
+        ></Column>    
+        <Column
+          field="begtm"
+          header={translations[selectedLanguage].begtm}
+          sortable
+          //filter
+          style={{ width: "10%" }}
+        ></Column>     
+        <Column
+          field="endtm"
+          header={translations[selectedLanguage].endtm}
+          sortable
+          //filter
+          style={{ width: "10%" }}
+        ></Column>                                                      
 {/**             
         <Column
           field="date"
@@ -458,6 +484,7 @@ Click Handle *******************************************************************
           <TicDocs
             parameter={"inputTextValue"}
             ticDocs={ticDocs}
+            ticEvent={ticEvent}
             ticDoc={props.ticDoc}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
@@ -483,9 +510,9 @@ Click Handle *******************************************************************
                 {webMapVisible && (
                     <WebMap
                         remoteUrl= {`http://ws11.ems.local:3000/#/events/?docid=${props.ticDoc.id}&sl=sr_cyr`}
-                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://ws10.ems.local:8354' }} // Dodajte ostale parametre po potrebi
+                        queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://192.168.72.96:8354' }} // Dodajte ostale parametre po potrebi
                         onTaskComplete={handleWebMapDialogClose}
-                        originUrl="http://ws10.ems.local:8353"
+                        originUrl="http://192.168.72.96:8353"
                     />
                 )}
             </Dialog>   

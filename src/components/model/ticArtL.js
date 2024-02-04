@@ -16,6 +16,7 @@ import { translations } from '../../configs/translations';
 import DateFunction from '../../utilities/DateFunction';
 import TicArtlocL from './ticArtlocL';
 import TicArtcenaL from './ticArtcenaL';
+import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 export default function TicArtL(props) {
     const objName = 'tic_art';
@@ -40,7 +41,7 @@ export default function TicArtL(props) {
 
     const handleConfirmClick = () => {
         if (ticArt) {
-            props.onTaskComplete(ticArt); 
+            props.onTaskComplete(ticArt);
         } else {
             toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
         }
@@ -56,7 +57,7 @@ export default function TicArtL(props) {
                     // if (props.eventArt) {
                     //     data = await ticArtService.getEventLista(props.ticEvent.id);
                     // } else {
-                        data = await ticArtService.getLista();
+                    data = await ticArtService.getLista();
                     // }
                     setTicArts(data);
 
@@ -280,6 +281,15 @@ export default function TicArtL(props) {
         );
     };
 
+    const colorBodyTemplate = (rowData) => {
+        return (
+            <>
+                <ColorPickerWrapper value={rowData.color} format={"hex"} />
+                {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+            </>
+        );
+    };
+
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -316,6 +326,12 @@ export default function TicArtL(props) {
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '30%' }}></Column>
                 <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '15%' }}></Column>
                 <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '35%' }}></Column>
+                <Column
+                    field="color"
+                    header={translations[selectedLanguage].Color}
+                    body={colorBodyTemplate}
+                    style={{ width: "20%" }}
+                ></Column>
                 <Column
                     field="valid"
                     filterField="valid"

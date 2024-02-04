@@ -11,17 +11,20 @@ import AppRightMenu from './AppRightMenu';
 import './index.css';
 
 import Discount from './components/model/ticDiscountL';
+import Condtp from './components/model/ticCondtpL';
 import DiscountTp from './components/model/ticDiscounttpL';
 import PrivilegeTp from './components/model/ticPrivilegetpL';
 import Privilege from './components/model/ticPrivilegeL';
 import Doc from './components/model/ticDocL';
 import DocTp from './components/model/ticDoctpL';
 import DocVr from './components/model/ticDocvrL';
+import EventAtttp from './components/model/ticEventatttpL';
 import EventAtt from './components/model/ticEventattL';
 import EventCtg from './components/model/ticEventctgL';
 import EventTP from './components/model/ticEventtpL';
 import AgendaTp from './components/model/ticAgendatpL';
 import Agenda from './components/model/ticAgendaL';
+import Season from './components/model/ticSeasonL';
 import Art from './components/model/ticArtL';
 import ArtGrp from './components/model/ticArtgrpL';
 import ArtTp from './components/model/ticArttpL';
@@ -30,10 +33,14 @@ import CenaTp from './components/model/ticCenatpL';
 import SeattpAtt from './components/model/ticSeattpattL';
 import SeatTp from './components/model/ticSeattpL';
 import Atest from './components/model/1test';
+import Sal from './components/model/ticSal';
 
 import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
+import Transaction from './components/model/ticTransactionL';
+import Delivery from './components/model/ticDocdeliveryL';
 import EmptyPage from './pages/EmptyPage';
+import ObjW from './components/model/ticCmnW';
 
 import PrimeReact from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
@@ -96,7 +103,27 @@ const App = () => {
                         { label: translations[selectedLanguage].Privilege_type, icon: 'pi pi-fw pi-calendar', to: '/privilegetp' },
                         { label: translations[selectedLanguage].Privileges, icon: 'pi pi-fw pi-calendar', to: '/privilege'  },
                         { label: translations[selectedLanguage].Discount_type, icon: 'pi pi-fw pi-calendar' , to: '/discounttp'},
-                        { label: translations[selectedLanguage].Discount, icon: 'pi pi-fw pi-calendar' , to: '/discount'}
+                        { label: translations[selectedLanguage].Discount, icon: 'pi pi-fw pi-calendar' , to: '/discount'},
+                        { label: translations[selectedLanguage].Conditional, icon: 'pi pi-fw pi-calendar' , to: '/condtp'}
+                    ]
+                },
+                {
+                    label: translations[selectedLanguage].Objects_administration,
+                    icon: 'pi pi-cog',
+                    items: [
+                        { action: 'objtpMenu', label: translations[selectedLanguage].Objects_type, icon: 'pi pi-clone', to: '/objtp' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXPK, icon: 'pi pi-fw pi-clone', to: '/objpk/XPK' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXPM, icon: 'pi pi-fw pi-clone', to: '/objpm/XPM' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXTCTP, icon: 'pi pi-fw pi-clone', to: '/objtctp/XTCTP' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXDOC, icon: 'pi pi-fw pi-clone', to: '/objdoc/XDOC' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXBL, icon: 'pi pi-fw pi-clone', to: '/objdoc/XBL' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].Objects, icon: 'pi pi-fw pi-clone', to: '/obj/-1' },                      
+                        { action: 'objattMenu', label: translations[selectedLanguage].Properties_object, icon: 'pi pi-fw pi-clone', to: '/objatt' },
+                        { action: 'objatttpMenu', label: translations[selectedLanguage].Group_of_properties, icon: 'pi pi-fw pi-clone', to: '/objatttp' },
+                        //{ action: 'linkMenu', label: translations[selectedLanguage].Type_of_relationship, icon: 'pi pi-fw pi-exclamation-triangle', to: '/link' },
+                        //{ action: 'objtreeMenu', label: translations[selectedLanguage].ObjectsTree, icon: 'pi pi-fw pi-clone', to: '/objtree' },
+                        // { action: 'objconMenu', label: translations[selectedLanguage].ObjCon, icon: 'pi pi-fw pi-clone', to: '/objcon' },
+                        // { action: 'objdMenu', label: translations[selectedLanguage].ObjectsD, icon: 'pi pi-fw pi-clone', to: '/objd' },
                     ]
                 },
                 {
@@ -105,9 +132,22 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Eventctg, icon: 'pi pi-fw pi-th-large', to: '/eventctg' },
                         { label: translations[selectedLanguage].Event_type, icon: 'pi pi-fw pi-table', to: '/eventtp' },
+                        { label: translations[selectedLanguage].Eventatt_type, icon: 'pi pi-fw pi-table', to: '/eventatttp' },
                         { label: translations[selectedLanguage].Properties_event, icon: 'pi pi-fw pi-align-right', to: '/eventatt'  },
                         { label: translations[selectedLanguage].Agenda_type, icon: 'pi pi-fw pi-table' , to: '/agendatp'},
-                        { label: translations[selectedLanguage].Agenda, icon: 'pi pi-fw pi-align-justify' , to: '/agenda'}
+                        { label: translations[selectedLanguage].Agenda, icon: 'pi pi-fw pi-align-justify' , to: '/agenda'},
+                        { label: translations[selectedLanguage].Season, icon: 'pi pi-fw pi-sun' , to: '/season'}
+                    ]
+                },
+                {
+                    label: translations[selectedLanguage].Processing_elements,
+                    icon: 'pi pi-wrench',
+                    items: [
+                        { label: translations[selectedLanguage].Item_type, icon: 'pi pi-database', to: '/arttp' },
+                        { label: translations[selectedLanguage].Groups_of_items, icon: 'pi pi-fw pi-clone', to: '/artgrp' },
+                        { label: translations[selectedLanguage].Item, icon: 'pi pi-fw pi-clone', to: '/art' },
+                        { label: translations[selectedLanguage].Price_types, icon: 'pi pi-fw pi-clone', to: '/cenatp' },
+                        { label: translations[selectedLanguage].Price, icon: 'pi pi-fw pi-exclamation-triangle', to: '/cena' }
                     ]
                 },
                 {
@@ -121,30 +161,20 @@ const App = () => {
             ]
         },
         {
-            label: translations[selectedLanguage].Processing,
-            icon: 'pi pi-fw pi-bars',
-            items: [
-                {
-                    label: translations[selectedLanguage].Processing_elements,
-                    icon: 'pi pi-prime',
-                    items: [
-                        { label: translations[selectedLanguage].Item_type, icon: 'pi pi-database', to: '/arttp' },
-                        { label: translations[selectedLanguage].Groups_of_items, icon: 'pi pi-fw pi-clone', to: '/artgrp' },
-                        { label: translations[selectedLanguage].Item, icon: 'pi pi-fw pi-clone', to: '/art' },
-                        { label: translations[selectedLanguage].Price_types, icon: 'pi pi-fw pi-clone', to: '/cenatp' },
-                        { label: translations[selectedLanguage].Price, icon: 'pi pi-fw pi-exclamation-triangle', to: '/cena' }
-                    ]
-                },
-                {
+            // label: translations[selectedLanguage].Processing,
+            // icon: 'pi pi-fw pi-bars',
+            // items: [
+            //     {
                     label: translations[selectedLanguage].Event_processing,
                     icon: 'pi pi-prime',
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
-                        //{ label: translations[selectedLanguage].Sale, icon: 'pi pi-fw pi-clone', to: '/message' },
-                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' }
+                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
+                        { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-book', to: '/transaction' },
+                        { label: translations[selectedLanguage].Delivery, icon: 'pi pi-fw pi-truck', to: '/delivery' },
                     ]
-                }
-            ]
+            //     }
+            // ]
         },
         {
             label: translations[selectedLanguage].Reporting,
@@ -152,16 +182,16 @@ const App = () => {
             items: [
                 {
                     label: translations[selectedLanguage].Reports,
-                    icon: 'pi pi-prime',
+                    icon: 'pi pi-file-pdf',
                     items: [
                         { label: translations[selectedLanguage].Test, icon: 'pi pi-database', to: '/atest' }
                     ]
                 },
                 {
                     label: translations[selectedLanguage].Reports,
-                    icon: 'pi pi-prime',
+                    icon: 'pi pi-chart-bar',
                     items: [
-                        { label: translations[selectedLanguage].Report, icon: 'pi pi-database', to: '/izv2' }
+                        { label: translations[selectedLanguage].Report, icon: 'pi pi-chart-bar', to: '/izv2' }
                     ]
                 }
             ]
@@ -488,6 +518,17 @@ const App = () => {
                         <Route path="/privilegetp" element={<PrivilegeTp />} />
                         <Route path="/privilege" element={<Privilege />} />
                         <Route path="/discount" element={<Discount />} />
+                        <Route path="/condtp" element={<Condtp />} />
+
+                        <Route path="/objtp" element={<ObjW endpoint="objtpend" />} />
+                        <Route path="/objpk/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objpm/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objorg/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objtctp/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objdoc/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/obj/:objtpCode" element={<ObjW endpoint="objend" />} />   
+                        <Route path="/objatt" element={<ObjW endpoint="objattend" />} />  
+                        <Route path="/objatttp" element={<ObjW endpoint="objatttpend" />} />                       
 
                         <Route path="/usergrp" element={<EventAtt />} />
                         <Route path="/action" element={<EventAtt />} />
@@ -498,17 +539,22 @@ const App = () => {
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/eventtp" element={<EventTP />} />
                         <Route path="/eventctg" element={<EventCtg />} />
+                        <Route path="/eventatttp" element={<EventAtttp />} />
                         <Route path="/eventatt" element={<EventAtt />} />
                         <Route path="/agendatp" element={<AgendaTp />} />
                         <Route path="/agenda" element={<Agenda />} />
+                        <Route path="/season" element={<Season />} /> 
                         <Route path="/art" element={<Art />} />
                         <Route path="/artgrp" element={<ArtGrp />} />
                         <Route path="/arttp" element={<ArtTp />} />
                         <Route path="/cena" element={<Cena />} />
                         <Route path="/cenatp" element={<CenaTp />} />
                         <Route path="/docvr" element={<DocVr />} />
+                        <Route path="/transaction" element={<Transaction />} />
+                        <Route path="/delivery" element={<Delivery />} />
 
                         <Route path="/atest" element={<Atest />} />
+                        <Route path="/sal" element={<Sal />} />
                     </Routes>
                 </div>
 

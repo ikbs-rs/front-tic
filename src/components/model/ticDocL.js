@@ -28,6 +28,7 @@ export default function TicDocL(props) {
   const objName = "tic_doc"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDoc = EmptyEntities[objName]
+  emptyTicDoc.docobj = 1;
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocs, setTicDocs] = useState([]);
   const [ticDoc, setTicDoc] = useState(emptyTicDoc);
@@ -38,14 +39,14 @@ export default function TicDocL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [docTip, setDocTip] = useState('');
-  
+
   const [ticDocvrs, setTicDocvrs] = useState([]);
-  const [ticDocvr, setTicDocvr] = useState(null);  
+  const [ticDocvr, setTicDocvr] = useState(null);
   const [ddTicDocvrItem, setDdTicDocvrItem] = useState(null);
   const [ddTicDocvrItems, setDdTicDocvrItems] = useState(null);
 
   const [ticDocobjs, setTicDocobjs] = useState([]);
-  const [ticDocobj, setTicDocobj] = useState(null);
+  const [ticDocobj, setTicDocobj] = useState(1); // SETUJE SE PRIVREMENO DOK SE NE RAZVRSTA PO LOKACIJI
   const [ddTicDocobjItem, setDdTicDocobjItem] = useState(null);
   const [ddTicDocobjItems, setDdTicDocobjItems] = useState(null);
 
@@ -70,19 +71,19 @@ export default function TicDocL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-          const ticDocService = new TicDocService();
-          const data = await ticDocService.getCmnListaByItem('obj', 'listabytxt', 'cmn_obj_tp_v', 't.code', 'O');
+        const ticDocService = new TicDocService();
+        const data = await ticDocService.getCmnListaByItem('obj', 'listabytxt', 'cmn_obj_tp_v', 't.code', 'O');
 
-          setTicDocobjs(data);
+        setTicDocobjs(data);
 
-          const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-          setDdTicDocobjItems(dataDD);
+        const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+        setDdTicDocobjItems(dataDD);
 
-          const foundItem = data.find((item) => item.code === 'O0' );
-          emptyTicDoc.docobj = foundItem.id;
-          setDdTicDocobjItem(dataDD.find((item) => item.code === foundItem.id) || null);
-          setTicDocobj(foundItem || null);
-         
+        const foundItem = data.find((item) => item.code === 'O0');
+        emptyTicDoc.docobj = foundItem.id;
+        setDdTicDocobjItem(dataDD.find((item) => item.code === foundItem.id) || null);
+        setTicDocobj(foundItem || null);
+
         //}
       } catch (error) {
         console.error(error);
@@ -102,9 +103,9 @@ export default function TicDocL(props) {
 
         const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
         setDdTicDocvrItems(dataDD);
-       
+
         if (docVr) {
-          const foundItem = data.find((item) => item.code === docVr );
+          const foundItem = data.find((item) => item.code === docVr);
           emptyTicDoc.docvr = foundItem.id;
           setDdTicDocvrItem(dataDD.find((item) => item.code === foundItem.id) || null);
           setTicDocvr(foundItem || null);
@@ -160,10 +161,10 @@ export default function TicDocL(props) {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const showDeleteDialog = () => {
     setDeleteDialogVisible(true);
-};  
-const hideDeleteDialog = () => {
-  setDeleteDialogVisible(false);
-};
+  };
+  const hideDeleteDialog = () => {
+    setDeleteDialogVisible(false);
+  };
 
   const onRowSelect = (doc) => {
     toast.current.show({
@@ -185,24 +186,25 @@ const hideDeleteDialog = () => {
   const onInputChange = (e, type, name) => {
     let val = '';
     if (type === "options") {
-        let _ticDoc = { ...ticDoc };
-        val = (e.target && e.target.value && e.target.value.code) || '';
-        if (name == "docvr") {
-            setDdTicDocvrItem(e.value);
-            const foundItem = ticDocvrs.find((item) => item.id === val);
-            setTicDocvr(foundItem || null);
-            _ticDoc.docvr = val;
-            emptyTicDoc.docvr = val;
-        } else if (name == "docobj") {
-            setDdTicDocobjItem(e.value);
-            const foundItem = ticDocobjs.find((item) => item.id === val);
-            setTicDocobj(foundItem || null);
-            _ticDoc.docobj = val;
-            emptyTicDoc.docobj = val;
-        }
-        setTicDoc(_ticDoc);
+      let _ticDoc = { ...ticDoc };
+      val = (e.target && e.target.value && e.target.value.code) || '';
+      if (name == "docvr") {
+        setDdTicDocvrItem(e.value);
+        const foundItem = ticDocvrs.find((item) => item.id === val);
+        setTicDocvr(foundItem || null);
+        _ticDoc.docvr = val;
+        emptyTicDoc.docvr = val;
+        emptyTicDoc.docobj = 1;
+      } else if (name == "docobj") {
+        setDdTicDocobjItem(e.value);
+        const foundItem = ticDocobjs.find((item) => item.id === val);
+        setTicDocobj(foundItem || null);
+        _ticDoc.docobj = val;
+        emptyTicDoc.docobj = val;
+      }
+      setTicDoc(_ticDoc);
     }
-}
+  }
   // <heder za filter
   const initFilters = () => {
     setFilters({
@@ -241,9 +243,12 @@ const hideDeleteDialog = () => {
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-        <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />     
-        </div> 
-       
+          <Button label={translations[selectedLanguage].Map} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+        </div>        
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />
+        </div>
+
         <div className="flex-grow-1" />
         <b>{translations[selectedLanguage].DocList}</b>
         <div className="flex-grow-1"></div>
@@ -336,7 +341,7 @@ const hideDeleteDialog = () => {
 
   return (
     <div className="card">
-      <Toast ref={toast} />   
+      <Toast ref={toast} />
       <div className="p-fluid formgrid grid">
         <div className="field col-12 md:col-3">
           <label htmlFor="docvr">{translations[selectedLanguage].docvr_}</label>
@@ -347,8 +352,8 @@ const hideDeleteDialog = () => {
             optionLabel="name"
             placeholder="Select One"
           />
-
         </div>
+        {/* 
         <div className="field col-12 md:col-4">
           <label htmlFor="docobj">{translations[selectedLanguage].ndocobj}</label>
           <Dropdown id="docobj"
@@ -358,10 +363,9 @@ const hideDeleteDialog = () => {
             required
             optionLabel="name"
             placeholder="Select One"
-          //className={classNames({ 'p-invalid': submitted && !ticDoc.event })}
           />
-          {/*submitted && !ticDoc.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>*/}
         </div>       
+         */}
       </div>
       <DataTable
         dataKey="id"
@@ -401,13 +405,13 @@ const hideDeleteDialog = () => {
           filter
           style={{ width: "15%" }}
         ></Column>
-        <Column
+        {/* <Column
           field="ndocobj"
           header={translations[selectedLanguage].ndocobj}
           sortable
           filter
           style={{ width: "15%" }}
-        ></Column>
+        ></Column> */}
         <Column
           field="year"
           header={translations[selectedLanguage].year}
@@ -442,9 +446,16 @@ const hideDeleteDialog = () => {
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "date")}
         ></Column>
-        <Column
+        {/* <Column
           field="cpar"
           header={translations[selectedLanguage].cpar}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column> */}
+        <Column
+          field="nevent"
+          header={translations[selectedLanguage].nevent}
           sortable
           filter
           style={{ width: "10%" }}
@@ -456,9 +467,23 @@ const hideDeleteDialog = () => {
           filter
           style={{ width: "15%" }}
         ></Column>
+        <Column
+          field="quantity"
+          header={translations[selectedLanguage].quantity}
+          sortable
+          filter
+          style={{ width: "15%" }}
+        ></Column>
+        <Column
+          field="amount"
+          header={translations[selectedLanguage].amount}
+          sortable
+          filter
+          style={{ width: "15%" }}
+        ></Column>
 
       </DataTable>
-      <DeleteDialog visible={deleteDialogVisible} inAction="delete"  onHide={hideDeleteDialog}  />
+      <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
       <Dialog
         header={translations[selectedLanguage].Doc}
         visible={visible}

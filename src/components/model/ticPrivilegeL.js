@@ -16,6 +16,7 @@ import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import TicPrivilegelinkL from "./ticPrivilegelinkL"
 import TicPrivilegediscountL from "./ticPrivilegediscountL"
+import TicPrivilegecondL from "./ticPrivilegecondL"
 
 
 export default function TicPrivilegeL(props) {
@@ -34,6 +35,7 @@ export default function TicPrivilegeL(props) {
   const [privilegeTip, setPrivilegeTip] = useState('');
   const [ticPrivilegelinkLVisible, setTicPrivilegelinkLVisible] = useState(false);
   const [ticPrivilegediscountLVisible, setTicPrivilegediscountLVisible] = useState(false);
+  const [ticPrivilegecondLVisible, setTicPrivilegecondLVisible] = useState(false);
   let i = 0
   const handleCancelClick = () => {
     props.setTicPrivilegeLVisible(false);
@@ -101,6 +103,10 @@ export default function TicPrivilegeL(props) {
     const localObj = { newObj };
   };
 
+  const handleTicPrivilegecondLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  };
+
   const openNew = () => {
     setTicPrivilegeDialog(emptyTicPrivilege);
   };
@@ -112,6 +118,10 @@ export default function TicPrivilegeL(props) {
   const openPrivilegediscount = () => {
     setTicPrivilegediscountDialog();
   };  
+
+  const openPrivilegecond = () => {
+    setTicPrivilegecondDialog();
+  }; 
 
   const onRowSelect = (event) => {
     //ticPrivilege.begda = event.data.begda
@@ -179,6 +189,12 @@ export default function TicPrivilegeL(props) {
     setShowMyComponent(true);
     setTicPrivilegediscountLVisible(true);
   } 
+
+  const setTicPrivilegecondDialog = () => {
+    setShowMyComponent(true);
+    setTicPrivilegecondLVisible(true);
+  } 
+
   const renderHeader = () => {
     return (
       <div className="flex card-container">
@@ -195,7 +211,7 @@ export default function TicPrivilegeL(props) {
           <Button label={translations[selectedLanguage].Link} icon="pi pi-sitemap" onClick={openPrivilegelink} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Condition} icon="pi pi-plus" onClick={openPrivilegelink} text raised />
+          <Button label={translations[selectedLanguage].Condition} icon="pi pi-plus" onClick={openPrivilegecond} text raised />
         </div>
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].PrivilegeList}</b>
@@ -420,7 +436,27 @@ export default function TicPrivilegeL(props) {
             lookUp={false}
           />
         )}
-      </Dialog>           
+      </Dialog>    
+      <Dialog
+        header={translations[selectedLanguage].PrivilegecondList}
+        visible={ticPrivilegecondLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicPrivilegecondLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicPrivilegecondL
+            parameter={"inputTextValue"}
+            ticPrivilege={ticPrivilege}
+            handleTicPrivilegecondLDialogClose={handleTicPrivilegecondLDialogClose}
+            setTicPrivilegecondLVisible={setTicPrivilegecondLVisible}
+            dialog={true}
+            lookUp={false}
+          />
+        )}
+      </Dialog>               
     </div>
   );
 }

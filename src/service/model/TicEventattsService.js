@@ -4,9 +4,10 @@ import Token from "../../utilities/Token";
 
 export class TicEventattsService {
 
-    async getLista(objId) {
+    async getLista(objId, par1) {
+        console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
         const selectedLanguage = localStorage.getItem('sl') || 'en'
-        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventatts_v&objid=${objId}&sl=${selectedLanguage}`;
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventattstp_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
           Authorization: tokenLocal.token
@@ -72,6 +73,77 @@ export class TicEventattsService {
             };
             const jsonObj = JSON.stringify(newObj)
             const response = await axios.post(url, jsonObj, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async postAutoEventatts(objId) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_autoeventatts_s&objId1=${objId}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            //const jsonObj = JSON.stringify(newObj)
+            const response = await axios.post(url, {}, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async postGrpEventatts(objId,newObj, addItems) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_grpeventatts_s&objId1=${objId}&par1=${addItems}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
+            const response = await axios.post(url, {jsonObj}, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async postCopyEventatts(objId,newObj) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventatts/_s/param/?stm=tic_copyeventatts_s&objId1=${objId}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
+            const response = await axios.post(url, {jsonObj}, { headers });
             return response.data.items;
         } catch (error) {
             console.error(error);

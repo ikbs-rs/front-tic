@@ -7,37 +7,37 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { CmnParService } from "../../service/model/CmnParService";
-import CmnPar from './cmnPar';
+import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
+import TicDocdelivery from './ticDocdelivery';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
-//import CmnParattsL from './cmnParattsL';
-//import CmnParlinkL from './cmnParlinkL';
 
 
-export default function CmnParL(props) {
-  console.log("propspropspropspropsprops", props)
-  const objName = "cmn_par"
+export default function TicDocdeliveryL(props) {
+
+  const objName = "tic_docdelivery"
+  const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const emptyCmnPar = EmptyEntities[objName]
+  const emptyTicDocdelivery = EmptyEntities[objName]
+  const emptyPar = EmptyEntities[objPar]
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [cmnPars, setCmnPars] = useState([]);
-  const [cmnPar, setCmnPar] = useState(emptyCmnPar);
+  const [ticDocdeliverys, setTicDocdeliverys] = useState([]);
+  const [ticDocdelivery, setTicDocdelivery] = useState(emptyTicDocdelivery);
+  const [cmnPar, setCmnPar] = useState(emptyPar);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [parTip, setParTip] = useState('');
-  const [cmnParattsLVisible, setCmnParattsLVisible] = useState(false);
-  const [cmnParlinkLVisible, setCmnParlinkLVisible] = useState(false);
+  const [docdeliveryTip, setDocdeliveryTip] = useState('');
+  const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);
   let i = 0
-
+  
   const handleCancelClick = () => {
-    props.setCmnParLVisible(false);
+    props.setTicPaymentLVisible(false);
   };
 
   useEffect(() => {
@@ -45,9 +45,9 @@ export default function CmnParL(props) {
       try {
         ++i
         if (i < 2) {
-          const cmnParService = new CmnParService();
-          const data = await cmnParService.getLista();
-          setCmnPars(data);
+          const ticDocdeliveryService = new TicDocdeliveryService();
+          const data = await ticDocdeliveryService.getLista();
+          setTicDocdeliverys(data);
 
           initFilters();
         }
@@ -59,42 +59,52 @@ export default function CmnParL(props) {
     fetchData();
   }, []);
 
+  const rowClass = (rowData) => {
+    const tableRow = document.querySelectorAll('.p-datatable-tbody');
+    tableRow.forEach((row) => {
+      row.classList.remove('p-datatable-tbody');
+    });
+    const selRow = document.querySelectorAll('.p-selectable-row');
+    selRow.forEach((row) => {
+      //console.log("*-*-*************row.row.classList*************-*", row.classList)
+      row.classList.remove('p-selectable-row');
+    });
+
+    //console.log(rowData.docvr == '1683550594276921344', "****************rowData************************", rowData)
+    return rowData.doc == '1683550594276921344'
+      ? 'highlight-row-blue'
+      : rowData.docvr == '1683550132932841472'
+        ? 'highlight-row-green'
+        : '';
+  };
+
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _cmnPars = [...cmnPars];
-    let _cmnPar = { ...localObj.newObj.obj };
+    let _ticDocdeliverys = [...ticDocdeliverys];
+    let _ticDocdelivery = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.parTip === "CREATE") {
-      _cmnPars.unshift(_cmnPar);
-    } else if (localObj.newObj.parTip === "UPDATE") {
+    if (localObj.newObj.docdeliveryTip === "CREATE") {
+      _ticDocdeliverys.push(_ticDocdelivery);
+    } else if (localObj.newObj.docdeliveryTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _cmnPars[index] = _cmnPar;
-    } else if ((localObj.newObj.parTip === "DELETE")) {
-      _cmnPars = cmnPars.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnPar Delete', life: 3000 });
+      _ticDocdeliverys[index] = _ticDocdelivery;
+    } else if ((localObj.newObj.docdeliveryTip === "DELETE")) {
+      _ticDocdeliverys = ticDocdeliverys.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnPar ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.parTip}`, life: 3000 });
-    setCmnPars(_cmnPars);
-    setShowMyComponent(false)
-    setCmnPar(emptyCmnPar);
-  };
-
-  const handleCmnParattsLDialogClose = (newObj) => {
-    const localObj = { newObj };
-  };
-
-  const handleCmnParlinkLDialogClose = (newObj) => {
-    const localObj = { newObj };
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docdeliveryTip}`, life: 3000 });
+    setTicDocdeliverys(_ticDocdeliverys);
+    setTicDocdelivery(emptyTicDocdelivery);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < cmnPars.length; i++) {
-      if (cmnPars[i].id === id) {
+    for (let i = 0; i < ticDocdeliverys.length; i++) {
+      if (ticDocdeliverys[i].id === id) {
         index = i;
         break;
       }
@@ -104,29 +114,11 @@ export default function CmnParL(props) {
   };
 
   const openNew = () => {
-    setShowMyComponent(true)
-    setCmnParDialog(emptyCmnPar);
-  };
-
-  
-  const returnPar = () => {
-    props.setCmnParLVisible(false);
-    props.handleCmnParLDialogClose({obj: cmnPar})
-    setCmnParDialog(emptyCmnPar);
-  };
-
-  const openParAtt = () => {
-    setCmnParattsLDialog();
-  };
-
-  const openParLink = () => {
-    setCmnParlinkLDialog();
+    setTicDocdeliveryDialog(emptyTicDocdelivery);
   };
 
   const onRowSelect = (event) => {
-    //cmnPar.begda = event.data.begda
-    console.log("****************event.data************************", event.data)
-    setCmnPar(event.data)
+    //ticDocdelivery.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -147,15 +139,15 @@ export default function CmnParL(props) {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ctp: {
+      ocode: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      ntp: {
+      code: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      endda: {
+      text: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
@@ -184,32 +176,14 @@ export default function CmnParL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-        <div className="flex flex-wrap gap-1" />
+        {/* <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
-
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
-        </div>
-        {!props.lookUp && (
-          <>
-            <div className="flex flex-wrap gap-1">
-              <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={openParAtt} text raised disabled={!cmnPar} />
-            </div>
-            <div className="flex flex-wrap gap-1">
-              <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openParLink} text raised disabled={!cmnPar} />
-            </div>
-          </>
-        )}
-        {props.lookUp && (
-          <>
-            <div className="flex flex-wrap gap-1">
-              <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={returnPar} text raised disabled={!cmnPar} />
-            </div>
-          </>
-        )}        
+        </div> */}
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].ParList}</b>
+        <b>{translations[selectedLanguage].DocdeliveryList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -238,28 +212,17 @@ export default function CmnParL(props) {
   };
 
   // <--- Dialog
-
-  const setCmnParattsLDialog = () => {
-    setShowMyComponent(true);
-    setCmnParattsLVisible(true);
-  }
-
-  const setCmnParlinkLDialog = () => {
-    setShowMyComponent(true);
-    setCmnParlinkLVisible(true);
-  }
-
-  const setCmnParDialog = (cmnPar) => {
+  const setTicDocdeliveryDialog = (ticDocdelivery) => {
     setVisible(true)
-    setParTip("CREATE")
-    setCmnPar({ ...cmnPar });
+    setDocdeliveryTip("CREATE")
+    setTicDocdelivery({ ...ticDocdelivery });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const parTemplate = (rowData) => {
+  const docdeliveryTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -268,9 +231,8 @@ export default function CmnParL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setShowMyComponent(true)
-            setCmnParDialog(rowData)
-            setParTip("UPDATE")
+            setTicDocdeliveryDialog(rowData)
+            setDocdeliveryTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -282,13 +244,13 @@ export default function CmnParL(props) {
   return (
     <div className="card">
       <Toast ref={toast} />
-
       <DataTable
         dataKey="id"
+        rowClassName={rowClass}
         selectionMode="single"
-        selection={cmnPar}
+        selection={ticDocdelivery}
         loading={loading}
-        value={cmnPars}
+        value={ticDocdeliverys}
         header={header}
         showGridlines
         removableSort
@@ -301,69 +263,76 @@ export default function CmnParL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setCmnPar(e.value)}
+        onSelectionChange={(e) => setTicDocdelivery(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={parTemplate}
+          body={docdeliveryTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="code"
-          header={translations[selectedLanguage].code}
+          field="doc"
+          header={translations[selectedLanguage].Transaction}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="cpar"
+          header={translations[selectedLanguage].cpar}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="npar"
+          header={translations[selectedLanguage].npar}
+          sortable
+          filter
+          style={{ width: "25%" }}
+        ></Column>
+        <Column
+          field="adress"
+          header={translations[selectedLanguage].adress}
           sortable
           filter
           style={{ width: "20%" }}
         ></Column>
         <Column
-          field="text"
-          header={translations[selectedLanguage].text}
+          field="dat"
+          header={translations[selectedLanguage].dat}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
-          field="ntp"
-          header={translations[selectedLanguage].Text}
+          field="potrazuje"
+          header={translations[selectedLanguage].potrazuje}
           sortable
           filter
-          style={{ width: "35%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
-          field="place"
-          header={translations[selectedLanguage].place}
+          field="ncourier"
+          header={translations[selectedLanguage].ncourier}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
-          field="activity"
-          header={translations[selectedLanguage].activity}
+          field="parent"
+          header={translations[selectedLanguage].parent}
           sortable
           filter
-          style={{ width: "20%" }}
-        ></Column>
-        <Column
-          field="pib"
-          header={translations[selectedLanguage].pib}
-          sortable
-          filter
-          style={{ width: "20%" }}
-        ></Column>
-        <Column
-          field="idnum"
-          header={translations[selectedLanguage].idnum}
-          sortable
-          filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Link}
+        header={translations[selectedLanguage].Payment}
         visible={visible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -372,13 +341,16 @@ export default function CmnParL(props) {
         }}
       >
         {showMyComponent && (
-          <CmnPar
+          <TicDocdelivery
             parameter={"inputTextValue"}
+            ticDocdelivery={ticDocdelivery}
+            ticDoc={props.ticDoc}
             cmnPar={cmnPar}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
+            setTicDocdeliveryVisible={setTicDocdeliveryVisible}
             dialog={true}
-            parTip={parTip}
+            docdeliveryTip={docdeliveryTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
@@ -387,48 +359,6 @@ export default function CmnParL(props) {
           </button>
         </div>
       </Dialog>
-      {/*
-      <Dialog
-        header={translations[selectedLanguage].ParattsLista}
-        visible={cmnParattsLVisible}
-        style={{ width: '70%' }}
-        onHide={() => {
-          setCmnParattsLVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <CmnParattsL
-            parameter={"inputTextValue"}
-            cmnPar={cmnPar}
-            handleCmnParattsLDialogClose={handleCmnParattsLDialogClose}
-            setCmnParattsLVisible={setCmnParattsLVisible}
-            dialog={true}
-            lookUp={false}
-          />
-        )}
-      </Dialog>       
-      <Dialog
-        header={translations[selectedLanguage].ParlinkLista}
-        visible={cmnParlinkLVisible}
-        style={{ width: '70%' }}
-        onHide={() => {
-          setCmnParlinkLVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <CmnParlinkL
-            parameter={"inputTextValue"}
-            cmnPar={cmnPar}
-            handleCmnParlinkLDialogClose={handleCmnParlinkLDialogClose}
-            setCmnParlinkLVisible={setCmnParlinkLVisible}
-            dialog={true}
-            lookUp={false}
-          />
-        )}
-      </Dialog>   
-      */}
     </div>
   );
 }

@@ -2,10 +2,27 @@ import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
-export class CmnPartpService {
-  async getCmnPartps() {
+export class TicEventatttpService {
+  async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/_v/lista/?stm=tic_eventatttp_v&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTicEventatttps() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -20,14 +37,14 @@ export class CmnPartpService {
     }
   }
 
-  async getCmnPartp(objId) {
+  async getTicEventatttp(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/partp/${objId}/?sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/${objId}/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
-    
+
     try {
       const response = await axios.get(url, { headers });
       return response.data.items;
@@ -38,7 +55,7 @@ export class CmnPartpService {
   }
 
 
-  async postCmnPartp(newObj) {
+  async postTicEventatttp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -46,7 +63,7 @@ export class CmnPartpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -63,7 +80,7 @@ export class CmnPartpService {
 
   }
 
-  async putCmnPartp(newObj) {
+  async putTicEventatttp(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
@@ -71,7 +88,7 @@ export class CmnPartpService {
           "Items must be filled!"
         );
       }
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Content-Type': 'application/json',
@@ -88,9 +105,9 @@ export class CmnPartpService {
 
   }
 
-  async deleteCmnPartp(newObj) {
+  async deleteTicEventatttp(newObj) {
     try {
-      const url = `${env.CMN_BACK_URL}/cmn/x/partp/${newObj.id}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/eventatttp/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         'Authorization': tokenLocal.token

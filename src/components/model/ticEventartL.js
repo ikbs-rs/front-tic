@@ -14,12 +14,14 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
-
+import TicEventrtcenaL from './ticEventartcenaL';
+import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
+import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 export default function TicEventartL(props) {
 
   const objName = "tic_eventart"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventart = EmptyEntities[objName]
   emptyTicEventart.event = props.ticEvent.id
   const [showMyComponent, setShowMyComponent] = useState(true);
@@ -31,20 +33,47 @@ export default function TicEventartL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [eventartTip, setEventartTip] = useState('');
+  const [ticEventartcenaLVisible, setTicEventartcenaLVisible] = useState(false);
+  const [refreshForm, setRefreshForm] = useState('');
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventartLVisible(false);
   };
 
+  const handleRefresh = (uId) => {
+    setRefreshForm(uId);
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
-        ++i
+        ++i;
         if (i < 2) {
           const ticEventartService = new TicEventartService();
           const data = await ticEventartService.getLista(props.ticEvent.id);
-          setTicEventarts(data);
-
+  
+          // Kreiraj niz obećanja za dohvat cena
+          const pricePromises = data.map(async (item) => {
+            const ticEventartcenaService = new TicEventartcenaService();
+            const prices = await ticEventartcenaService.getLista(item.id);
+            return prices.map((price) => ({
+              ccurr: price.ccurr,
+              ncena: price.ncena,
+              value: price.value, // Prilagodite kako konvertujete cenu
+              begda: price.begda,
+            }));
+          });
+  
+          // Sačekaj da sva obećanja budu ispunjena
+          const pricesArray = await Promise.all(pricePromises);
+  
+          // Dodajte polje 'products' u svaki red podataka sa vrednostima proizvoda
+          const updatedData = data.map((item, index) => ({
+            ...item,
+            products: pricesArray[index],
+          }));
+  console.log(updatedData, "************************************************************")
+          setTicEventarts(updatedData);
           initFilters();
         }
       } catch (error) {
@@ -52,9 +81,59 @@ export default function TicEventartL(props) {
         // Obrada greške ako je potrebna
       }
     }
+  
     fetchData();
-  }, []);
+  }, [refreshForm]);
+  
 
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       ++i
+  //       if (i < 2) {
+  //         const ticEventartService = new TicEventartService();
+  //         const data = await ticEventartService.getLista(props.ticEvent.id);
+  //     // Dodajte polje 'products' u svaki red podataka sa vrednostima proizvoda
+  //     const updatedData = data.map((item) => ({
+  //       ...item,
+  //       products: [
+  //         {
+  //           id: '1029',
+  //           code: 'gwuby345v',
+  //           name: '1500'
+  //         },
+  //         {
+  //           id: '1027',
+  //           code: 'acvx872gc',
+  //           name: '750'
+  //         }
+  //       ],
+  //     }));
+
+  //     setTicEventarts(updatedData);          
+  //         //setTicEventarts(data);
+
+  //         initFilters();
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //       // Obrada greške ako je potrebna
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
+  const handleConfirmClick = () => {
+    console.log(ticEventart, "7777777777777777777777777777777777777777777777777777")
+    if (ticEventart) {
+      ticEventart.price = 1000;
+      ticEventart.loc1 = "1707106091126886400";
+      props.onTaskComplete(ticEventart);
+      // DODATI MIN LOKACIJU ZA KOJU JE VEZANA KATEGORIJA CENA
+      // DODATI I REGULARNU CENU
+    } else {
+      toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
+    }
+  };
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
@@ -94,13 +173,36 @@ export default function TicEventartL(props) {
     setTicEventartDialog(emptyTicEventart);
   };
 
+  /*
+  Event Prodaja *****************************************************************************************************
+  */
+  const handleEventartcenaLClick = () => {
+    setTicEventartcenaLDialog();
+  };
+
+  const setTicEventartcenaLDialog = (destination) => {
+    setShowMyComponent(true);
+    setTicEventartcenaLVisible(true);
+  };
+
+
+  const handleTicEventCenaLDialogClose = (newObj) => {
+    setTicEventart(newObj);
+    // ticDocs.event = newObj.id;
+    // ticDocs.nevent = newObj.text;
+    // ticDocs.cevent = newObj.code;
+    //*******setTicEventCenaLVisible(false);
+  };
+  /*
+  Click Handle *****************************************************************************************************
+  */
   const onRowSelect = (event) => {
     //ticEventart.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
       detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
+      life: 300,
     });
   };
 
@@ -109,7 +211,7 @@ export default function TicEventartL(props) {
       severity: "warn",
       summary: "Action Unselected",
       detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-      life: 3000,
+      life: 300,
     });
   };
   // <heder za filter
@@ -122,16 +224,16 @@ export default function TicEventartL(props) {
       },
       ntp: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       endda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      }
     });
     setGlobalFilterValue("");
   };
@@ -156,9 +258,19 @@ export default function TicEventartL(props) {
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
+        {props.lookUp && (
+          <>
+            <div className="flex flex-wrap gap-1" />
+            <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised disabled={!ticEventart} />
+          </>
+        )}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Cena} icon="pi pi-dollar" onClick={handleEventartcenaLClick} severity="info" text raised />
+        </div>
+               
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventartList}</b>
         <div className="flex-grow-1"></div>
@@ -218,6 +330,43 @@ export default function TicEventartL(props) {
     );
   };
 
+
+  const cenaTemplate = (rowData) => {
+    // Proveri da li postoji niz proizvoda
+    if (rowData.products && rowData.products.length > 0) {
+      return (
+        <div>
+          <table className="p-datatable" style={{ minWidth: "20rem" }}>
+            <tbody>
+              {rowData.products.map((product) => (
+                <tr key={product.id}>
+                  <td style={{ width: '50%' }}>{product.ncena}</td>
+                  <td style={{ width: '30%' }}>{product.value}</td>
+                  <td style={{ width: '20%' }}>{DateFunction.formatDate(product.begda)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      // Ako nema proizvoda, možete prikazati odgovarajuću poruku ili ništa
+      return null;
+    }
+  };
+  
+  
+  
+  const colorBodyTemplate = (rowData) => {
+    return (
+      <>
+        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+      </>
+    );
+  };
+  
+
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -238,7 +387,7 @@ export default function TicEventartL(props) {
                 value={props.ticEvent.textx}
                 disabled={true}
               />
-            </div>           
+            </div>
           </div>
         </div>
       </div>
@@ -284,21 +433,21 @@ export default function TicEventartL(props) {
           sortable
           filter
           style={{ width: "30%" }}
-        ></Column>   
+        ></Column>
         <Column
           field="discount"
           header={translations[selectedLanguage].Discount}
           sortable
           filter
           style={{ width: "20%" }}
-        ></Column>  
+        ></Column>
         <Column
           field="descript"
           header={translations[selectedLanguage].Description}
           sortable
           filter
-          style={{ width: "20%" }}
-        ></Column>                 
+          style={{}}
+        ></Column>
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}
@@ -306,7 +455,7 @@ export default function TicEventartL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "begda")}
-        ></Column>  
+        ></Column>
         <Column
           field="endda"
           header={translations[selectedLanguage].Endda}
@@ -314,7 +463,21 @@ export default function TicEventartL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>         
+        ></Column>        
+        <Column
+          //bodyClassName="text-center"
+          header={translations[selectedLanguage].Cena}
+          body={cenaTemplate}
+          exportable={false}
+          // headerClassName="w-10rem"
+          style={{ width: "20%" }}
+        />
+        <Column
+          field="color"
+          header={translations[selectedLanguage].Color}
+          body={colorBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}
@@ -341,6 +504,27 @@ export default function TicEventartL(props) {
             <span className="p-dialog-header-close-icon pi pi-times"></span>
           </button>
         </div>
+      </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].EventartcanaList}
+        visible={ticEventartcenaLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventartcenaLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent &&
+          <TicEventrtcenaL
+            parameter={'inputTextValue'}
+            ticEventart={ticEventart}
+            //setTicArtLVisible={setTicArtLVisible} 
+            setTicEventartcenaLVisible={setTicEventartcenaLVisible}
+            dialog={true}
+            lookUp={true}
+            eventArtcena={true}
+            handleRefresh={handleRefresh}
+          />}
       </Dialog>
     </div>
   );
