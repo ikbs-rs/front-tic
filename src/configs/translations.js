@@ -600,7 +600,7 @@ export const translations = {
         LocobjLista: "Веза са местим",
         nevent: "Догађај",
         cart: "Артикал шифра",
-        nart: "Артикал",
+        nart: "...",
         cloc: "Локација шифра",
         nloc: "Локација",
         price: "Цена",

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventartService } from '../../service/model/TicEventartService';
+import { TicArtService } from '../../service/model/TicArtService';
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -15,6 +16,7 @@ import axios from 'axios';
 import Token from '../../utilities/Token';
 import TicArtL from './ticArtL';
 import { Dialog } from 'primereact/dialog';
+import { AutoComplete } from "primereact/autocomplete";
 
 const TicEventart = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -26,13 +28,24 @@ const TicEventart = (props) => {
     const [ticEventartItem, setTicEventartItem] = useState(null);
     const [ticEventartItems, setTicEventartItems] = useState(null);
 
-    const [ticArtLVisible, setTicArtLVisible] = useState(false);
-    const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
-    const [ticArt, setTicArt] = useState(null);
-    const [showMyComponent, setShowMyComponent] = useState(true);
     
+    
+    const [showMyComponent, setShowMyComponent] = useState(true);
+
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventart.begda || props.ticEvent.begda)));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventart.endda || props.ticEvent.endda)));
+
+    /************************AUTOCOMPLIT**************************** */
+    const [ticArtLVisible, setTicArtLVisible] = useState(false);
+    const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
+    const [ticArt, setTicArt] = useState(null);    
+    const [allArt, setAllArts] = useState([]);
+    const [artValue, setArtValue] = useState(props.ticEventart.cart);
+    const [filteredArts, setFilteredArts] = useState([]);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const [selectedArt, setSelectedArt] = useState(null);
+    /************************AUTOCOMPLIT**************************** */
 
     const calendarRef = useRef(null);
 
@@ -67,6 +80,88 @@ const TicEventart = (props) => {
     //     fetchData();
     // }, []);
     // Autocomplit>
+
+    /*************************AUTOCOMPLIT************************************ART************* */
+    /**************** */
+    useEffect(() => {
+        async function fetchData() {
+            const ticArtService = new TicArtService();
+            const data = await ticArtService.getLista();
+            setAllArts(data);
+            //setParValue(data.find((item) => item.id === props.ticEvent.par) || null);
+        }
+        fetchData();
+    }, []);
+    /**************** */
+    useEffect(() => {
+        if (debouncedSearch && selectedArt === null) {
+            // Filtrirajte podatke na osnovu trenutnog unosa
+            console.log("debouncedLocSearch-=============================0", debouncedSearch, "=============================")
+            const query = debouncedSearch.toLowerCase();
+            console.log("debouncedLocSearch-=============================1", allArt, "=============================")
+            const filtered = allArt.filter(
+                (item) =>
+                    item.text.toLowerCase().includes(query) ||
+                    item.code.toLowerCase().includes(query) ||
+                    item.id.toLowerCase().includes(query)
+            );
+
+            setSelectedArt(null);
+            setFilteredArts(filtered);
+        }
+    }, [debouncedSearch, allArt]);
+    /*** */
+
+    useEffect(() => {
+        // Samo kada je izabrani element `null`, izvršavamo `onChange`
+        console.log(artValue, "*********************parValue*****************@@@@@@@@@***********")
+        setArtValue(artValue);
+    }, [artValue, selectedArt]);
+
+    const handleSelect = (e) => {
+        // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
+        setSelectedArt(e.value.code);
+        setArtValue(e.value.code);
+    };
+    /************************** */
+    const handleArtClick = async (e, destination) => {
+        try {
+            if (destination === 'local') setTicArtDialog();
+            else setTicArtRemoteDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticArt data',
+                life: 3000
+            });
+        }
+    };
+
+    const setTicArtRemoteDialog = () => {
+        setTicArtRemoteLVisible(true);
+    };
+
+    const setTicArtDialog = (destination) => {
+        setTicArtLVisible(true);
+    };    
+    /************************** */
+    const handleTicArtLDialogClose = (newObj) => {
+        console.log(newObj, "11111111111111111111111111111111qqq1111111111111111111111111111111", newObj)
+        setTicArt(newObj);
+        let _ticEventart = { ...ticEventart }
+        _ticEventart.art = newObj.id;
+        _ticEventart.nart = newObj.text;
+        _ticEventart.cart = newObj.code;
+        //ticEventart.price = newObj.price;
+        //ticEventart.loc = newObj.loc1;
+        setTicEventart(_ticEventart)
+        //ticEventart.potrazuje = newObj.cena * ticEventart.output;
+        setTicArtLVisible(false);
+    };    
+    /**************************AUTOCOMPLIT************************************************ */
+
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -157,47 +252,11 @@ const TicEventart = (props) => {
             });
         }
     };
-/************************************ */
+    /************************************ */
 
-const setTicArtRemoteDialog = () => {
-    setTicArtRemoteLVisible(true);
-};
-
-const setTicArtDialog = (destination) => {
-    setTicArtLVisible(true);
-};
-
-const handleArtClick = async (e, destination) => {
-    try {
-        if (destination === 'local') setTicArtDialog();
-        else setTicArtRemoteDialog();
-    } catch (error) {
-        console.error(error);
-        toast.current.show({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch ticArt data',
-            life: 3000
-        });
-    }
-};
-const handleTicArtLDialogClose = (newObj) => {
-    console.log(newObj, "11111111111111111111111111111111qqq1111111111111111111111111111111", newObj)
-    setTicArt(newObj);
-    let _ticEventart = {...ticEventart}
-    _ticEventart.art = newObj.id;
-    _ticEventart.nart = newObj.text;
-    _ticEventart.cart = newObj.code;   
-    //ticEventart.price = newObj.price;
-    //ticEventart.loc = newObj.loc1;
-    setTicEventart(_ticEventart)
-    //ticEventart.potrazuje = newObj.cena * ticEventart.output;
-    setTicArtLVisible(false);
-};
-/************************************ */
     const onInputChange = (e, type, name, a) => {
         let val = '';
-
+        console.log(type, "*******!!", e.target, "!!*******", name)
         if (type === 'options') {
             val = (e.target && e.target.value && e.target.value.code) || '';
             setDdTicEventartItem(e.value);
@@ -220,6 +279,32 @@ const handleTicArtLDialogClose = (newObj) => {
                 default:
                     console.error('Pogresan naziv polja');
             }
+        } else if (type === "auto") {
+            console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", e.target.value)
+            let timeout = null
+            switch (name) {
+                case "art":
+                    if (selectedArt === null) {
+                        setArtValue(e.target.value.text || e.target.value);
+                    } else {
+                        setSelectedArt(null);
+                        setArtValue(e.target.value.text || e.target.value.text);
+                    }
+                    console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", e.target.value)
+                    ticEventart.art = e.target.value.id
+                    ticEventart.nart = e.target.value.text
+                    ticEventart.cart = e.target.value.code
+                    // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
+                    clearTimeout(searchTimeout);
+                    timeout = setTimeout(() => {
+                        setDebouncedSearch(e.target.value);
+                    }, 400);
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
+            setSearchTimeout(timeout);
+            val = (e.target && e.target.value && e.target.value.id) || '';
         } else {
             val = (e.target && e.target.value) || '';
         }
@@ -230,6 +315,21 @@ const handleTicArtLDialogClose = (newObj) => {
 
     const hideDeleteDialog = () => {
         setDeleteDialogVisible(false);
+    };
+
+    const itemTemplate = (item) => {
+        return (
+            <>
+                <div>
+                    {item.text}
+                    {` `}
+                    {item.code}
+                </div>
+                <div>
+                    {item.id}
+                </div>
+            </>
+        );
     };
 
     return (
@@ -252,25 +352,31 @@ const handleTicArtLDialogClose = (newObj) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-3">
-                            <label htmlFor="cart">{translations[selectedLanguage].cart}</label>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="art">{translations[selectedLanguage].Art} *</label>
                             <div className="p-inputgroup flex-1">
-                                <InputText id="cart" value={ticEventart.cart}
-                                    onChange={(e) => onInputChange(e, 'text', 'cart')}
-                                    required
-                                    className={classNames({ 'p-invalid': submitted && !ticEventart.cart })} />
+                                <AutoComplete
+                                    value={artValue}
+                                    suggestions={filteredArts}
+                                    completeMethod={() => { }}
+                                    onSelect={handleSelect}
+                                    onChange={(e) => onInputChange(e, "auto", 'art')}
+                                    itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
+                                    placeholder="Pretraži"
+                                    className={classNames({ 'p-invalid': submitted && !ticEventart.cart })}
+                                />
                                 <Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'local')} className="p-button" />
-                                {/*<Button icon="pi pi-search" onClick={(e) => handleArtClick(e, 'remote')} className="p-button-success" />*/}
                             </div>
                             {submitted && !ticEventart.cart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-9">
+
+                        <div className="field col-12 md:col-8">
                             <label htmlFor="nart">{translations[selectedLanguage].nart}</label>
-                            <InputText id="nart" 
-                                value={ticEventart.nart} 
-                                onChange={(e) => onInputChange(e, 'text', 'nart')} 
-                                required 
-                                className={classNames({ 'p-invalid': submitted && !ticEventart.nart })} 
+                            <InputText id="nart"
+                                value={ticEventart.nart}
+                                onChange={(e) => onInputChange(e, 'text', 'nart')}
+                                required
+                                className={classNames({ 'p-invalid': submitted && !ticEventart.nart })}
                             />
                             {submitted && !ticEventart.nart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>

@@ -353,7 +353,8 @@ const EmptyEntities =
     "fee": 0,
 		"par": null,
 		"descript": "string",
-    "storno": 0
+    "storno": 0,
+		"nart": ""
   },
   "tic_docslink": {
     "id": null,

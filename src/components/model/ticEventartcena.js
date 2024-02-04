@@ -167,6 +167,7 @@ const TicEventartcena = (props) => {
             const data = await ticEventartcenaService.postTicEventartcena(newTicEventobj);
             ticEventartcena.id = data;
             props.handleDialogClose({ obj: ticEventartcena, eventartcenaTip: "CREATE" });
+            ticEventartcena.cena = 0;
             //props.setVisible(false);
         } catch (err) {
             toast.current.show({

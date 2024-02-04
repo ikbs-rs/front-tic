@@ -216,6 +216,10 @@ const TicEventartcena = (props) => {
             ticEventartcena.id = data;
             console.log("handleCreateAndAddNewClick***********************************************")
             props.handleDialogClose({ obj: ticEventartcena, eventartcenaTip: "CREATE" });
+            const _ticEventartcena = ticEventartcena;
+            _ticEventartcena.value = 0;
+            setTicEventartcena(_ticEventartcena)
+
             //props.setVisible(false);
         } catch (err) {
             toast.current.show({

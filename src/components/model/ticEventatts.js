@@ -199,6 +199,8 @@ const handleTicEventattLDialogClose = (newObj) => {
     _ticEventatts.att = newObj.id;
     _ticEventatts.ntp = newObj.text;
     _ticEventatts.ctp = newObj.code; 
+    _ticEventatts.link = newObj.link; 
+    _ticEventatts.valid = 1; 
     console.log(newObj, "11111111111111111111111111111111_ticEventatt1111111111111111111111111111111", _ticEventatts)  
     //ticEventatt.price = newObj.price;
     //ticEventatt.loc = newObj.loc1;
@@ -214,6 +216,7 @@ const handleTicEventattLDialogClose = (newObj) => {
             val = (e.target && e.target.value && e.target.value.code) || '';
             switch (name) {
                 case 'valid':
+                    //console.log(e.value, "$$$$$$$$$$$$$$$$$$$$$$$$$valid$$$$$$$$$$$$$$$$$$$$$$$$$$")
                     setDropdownItem(e.value);
                     break;
                 case 'att':
@@ -231,6 +234,7 @@ const handleTicEventattLDialogClose = (newObj) => {
         }
         let _ticEventatts = { ...ticEventatts };
         _ticEventatts[`${name}`] = val;
+        //console.log(_ticEventatts, "$$$$$$$$$$$$$$$$$$$$$$$$$_ticEventatts$$$$$$$$$$$$$$$$$$$$$$$$$$")
         setTicEventatts(_ticEventatts);
     };
 
@@ -281,19 +285,19 @@ const handleTicEventattLDialogClose = (newObj) => {
                             {submitted && !ticEventatts.ntp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         </div>
-                        <div className="p-fluid formgrid grid">
+                        {/* <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-5">
                                 <label htmlFor="ddlist">{translations[selectedLanguage].ddlist}</label>
                                 <InputText id="ddlist" value={ticEventatts.ddlist} onChange={(e) => onInputChange(e, 'text', 'ddlist')} />
                             </div>
-                        </div>
+                        </div> */}
                         {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-11">
                             <label htmlFor="text">{translations[selectedLanguage].Descript}</label>
                             <InputText id="text" value={ticEventatts.text} onChange={(e) => onInputChange(e, 'text', 'text')} />
                         </div>
                     </div>                     */}
-                        <div className="p-fluid formgrid grid">
+                        {/* <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-4">
                                 <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                                 <Dropdown
@@ -308,7 +312,7 @@ const handleTicEventattLDialogClose = (newObj) => {
                                 />
                                 {submitted && !ticEventatts.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                             </div>
-                        </div>
+                        </div> */}
                         <div className="field col-12 md:col-1">
                             <div className="flex-2 flex flex-column align-items-left">
                                 <label htmlFor="color">{translations[selectedLanguage].color}</label>
