@@ -638,7 +638,7 @@ const EmptyEntities =
 		"popust": null,
 		"vrednost": "0",
 		"uslov": "0",
-		"domen": null
+		"domen": "0"
   },
   "tic_privilegecond": {
     "id": null,

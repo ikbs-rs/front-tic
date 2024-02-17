@@ -1,7 +1,7 @@
 {
     "name": "roma-react",
     "version": "9.0.0",
-    "homepage": "",
+    "homepage": "/tic/",
     "private": true,
     "dependencies": {
         "@fullcalendar/core": "^6.1.4",
