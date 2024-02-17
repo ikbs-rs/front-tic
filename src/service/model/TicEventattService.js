@@ -70,7 +70,7 @@ export class TicEventattService {
             };
             const jsonObj = JSON.stringify(newObj);
             const response = await axios.post(url, jsonObj, { headers });
-            console.log("**************"  , jsonObj, "****************")
+            console.log("*****QQQQQQ*********"  , jsonObj, "**********QQQQQQQ******")
             return response.data.items;
         } catch (error) {
             console.error(error);
@@ -92,7 +92,7 @@ export class TicEventattService {
             };
             const jsonObj = JSON.stringify(newObj);
             const response = await axios.put(url, jsonObj, { headers });
-            //console.log("**************"  , response, "****************")
+            console.log("*****QQQQQQ*********"  , jsonObj, "**********QQQQQQQ******")
             return response.data.items;
         } catch (error) {
             console.error(error);
