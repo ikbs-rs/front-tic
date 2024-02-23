@@ -27,6 +27,7 @@ import TicEventTmpL from './ticEventTmpL';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
+    console.log(props, '**************************-ticEventL-****************************')
 
     let i = 0;
     const objName = 'tic_event';

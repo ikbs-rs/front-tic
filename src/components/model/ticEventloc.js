@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventlocService } from "../../service/model/TicEventlocService";
+import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
 import { TicEventService } from "../../service/model/TicEventService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
@@ -16,7 +17,7 @@ import axios from 'axios';
 import Token from "../../utilities/Token";
 
 const TicEventloc = (props) => {
-    
+    console.log(props, "####################### TicEventloc ##########################")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventloc, setTicEventloc] = useState(props.ticEventloc);
@@ -28,22 +29,52 @@ const TicEventloc = (props) => {
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.begda || props.ticEvent.begda)));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate(props.ticEventloc.endda || props.ticEvent.endda)))
 
+    const [ddCmnLoctpItem, setDdCmnLoctpItem] = useState(null);
+    const [ddCmnLoctpItems, setDdCmnLoctpItems] = useState(null);
+    const [cmnLoctpItem, setCmnLoctpItem] = useState(null);
+    const [cmnLoctpItems, setCmnLoctpItems] = useState(null);
+
     const calendarRef = useRef(null);
 
     const toast = useRef(null);
+    useEffect(() => {
+        // Ažurirajte ticEventloc samo kada je cloctp nedostajući ili props.tp se promeni
+        if (!ticEventloc?.cloctp || props.tpId !== ticEventloc.loctp) {
+            setTicEventloc({ ...ticEventloc, loctp: props.tpId });
+        }
+    }, [props.tpId]);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                // const url = `${env.CMN_BACK_URL}/cmn/x/loc/?sl=${selectedLanguage}`;
-                // const tokenLocal = await Token.getTokensLS();
-                // const headers = {
-                //     Authorization: tokenLocal.token
-                // };
-                // const response = await axios.get(url, { headers });
-                // const data = response.data.items;
+                console.log(ticEventloc.loctp, "@@@@@@@@@@@@@@ticEventloc.loctp!!!!!!!!!")
+                const cmnLoctpService = new CmnLoctpService();
+                const data = await cmnLoctpService.getCmnLoctps('loctp');
+                setCmnLoctpItems(data)
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdCmnLoctpItems(dataDD);
+                setDdCmnLoctpItem(dataDD.find((item) => item.code === ticEventloc.loctp) || null);
+                if (ticEventloc.loctp) {
+                    const foundItem = data.find((item) => item.id === ticEventloc.loctp);
+                    setCmnLoctpItem(foundItem || null);
+                    ticEventloc.cloctp = foundItem.code
+                    ticEventloc.nloctp = foundItem.textx
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                console.log(ticEventloc.loctp, "**********@@@@@@@@@@@@@@getCmnObjXcsDDLista@@@@@@@@@@@@@@@******************", props.ticEventloc)
                 const ticEventService = new TicEventService();
-                const data = await ticEventService.getCmnObjXcsDDLista(props.ticEvent);                
+                const data = await ticEventService.getCmnObjXcsDDLista(props.ticEvent.id, ticEventloc.loctp);
                 setTicEventlocItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventlocItems(dataDD);
@@ -61,7 +92,7 @@ const TicEventloc = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [ticEventloc.loctp || props.tpId]);
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -92,7 +123,7 @@ const TicEventloc = (props) => {
         try {
             setSubmitted(true);
             ticEventloc.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
+            ticEventloc.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             const ticEventlocService = new TicEventlocService();
 
             await ticEventlocService.putTicEventloc(ticEventloc);
@@ -135,11 +166,29 @@ const TicEventloc = (props) => {
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            setDdTicEventlocItem(e.value);
-            const foundItem = ticEventlocItems.find((item) => item.id === val);
-            setTicEventlocItem(foundItem || null);
-            ticEventloc.nloc = e.value.name
-            ticEventloc.cloc = foundItem.code
+            let foundItem
+            switch (name) {
+                case "loctp":
+                    setDdCmnLoctpItem(e.value);
+                    foundItem = cmnLoctpItems.find((item) => item.id === val);
+                    setCmnLoctpItem(foundItem || null);
+                    ticEventloc.nloctp = e.value.name
+                    ticEventloc.cloctp = foundItem.code                    
+                    break;
+                case "loc":
+                    setDdTicEventlocItem(e.value);
+                    foundItem = ticEventlocItems.find((item) => item.id === val);
+                    const foundTpItem = cmnLoctpItems.find((item) => item.id === foundItem.tp);
+                    console.log(foundTpItem, "**********foundTpItem******************")
+                    setTicEventlocItem(foundItem || null);
+                    ticEventloc.nloc = e.value.name
+                    ticEventloc.cloc = foundItem.code 
+                    ticEventloc.nloctp = foundTpItem.text  
+                    break;                 
+                default:
+                    console.error("Pogresan naziv polja")
+            }
+
         } else if (type === "Calendar") {
             const dateVal = DateFunction.dateGetValue(e.value)
             val = (e.target && e.target.value) || '';
@@ -193,12 +242,27 @@ const TicEventloc = (props) => {
                 <div className="card">
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
+                            <label htmlFor="loctp">{translations[selectedLanguage].Objtp} *</label>
+                            <Dropdown id="loctp"
+                                value={ddCmnLoctpItem}
+                                options={ddCmnLoctpItems}
+                                onChange={(e) => onInputChange(e, "options", 'loctp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEventloc.loctp })}
+                            />
+                            {submitted && !ticEventloc.loctp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-7">
                             <label htmlFor="loc">{translations[selectedLanguage].Location} *</label>
                             <Dropdown id="loc"
                                 value={ddTicEventlocItem}
                                 options={ddTicEventlocItems}
                                 onChange={(e) => onInputChange(e, "options", 'loc')}
-                                required                            
+                                required
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !ticEventloc.loc })}

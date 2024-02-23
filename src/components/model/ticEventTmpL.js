@@ -15,6 +15,7 @@ import { Dialog } from 'primereact/dialog';
 import { translations } from '../../configs/translations';
 import DateFunction from '../../utilities/DateFunction';
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import ConfirmDialogSettings from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
 console.log(props, "********************TicEventLTmp*********************************")
@@ -33,6 +34,7 @@ console.log(props, "********************TicEventLTmp****************************
     const [visible, setVisible] = useState(false);
     const [eventTip, setEventTip] = useState('');
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+    const [confirmDialogSettingsVisible, setConfirmDialogSettingsVisible] = useState(false);
 
     const handleCancelClick = () => {
         props.setTicEventTmpLVisible(false);
@@ -74,6 +76,10 @@ console.log(props, "********************TicEventLTmp****************************
         setConfirmDialogVisible(true);
     };
 
+    const handleSettingsConfirmClick = () => {
+        setConfirmDialogSettingsVisible(true);
+    };    
+
 
     const handleConfirm = async () => {
         //console.log(props.ticEvent, "***********handleConfirm********************")
@@ -87,6 +93,19 @@ console.log(props, "********************TicEventLTmp****************************
         //hideDeleteDialog();
         setConfirmDialogVisible(false);
     };
+
+    const handleSettingsConfirm = async () => {
+        //console.log(props.ticEvent, "***********handleSetingsConfirm********************")
+        setSubmitted(true);
+        const ticEventService = new TicEventService();
+        await ticEventService.postCopyEventSettings(props.ticEvent.id, ticEvent.id, props.ticEvent.begda, props.ticEvent.endda);
+        const data = await ticEventService.getListaTmp();
+        setTicEvents(data);        
+        //props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
+        props.setTicEventTmpLVisible(false);
+        //hideDeleteDialog();
+        setConfirmDialogSettingsVisible(false);
+    };    
 
     const onRowSelect = (event) => {
         toast.current.show({
@@ -152,15 +171,18 @@ console.log(props, "********************TicEventLTmp****************************
                 </div> 
             */}
                 <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].CopySettings} icon="pi pi-copy" severity="warning" onClick={handleSettingsConfirmClick} text raised disabled={!ticEvent} />
+                </div>            
+                <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" severity="warning" onClick={handleActivationClick} text raised disabled={!ticEvent} />
                 </div>
                 {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Activation} icon="pi pi-caret-right" severity="danger" onClick={handleActivationClick} text raised disabled={!ticEvent} />
                 </div>                 */}
-                {/*        <div className="flex flex-wrap gap-1">
+                       {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
-                </div>
-        */}
+                </div> */}
+        
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].EventsList}</b>
                 <div className="flex-grow-1"></div>
@@ -273,6 +295,12 @@ console.log(props, "********************TicEventLTmp****************************
                 onConfirm={handleConfirm} 
                 uPoruka={'Kopiranje templejta, da li ste sigurni?'}
             />
+            <ConfirmDialogSettings 
+                visible={confirmDialogSettingsVisible} 
+                onHide={() => setConfirmDialogSettingsVisible(false)} 
+                onConfirm={handleSettingsConfirm} 
+                uPoruka={'Kopiranje postavki templejta, da li ste sigurni?'}
+            />            
         </div>
     );
 }

@@ -120,19 +120,22 @@ export async function fetchObjData(...args) {
             case 'user':
                 url = `${backend}/${args[0]}/${args[1]}/_v/lista/?stm=adm_usereventdd_v&sl=${selectedLanguage}`;
                 break;
-            case 'event':
-                url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdd_v&objid=${obj.id}&sl=${selectedLanguage}`;
-                break;
+            // case 'event':
+            //     url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdd_v&objid=${obj.id}&sl=${selectedLanguage}`;
+            //     break;
             default:
                 if (args[2]) {
                     if (`${args[0]}_${args[1]}` == 'cmn_obj') {
                         if (`${args[2]}` == 'XPK') {
                             url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objevent_v&objid=${args[2]}&id=${obj.id}&sl=${selectedLanguage}`;
-                            console.log("******************* CODE PAR XPK***************************", url);
+                            // console.log("******************* CODE PAR XPK***************************", url);
                         } else {
                             url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=cmn_objsett_v&objid=${args[2]}&sl=${selectedLanguage}`;
-                            console.log("******************* CODE PAR ***************************", url);
+                           // console.log("******************* CODE PAR ***************************", url);
                         }
+                    } else if (`${args[0]}_${args[1]}` == 'tic_event') {
+                        url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdd_v&objid=${obj.id}&par1=${args[2]}&sl=${selectedLanguage}`;
+                        console.log("******************* CODE TIC EVENT ***************************", url);
                     }
 
                 } else {
@@ -143,7 +146,7 @@ export async function fetchObjData(...args) {
         const headers = {
             Authorization: tokenLocal.token
         };
-        console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
+        //console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
         const response = await axios.get(url, { headers });
         const datas = response.data.items || response.data.item;
         const items = datas.map(({ text, id }) => ({ name: text, code: id }));

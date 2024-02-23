@@ -360,7 +360,7 @@ export const translations = {
         EventAtt: "Особина догађаја",
         EventAttsList: "Особине догађаја Листа",
         EventlinkLista: "Везе објекта Листа",
-        EventlocList: "Улази, капије Листа",
+        EventlocList: "Локације Листа",
         EventTp: "Тип догађаја",
         EventTpList: "Типови догађаја Лоста",
         Events_administration: "Администрација догађаја",
@@ -748,6 +748,7 @@ export const translations = {
         select_connection: "Изаберите везу",
         No_connection: "Без везе",
         minfee: "Лимит",
+        CopySettings: "Копирај поставке",
     }
   };
   

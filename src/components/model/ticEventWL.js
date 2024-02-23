@@ -19,6 +19,7 @@ import TicEventobjL from './ticEventobjL';
 import TicEventattsL from './ticEventattsL';
 import TicEventrtL from './ticEventartL';
 import CmnLoclinkL from './cmn/cmnLoclinkL';
+import TicEventlocL from './ticEventlocL';
 import SaleEvent from './ticSalEvent'
 import { CmnLocService } from "../../service/model/cmn/CmnLocService";
 
@@ -104,16 +105,23 @@ export default function TicEventWL(props) {
 
 
         <TabPanel header={translations[selectedLanguage].Channels}>
-          <TicEventobjL key={"XSCT"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventobjLVisible={props.setTicEventobjLVisible} />
+          <TicEventobjL
+            key={"XSCT"}
+            ticEvent={props.ticEvent}
+            TabView={true}
+            dialog={true}
+            setTicEventobjLVisible={props.setTicEventobjLVisible}
+          />
         </TabPanel>
         <TabPanel header={translations[selectedLanguage].Sectors}>
-          <CmnLoclinkL key={"LL"} 
-          loctpCode={LOCATION_CODE}
-          ticEvent={props.ticEvent} 
-          cmnLoc={cmnLoc} 
-          TabView={true} 
-          dialog={true} 
-          setTicEventobjLVisible={props.setTicEventobjLVisible} />
+          <TicEventlocL key={"LL"}
+            loctpCode={LOCATION_CODE}
+            ticEvent={props.ticEvent}
+            cmnLoc={cmnLoc}
+            TabView={true}
+            lookUp={true}
+            dialog={true}
+            setTicEventobjLVisible={props.setTicEventobjLVisible} />
         </TabPanel>
         <TabPanel header={translations[selectedLanguage].Setings}>
           <TicEventattsL key={"I"} ticEvent={props.ticEvent} TabView={true} dialog={true} setTicEventattsLVisible={props.setTicEventattsLVisible} />

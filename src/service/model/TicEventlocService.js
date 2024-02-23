@@ -21,6 +21,24 @@ export class TicEventlocService {
         }
       }
 
+      async getListaTp(objId, id) {
+        console.log(objId, "@@@@@@@@@@@@@@@@@@@- getListaTp -@@@@@@@@@@@@@@@@@@@@@", id, "###########")
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventloc/_v/lista/?stm=tic_eventloctp_v&objid=${objId}&par1=${id}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+          Authorization: tokenLocal.token
+        };
+    
+        try {
+          const response = await axios.get(url, { headers });
+          return response.data.item;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
+
     async getTicEventlocs() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/eventloc/?sl=${selectedLanguage}`;
@@ -55,7 +73,6 @@ export class TicEventlocService {
         }
     }
 
-
     async postTicEventloc(newObj) {
         try {            
             const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -72,6 +89,29 @@ export class TicEventlocService {
             };
             const jsonObj = JSON.stringify(newObj)
             const response = await axios.post(url, jsonObj, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async postTpEventloc(eventId, tpId) {
+        try {            
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (eventId === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventloc/_s/param/?stm=tic_tpeventloc_s&objId1=${eventId}&par1=${tpId}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            console.log(eventId, "@@@@@@@@@@@@@@@@@@@@@@@@ postGrpEventatts @@@@@@@@@@@@@@@@@@@@@", url)
+            const response = await axios.post(url, {}, { headers });
             return response.data.items;
         } catch (error) {
             console.error(error);

@@ -40,6 +40,7 @@ export class TicEventService {
   async postCopyEvent(objId, tmpId, begda, endda) {
     try {
       console.log("*****************postCopyEvent************************", begda)
+      return -1
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (objId === null || tmpId === null) {
         throw new Error(
@@ -55,6 +56,33 @@ export class TicEventService {
       console.log("************postCopyEvent****************", url)
       //const jsonObj = JSON.stringify(newObj)
       console.log("****************url******************", url)
+      const response = await axios.post(url, {}, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async postCopyEventSettings(objId, tmpId, begda, endda) {
+    try {
+      console.log("*****************postCopyEventSettings************************", begda)
+      // return -1
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (objId === null || tmpId === null) {
+        throw new Error(
+          "objId or tmpId must be filled!"
+        );
+      }
+      const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_copyeventsettings_s&objId1=${objId}&objId2=${tmpId}&begda=${begda}&endda=${endda}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      console.log("************postCopyEventSettings****************", url)
+      //const jsonObj = JSON.stringify(newObj)
+      console.log("****************urlSettings******************", url)
       const response = await axios.post(url, {}, { headers });
       return response.data.item;
     } catch (error) {
@@ -124,10 +152,10 @@ export class TicEventService {
     }
   }
 
-  async getCmnObjXcsDDLista(obj) {
-    console.log(obj.id, "******************getCmnObjXcsLista*********************")
+  async getCmnObjXcsDDLista(uObj, locTtp) {
+    console.log(uObj, "******************getCmnObjXcsLista*********************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.CMN_BACK_URL}/cmn/x/loc/_v/lista/?stm=cmn_xscdd_v&objid=${obj.id}&sl=${selectedLanguage}`;
+    const url = `${env.CMN_BACK_URL}/cmn/x/loc/_v/lista/?stm=cmn_xscdd_v&objid=${uObj}&id=${locTtp}&sl=${selectedLanguage}`;
 
     const tokenLocal = await Token.getTokensLS();
     const headers = {

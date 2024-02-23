@@ -15,6 +15,8 @@ import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import { CmnLoctpService } from '../../service/model/cmn/CmnLoctpService';
+import { Dropdown } from 'primereact/dropdown';
 
 
 export default function TicEventlocL(props) {
@@ -34,6 +36,16 @@ export default function TicEventlocL(props) {
   const [eventlocTip, setEventlocTip] = useState('');
   const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const [ddTicLoctpItem, setDdTicLoctpItem] = useState(null);
+  const [ddTicLoctpItems, setDdTicLoctpItems] = useState(null);
+  const [ticLoctp, setTicLoctp] = useState({});
+  const [ticLoctps, setTicLoctps] = useState([]);
+  let [refresh, setRefresh] = useState(null);
+  const [componentKey, setComponentKey] = useState(0);
+
+  const [addItems, setAddItems] = useState(true);
+
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventlocLVisible(false);
@@ -42,10 +54,11 @@ export default function TicEventlocL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
+        console.log(props.ticEvent.id, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticLoctp?.id || -1, "###########")
         ++i
         if (i < 2) {
           const ticEventlocService = new TicEventlocService();
-          const data = await ticEventlocService.getLista(props.ticEvent.id);
+          const data = await ticEventlocService.getListaTp(props.ticEvent.id, ticLoctp?.id || -1);
           setTicEventlocs(data);
 
           initFilters();
@@ -56,10 +69,58 @@ export default function TicEventlocL(props) {
       }
     }
     fetchData();
+  }, [refresh, componentKey]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const cmnLoctpService = new CmnLoctpService();
+        const data = await cmnLoctpService.getCmnLoctps();
+
+        setTicLoctps(data)
+        //console.log("******************", ticLoctpItem)
+
+        const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+        setDdTicLoctpItems(dataDD);
+        //setDdTicLoctpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
   }, []);
 
   const handleAutoInputClick = () => {
     setConfirmDialogVisible(true);
+  };
+
+  const onLoctpChange = (e) => {
+    let _ticEventloc = { ...ticEventloc };
+    let val = (e.target && e.target.value && e.target.value.code) || '';
+    setDdTicLoctpItem(e.value);
+    const foundItem = ticLoctps.find((item) => item.id === val);
+    setTicLoctp(foundItem || null);
+    _ticEventloc.tp = val;
+    emptyTicEventloc.tp = val;
+    setTicEventloc(_ticEventloc);
+    setRefresh(++refresh);
+  }
+
+  const handCopyClick = async () => {
+    setConfirmDialogVisible(true);
+    await setAddItems(true)
+  };
+  const handleConfirmCopy = async () => {
+    console.log(ticLoctp?.id || -1, "#######***********tpId********************######", addItems)
+    setSubmitted(true);
+    const ticEventlocService = new TicEventlocService();
+    await ticEventlocService.postTpEventloc(props.ticEvent.id, ticLoctp?.id || -1, addItems);
+    // props.handleTicEventattsgrpLDialogClose({ obj: props.ticEvent });
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Поставке успешно копиране ?', life: 3000 });
+    setRefresh(++refresh);
+    setVisible(false);
+    setConfirmDialogVisible(false);
   };
 
   const handleConfirm = async () => {
@@ -74,6 +135,7 @@ export default function TicEventlocL(props) {
     //hideDeleteDialog();
     setConfirmDialogVisible(false);
   };
+
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -111,7 +173,7 @@ export default function TicEventlocL(props) {
   };
 
   const openNew = () => {
-    setTicEventlocDialog(emptyTicEventloc);
+    setTicEventlocDialog({ ...emptyTicEventloc, loctp: ticLoctp?.id || -1 });
   };
 
   const onRowSelect = (event) => {
@@ -173,17 +235,34 @@ export default function TicEventlocL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-        <div className="flex flex-wrap gap-1" />
+         <div className="flex flex-wrap gap-1" />
+         {(!props.lookUp) ? (
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        />
+        /> 
+        ) : null}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handCopyClick} text raised />
         </div>
         {/* <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
         </div> */}
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventlocList}</b>
+        <div className="flex-grow-1"></div>
+        <div className="flex-grow-1 ">
+          <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+          <Dropdown id="tp"
+            value={ddTicLoctpItem}
+            options={ddTicLoctpItems}
+            onChange={(e) => onLoctpChange(e)}
+            showClear
+            optionLabel="name"
+            placeholder="Select One"
+          />
+        </div>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -266,6 +345,7 @@ export default function TicEventlocL(props) {
         </div>
       </div>
       <DataTable
+        key={componentKey}
         dataKey="id"
         selectionMode="single"
         selection={ticEventloc}
@@ -299,14 +379,21 @@ export default function TicEventlocL(props) {
           header={translations[selectedLanguage].Code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="nloc"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "60%" }}
+          style={{ width: "30%" }}
+        ></Column>
+        <Column
+          field="nloctp"
+          header={translations[selectedLanguage].ntp}
+          sortable
+          filter
+          style={{ width: "30%" }}
         ></Column>
         <Column
           field="begda"
@@ -339,6 +426,7 @@ export default function TicEventlocL(props) {
             parameter={"inputTextValue"}
             ticEventloc={ticEventloc}
             ticEvent={props.ticEvent}
+            tpId={ticLoctp?.id || -1}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
@@ -351,7 +439,12 @@ export default function TicEventlocL(props) {
           </button>
         </div>
       </Dialog>
-      <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} />
+      <ConfirmDialog
+          visible={confirmDialogVisible}
+          onHide={() => setConfirmDialogVisible(false)}
+          onConfirm={handleConfirmCopy}
+          uPoruka={'Копирањие поставки, да ли сте сигурни?'}
+        />      
     </div>
   );
 }
