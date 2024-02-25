@@ -308,5 +308,22 @@ export class TicEventService {
     }
 
   }
+
+  async generateImageUrl(id, relpath, selectedLanguage) {
+    try {
+      // const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const url = `${env.IMG_BACK_URL}/public/tic/${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Authorization': tokenLocal.token
+      };
+
+      const response = await axios.get(url, { headers });
+      //console.log("**************generateImageUrl 01 ***********", response)
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 

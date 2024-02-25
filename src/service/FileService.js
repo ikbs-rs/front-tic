@@ -33,8 +33,9 @@ class FileService {
       const headers = {
         Authorization: tokenLocal.token,
       };
-
+      console.log(url, "+++++++++++++++++++++++++++++++++++++++++", formData)
       const response = await axios.post(url, formData, { headers });
+
       return {status: response.status, message: response.data.message};
     } catch (error) {
       console.error("Error uploading file:", error);
