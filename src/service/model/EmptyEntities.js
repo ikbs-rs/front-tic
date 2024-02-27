@@ -281,7 +281,8 @@ const EmptyEntities =
     "opis": "",
     "timecreation": "",
     "storno": "0",
-    "year": `${new Date().getFullYear().toString()}`
+    "year": `${new Date().getFullYear().toString()}`,
+    "channel": null
   },
 	"tic_docb": {
 		"id": null,

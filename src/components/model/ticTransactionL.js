@@ -27,10 +27,11 @@ import DateFunction from "../../utilities/DateFunction"
 import { Dropdown } from 'primereact/dropdown';
 import { useSearchParams } from 'react-router-dom';
 import DeleteDialog from '../dialog/DeleteDialog';
+import TicEventProdajaL from './ticEventProdajaL';
 
 export default function TicTransactionL(props) {
     const [searchParams] = useSearchParams();
-    const docVr = searchParams.get('docVr');    
+    const docVr = searchParams.get('docVr');
     const objName = 'tic_doc';
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [submitted, setSubmitted] = useState(false);
@@ -57,6 +58,8 @@ export default function TicTransactionL(props) {
     const [ddTicDocobjItem, setDdTicDocobjItem] = useState(null);
     const [ddTicDocobjItems, setDdTicDocobjItems] = useState(null);
     const [componentKey, setComponentKey] = useState(0);
+
+    const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
     let i = 0;
 
     const handleCancelClick = () => {
@@ -257,11 +260,35 @@ export default function TicTransactionL(props) {
         setGlobalFilterValue(value1);
     };
 
+    const handleEventProdajaClick = async (e, destination) => {
+      try {
+          setTicEventProdajaLDialog();
+      } catch (error) {
+          console.error(error);
+          toast.current.show({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to fetch ticArt data',
+              life: 3000
+          });
+      }
+    };
+
+    const setTicEventProdajaLDialog = (destination) => {
+        setTicEventProdajaLVisible(true);
+      }; 
+
+      const handleTicEventProdajaLDialogClose = (newObj) => {
+        setTicEventProdajaLVisible(false);
+      }; 
+
     const renderHeader = () => {
         return (
             <div className="flex card-container">
 
-
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
+                </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].TransactionList}</b>
                 <div className="flex-grow-1"></div>
@@ -470,17 +497,17 @@ export default function TicTransactionL(props) {
                 onSelectionChange={(e) => setTicDoc(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
-                // rowClassName={(rowData) => {
-                //     const isEditing = rowData === ticEventatts;
-                //     const customClass = rowClass(rowData);
+            // rowClassName={(rowData) => {
+            //     const isEditing = rowData === ticEventatts;
+            //     const customClass = rowClass(rowData);
 
-                //     return {
-                //         'editing-row': isEditing,
-                //         [customClass]: customClass !== '',
-                //     };
-                // }}
-                //virtualScrollerOptions={{ itemSize: 46 }}
-                //metaKeySelection={false}
+            //     return {
+            //         'editing-row': isEditing,
+            //         [customClass]: customClass !== '',
+            //     };
+            // }}
+            //virtualScrollerOptions={{ itemSize: 46 }}
+            //metaKeySelection={false}
             >
                 {/* <Column
                     //bodyClassName="text-center"
@@ -582,6 +609,26 @@ export default function TicTransactionL(props) {
                     />
                 )}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].EventList}
+                visible={ticEventProdajaLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setTicEventProdajaLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticEventProdajaLVisible && 
+                    <TicEventProdajaL 
+                        parameter={'inputTextValue'} 
+                        ticDocs={ticDocs} 
+                        ticDoc={props.ticDoc} 
+                        onTaskComplete={handleTicEventProdajaLDialogClose} 
+                        setTicEventProdajaLVisible={setTicEventProdajaLVisible} 
+                        dialog={true} 
+                        lookUp={true} 
+                    />}
+            </Dialog>            
             {/* <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} /> */}
         </div>
     );
