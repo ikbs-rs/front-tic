@@ -17,11 +17,13 @@ import DateFunction from "../../utilities/DateFunction";
 import ConfirmDialog from '../dialog/ConfirmDialog';
 import { CmnLoctpService } from '../../service/model/cmn/CmnLoctpService';
 import { Dropdown } from 'primereact/dropdown';
+import TicLoclinkL from "./ticLoclinkL"
 
 
 export default function TicEventlocL(props) {
 
   const objName = "tic_eventloc"
+  const LOCATION_CODE = "-1"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventloc = EmptyEntities[objName]
   emptyTicEventloc.event = props.ticEvent.id
@@ -45,6 +47,7 @@ export default function TicEventlocL(props) {
   const [componentKey, setComponentKey] = useState(0);
 
   const [addItems, setAddItems] = useState(true);
+  const [ticLoclinkLVisible, setTicLoclinkLVisible] = useState(false); 
 
   let i = 0
   const handleCancelClick = () => {
@@ -159,6 +162,10 @@ export default function TicEventlocL(props) {
     setTicEventloc(emptyTicEventloc);
   };
 
+  const handleTicLoclinkLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  };
+
   const findIndexById = (id) => {
     let index = -1;
 
@@ -175,6 +182,16 @@ export default function TicEventlocL(props) {
   const openNew = () => {
     setTicEventlocDialog({ ...emptyTicEventloc, loctp: ticLoctp?.id || -1 });
   };
+
+  const openLocLink = () => {
+    setTicLoclinkLDialog();
+  };
+
+  const setTicLoclinkLDialog = () => {
+    setShowMyComponent(true);
+    setTicLoclinkLVisible(true);
+
+  }
 
   const onRowSelect = (event) => {
     //ticEventloc.begda = event.data.begda
@@ -243,6 +260,9 @@ export default function TicEventlocL(props) {
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openLocLink} text raised disabled={!ticEventloc} />
+        </div>         
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handCopyClick} text raised />
         </div>
@@ -439,6 +459,28 @@ export default function TicEventlocL(props) {
           </button>
         </div>
       </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].LoclinkList}
+        visible={ticLoclinkLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicLoclinkLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicLoclinkL
+            parameter={"inputTextValue"}
+            ticEventloc={ticEventloc}
+            handleTicLoclinkLDialogClose={handleTicLoclinkLDialogClose}
+            setTicLoclinkLVisible={setTicLoclinkLVisible}
+            dialog={true}
+            loctpCode={LOCATION_CODE}
+            cmnLoctpId={null}
+            lookUp={false}
+          />
+        )}
+      </Dialog>        
       <ConfirmDialog
           visible={confirmDialogVisible}
           onHide={() => setConfirmDialogVisible(false)}

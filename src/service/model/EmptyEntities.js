@@ -840,6 +840,23 @@ const EmptyEntities =
     "color": "",
     "icon": ""
   },
+  "tic_loclink": {
+    "id": null,
+    "site": null,
+    "event": null,
+    "tp": 1,
+    "loctp1": -1,
+    "loc1": null,
+    "loctp2": null,
+    "loc2": null,
+    "val": "",
+    "begda": "",
+    "endda": "99991231",
+    "hijerarhija": 1,
+    "onoff": 0,
+    "color": "",
+    "icon": ""
+  },  
   // "cmn_par": {
   //   "id": null,
   //   "site": null,
