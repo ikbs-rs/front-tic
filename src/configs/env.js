@@ -1,4 +1,5 @@
 const env = {
+    DOMEN: 'http://brztest.ems.local',
     START_URL: 'http://brztest.ems.local/ems/',
     ADM_URL: 'http://brztest.ems.local/adm/',
     CMN_URL: 'http://brztest.ems.local/cmn/',
