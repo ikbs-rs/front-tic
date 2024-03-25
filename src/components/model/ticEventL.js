@@ -285,7 +285,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].AdmEntrance} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].EventLoc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />

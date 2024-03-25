@@ -102,6 +102,7 @@ console.log(props, "********************TicEventLTmp****************************
         const data = await ticEventService.getListaTmp();
         setTicEvents(data);        
         //props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
+        props.handleTicEventattsgrpLDialogClose({ obj: props.ticEvent });
         props.setTicEventTmpLVisible(false);
         //hideDeleteDialog();
         setConfirmDialogSettingsVisible(false);

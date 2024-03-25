@@ -32,6 +32,7 @@ import { Calendar } from 'primereact/calendar';
 import DateFunction from "../../utilities/DateFunction";
 import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
+import TicEventTmpL from './ticEventTmpL';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -62,6 +63,7 @@ export default function TicEventattsL(props) {
     const [ddTicEventatttpItems, setDdTicEventatttpItems] = useState(null);
     const [ticEventatttp, setTicEventatttp] = useState({});
     const [ticEventatttps, setTicEventatttps] = useState([]);
+    const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
 
     let i = 0;
 
@@ -79,7 +81,7 @@ export default function TicEventattsL(props) {
                     // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
-                    
+
                     console.log(data, "*********************data**************************#####################", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
                     const promisesDD = data.map(async (row) => {
@@ -152,6 +154,16 @@ export default function TicEventattsL(props) {
         setTicEventattsgrpDialog();
     };
 
+
+    const openEventTmp = () => {
+        setTicEventTmpDialog();
+    };
+
+    const setTicEventTmpDialog = () => {
+        setShowMyComponent(true);
+        setTicEventTmpLVisible(true);
+    };
+
     const setTicEventattsgrpDialog = () => {
         setShowMyComponent(true);
         setTicEventattsgrpLVisible(true);
@@ -197,7 +209,7 @@ export default function TicEventattsL(props) {
 
     const handleTicEventattsgrpLDialogClose = (newObj) => {
         const localObj = { newObj };
-        //console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+        console.log(props.ticEvent, "@@@@@@@@***********handleTicEventattsgrpLDialogClose********************@@@@@@@@@@@@@")
         setRefresh(++refresh);
     };
 
@@ -261,7 +273,7 @@ export default function TicEventattsL(props) {
                 break;
             case 'calendar':
                 val = await DateFunction.formatDateToDBFormat(DateFunction.dateGetValue((e.target && e.target.value) || ''))
-                rowData.text = val              
+                rowData.text = val
                 break;
             default:
                 val = '';
@@ -454,6 +466,9 @@ export default function TicEventattsL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].GroupAtts} icon="pi pi-plus-circle" severity="warning" onClick={openEventattsgrp} text raised />
                 </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={openEventTmp} text raised disabled={!props.ticEvent} />
+                </div>
                 <div className="flex-grow-1"></div>
                 <b>{translations[selectedLanguage].EventattsList}</b>
                 <div className="flex-grow-1"></div>
@@ -586,7 +601,7 @@ export default function TicEventattsL(props) {
             onChange={(e) => onInputChange(e, 'input', 'minfee', rowData, null)}
         />;
 
-    };    
+    };
     const validEditor = (rowData, field) => {
         return <Checkbox checked={rowData.valid === 1} onChange={(e) => onInputChange(e, 'checkbox', 'valid', rowData, null)} />;
 
@@ -940,7 +955,7 @@ export default function TicEventattsL(props) {
                     editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
                     //body={conditionTemplate}
                     onCellEditComplete={onCellEditComplete}
-                ></Column>                
+                ></Column>
                 <Column
                     field="valid"
                     filterField="valid"
@@ -1005,6 +1020,27 @@ export default function TicEventattsL(props) {
                         setVisible={setVisible}
                         dialog={true}
                         lookUp={false}
+                    />}
+            </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].EventTmpList}
+                visible={ticEventTmpLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicEventTmpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent &&
+                    <TicEventTmpL
+                        parameter={'inputTextValue'}
+                        ticEvent={props.ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        handleTicEventattsgrpLDialogClose={handleTicEventattsgrpLDialogClose}
+                        setTicEventTmpLVisible={setTicEventTmpLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
                     />}
             </Dialog>
             <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} />

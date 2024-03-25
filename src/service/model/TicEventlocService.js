@@ -159,5 +159,55 @@ export class TicEventlocService {
         }
 
     }
+
+    async postGrpEventloc(obj, newObj, addItems) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (obj.id === null ) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventloc/_s/param/?stm=tic_grpeventloc_s&objId1=${obj.id}&par1=${addItems}&par2=${obj.loc}&par3=${obj.tploc}&begda=${obj.begda}&endda=${obj.endda}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(newObj, "@@@@@@***************************postGrpEventatts*******************************@@@@@@@@@@@", url)
+            const response = await axios.post(url, {jsonObj}, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    } 
+    
+    async postGrpLoclink(obj,newObj, addItems, begda, enda) {
+        try {
+            console.log(addItems, "********************    ***postGrpEventattsk9999999999")
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (obj.id===null) {
+                throw new Error(
+                    "obj must be filled!"
+                );
+            }
+            const url = `${env.CMN_BACK_URL}/cmn/loclink/_s/param/?stm=cmn_grploclink_s&table=${JSON.stringify(obj)}&par1=${addItems}&begda=${begda}&endda=${enda}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            
+            const response = await axios.post(url, {jsonObj}, { headers });
+            console.log(response.data, "***************************postGrpEventatts*******************************", url)
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }    
 }
 

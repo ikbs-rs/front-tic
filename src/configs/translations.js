@@ -749,6 +749,8 @@ export const translations = {
         No_connection: "Без везе",
         minfee: "Лимит",
         CopySettings: "Копирај поставке",
+        GrpLink: "Групно повезивање",
+        EventLoc: "Локације"
     }
   };
   
