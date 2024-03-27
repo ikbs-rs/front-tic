@@ -20,7 +20,7 @@ import DateFunction from "../../utilities/DateFunction";
 
 
 export default function TicLoclinkL(props) {
-  console.log(props, "*********props*********************TicLoclinkL***********************************@@@@@@")
+  console.log(props, "@@@@@*********props*********************TicLoclinkL***********************************@@@@@@")
   const objName = "tic_loclink"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicLoclink = EmptyEntities[objName]
@@ -44,8 +44,11 @@ export default function TicLoclinkL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
 
-  const [cmnLoclinkgrpLVisible, setCmnLoclinkgrpLVisible] = useState(false);
+  // const [cmnLoclinkgrpLVisible, setCmnLoclinkgrpLVisible] = useState(false);
   const [loclinkTip, setLoclinkTip] = useState('');
+  let [refresh, setRefresh] = useState(null);
+  const [componentKey, setComponentKey] = useState(0);
+  const [ticLoclinkgrpLVisible, setTicLoclinkgrpLVisible] = useState(false);
 
    
   let i = 0
@@ -61,7 +64,7 @@ export default function TicLoclinkL(props) {
           const loctpCode = props.loctpCode ? props.loctpCode : props.ticEventloc.loctpCode
           const ticLoclinkService = new TicLoclinkService();
           console.log(props.loctpCode, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
-          const data = await ticLoclinkService.getListaLL(props.ticEventloc.loc, loctpCode);
+          const data = await ticLoclinkService.getTicListaLL(props.ticEventloc.loc, props.ticEvent.id, loctpCode);
           setTicLoclinks(data);
           initFilters();
         }
@@ -71,12 +74,17 @@ export default function TicLoclinkL(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [refresh]);
 
 
   const handleCmnLoclinkgrpLDialogClose = (newObj) => {
     const localObj = { newObj };
   }
+  const handleTicLoclinkgrpLDialogClose = (newObj) => {
+    const localObj = { newObj };
+    console.log(props.ticEvent, "@@@@@@@@@@@@@@@***********handleTicEventattsgrpLDialogClose********************##############")
+    setRefresh(++refresh);
+  };
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -271,7 +279,7 @@ export default function TicLoclinkL(props) {
   }
 
   const setCmnLoclinkgrpDialog = () => {
-    setCmnLoclinkgrpLVisible(true)
+    setTicLoclinkgrpLVisible(true)
   }   
   //  Dialog --->
 
@@ -447,10 +455,10 @@ export default function TicLoclinkL(props) {
       </Dialog>
       <Dialog
         header={translations[selectedLanguage].Loclinkgrp}
-        visible={cmnLoclinkgrpLVisible}
+        visible={ticLoclinkgrpLVisible}
         style={{ width: '60%' }}
         onHide={() => {
-          setCmnLoclinkgrpLVisible(false);
+          setTicLoclinkgrpLVisible(false);
           setShowMyComponent(false);
         }}
       >
@@ -459,12 +467,13 @@ export default function TicLoclinkL(props) {
             parameter={"inputTextValue"}
             cmnLoc={props.cmnLoc}
             ticEvent={props.ticEvent}
-            // handleDialogClose={handleDialogClose}
-            handleCmnLoclinkgrpLDialogClose={handleCmnLoclinkgrpLDialogClose}
-            setCmnLoclinkgrpLVisible={setCmnLoclinkgrpLVisible}
+            ticEventloc={props.ticEventloc}
+            handleTicLoclinkgrpLDialogClose={handleTicLoclinkgrpLDialogClose}
+            setTicLoclinkgrpLVisible={setTicLoclinkgrpLVisible}
             dialog={true}
             cmnLoctpId={props.cmnLoctpId}
             loctpCode={props.loctpCode}
+            lista={"LL"} // sa koje liste pozivam
           />
         )}        
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

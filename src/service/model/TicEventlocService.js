@@ -160,22 +160,30 @@ export class TicEventlocService {
 
     }
 
-    async postGrpEventloc(obj, newObj, addItems) {
+    async postGrpEventloc(obj, newObj, delItem, lista, eventloc) {
         try {
+
+            const stm = (lista=='LL')?'tic_grpeventlocl_s':'tic_grpeventloc_s'
+            var loc2=''
+            console.log("stn", stm, "$$$", obj, "!!!", newObj, "+++delItem+++", delItem, "***", lista, "@@@")
             const selectedLanguage = localStorage.getItem('sl') || 'en'
             if (obj.id === null ) {
                 throw new Error(
                     "objId must be filled!"
                 );
             }
-            const url = `${env.TIC_BACK_URL}/tic/eventloc/_s/param/?stm=tic_grpeventloc_s&objId1=${obj.id}&par1=${addItems}&par2=${obj.loc}&par3=${obj.tploc}&begda=${obj.begda}&endda=${obj.endda}&sl=${selectedLanguage}`;
+            if (eventloc?.loc){
+                loc2 = eventloc?.loc
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventloc/_s/param/?stm=${stm}&objId1=${obj.id}&par1=${delItem}&par2=${obj.loc}&par3=${obj.tploc}&begda=${obj.begda}&endda=${obj.endda}&objId2=${loc2}&sl=${selectedLanguage}`;
+            
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(newObj, "@@@@@@***************************postGrpEventatts*******************************@@@@@@@@@@@", url)
+            console.log(newObj, "@@@@@@************BMV********postGrpEventatts**********BMV**********@@@@@@@@@@@", url, "@@+@@", obj)
             const response = await axios.post(url, {jsonObj}, { headers });
             return response.data.items;
         } catch (error) {
@@ -184,16 +192,16 @@ export class TicEventlocService {
         }
     } 
     
-    async postGrpLoclink(obj,newObj, addItems, begda, enda) {
+    async postGrpEventlocl(obj,newObj, addItems, begda, enda) {
         try {
-            console.log(addItems, "********************    ***postGrpEventattsk9999999999")
             const selectedLanguage = localStorage.getItem('sl') || 'en'
             if (obj.id===null) {
                 throw new Error(
                     "obj must be filled!"
                 );
             }
-            const url = `${env.CMN_BACK_URL}/cmn/loclink/_s/param/?stm=cmn_grploclink_s&table=${JSON.stringify(obj)}&par1=${addItems}&begda=${begda}&endda=${enda}&sl=${selectedLanguage}`;
+            const url = `${env.CMN_BACK_URL}/cmn/loclink/_s/param/?stm=cmn_grploclink_s&att=${JSON.stringify(obj)}&par1=${addItems}&begda=${begda}&endda=${enda}&sl=${selectedLanguage}`;
+            console.log(obj, "@@@@@@*****************postGrpEventatts********************@@@@@@@@@@@", url, "@@+@@", "@@+@@", newObj)
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
@@ -202,12 +210,30 @@ export class TicEventlocService {
             const jsonObj = JSON.stringify(newObj)
             
             const response = await axios.post(url, {jsonObj}, { headers });
-            console.log(response.data, "***************************postGrpEventatts*******************************", url)
+            // console.log(response.data, "***************************postGrpEventatts*******************************", url)
             return response.data.item;
         } catch (error) {
             console.error(error);
             throw error;
         }
-    }    
+    } 
+    
+    async getListaLL(objId, eventObj) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventloc/_v/lista/?stm=tic_locll_v&objid=${objId}&par1=${eventObj.loc}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+          Authorization: tokenLocal.token
+        };
+    
+        try {
+          const response = await axios.get(url, { headers });
+          console.log(url, "*****************getListaLL******************", response.data)
+          return response.data.item;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }    
 }
 

@@ -305,7 +305,8 @@ export default function TicEventL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Activation} icon="pi pi-caret-right" severity="danger" onClick={handleActivationClick} text raised disabled={!ticEvent} />
                 </div>
-                {/*        <div className="flex flex-wrap gap-1">
+                {/*        
+                <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
         */}
@@ -459,8 +460,8 @@ export default function TicEventL(props) {
                 rows={10}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 onSelectionChange={(e) => setTicEvent(e.value)}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
+                // onRowSelect={onRowSelect}
+                // onRowUnselect={onRowUnselect}
             >
                 <Column
                     //bodyClassName="text-center"

@@ -36,7 +36,7 @@ export default function CmnLoclinkgrpL(props) {
   const [visible, setVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [addItems, setAddItems] = useState(true);
-  
+
   let [refresh, setRefresh] = useState(null);
   const [ddTicLoctpItem, setDdTicLoctpItem] = useState(null);
   const [ddTicLoctpItems, setDdTicLoctpItems] = useState(null);
@@ -50,7 +50,7 @@ export default function CmnLoclinkgrpL(props) {
   const [cmnLoctp, setCmnLoctp] = useState({});
   const [cmnLoctps, setCmnLoctps] = useState([]);
   const [cmnEventloc, setCmnEventloc] = useState(emptyCmnloclink);
-  const [refCode, setRefCode] = useState(props.loctpCode||-1);
+  const [refCode, setRefCode] = useState(props.loctpCode || -1);
 
   // useEffect(() => {
   //   ProductService.getProductsMini().then((data) => setProducts(data));
@@ -60,14 +60,13 @@ export default function CmnLoclinkgrpL(props) {
     async function fetchData() {
       try {
         ++i
-        if (i < 2) {
-          const ticEventlocService = new TicEventlocService();
-          const data = await ticEventlocService.postGrpLoclink(props.cmnLoc, addItems, props.ticEvent.begda, props.ticEvent.endda);
-          console.log(data, "************************************CmnLoclinkgrpL*************************************")
-          setCmnLoclinkgrps(data);
-          console.log("***** data *************####### data ################### data ######", data)
-          initFilters();
-        }
+        // if (i < 2) {
+        const ticEventlocService = new TicEventlocService();
+        const data = await ticEventlocService.getListaLL(refCode || -1, props.ticEvent);
+        setCmnLoclinkgrps(data);
+        console.log(refCode, "***** data *************####### data ################### data ######@@@@@@@@@@@", data)
+        initFilters();
+        // }
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -76,7 +75,7 @@ export default function CmnLoclinkgrpL(props) {
     fetchData();
   }, [refresh, componentKey, refCode]);
 
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -84,10 +83,10 @@ export default function CmnLoclinkgrpL(props) {
         const data = await cmnLoctpService.getCmnLoctps();
 
         setCmnLoctps(data)
-        console.log("@---------------------******* !!! ***********------------------------@", data)
 
         const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
         setDdCmnLoctpItems(dataDD);
+        console.log(dataDD, "!!@---------------------******* !!! ***********------------------------@!!", data)
         //setDdTicLoctpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
       } catch (error) {
         console.error(error);
@@ -102,14 +101,14 @@ export default function CmnLoclinkgrpL(props) {
     props.setTicLoclinkgrpLVisible(false);
   };
 
-  const handleGetSelectedRowsClick = async () => {
-    setConfirmDialogVisible(true);
-    await setAddItems(false)
-  };
-
-  const handleGetSelectedAddRowsClick = async () => {
+  const handleCopySelectedRowsClick = async () => {
     setConfirmDialogVisible(true);
     await setAddItems(true)
+  };
+
+  const handleAddSelectedRowsClick = async () => {
+    setConfirmDialogVisible(true);
+    await setAddItems(false)
   };
 
 
@@ -138,10 +137,14 @@ export default function CmnLoclinkgrpL(props) {
 
 
   const handleConfirm = async () => {
-    // console.log(selectedProducts, "***********handleConfirm********************")
+    console.log(addItems, "@@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@", props.lista)
     setSubmitted(true);
     const ticEventlocService = new TicEventlocService(selectedProducts);
-    await ticEventlocService.postGrpEventloc(props.ticEvent, selectedProducts, addItems);
+    // if (props.lista == 'EL') {
+      await ticEventlocService.postGrpEventloc(props.ticEvent, selectedProducts, addItems, props.lista, props.ticEventloc);
+    // } else {
+    //   await ticEventlocService.postGrpEventloc(props.ticEvent, selectedProducts, addItems, props.lista, props.ticEventloc, props.lista);
+    // }
     props.handleTicLoclinkgrpLDialogClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
     setVisible(false);
@@ -156,12 +159,13 @@ export default function CmnLoclinkgrpL(props) {
   const onLoctpChange = (e) => {
     let _cmnLoclinkgrps = { ...cmnLoclinkgrps };
     let val = (e.target && e.target.value && e.target.value.code) || '';
-    setDdTicLoctpItem(e.value);
-    const foundItem = ticLoctps.find((item) => item.id === val);
-    setTicLoctp(foundItem || null);
+    setDdCmnLoctpItem(e.value);
+    const foundItem = cmnLoctps.find((item) => item.id === val);
+    setCmnLoctp(foundItem || null);
     _cmnLoclinkgrps.tp = val;
-    //emptyTicEventloc.tp = val;
-    setTicEventloc(_cmnLoclinkgrps);
+    setRefCode(val);
+    console.log(e.value, "!!!!!*************************_cmnLoclinkgrps***************************!!!!!", foundItem, val)
+    // setCmnLoclinkgrps(_cmnLoclinkgrps);
     setRefresh(++refresh);
   }
 
@@ -207,10 +211,10 @@ export default function CmnLoclinkgrpL(props) {
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handleGetSelectedRowsClick} text raised />
+          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handleCopySelectedRowsClick} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Add} icon="pi pi-plus" onClick={handleGetSelectedAddRowsClick} severity="warning" text raised />
+          <Button label={translations[selectedLanguage].Add} icon="pi pi-plus" onClick={handleAddSelectedRowsClick} severity="warning" text raised />
         </div>
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventattsgrpList}</b>

@@ -117,12 +117,12 @@ export default function TicEventlocL(props) {
     await setAddItems(true)
   };
   const handleConfirmCopy = async () => {
-    console.log(ticLoctp?.id || -1, "#######***********tpId********************######", addItems)
+    console.log(ticLoctp?.id || -1, "#######***********tpId******** handleConfirmCopy ************######", addItems)
     setSubmitted(true);
     const ticEventlocService = new TicEventlocService();
     await ticEventlocService.postTpEventloc(props.ticEvent.id, ticLoctp?.id || -1, addItems);
     // props.handleTicEventattsgrpLDialogClose({ obj: props.ticEvent });
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Поставке успешно копиране ?', life: 3000 });
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
     setRefresh(++refresh);
     setVisible(false);
     setConfirmDialogVisible(false);
@@ -144,7 +144,7 @@ export default function TicEventlocL(props) {
 
   const handleTicLoclinkgrpLDialogClose = (newObj) => {
     const localObj = { newObj };
-    //console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+    console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
     setRefresh(++refresh);
   };
 
@@ -494,6 +494,8 @@ export default function TicEventlocL(props) {
           <TicLoclinkL
             parameter={"inputTextValue"}
             ticEventloc={ticEventloc}
+            cmnLoc={props.cmnLoc}
+            ticEvent={props.ticEvent}      
             handleTicLoclinkLDialogClose={handleTicLoclinkLDialogClose}
             setTicLoclinkLVisible={setTicLoclinkLVisible}
             dialog={true}
@@ -517,12 +519,14 @@ export default function TicEventlocL(props) {
             parameter={"inputTextValue"}
             cmnLoc={props.cmnLoc}
             ticEvent={props.ticEvent}
+            // ticEventloc={ticEventloc}
             // handleDialogClose={handleDialogClose}
             handleTicLoclinkgrpLDialogClose={handleTicLoclinkgrpLDialogClose}
             setTicLoclinkgrpLVisible={setTicLoclinkgrpLVisible}
             dialog={true}
             cmnLoctpId={props.cmnLoctpId}
             loctpCode={props.loctpCode}
+            lista={"EL"} // sa koje liste pozivam
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>
