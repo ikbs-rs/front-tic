@@ -103,6 +103,7 @@ router.use('/cmn/x/terratt', checkPermissions(), abstructX)
 router.use('/cmn/x/terrtp', checkPermissions(), abstructX)
 router.use('/cmn/x/tgp', checkPermissions(), abstructX)
 router.use('/cmn/x/um', checkPermissions(), abstructX)
+router.use('/cmn/x/val', checkPermissions(), abstructX)
 
 //router.use('/adm/services', servicesRoute)
 

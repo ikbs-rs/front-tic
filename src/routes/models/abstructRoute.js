@@ -1,6 +1,7 @@
 import express from "express";
 import abstructController from "../../controllers/abstructController.js";
 import vRoute from './vRoute.js'
+import sRoute from "./sRoute.js";
 import { checkPermissions } from '../../security/interceptors.js'
 
 const router = express.Router();
@@ -15,6 +16,8 @@ router.use("/", (req, res, next) => {
   } else {
     if (req.path.startsWith("/_v")) {
       router.use("/_v", vRoute);
+    } else if (req.path.startsWith("/_s")) {
+      router.use("/_s", sRoute);
     } else {    
       router.get("/", abstructController.getAll);
       router.get("/:id", abstructController.getById);

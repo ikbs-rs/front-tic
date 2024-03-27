@@ -109,9 +109,10 @@ const update = async (sqlQuery, objName, objData, lang) => {
         const result3 = await db.query(sqlQuery3);
         if (result3.rows[0].count == 0) {
           const sqlQuery3 = `
-        insert into tic_venue (venue_id, site, loc_id, venue_name, code) 
-        values (${objData.id}, ${objData.site}, ${objData.id}, '${objData.text}', '${objData.code}')
+        insert into tic_venue (venue_id, site, loc_id, venue_name, code, venue_type, map_min_zoom, map_max_zoom, map_max_resolution) 
+        values (${objData.id}, ${objData.site}, ${objData.id}, '${objData.text}', '${objData.code}', '${objData.tp}', 1, 3, 1)
         `
+        // console.log(sqlQuery3, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%insert%%%%%%%%%%%%%%%%%insert%%%%%%%%%%%%%%%%%%%", objData)
           const result31 = await db.query(sqlQuery3);
         } else {
           const sqlQuery3 = `
@@ -122,7 +123,7 @@ const update = async (sqlQuery, objName, objData, lang) => {
               site = ${objData.site}
         WHERE loc_id = ${objData.id}
         `
-          //console.log(sqlQuery3, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%update%%%%%%%%%%%%%%%%%update%%%%%%%%%%%%%%%%%%%")
+          // console.log(sqlQuery3, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%update%%%%%%%%%%%%%%%%%update%%%%%%%%%%%%%%%%%%%", objData)
           const result32 = await db.query(sqlQuery3);
         }
       }
