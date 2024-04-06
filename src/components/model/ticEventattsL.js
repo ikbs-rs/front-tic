@@ -33,6 +33,7 @@ import DateFunction from "../../utilities/DateFunction";
 import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
 import TicEventTmpL from './ticEventTmpL';
+import { Tooltip } from 'primereact/tooltip';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -543,8 +544,12 @@ export default function TicEventattsL(props) {
     const eventattsTemplate = (rowData) => {
         return (
             <div className="flex flex-wrap gap-1">
+            <Tooltip target=".eventatts-tooltip" position="top" mouseTrack mouseTrackLeft={2} mouseTrackTop={2}>
+                {rowData.description}
+            </Tooltip>                
                 <Button
                     type="button"
+                    // className="eventatts-tooltip"
                     icon="pi pi-pencil"
                     style={{ width: '24px', height: '24px' }}
                     onClick={() => {
@@ -868,6 +873,7 @@ export default function TicEventattsL(props) {
             <DataTable
                 key={componentKey}
                 dataKey="id"
+                size={"small"}
                 selectionMode="single"
                 selection={ticEventatts}
                 loading={loading}

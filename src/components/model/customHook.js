@@ -98,6 +98,7 @@ export const useDropdown = (...args) => {
 export async function fetchObjData(...args) {
     // console.log(args, args[0], "****************************coostomHook***********************!!!!!!!!!!****")
     const obj = args[3]
+    const timeout = 15000;
     try {
         let backend = '';
         let url = '';
@@ -147,7 +148,7 @@ export async function fetchObjData(...args) {
             Authorization: tokenLocal.token
         };
         //console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
-        const response = await axios.get(url, { headers });
+        const response = await axios.get(url, { headers, timeout });
         const datas = response.data.items || response.data.item;
         const items = datas.map(({ text, id }) => ({ name: text, code: id }));
         // console.log(items, "*******************************items*************************", datas, args[2])

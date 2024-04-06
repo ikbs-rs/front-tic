@@ -49,7 +49,7 @@ export class CmnParService {
 
         try {
             const response = await axios.get(url, { headers });
-            return response.data.items;
+            return response.data.items||response.data.item;
         } catch (error) {
             console.error(error);
             throw error;

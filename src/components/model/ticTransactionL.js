@@ -19,7 +19,7 @@ import { Toast } from "primereact/toast";
 import './index.css';
 import { TicDocService } from "../../service/model/TicDocService";
 import { TicDocvrService } from "../../service/model/TicDocvrService";
-import TicDoc from './ticDoc';
+import TicTransaction from './ticTransaction';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
@@ -475,6 +475,7 @@ export default function TicTransactionL(props) {
             <DataTable
                 key={componentKey}
                 dataKey="id"
+                size={"small"}
                 rowClassName={rowClass}
                 selectionMode="single"
                 selection={ticDoc}
@@ -588,7 +589,20 @@ export default function TicTransactionL(props) {
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog
-                header={translations[selectedLanguage].Doc}
+                // header={translations[selectedLanguage].Doc}
+                header={
+                    <div className="dialog-header">
+                        <Button 
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times" 
+                            onClick={() => {
+                                setVisible(false);
+                                // setShowMyComponent(false);
+                            }} 
+                            severity="secondary" raised 
+                        />
+                        {/* <span>{translations[selectedLanguage].Doc}</span>                         */}
+                    </div>
+                }                
                 visible={visible}
                 style={{ width: '95%', height: '1400px' }}
                 onHide={() => {
@@ -597,7 +611,7 @@ export default function TicTransactionL(props) {
                 }}
             >
                 {showMyComponent && (
-                    <TicDoc
+                    <TicTransaction
                         parameter={"inputTextValue"}
                         ticDoc={ticDoc}
                         handleDialogClose={handleDialogClose}
@@ -610,9 +624,9 @@ export default function TicTransactionL(props) {
                 )}
             </Dialog>
             <Dialog
-                header={translations[selectedLanguage].EventList}
+                // header={translations[selectedLanguage].EventList}
                 visible={ticEventProdajaLVisible}
-                style={{ width: '90%', height: '1400px' }}
+                style={{ width: '95%', height: '1400px' }}
                 onHide={() => {
                     setTicEventProdajaLVisible(false);
                     setShowMyComponent(false);

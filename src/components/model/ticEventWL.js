@@ -42,6 +42,8 @@ export default function TicEventWL(props) {
   const [eventobjTip, setEventobjTip] = useState('');
   const LOCATION_CODE = "-1"
 
+  const [activeTabIndex, setActiveTabIndex] = useState(1);
+
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventobjLVisible(false);
@@ -92,18 +94,21 @@ export default function TicEventWL(props) {
   const handleTaskComplete = (data) => {
     props.onTaskComplete(data);
   };
+  const tabHeaderTemplate = () => {
+
+    return (
+      <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} severity="secondary" raised  />
+    )
+  };
 
   return (
     <>
       {/* <div className="card"> */}
-      <div className="flex card-container">
-        {/* <Button onClick={() => handleTaskComplete()} label={translations[selectedLanguage].Confirm} text raised icon="pi pi-table" /> */}
+      {/* <div className="flex card-container">
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
-      </div>
-      <TabView>
-
-
-
+      </div> */}
+      <TabView activeIndex={activeTabIndex}>
+        <TabPanel headerTemplate={tabHeaderTemplate} />
         <TabPanel header={translations[selectedLanguage].Channels}>
           <TicEventobjL
             key={"XSCT"}

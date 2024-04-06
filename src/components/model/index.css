@@ -1,5 +1,13 @@
 .p-dialog .p-dialog-header .p-dialog-header-icons {
-  display: none;
+  display: flex;
+}
+
+/* CSS */
+.custom-row-color:nth-child(even) {
+  background-color: #e9efeb; /* Promenite boju po potrebi */
+}
+.customa-row-color:nth-child(even) {
+  background-color: #4bb6f4; /* Promenite boju po potrebi */
 }
 
 .p-datatable .p-datatable-tbody .editing-row {

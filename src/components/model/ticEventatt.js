@@ -10,6 +10,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from '../../configs/translations';
+import { InputTextarea } from 'primereact/inputtextarea';
+
 
 const TicEventatt = (props) => {
     console.log(props);
@@ -38,7 +40,7 @@ const TicEventatt = (props) => {
         { name: `${translations[selectedLanguage].No_connection}`, code: '0' },
         { name: `${translations[selectedLanguage].Paymenttp}`, code: '1' },
         { name: `${translations[selectedLanguage].Sales_channels}`, code: '2' }
-      //  { name: 'Option 3', code: '3' }
+        //  { name: 'Option 3', code: '3' }
     ];
 
     const [linktpItem, setLinktpItem] = useState(null);
@@ -46,7 +48,7 @@ const TicEventatt = (props) => {
 
     const [showDdCmnLinkItem, setShowDdCmnLinkItem] = useState(false);
     const [ddCmnLink, setDdCmnLink] = useState(null);
-    const [ddCmnLinks, setDdCmnLinks] = useState(null);    
+    const [ddCmnLinks, setDdCmnLinks] = useState(null);
     const [ddCmnLinkItem, setDdCmnLinkItem] = useState(null);
     const [ddCmnLinkItems, setDdCmnLinkItems] = useState([]);
 
@@ -58,7 +60,7 @@ const TicEventatt = (props) => {
 
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticEventatt.valid));
-    }, []);    
+    }, []);
 
     useEffect(() => {
         async function fetchData() {
@@ -115,7 +117,7 @@ const TicEventatt = (props) => {
     useEffect(() => {
         setLinktpItems(linktpValues);
     }, []);
-    
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -130,7 +132,7 @@ const TicEventatt = (props) => {
                         data = await ticEventattService.getCmnObjs('XPK');
                     } else if (linktpItem.code == '3') {
                         const ticEventattService = new TicEventattService();
-                        data = await ticEventattService.getCmnInputtps();                        
+                        data = await ticEventattService.getCmnInputtps();
                     }
                     setDdCmnLinks(data);
                     const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
@@ -367,6 +369,19 @@ const TicEventatt = (props) => {
                             {submitted && !ticEventatt.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
+                    <div className="field col-12 md:col-12">
+                        <label htmlFor="description">{translations[selectedLanguage].Description}</label>
+                        <InputTextarea
+                            id="description"
+                            rows={5}
+                            autoResize
+                            style={{ width: '100%' }}
+                            // cols={100}
+                            value={ticEventatt.description}
+                            onChange={(e) => onInputChange(e, 'text', 'description')}
+                        />
+                    </div>
+                    {/* <InputTextarea value={value} onChange={(e) => setValue(e.target.value)} rows={5} cols={30} /> */}
 
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}

@@ -474,7 +474,8 @@ const EmptyEntities =
     "ddlist": "",
     "tp": null,
 		"link": null,
-		"linktp": null   
+		"linktp": null,
+		"description": "" 
   },
   "tic_eventatts": {
     "id": null,

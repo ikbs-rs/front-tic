@@ -750,7 +750,11 @@ export const translations = {
         minfee: "Лимит",
         CopySettings: "Копирај поставке",
         GrpLink: "Групно повезивање",
-        EventLoc: "Локације"
+        EventLoc: "Локације",
+        Order_info: "Order info:",
+        Customer_info: "Customer info:",
+        Transaction_info: "Transaction info:",
+        Print: "Print",
     }
   };
   

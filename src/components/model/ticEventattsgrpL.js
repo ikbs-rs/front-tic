@@ -202,6 +202,7 @@ export default function TicEventattsgrpL(props) {
       </div> */}
       <DataTable
         value={ticEventattsgrps}
+        size={"small"}
         selectionMode={rowClick ? null : "checkbox"}
         selection={selectedProducts}
         onSelectionChange={(e) => setSelectedProducts(e.value)}
