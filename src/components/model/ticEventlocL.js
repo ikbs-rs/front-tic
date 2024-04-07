@@ -18,10 +18,11 @@ import ConfirmDialog from '../dialog/ConfirmDialog';
 import { CmnLoctpService } from '../../service/model/cmn/CmnLoctpService';
 import { Dropdown } from 'primereact/dropdown';
 import TicLoclinkL from "./ticLoclinkL"
+import TicLoclinkgrpL from './ticLoclinkgrpL';
 
 
 export default function TicEventlocL(props) {
-
+  console.log(props, "@@@@@@@@@@@@@@@@@@@@@@@@@@@ TicEventlocL - props @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   const objName = "tic_eventloc"
   const LOCATION_CODE = "-1"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -47,7 +48,8 @@ export default function TicEventlocL(props) {
   const [componentKey, setComponentKey] = useState(0);
 
   const [addItems, setAddItems] = useState(true);
-  const [ticLoclinkLVisible, setTicLoclinkLVisible] = useState(false); 
+  const [ticLoclinkLVisible, setTicLoclinkLVisible] = useState(false);
+  const [ticLoclinkgrpLVisible, setTicLoclinkgrpLVisible] = useState(false);
 
   let i = 0
   const handleCancelClick = () => {
@@ -115,12 +117,12 @@ export default function TicEventlocL(props) {
     await setAddItems(true)
   };
   const handleConfirmCopy = async () => {
-    console.log(ticLoctp?.id || -1, "#######***********tpId********************######", addItems)
+    console.log(ticLoctp?.id || -1, "#######***********tpId******** handleConfirmCopy ************######", addItems)
     setSubmitted(true);
     const ticEventlocService = new TicEventlocService();
     await ticEventlocService.postTpEventloc(props.ticEvent.id, ticLoctp?.id || -1, addItems);
     // props.handleTicEventattsgrpLDialogClose({ obj: props.ticEvent });
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Поставке успешно копиране ?', life: 3000 });
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
     setRefresh(++refresh);
     setVisible(false);
     setConfirmDialogVisible(false);
@@ -139,6 +141,12 @@ export default function TicEventlocL(props) {
     setConfirmDialogVisible(false);
   };
 
+
+  const handleTicLoclinkgrpLDialogClose = (newObj) => {
+    const localObj = { newObj };
+    console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+    setRefresh(++refresh);
+  };
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -186,6 +194,12 @@ export default function TicEventlocL(props) {
   const openLocLink = () => {
     setTicLoclinkLDialog();
   };
+
+
+  const openGrpLink = () => {
+    setTicLoclinkgrpDialog();
+  };
+
 
   const setTicLoclinkLDialog = () => {
     setShowMyComponent(true);
@@ -252,20 +266,24 @@ export default function TicEventlocL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-         <div className="flex flex-wrap gap-1" />
-         {(!props.lookUp) ? (
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        /> 
+        <div className="flex flex-wrap gap-1" />
+        {(!props.lookUp) ? (
+          <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
+          />
         ) : null}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openLocLink} text raised disabled={!ticEventloc} />
-        </div>         
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handCopyClick} text raised />
         </div>
+        {/* <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" severity="danger" onClick={handCopyClick} text raised />
+        </div> */}
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].GrpLink} icon="pi pi-plus" severity="warning" onClick={openGrpLink} text raised />
+        </div>
+
         {/* <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].AutoAtts} icon="pi pi-copy" severity="warning" onClick={handleAutoInputClick} text raised />
         </div> */}
@@ -315,6 +333,10 @@ export default function TicEventlocL(props) {
     setVisible(true)
     setEventlocTip("CREATE")
     setTicEventloc({ ...ticEventloc });
+  }
+
+  const setTicLoclinkgrpDialog = () => {
+    setTicLoclinkgrpLVisible(true)
   }
   //  Dialog --->
 
@@ -381,8 +403,8 @@ export default function TicEventlocL(props) {
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        rows={125}
+        rowsPerPageOptions={[125, 250, 500, 1000]}
         onSelectionChange={(e) => setTicEventloc(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
@@ -472,6 +494,8 @@ export default function TicEventlocL(props) {
           <TicLoclinkL
             parameter={"inputTextValue"}
             ticEventloc={ticEventloc}
+            cmnLoc={props.cmnLoc}
+            ticEvent={props.ticEvent}      
             handleTicLoclinkLDialogClose={handleTicLoclinkLDialogClose}
             setTicLoclinkLVisible={setTicLoclinkLVisible}
             dialog={true}
@@ -480,13 +504,44 @@ export default function TicEventlocL(props) {
             lookUp={false}
           />
         )}
-      </Dialog>        
+      </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].Loclinkgrp}
+        visible={ticLoclinkgrpLVisible}
+        style={{ width: '60%' }}
+        onHide={() => {
+          setTicLoclinkgrpLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicLoclinkgrpL
+            parameter={"inputTextValue"}
+            cmnLoc={props.cmnLoc}
+            ticEvent={props.ticEvent}
+            // ticEventloc={ticEventloc}
+            // handleDialogClose={handleDialogClose}
+            handleTicLoclinkgrpLDialogClose={handleTicLoclinkgrpLDialogClose}
+            setTicLoclinkgrpLVisible={setTicLoclinkgrpLVisible}
+            dialog={true}
+            cmnLoctpId={props.cmnLoctpId}
+            loctpCode={props.loctpCode}
+            lista={"EL"} // sa koje liste pozivam
+          />
+        )}
+        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+          <button className="p-dialog-header-close p-link">
+            <span className="p-dialog-header-close-icon pi pi-times"></span>
+          </button>
+        </div>
+      </Dialog>
+
       <ConfirmDialog
-          visible={confirmDialogVisible}
-          onHide={() => setConfirmDialogVisible(false)}
-          onConfirm={handleConfirmCopy}
-          uPoruka={'Копирањие поставки, да ли сте сигурни?'}
-        />      
+        visible={confirmDialogVisible}
+        onHide={() => setConfirmDialogVisible(false)}
+        onConfirm={handleConfirmCopy}
+        uPoruka={'Копирањие поставки, да ли сте сигурни?'}
+      />
     </div>
   );
 }

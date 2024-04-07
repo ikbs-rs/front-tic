@@ -9,6 +9,7 @@ import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import { TicLoclinkService } from "../../service/model/TicLoclinkService";
 import TicLoclink from './ticLoclink';
+import TicLoclinkgrpL from './ticLoclinkgrpL';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -17,8 +18,9 @@ import DateFunction from "../../utilities/DateFunction";
 
 
 
+
 export default function TicLoclinkL(props) {
-  console.log(props, "*********props*********************TicLoclinkL***********************************@@@@@@")
+  console.log(props, "@@@@@*********props*********************TicLoclinkL***********************************@@@@@@")
   const objName = "tic_loclink"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicLoclink = EmptyEntities[objName]
@@ -41,7 +43,12 @@ export default function TicLoclinkL(props) {
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
+
+  // const [cmnLoclinkgrpLVisible, setCmnLoclinkgrpLVisible] = useState(false);
   const [loclinkTip, setLoclinkTip] = useState('');
+  let [refresh, setRefresh] = useState(null);
+  const [componentKey, setComponentKey] = useState(0);
+  const [ticLoclinkgrpLVisible, setTicLoclinkgrpLVisible] = useState(false);
 
    
   let i = 0
@@ -57,7 +64,7 @@ export default function TicLoclinkL(props) {
           const loctpCode = props.loctpCode ? props.loctpCode : props.ticEventloc.loctpCode
           const ticLoclinkService = new TicLoclinkService();
           console.log(props.loctpCode, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
-          const data = await ticLoclinkService.getListaLL(props.ticEventloc.loc, loctpCode);
+          const data = await ticLoclinkService.getTicListaLL(props.ticEventloc.loc, props.ticEvent.id, loctpCode);
           setTicLoclinks(data);
           initFilters();
         }
@@ -67,7 +74,17 @@ export default function TicLoclinkL(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [refresh]);
+
+
+  const handleCmnLoclinkgrpLDialogClose = (newObj) => {
+    const localObj = { newObj };
+  }
+  const handleTicLoclinkgrpLDialogClose = (newObj) => {
+    const localObj = { newObj };
+    console.log(props.ticEvent, "@@@@@@@@@@@@@@@***********handleTicEventattsgrpLDialogClose********************##############")
+    setRefresh(++refresh);
+  };
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -109,6 +126,9 @@ export default function TicLoclinkL(props) {
     setTicLoclinkDialog(emptyTicLoclink);
   };
 
+  const openGrpLink = () => {
+    setCmnLoclinkgrpDialog();
+  };   
 
 
   const onRowSelect = (event) => {
@@ -167,7 +187,10 @@ export default function TicLoclinkL(props) {
         )}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
-        </div>       
+        </div> 
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].GrpLink} icon="pi pi-plus" severity="warning" onClick={openGrpLink} text raised  />
+        </div>               
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].LoclinkList}</b>
         <div className="flex-grow-1"></div>
@@ -254,6 +277,10 @@ export default function TicLoclinkL(props) {
     setLoclinkTip("CREATE")
     setTicLoclink({ ...ticLoclink });
   }
+
+  const setCmnLoclinkgrpDialog = () => {
+    setTicLoclinkgrpLVisible(true)
+  }   
   //  Dialog --->
 
   const header = renderHeader();
@@ -426,6 +453,35 @@ export default function TicLoclinkL(props) {
           </button>
         </div>
       </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].Loclinkgrp}
+        visible={ticLoclinkgrpLVisible}
+        style={{ width: '60%' }}
+        onHide={() => {
+          setTicLoclinkgrpLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicLoclinkgrpL
+            parameter={"inputTextValue"}
+            cmnLoc={props.cmnLoc}
+            ticEvent={props.ticEvent}
+            ticEventloc={props.ticEventloc}
+            handleTicLoclinkgrpLDialogClose={handleTicLoclinkgrpLDialogClose}
+            setTicLoclinkgrpLVisible={setTicLoclinkgrpLVisible}
+            dialog={true}
+            cmnLoctpId={props.cmnLoctpId}
+            loctpCode={props.loctpCode}
+            lista={"LL"} // sa koje liste pozivam
+          />
+        )}        
+        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+          <button className="p-dialog-header-close p-link">
+            <span className="p-dialog-header-close-icon pi pi-times"></span>
+          </button>
+        </div>
+      </Dialog>      
     
     </div>
   );

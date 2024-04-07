@@ -4,7 +4,7 @@ import Token from "../../utilities/Token";
 
 export class TicLoclinkService {
 
-    async getLista(objId) {
+    async getLista(objId, loc) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.CMN_BACK_URL}/tic/loclink/_v/fkey/?stm=tic_loclink_v&id=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
@@ -21,9 +21,9 @@ export class TicLoclinkService {
         }
     }
 
-    async getListaLL(objId, locCode) {
+    async getTicListaLL(objId, eventId, locCode) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
-        const url = `${env.CMN_BACK_URL}/tic/loclink/_v/fkey/?stm=tic_loclinkll_v&item=${locCode}&id=${objId}&sl=${selectedLanguage}`;
+        const url = `${env.TIC_BACK_URL}/tic/loclink/_v/lista/?stm=tic_loclinkll_v&objName=${locCode}&objid=${objId}&par1=${eventId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
             Authorization: tokenLocal.token

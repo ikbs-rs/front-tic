@@ -15,9 +15,10 @@ import DateFunction from '../../utilities/DateFunction';
 import { useFetchObjData, useDropdown } from './customHook';
 import TicEventattL from './ticEventattL';
 import { Dialog } from 'primereact/dialog';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 const TicEventatts = (props) => {
-//console.log(props, "/////////////////////////////////////////////////////////////////")
+    console.log(props, "/////////////////////////////////////////////////////////////////")
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const dataDd = useDropdown(props.ticEventatts.valid);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -33,7 +34,7 @@ const TicEventatts = (props) => {
     const [ticEventattLVisible, setTicEventattLVisible] = useState(false);
     const [ticEventattRemoteLVisible, setTicEventattRemoteLVisible] = useState(false);
     const [ticEventatt, setTicEventatt] = useState(null);
-    const [showMyComponent, setShowMyComponent] = useState(true);    
+    const [showMyComponent, setShowMyComponent] = useState(true);
 
     const calendarRef = useRef(null);
     const toast = useRef(null);
@@ -168,47 +169,47 @@ const TicEventatts = (props) => {
             });
         }
     };
-/************************************ */
+    /************************************ */
 
-const setTicEventattRemoteDialog = () => {
-    setTicEventattRemoteLVisible(true);
-};
+    const setTicEventattRemoteDialog = () => {
+        setTicEventattRemoteLVisible(true);
+    };
 
-const setTicEventattDialog = (destination) => {
-    setTicEventattLVisible(true);
-};
+    const setTicEventattDialog = (destination) => {
+        setTicEventattLVisible(true);
+    };
 
-const handleEventattClick = async (e, destination) => {
-    try {
-        if (destination === 'local') setTicEventattDialog();
-        else setTicEventattRemoteDialog();
-    } catch (error) {
-        console.error(error);
-        toast.current.show({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch ticEventatt data',
-            life: 3000
-        });
-    }
-};
-const handleTicEventattLDialogClose = (newObj) => {
-    console.log(newObj, "11111111111111111111111111111111qqq1111111111111111111111111111111", newObj)
-    setTicEventatt(newObj);
-    let _ticEventatts = {...ticEventatts}
-    _ticEventatts.att = newObj.id;
-    _ticEventatts.ntp = newObj.text;
-    _ticEventatts.ctp = newObj.code; 
-    _ticEventatts.link = newObj.link; 
-    _ticEventatts.valid = 1; 
-    console.log(newObj, "11111111111111111111111111111111_ticEventatt1111111111111111111111111111111", _ticEventatts)  
-    //ticEventatt.price = newObj.price;
-    //ticEventatt.loc = newObj.loc1;
-    setTicEventatts(_ticEventatts)
-    //ticEventatt.potrazuje = newObj.cena * ticEventatt.output;
-    setTicEventattLVisible(false);
-};
-/************************************ */
+    const handleEventattClick = async (e, destination) => {
+        try {
+            if (destination === 'local') setTicEventattDialog();
+            else setTicEventattRemoteDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticEventatt data',
+                life: 3000
+            });
+        }
+    };
+    const handleTicEventattLDialogClose = (newObj) => {
+        console.log(newObj, "11111111111111111111111111111111qqq1111111111111111111111111111111", newObj)
+        setTicEventatt(newObj);
+        let _ticEventatts = { ...ticEventatts }
+        _ticEventatts.att = newObj.id;
+        _ticEventatts.ntp = newObj.text;
+        _ticEventatts.ctp = newObj.code;
+        _ticEventatts.link = newObj.link;
+        _ticEventatts.valid = 1;
+        console.log(newObj, "11111111111111111111111111111111_ticEventatt1111111111111111111111111111111", _ticEventatts)
+        //ticEventatt.price = newObj.price;
+        //ticEventatt.loc = newObj.loc1;
+        setTicEventatts(_ticEventatts)
+        //ticEventatt.potrazuje = newObj.cena * ticEventatt.output;
+        setTicEventattLVisible(false);
+    };
+    /************************************ */
     const onInputChange = (e, type, name, a) => {
         let val = '';
 
@@ -284,20 +285,20 @@ const handleTicEventattLDialogClose = (newObj) => {
                             />
                             {submitted && !ticEventatts.ntp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        </div>
-                        {/* <div className="p-fluid formgrid grid">
+                    </div>
+                    {/* <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-5">
                                 <label htmlFor="ddlist">{translations[selectedLanguage].ddlist}</label>
                                 <InputText id="ddlist" value={ticEventatts.ddlist} onChange={(e) => onInputChange(e, 'text', 'ddlist')} />
                             </div>
                         </div> */}
-                        {/* <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-11">
                             <label htmlFor="text">{translations[selectedLanguage].Descript}</label>
                             <InputText id="text" value={ticEventatts.text} onChange={(e) => onInputChange(e, 'text', 'text')} />
                         </div>
                     </div>                     */}
-                        {/* <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-4">
                                 <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>
                                 <Dropdown
@@ -313,43 +314,57 @@ const handleTicEventattLDialogClose = (newObj) => {
                                 {submitted && !ticEventatts.valid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                             </div>
                         </div> */}
-                        <div className="field col-12 md:col-1">
-                            <div className="flex-2 flex flex-column align-items-left">
-                                <label htmlFor="color">{translations[selectedLanguage].color}</label>
-                                <ColorPicker format="hex" id="color" value={ticEventatts.color || 'ffffff'} onChange={(e) => onInputChange(e, 'text', 'color')} />
-                            </div>
-
+                    <div className="field col-12 md:col-1">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <ColorPicker format="hex" id="color" value={ticEventatts.color || 'ffffff'} onChange={(e) => onInputChange(e, 'text', 'color')} />
                         </div>
+
+                    </div>
+                    <div className="field col-12 md:col-12">
+                        <label htmlFor="description">{translations[selectedLanguage].Description}</label>
+                        <InputTextarea
+                            id="description"
+                            rows={5}
+                            autoResize
+                            style={{ width: '100%' }}
+                            // cols={100}
+                            value={ticEventatts.description}
+                            onChange={(e) => onInputChange(e, 'text', 'description')}
+                        />
+                    </div>
+
+
+                    <div className="flex flex-wrap gap-1">
+                        {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
+                        <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
-                            <div className="flex-grow-1"></div>
-                            <div className="flex flex-wrap gap-1">
-                                {props.eventattsTip === 'CREATE' ?
-                                    <>
-                                        <Button label={translations[selectedLanguage].Create}
-                                            icon="pi pi-check"
-                                            onClick={handleCreateClick}
-                                            severity="success"
-                                            outlined
-                                        />
-                                        <Button
-                                            label={translations[selectedLanguage].CreateAndAddNew}
-                                            icon="pi pi-plus"
-                                            onClick={handleCreateAndAddNewClick}
-                                            severity="success"
-                                            outlined
-                                        />
-                                    </>
-                                    : null}
-                                {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
-                                {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
-                                {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" onClick={handleCopyAndAddNewClick} severity="warrning" className=" p-button-warning" outlined /> : null}
-                            </div>
+                            {props.eventattsTip === 'CREATE' ?
+                                <>
+                                    <Button label={translations[selectedLanguage].Create}
+                                        icon="pi pi-check"
+                                        onClick={handleCreateClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].CreateAndAddNew}
+                                        icon="pi pi-plus"
+                                        onClick={handleCreateAndAddNewClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                </>
+                                : null}
+                            {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Delete} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" outlined /> : null}
+                            {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Save} icon="pi pi-check" onClick={handleSaveClick} severity="success" outlined /> : null}
+                            {props.eventattsTip !== 'CREATE' ? <Button label={translations[selectedLanguage].Copy} icon="pi pi-copy" onClick={handleCopyAndAddNewClick} severity="warrning" className=" p-button-warning" outlined /> : null}
                         </div>
                     </div>
                 </div>
-                <DeleteDialog visible={deleteDialogVisible} inTicEventatts="delete" item={ticEventatts.roll} onHide={hideDeleteDialog} onDelete={handleDeleteClick} />
-                <Dialog
+            </div>
+            <DeleteDialog visible={deleteDialogVisible} inTicEventatts="delete" item={ticEventatts.roll} onHide={hideDeleteDialog} onDelete={handleDeleteClick} />
+            <Dialog
                 header={translations[selectedLanguage].EventattList}
                 visible={ticEventattLVisible}
                 style={{ width: '90%', height: '1400px' }}
@@ -368,9 +383,9 @@ const handleTicEventattLDialogClose = (newObj) => {
                         dialog={true}
                         lookUp={true}
                     />}
-            </Dialog>                
-            </div>
-            );
+            </Dialog>
+        </div>
+    );
 };
 
-            export default TicEventatts;
+export default TicEventatts;

@@ -285,7 +285,7 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].AdmEntrance} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
+                    <Button label={translations[selectedLanguage].EventLoc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
@@ -305,7 +305,8 @@ export default function TicEventL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Activation} icon="pi pi-caret-right" severity="danger" onClick={handleActivationClick} text raised disabled={!ticEvent} />
                 </div>
-                {/*        <div className="flex flex-wrap gap-1">
+                {/*        
+                <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].CopyTemp} icon="pi pi-copy" onClick={openEventloc} text raised disabled={!ticEvent} />
                 </div>
         */}
@@ -440,6 +441,7 @@ export default function TicEventL(props) {
             <Toast ref={toast} />
             <DataTable
                 dataKey="id"
+                size={"small"}
                 selectionMode="single"
                 selection={ticEvent}
                 loading={loading}
@@ -456,11 +458,11 @@ export default function TicEventL(props) {
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rows={125}
+                rowsPerPageOptions={[125, 250, 500, 1000]}
                 onSelectionChange={(e) => setTicEvent(e.value)}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
+                // onRowSelect={onRowSelect}
+                // onRowUnselect={onRowUnselect}
             >
                 <Column
                     //bodyClassName="text-center"

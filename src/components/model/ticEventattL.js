@@ -268,8 +268,8 @@ export default function TicEventattL(props) {
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
-        rows={50}
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        rows={125}
+        rowsPerPageOptions={[125, 250, 500, 1000]}
         onSelectionChange={(e) => setTicEventatt(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
