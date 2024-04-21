@@ -73,7 +73,7 @@ const TicArtloc = (props) => {
                 severity: "error",
                 summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -93,7 +93,7 @@ const TicArtloc = (props) => {
                 severity: "error",
                 summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -115,7 +115,7 @@ const TicArtloc = (props) => {
                 severity: "error",
                 summary: "TicArtloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

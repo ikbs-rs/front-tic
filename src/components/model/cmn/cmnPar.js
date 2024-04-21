@@ -91,7 +91,7 @@ const CmnPar = (props) => {
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -111,7 +111,7 @@ const CmnPar = (props) => {
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -133,7 +133,7 @@ const CmnPar = (props) => {
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

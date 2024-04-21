@@ -88,7 +88,7 @@ const TicEventatts = (props) => {
                 severity: 'error',
                 summary: 'TicEventatts ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -108,7 +108,7 @@ const TicEventatts = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -126,7 +126,7 @@ const TicEventatts = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -143,7 +143,7 @@ const TicEventatts = (props) => {
                 severity: 'error',
                 summary: 'TicEventatts ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -165,7 +165,7 @@ const TicEventatts = (props) => {
                 severity: 'error',
                 summary: 'TicEventatts ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };

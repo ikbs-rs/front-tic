@@ -87,7 +87,7 @@ const TicDiscount = (props) => {
                 severity: "error",
                 summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -105,7 +105,7 @@ const TicDiscount = (props) => {
                 severity: "error",
                 summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -127,7 +127,7 @@ const TicDiscount = (props) => {
                 severity: "error",
                 summary: "TicDiscount ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

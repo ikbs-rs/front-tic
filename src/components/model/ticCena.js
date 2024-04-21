@@ -88,7 +88,7 @@ const TicCena = (props) => {
                 severity: "error",
                 summary: "TicCena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -106,7 +106,7 @@ const TicCena = (props) => {
                 severity: "error",
                 summary: "TicCena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -128,7 +128,7 @@ const TicCena = (props) => {
                 severity: "error",
                 summary: "TicCena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

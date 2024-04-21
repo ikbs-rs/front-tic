@@ -102,7 +102,7 @@ console.log(props, "*******************TicDocpayment***********************")
                 severity: "error",
                 summary: "TicDocpayment ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -119,7 +119,7 @@ console.log(props, "*******************TicDocpayment***********************")
                 severity: "error",
                 summary: "TicDocpayment ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -141,7 +141,7 @@ console.log(props, "*******************TicDocpayment***********************")
                 severity: "error",
                 summary: "TicDocpayment ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

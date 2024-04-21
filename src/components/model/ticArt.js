@@ -13,7 +13,8 @@ import { Dropdown } from 'primereact/dropdown';
 import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
-import { ColorPicker } from 'primereact/colorpicker';
+// import { ColorPicker } from 'primereact/colorpicker';
+import CustomColorPicker from "../custom/CustomColorPicker.js"
 
 const TicArt = (props) => {
 console.log(props, "*********************************props**************************************************")
@@ -259,7 +260,7 @@ console.log(props, "*********************************props**********************
                 severity: "error",
                 summary: "TicArt ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -277,7 +278,7 @@ console.log(props, "*********************************props**********************
                 severity: "error",
                 summary: "TicArt ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -299,11 +300,15 @@ console.log(props, "*********************************props**********************
                 severity: "error",
                 summary: "TicArt ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
 
+    const onColorChange = (newColor) => {
+        const updatedTicArt = { ...ticArt, color: newColor };
+        setTicArt(updatedTicArt); // Ažuriranje ticEventobj sa novom bojom
+    };
     const onInputChange = (e, type, name, a) => {
         let val = ''
 
@@ -453,7 +458,11 @@ console.log(props, "*********************************props**********************
                         <div className="field col-12 md:col-1">
                             <div className="flex-2 flex flex-column align-items-left">
                                 <label htmlFor="color">{translations[selectedLanguage].color}</label>
-                                <ColorPicker format="hex" id="color" value={ticArt.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                                <CustomColorPicker
+                                    color={ticArt.color || '#ffffff'}
+                                    onChange={onColorChange}
+                                />                                
+                                {/* <ColorPicker format="hex" id="color" value={ticArt.color} onChange={(e) => onInputChange(e, 'text', 'color')} /> */}
                             </div>
 
                         </div>

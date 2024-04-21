@@ -504,7 +504,14 @@ const App = () => {
                         </CSSTransition>
                     </div>
                 )}
-                <AppMenu model={menu} onMenuItemClick={onMenuItemClick} onRootMenuItemClick={onRootMenuItemClick} layoutMode={layoutMode} active={menuActive} mobileMenuActive={staticMenuMobileActive} />
+                <AppMenu 
+                    model={menu} 
+                    onMenuItemClick={onMenuItemClick} 
+                    onRootMenuItemClick={onRootMenuItemClick} 
+                    layoutMode={layoutMode} 
+                    active={menuActive} 
+                    mobileMenuActive={staticMenuMobileActive} 
+                />
             </div>
 
             <div className="layout-main">

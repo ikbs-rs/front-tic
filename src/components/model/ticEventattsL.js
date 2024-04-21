@@ -8,6 +8,8 @@
  * 6 - vrednost atributa pokome se pretrazuje
  */
 import React, { useState, useEffect, useRef } from 'react';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { ProgressBar } from 'primereact/progressbar';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -22,6 +24,7 @@ import TicEventatts from './ticEventatts';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
+import './atts.css';
 import { translations } from '../../configs/translations';
 import { fetchObjData } from './customHook';
 import { Dropdown } from 'primereact/dropdown';
@@ -34,6 +37,7 @@ import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
 import TicEventTmpL from './ticEventTmpL';
 import { Tooltip } from 'primereact/tooltip';
+import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
@@ -46,7 +50,7 @@ export default function TicEventattsL(props) {
     const [ticEventatts, setTicEventatts] = useState(emptyTicEventatts);
     const [filters, setFilters] = useState('');
     const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
     const [eventattsTip, setEventattsTip] = useState('');
@@ -66,6 +70,8 @@ export default function TicEventattsL(props) {
     const [ticEventatttps, setTicEventatttps] = useState([]);
     const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
 
+    const [checked, setChecked] = useState(false);
+
     let i = 0;
 
     const handleCancelClick = () => {
@@ -76,6 +82,8 @@ export default function TicEventattsL(props) {
         async function fetchData() {
 
             try {
+                setLoading(true);
+                console.log('Učitavanje je započeto!!!!!');
                 ++i;
                 if (i < 2) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
@@ -83,8 +91,9 @@ export default function TicEventattsL(props) {
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
 
-                    console.log(data, "*********************data**************************#####################", pTp)
+                    // console.log(data, "*********************data**************************#####################", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
+
                     const promisesDD = data.map(async (row) => {
                         if (row.inputtp === '3' && row.ddlist) {
                             const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
@@ -120,16 +129,30 @@ export default function TicEventattsL(props) {
                     const updatedData = await Promise.all(promisesDD);
                     setTicEventattss(updatedData);
                     setDropdownAllItems(updatedDropdownItems);
+
                     initFilters();
+                    console.log('Učitavanje je završeno!!!!');
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
+
         }
 
+
         fetchData();
+
     }, [refresh, componentKey]);
+
+    useEffect(() => {
+        if (loading) {
+            console.log('Učitavanje je započeto');
+        } else {
+            console.log('Učitavanje je završeno');
+        }
+    }, [loading]);
 
     useEffect(() => {
         async function fetchData() {
@@ -233,6 +256,35 @@ export default function TicEventattsL(props) {
         const data = await ticEventattsService.postCopyEventatts(props.ticEvent.id, rowData);
         setRefresh(++refresh);
     };
+    const toggleChecked = async (e, name, rowData) => {
+        console.log(name, "***type!!!********input!!!***", e, "*")
+        const newCheckedState = e.value;
+        // Update local state
+        setChecked(newCheckedState);
+
+        /***************************************** */
+
+
+        let val = '';
+        let _ticEventatts = {}
+        val = newCheckedState ? 1 : 0;
+
+        _ticEventatts = { ...rowData };
+        // Update data in parent component or global store
+        const updatedRows = ticEventattss.map(row => {
+            if (row.id === rowData.id) {
+                return { ...row, valid: newCheckedState ? 1 : 0 };
+            }
+            return row;
+        });
+        setTicEventattss(updatedRows);
+        _ticEventatts[`${name}`] = val;
+        setTicEventatts(_ticEventatts);
+        // setTicEventattss([...ticEventattss]);
+        console.log(_ticEventatts, "=============================================================")
+        await updateDataInDatabase(_ticEventatts);
+    };
+
 
     const onInputChange = async (e, type, name, rowData, apsTabela) => {
         //console.log(name, "***type!!!********input!!!***", e.target.value, "*")
@@ -268,8 +320,8 @@ export default function TicEventattsL(props) {
                 setTicEventattss([...ticEventattss]);
                 break;
             case 'options':
-                rowData.text = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
+                rowData.text = e.value?.code;
+                val = (e.target && e.target.value && e.target.value?.code) || '';
                 setDropdownItemText(e.value);
                 break;
             case 'calendar':
@@ -313,8 +365,8 @@ export default function TicEventattsL(props) {
                 val = e.checked ? 1 : 0;
                 break;
             case 'options':
-                rowData.value = e.value.code;
-                val = (e.target && e.target.value && e.target.value.code) || '';
+                rowData.value = e.value?.code;
+                val = (e.target && e.target.value && e.target.value?.code) || '';
                 await setDropdownItem(e.value);
                 break;
             case 'fileUpload':
@@ -518,6 +570,29 @@ export default function TicEventattsL(props) {
             </>
         );
     };
+    const toggleBodyTemplate = (rowData, name, e) => {
+
+        const checked = rowData.valid == 1; // Pretpostavimo da 'valid' određuje da li je dugme čekirano
+        const buttonClass = checked ? "toggle-button-checked" : "toggle-button-unchecked";
+
+        return (
+            <div className="flex justify-content-center" style={{ width: "18px", height: "18px", "font-size": "9px", border: 'none' }}>
+                <ToggleButton
+                    id={`tgl${rowData.id}`}
+                    onLabel=""
+                    offLabel=""
+                    onIcon="pi pi-check"
+                    offIcon="pi pi-times"
+                    checked={checked}
+                    onChange={(e) => toggleChecked(e, 'valid', rowData)} // Ako treba ažurirati stanje u komponenti
+                    // className={`w-9rem ${buttonClass}`}
+                    className={`${buttonClass}`}
+                />
+            </div>
+        );
+    };
+
+
 
     const validFilterTemplate = (options) => {
         return (
@@ -544,9 +619,9 @@ export default function TicEventattsL(props) {
     const eventattsTemplate = (rowData) => {
         return (
             <div className="flex flex-wrap gap-1">
-            <Tooltip target=".eventatts-tooltip" position="top" mouseTrack mouseTrackLeft={2} mouseTrackTop={2}>
-                {rowData.description}
-            </Tooltip>                
+                <Tooltip target=".eventatts-tooltip" position="top" mouseTrack mouseTrackLeft={2} mouseTrackTop={2}>
+                    {rowData.description}
+                </Tooltip>
                 <Button
                     type="button"
                     // className="eventatts-tooltip"
@@ -578,7 +653,15 @@ export default function TicEventattsL(props) {
                 setDropdownItemsText(selectedOptionsText);
                 const selectedOptionText = selectedOptionsText.find((option) => option.code === rowData.text);
                 setDropdownItemText(selectedOptionText);
-                return <Dropdown id={rowData.id} value={selectedOptionText} options={selectedOptionsText} onChange={(e) => onInputTextChange(e, 'options', 'text', rowData, apsTabelaText)} placeholder="Select One" optionLabel="name" />;
+                return <Dropdown
+                    id={rowData.id}
+                    showClear
+                    value={selectedOptionText}
+                    options={selectedOptionsText}
+                    onChange={(e) => onInputTextChange(e, 'options', 'text', rowData, apsTabelaText)}
+                    placeholder="Select One"
+                    optionLabel="name"
+                />;
             case '8': // Za kalendar
                 return (
                     <Calendar
@@ -648,8 +731,16 @@ export default function TicEventattsL(props) {
                 setDropdownItems(selectedOptions);
                 const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
                 setDropdownItem(selectedOption);
-                console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
-                return <Dropdown id={rowData.id} value={selectedOption} options={selectedOptions} onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)} placeholder="Select One" optionLabel="name" />;
+                // console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
+                return <Dropdown
+                    id={rowData.id}
+                    showClear
+                    value={selectedOption}
+                    options={selectedOptions}
+                    onChange={(e) => onInputValueChange(e, 'options', 'value', rowData, apsTabela)}
+                    placeholder="Select One"
+                    optionLabel="name"
+                />;
             case '5': // Za kalendar
             case '8': // Za kalendar
                 return (
@@ -869,6 +960,11 @@ export default function TicEventattsL(props) {
                         </div>
                     </div>
                 </div>
+                {/* {loading ? (
+                    <div className="card">
+                        <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+                    </div>
+                ) : (null)} */}
             </div>
             <DataTable
                 key={componentKey}
@@ -877,6 +973,7 @@ export default function TicEventattsL(props) {
                 selectionMode="single"
                 selection={ticEventatts}
                 loading={loading}
+                loadingIcon="pi pi-spin pi-spinner"
                 value={ticEventattss}
                 header={header}
                 showGridlines
@@ -962,7 +1059,7 @@ export default function TicEventattsL(props) {
                     //body={conditionTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
-                <Column
+                {/* <Column
                     field="valid"
                     filterField="valid"
                     dataType="numeric"
@@ -975,6 +1072,15 @@ export default function TicEventattsL(props) {
                     body={validBodyTemplate}
                     editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
+                ></Column> */}
+                <Column
+                    header={translations[selectedLanguage].Valid}
+                    field="valid"
+                    dataType="numeric"
+                    style={{ width: '1%' }}
+                    bodyClassName="text-center"
+                    body={(e) => toggleBodyTemplate(e, `valid`)}
+                    onCellEditComplete={onCellEditComplete}
                 ></Column>
                 <Column
                     //header={translations[selectedLanguage].Valid}
@@ -982,7 +1088,9 @@ export default function TicEventattsL(props) {
                     bodyClassName="text-center"
                     body={cmdBodyTemplate}
                 ></Column>
+
             </DataTable>
+
             <Dialog
                 header={translations[selectedLanguage].Link}
                 visible={visible}

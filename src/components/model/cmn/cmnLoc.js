@@ -142,7 +142,7 @@ const CmnLoc = (props) => {
                 severity: 'error',
                 summary: 'CmnLoc ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -164,7 +164,7 @@ const CmnLoc = (props) => {
                 severity: 'error',
                 summary: 'CmnLoc ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -181,7 +181,7 @@ const CmnLoc = (props) => {
                 severity: 'error',
                 summary: 'CmnLoc ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -203,7 +203,7 @@ const CmnLoc = (props) => {
                 severity: 'error',
                 summary: 'CmnLoc ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };

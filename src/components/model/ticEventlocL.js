@@ -19,6 +19,7 @@ import { CmnLoctpService } from '../../service/model/cmn/CmnLoctpService';
 import { Dropdown } from 'primereact/dropdown';
 import TicLoclinkL from "./ticLoclinkL"
 import TicLoclinkgrpL from './ticLoclinkgrpL';
+import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 
 export default function TicEventlocL(props) {
@@ -362,6 +363,15 @@ export default function TicEventlocL(props) {
     );
   };
 
+  const colorBodyTemplate = (rowData) => {
+    return (
+      <>
+        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
+      </>
+    );
+  };
+
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -453,6 +463,12 @@ export default function TicEventlocL(props) {
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
         ></Column>
+        <Column
+          field="color"
+          header={translations[selectedLanguage].Color}
+          body={colorBodyTemplate}
+          style={{ width: "20%" }}
+        ></Column>        
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Link}

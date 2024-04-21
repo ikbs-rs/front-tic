@@ -114,7 +114,7 @@ const CmnLoclink = (props) => {
                 severity: "error",
                 summary: "CmnLoclink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -141,7 +141,7 @@ const CmnLoclink = (props) => {
                 severity: "error",
                 summary: "CmnLoclink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -162,7 +162,7 @@ const CmnLoclink = (props) => {
                 severity: "error",
                 summary: "CmnLoclink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -184,7 +184,7 @@ const CmnLoclink = (props) => {
                 severity: "error",
                 summary: "CmnLoclink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

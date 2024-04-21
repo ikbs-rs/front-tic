@@ -15,6 +15,7 @@ import DateFunction from "../../utilities/DateFunction"
 import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
+import CustomColorPicker from "../custom/CustomColorPicker.js"
 
 const TicEventloc = (props) => {
     console.log(props, "####################### TicEventloc ##########################")
@@ -114,7 +115,7 @@ const TicEventloc = (props) => {
                 severity: "error",
                 summary: "TicEventloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -134,7 +135,7 @@ const TicEventloc = (props) => {
                 severity: "error",
                 summary: "TicEventloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -156,9 +157,14 @@ const TicEventloc = (props) => {
                 severity: "error",
                 summary: "TicEventloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
+    };
+
+    const onColorChange = (newColor) => {
+        const updatedTicEventloc = { ...ticEventloc, color: newColor };
+        setTicEventloc(updatedTicEventloc); 
     };
 
     const onInputChange = (e, type, name, a) => {
@@ -173,7 +179,7 @@ const TicEventloc = (props) => {
                     foundItem = cmnLoctpItems.find((item) => item.id === val);
                     setCmnLoctpItem(foundItem || null);
                     ticEventloc.nloctp = e.value.name
-                    ticEventloc.cloctp = foundItem.code                    
+                    ticEventloc.cloctp = foundItem.code
                     break;
                 case "loc":
                     setDdTicEventlocItem(e.value);
@@ -182,9 +188,9 @@ const TicEventloc = (props) => {
                     console.log(foundTpItem, "**********foundTpItem******************")
                     setTicEventlocItem(foundItem || null);
                     ticEventloc.nloc = e.value.name
-                    ticEventloc.cloc = foundItem.code 
-                    ticEventloc.nloctp = foundTpItem.text  
-                    break;                 
+                    ticEventloc.cloc = foundItem.code
+                    ticEventloc.nloctp = foundTpItem.text
+                    break;
                 default:
                     console.error("Pogresan naziv polja")
             }
@@ -291,6 +297,16 @@ const TicEventloc = (props) => {
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />
+                        </div>
+                        <div className="field col-12 md:col-3">
+                            <div className="flex-2 flex flex-column align-items-left">
+                                <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                                <CustomColorPicker
+                                    color={ticEventloc.color || '#ffffff'}
+                                    onChange={onColorChange}
+                                />
+                                {/* <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} /> */}
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-1">

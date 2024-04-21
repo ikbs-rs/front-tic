@@ -109,7 +109,7 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                 severity: "error",
                 summary: "TicPrivilegecond ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -129,7 +129,7 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                 severity: "error",
                 summary: "TicPrivilegecond ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -151,7 +151,7 @@ console.log(props, "*-*-*-*-*-*-*-*-*-*-*-TicPrivilegecond*-*-*-*-*-*-*-*-*-")
                 severity: "error",
                 summary: "TicPrivilegecond ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

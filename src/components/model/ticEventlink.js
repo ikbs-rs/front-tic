@@ -71,7 +71,7 @@ const TicEventlink = (props) => {
                 severity: "error",
                 summary: "TicEventlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -88,7 +88,7 @@ const TicEventlink = (props) => {
                 severity: "error",
                 summary: "TicEventlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -110,7 +110,7 @@ const TicEventlink = (props) => {
                 severity: "error",
                 summary: "TicEventlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

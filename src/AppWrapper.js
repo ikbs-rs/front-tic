@@ -28,7 +28,7 @@ const AppWrapper = (props) => {
          {},
         {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 5000, // vreme za koje se očekuje odgovor od udaljenog servera (u milisekundama)
+          timeout: 25000, // vreme za koje se očekuje odgovor od udaljenog servera (u milisekundama)
         }
         )
          .then((response) => {

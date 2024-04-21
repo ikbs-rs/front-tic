@@ -81,7 +81,7 @@ const TicEventcenatp = (props) => {
                 severity: "error",
                 summary: "TicEventcenatp ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -101,7 +101,7 @@ const TicEventcenatp = (props) => {
                 severity: "error",
                 summary: "TicEventcenatp ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -123,7 +123,7 @@ const TicEventcenatp = (props) => {
                 severity: "error",
                 summary: "TicEventcenatp ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

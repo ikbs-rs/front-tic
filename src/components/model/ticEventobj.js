@@ -15,6 +15,7 @@ import { ColorPicker } from 'primereact/colorpicker';
 import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
+import CustomColorPicker from "../custom/CustomColorPicker.js"
 
 const TicEventobj = (props) => {
 
@@ -111,7 +112,7 @@ const TicEventobj = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -124,7 +125,7 @@ const TicEventobj = (props) => {
             ticEventobj.begtm = DateFunction.convertTimeToDBFormat(ticEventobj.begtm)
             ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
             const ticEventobjService = new TicEventobjService();
-            const newTicEventobj = { ...ticEventobj, id: null};
+            const newTicEventobj = { ...ticEventobj, id: null };
             const data = await ticEventobjService.postTicEventobj(newTicEventobj);
             ticEventobj.id = data
             props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
@@ -134,7 +135,7 @@ const TicEventobj = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -156,7 +157,7 @@ const TicEventobj = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -178,9 +179,14 @@ const TicEventobj = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
+    };
+
+    const onColorChange = (newColor) => {
+        const updatedTicEventobj = { ...ticEventobj, color: newColor };
+        setTicEventobj(updatedTicEventobj); // Ažuriranje ticEventobj sa novom bojom
     };
 
     const onInputChange = (e, type, name, a) => {
@@ -343,10 +349,14 @@ const TicEventobj = (props) => {
                     <div className="field col-12 md:col-1">
                         <div className="flex-2 flex flex-column align-items-left">
                             <label htmlFor="color">{translations[selectedLanguage].color}</label>
-                            <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} />
+                            <CustomColorPicker
+                                color={ticEventobj.color || '#ffffff'}
+                                onChange={onColorChange}
+                            />
+                            {/* <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} /> */}
                         </div>
 
-                    </div>                    
+                    </div>
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button

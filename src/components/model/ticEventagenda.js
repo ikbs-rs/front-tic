@@ -73,7 +73,7 @@ const TicEventagenda = (props) => {
                 severity: "error",
                 summary: "TicEventagenda ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -91,7 +91,7 @@ const TicEventagenda = (props) => {
                 severity: "error",
                 summary: "TicEventagenda ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -113,7 +113,7 @@ const TicEventagenda = (props) => {
                 severity: "error",
                 summary: "TicEventagenda ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

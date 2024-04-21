@@ -1,0 +1,9 @@
+  .p-togglebutton.p-button.p-highlight .p-button-icon-left,
+  .p-togglebutton.p-button.p-highlight .p-button-icon-right {
+    font-size: 8px;
+  }
+
+  .p-togglebutton.p-button .p-button-icon-left,
+  .p-togglebutton.p-button .p-button-icon-right {
+    font-size: 8px;
+  }

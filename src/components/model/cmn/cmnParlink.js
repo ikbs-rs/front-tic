@@ -76,7 +76,7 @@ const CmnParlink = (props) => {
                 severity: "error",
                 summary: "CmnParlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -96,7 +96,7 @@ const CmnParlink = (props) => {
                 severity: "error",
                 summary: "CmnParlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -118,7 +118,7 @@ const CmnParlink = (props) => {
                 severity: "error",
                 summary: "CmnParlink ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

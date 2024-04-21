@@ -98,7 +98,7 @@ const TicDocdelivery = (props) => {
                 severity: "error",
                 summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -118,7 +118,7 @@ const TicDocdelivery = (props) => {
                 severity: "error",
                 summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -141,7 +141,7 @@ const TicDocdelivery = (props) => {
                 severity: "error",
                 summary: "TicDocdelivery ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

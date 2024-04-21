@@ -139,3 +139,22 @@
 .highlight-row-29 {
   background-color: #63d89fba !important; /* Dodajte svoju željenu boju za plavu */
 }
+
+.layout-wrapper .layout-topbar {
+  top: 0;
+  height: 50px;
+  padding: 2px 2px;  
+}
+
+.layout-wrapper .layout-menu-container {
+  height: calc(100% - 50px);
+  top: 50px;
+}
+
+.layout-wrapper .layout-main {
+  padding-top: 40px;
+}
+
+.card {
+  padding: 1rem;
+}

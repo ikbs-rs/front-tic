@@ -54,7 +54,7 @@ const TicSeason = (props) => {
                 severity: "error",
                 summary: "Action ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -71,7 +71,7 @@ const TicSeason = (props) => {
                 severity: "error",
                 summary: "Action ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -93,7 +93,7 @@ const TicSeason = (props) => {
                 severity: "error",
                 summary: "Action ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

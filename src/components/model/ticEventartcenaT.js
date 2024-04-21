@@ -200,7 +200,7 @@ const TicEventartcena = (props) => {
                 severity: "error",
                 summary: "TicEventartcena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -246,7 +246,7 @@ const TicEventartcena = (props) => {
                 severity: "error",
                 summary: "TicEventartcena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -268,7 +268,7 @@ const TicEventartcena = (props) => {
                 severity: "error",
                 summary: "TicEventartcena ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

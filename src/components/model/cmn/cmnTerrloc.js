@@ -77,7 +77,7 @@ const CmnTerrloc = (props) => {
                 severity: "error",
                 summary: "CmnTerrloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -97,7 +97,7 @@ const CmnTerrloc = (props) => {
                 severity: "error",
                 summary: "CmnTerrloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -119,7 +119,7 @@ const CmnTerrloc = (props) => {
                 severity: "error",
                 summary: "CmnTerrloc ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };

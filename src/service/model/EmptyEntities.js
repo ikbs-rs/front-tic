@@ -537,6 +537,8 @@ const EmptyEntities =
     "begda": "",
     "endda": "",
     "color": "",
+    "icon": "",
+    "color": "",
     "icon": ""
   },
   "tic_eventobj": {

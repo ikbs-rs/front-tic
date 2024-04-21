@@ -17,6 +17,7 @@ import Token from '../../utilities/Token';
 import TicArtL from './ticArtL';
 import { Dialog } from 'primereact/dialog';
 import { AutoComplete } from "primereact/autocomplete";
+import CustomColorPicker from "../custom/CustomColorPicker.js"
 
 const TicEventart = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -28,8 +29,8 @@ const TicEventart = (props) => {
     const [ticEventartItem, setTicEventartItem] = useState(null);
     const [ticEventartItems, setTicEventartItems] = useState(null);
 
-    
-    
+
+
     const [showMyComponent, setShowMyComponent] = useState(true);
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEventart.begda || props.ticEvent.begda)));
@@ -38,7 +39,7 @@ const TicEventart = (props) => {
     /************************AUTOCOMPLIT**************************** */
     const [ticArtLVisible, setTicArtLVisible] = useState(false);
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
-    const [ticArt, setTicArt] = useState(null);    
+    const [ticArt, setTicArt] = useState(null);
     const [allArt, setAllArts] = useState([]);
     const [artValue, setArtValue] = useState(props.ticEventart.cart);
     const [filteredArts, setFilteredArts] = useState([]);
@@ -145,7 +146,7 @@ const TicEventart = (props) => {
 
     const setTicArtDialog = (destination) => {
         setTicArtLVisible(true);
-    };    
+    };
     /************************** */
     const handleTicArtLDialogClose = (newObj) => {
         console.log(newObj, "11111111111111111111111111111111qqq1111111111111111111111111111111", newObj)
@@ -159,7 +160,7 @@ const TicEventart = (props) => {
         setTicEventart(_ticEventart)
         //ticEventart.potrazuje = newObj.cena * ticEventart.output;
         setTicArtLVisible(false);
-    };    
+    };
     /**************************AUTOCOMPLIT************************************************ */
 
 
@@ -182,7 +183,7 @@ const TicEventart = (props) => {
                 severity: 'error',
                 summary: 'TicEventart ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -206,7 +207,7 @@ const TicEventart = (props) => {
                 severity: "error",
                 summary: "TicEventobj ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -226,7 +227,7 @@ const TicEventart = (props) => {
                 severity: 'error',
                 summary: 'TicEventart ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
@@ -248,11 +249,16 @@ const TicEventart = (props) => {
                 severity: 'error',
                 summary: 'TicEventart ',
                 detail: `${err.response.data.error}`,
-                life: 5000
+                life: 1000
             });
         }
     };
     /************************************ */
+
+    const onColorChange = (newColor) => {
+        const updatedTicEventart = { ...ticEventart, color: newColor };
+        setTicEventart(updatedTicEventart); // Ažuriranje ticEventobj sa novom bojom
+    };
 
     const onInputChange = (e, type, name, a) => {
         let val = '';
@@ -416,6 +422,16 @@ const TicEventart = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="roenddal">{translations[selectedLanguage].Endda} *</label>
                             <Calendar value={endda} onChange={(e) => onInputChange(e, 'Calendar', 'endda')} showIcon dateFormat="dd.mm.yy" />
+                        </div>
+                    </div>
+                    <div className="field col-12 md:col-3">
+                        <div className="flex-2 flex flex-column align-items-left">
+                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                            <CustomColorPicker
+                                color={ticEventart.color || '#ffffff'}
+                                onChange={onColorChange}
+                            />
+                            {/* <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} /> */}
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
