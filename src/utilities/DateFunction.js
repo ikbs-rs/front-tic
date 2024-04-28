@@ -48,6 +48,12 @@ const formatTime =  (inputTime) => {
     return `${hour}:${min}:${sec}`;
 }
 
+const formatTimeMin =  (inputTime) => {
+  const hour = inputTime.substring(0, 2);
+  const min = inputTime.substring(2, 4);
+  return `${hour}:${min}`;
+}
+
 function formatDateToDBFormat(maskedDate) {
     // Prvo, uklonimo svi tačke iz maskedDate kako bismo dobili "18072023"
     const dateWithoutDots = maskedDate.replace(/\./g, '');
@@ -132,6 +138,7 @@ export default {
     formatJsDate,
     formatDatetime,
     formatTime,
+    formatTimeMin,
     formatDateToDBFormat,
     formatDateTimeToDBFormat,
     formatTimeToDBFormat,

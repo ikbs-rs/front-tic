@@ -14,7 +14,7 @@ import DateFunction from "../../../utilities/DateFunction";
 import env from '../../../configs/env';
 
 const CmnPar = (props) => {
-    //console.log(props, "*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+    console.log(props, "*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
@@ -67,6 +67,7 @@ const CmnPar = (props) => {
             sendToParent(dataToSend);
         } else {
             props.setVisible(false);
+            props?.setCmnParVisible(false);
         }
     };
     const sendToParent = (data) => {
@@ -103,10 +104,13 @@ const CmnPar = (props) => {
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             const cmnParService = new CmnParService();
 
-            await cmnParService.putCmnPar(cmnPar);
+            const message = await cmnParService.putCmnPar(cmnPar);
+            console.log('Response data:', message); // Dodajte ovaj red
             props.handleDialogClose({ obj: cmnPar, parTip: props.parTip });
             props.setVisible(false);
+            props?.setCmnParVisible(false)
         } catch (err) {
+            console.error(err);
             toast.current.show({
                 severity: "error",
                 summary: "CmnPar ",
@@ -166,6 +170,8 @@ const CmnPar = (props) => {
             console.log(val, "*******************", e.target)
         }
         let _cmnPar = { ...cmnPar };
+        if (name == "textx") _cmnPar[`text`] = val;
+
         _cmnPar[`${name}`] = val;
         setCmnPar(_cmnPar);
     };
@@ -190,14 +196,14 @@ const CmnPar = (props) => {
                             {submitted && !cmnPar.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
+                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="text"
-                                value={cmnPar.text} onChange={(e) => onInputChange(e, "text", 'text')}
+                                id="textx"
+                                value={cmnPar.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !cmnPar.text })}
+                                className={classNames({ 'p-invalid': submitted && !cmnPar.textx })}
                             />
-                            {submitted && !cmnPar.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !cmnPar.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
@@ -222,7 +228,7 @@ const CmnPar = (props) => {
                             />
                         </div>
 
-                        <div className="field col-12 md:col-7">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="address">{translations[selectedLanguage].address}</label>
                             <InputText
                                 id="address"
@@ -231,7 +237,7 @@ const CmnPar = (props) => {
 
                         </div>
 
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="place">{translations[selectedLanguage].place}</label>
                             <InputText
                                 id="place"
@@ -239,6 +245,13 @@ const CmnPar = (props) => {
                             />
                         </div>
 
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="country">{translations[selectedLanguage].country}</label>
+                            <InputText
+                                id="country"
+                                value={cmnPar.country} onChange={(e) => onInputChange(e, "text", 'country')}
+                            />
+                        </div>
 
                         <div className="field col-12 md:col-4">
                             <label htmlFor="postcode">{translations[selectedLanguage].postcode}</label>
@@ -247,13 +260,20 @@ const CmnPar = (props) => {
                                 value={cmnPar.postcode} onChange={(e) => onInputChange(e, "text", 'postcode')}
                             />
                         </div>
-                        <div className="field col-12 md:col-8">
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="tel">{translations[selectedLanguage].tel}</label>
                             <InputText
                                 id="tel"
                                 value={cmnPar.tel} onChange={(e) => onInputChange(e, "text", 'tel')}
                             />
                         </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="email">{translations[selectedLanguage].email}</label>
+                            <InputText
+                                id="email"
+                                value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
+                            />
+                        </div>                        
                         <div className="field col-12 md:col-6">
                             <label htmlFor="activity">{translations[selectedLanguage].activity}</label>
                             <InputText

@@ -9,6 +9,7 @@ import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
 import { CmnParService } from "../../service/model/cmn/CmnParService";
+import CmnPar from "./cmn/cmnPar";
 import TicDocdelivery from './ticDocdelivery';
 import TicStampaL from './ticStampaL';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
@@ -17,6 +18,9 @@ import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import { TicDocService } from "../../service/model/TicDocService";
+import TicDocsL from './ticDocsL';
+import TicDocpaymentL from './ticDocpaymentL';
+import { AdmUserService } from "../../service/model/cmn/AdmUserService";
 
 
 export default function TicDocdeliveryL(props) {
@@ -24,12 +28,14 @@ export default function TicDocdeliveryL(props) {
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
+  const userId = localStorage.getItem('userId')
   const emptyTicDocdelivery = EmptyEntities[objName]
+  emptyTicDocdelivery.doc = props.ticDoc.id
   const emptyPar = EmptyEntities[objPar]
   const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticDocdeliverys, setTicDocdeliverys] = useState([]);
   const [ticDocdelivery, setTicDocdelivery] = useState(emptyTicDocdelivery);
-  const [cmnPar, setCmnPar] = useState(emptyPar);
+
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,7 +43,22 @@ export default function TicDocdeliveryL(props) {
   const [visible, setVisible] = useState(false);
   const [docdeliveryTip, setDocdeliveryTip] = useState('');
   const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);
+
+  const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
+  const [ticPayment, setTicPayment] = useState(null);
+
+  const [cmnParVisible, setCmnParVisible] = useState(false);
+  const [cmnPar, setCmnPar] = useState(null);
   let i = 0
+
+  const [ticDoc, setTicDoc] = useState(props.ticDoc);
+  const [ticDocs, setTicDocs] = useState(props.ticDocs);
+
+  const [ticTransactionInfos, setTicTransactionInfos] = useState([]);
+  const [ticTransactionInfo, setTicTransactionInfo] = useState('');
+
+  const [ticOrderInfos, setTicOrderInfos] = useState([]);
+  const [ticOrderInfo, setTicOrderInfo] = useState('');
 
   const [cmnParInfos, setCmnParInfos] = useState([]);
   const [cmnParInfo, setCmnParInfo] = useState('');
@@ -45,41 +66,67 @@ export default function TicDocdeliveryL(props) {
   const [cmnBtnInfos, setCmnBtnInfos] = useState([]);
   const [cmnBtnInfo, setCmnBtnInfo] = useState('');
 
+  const [cmnBtnActions, setCmnBtnActions] = useState([]);
+  const [cmnBtnAction, setCmnBtnAction] = useState('');
+
   const [ticStampaLVisible, setTicStampaLVisible] = useState(false);
+  const [openDialog, setOpenDialog] = useState('');
+  const [parRefresh, setparRefresh] = useState(0);
+
+  const [admUser, setAdmUser] = useState({});
+
+  const iframeRef = useRef(null);
 
   const handleCancelClick = () => {
     props.setVisible(false);
   };
+
+//******************************************************************************************************************** */
+//******************************************************************************************************************** */
 
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
         if (i < 2) {
-          const name = {
-            id: 1, firstname: 2, lastname: 3, mail: 4, tel: 5, address: 6, postcode: 7, place: 8, text: 9, code: 10
-          }
-          const cmnParService = new CmnParService();
-          const data = await cmnParService.getCmnPar(props.ticDoc.usr);
-
-          // Kreiranje novog objekta dataT
-          // const dataT = [];
-
-          // Iteriranje kroz elemente objekta data
-          // for (const key in name) {
-          //   if (data.hasOwnProperty(key)) {
-          //     // Dodavanje objekta sa imenom i vrednošću u dataT
-          //     dataT.push({ id: name[key], code: key, value: data[key] });
-          //   }
-          // }
-          // Kreiranje novog objekta dataT
-          const dataT = Object.keys(name).map(key => {
-            // Provera da li objekat data sadrži svojstvo sa trenutnim ključem
-            const value = data.hasOwnProperty(key) ? data[key] : null;
-            return { id: name[key], code: key, value: value };
-          });
-          console.log(data, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", dataT)
+          const dataT = [];
+          dataT.push({ code: `First name`, value: cmnPar.firstname });
+          dataT.push({ code: `Last name`, value: cmnPar?.lastname });
+          dataT.push({ code: `Customer id`, value: cmnPar?.pib || cmnPar?.idnum });
+          dataT.push({ code: `Email`, value: cmnPar?.email });
+          dataT.push({ code: `Phon`, value: cmnPar?.tel });
+          dataT.push({ code: `Address`, value: cmnPar?.address });
+          dataT.push({ code: `Post number`, value: cmnPar?.postcode });
+          dataT.push({ code: `City`, value: cmnPar?.place });
+          dataT.push({ code: `Country`, value: cmnPar.country });
           setCmnParInfos(dataT);
+
+          initFilters();
+        }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [cmnPar]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        ++i
+        if (i < 5) {
+          const dataO = [];
+          dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
+          dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
+          dataO.push({ code: `Order transaction no`, value: transactionTemplate(props.ticDoc.id) });
+          dataO.push({ code: `Event`, value: neventTemplate(props.ticDoc) });
+          dataO.push({ code: `Transaction time`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
+          dataO.push({ code: `Number of ticket`, value: props.ticDoc.ticketcount });
+          dataO.push({ code: `Ticket total price`, value: props.ticDoc.tickettotal });
+          dataO.push({ code: `Discount`, value: props.ticDoc?.discount });
+          dataO.push({ code: `Order total price`, value: props.ticDoc.potrazuje });
+          setTicOrderInfos(dataO);
 
           initFilters();
         }
@@ -91,8 +138,74 @@ export default function TicDocdeliveryL(props) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const dataO = [];
+        dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
+        dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
+        dataO.push({ code: `Order transaction no`, value: props.ticDoc.id });
+        dataO.push({ code: `Event`, value: neventTemplate(props.ticDoc) });
+        dataO.push({ code: `Transaction time`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
+        dataO.push({ code: `Number of ticket`, value: props.ticDoc.ticketcount });
+        dataO.push({ code: `Ticket total price`, value: props.ticDoc.tickettotal });
+        dataO.push({ code: `Discount`, value: props.ticDoc?.discount });
+        dataO.push({ code: `Order total price`, value: props.ticDoc.potrazuje });
+        console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
+        setTicTransactionInfos(dataO);
+
+        initFilters();
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
+//******************************************************************************************************************** */
+//******************************************************************************************************************** */
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const cmnParService = new CmnParService();
+        const data = await cmnParService.getCmnPar(props.ticDoc.idpar);
+        console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
+        const [firstname, lastname] = data.textx.split(' ');
+        const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
+        setCmnPar(_cmnPar);
+        initFilters();
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [parRefresh]);
   /******************************************** */
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const ticDocdeliveryService = new TicDocdeliveryService();
+        const dataD = await ticDocdeliveryService.getTicListaByItem("docdelivery", "listabynum", "tic_docdelivery_v", "doc", ticDoc.id);
+        if (dataD[0]) {
+          setTicDocdelivery(dataD[0])
+          const admUserService = new AdmUserService();
+          const data = await admUserService.getAdmUser(dataD[0].usr);
+          setAdmUser(data);
+        }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
+//******************************************************************************************************************** */
+//******************************************************************************************************************** */
   useEffect(() => {
     // Kreiranje niza objekata za cmnParInfos
     const newData = [
@@ -105,19 +218,31 @@ export default function TicDocdeliveryL(props) {
             severity="success"
             raised
           />
-        )
+        ),
+        status: ''
+
       },
       {
-        event: "Payment", button: (
+        event: (<Button
+          label={translations[selectedLanguage].notpaid}
+          className="p-button-warning"
+          onClick={handlePaymentClick}
+          severity="danger"
+          raised
+          disabled
+        />
+        ),
+        button: (
           <Button
             label={translations[selectedLanguage].Payment}
             icon="pi pi-dollar"
             className="p-button-warning"
-            // onClick={handlePaymentClick}
-            severity="success"
+            onClick={handlePaymentClick}
+            severity="danger"
             raised
           />
-        )
+        ),
+        status: ''
       },
       {
         event: "Delivery", button: (
@@ -129,12 +254,128 @@ export default function TicDocdeliveryL(props) {
             severity="success"
             raised
           />
+        ),
+        status: `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser.firstname} ${admUser.lastname}`
+      },
+      {
+        event: "Fiscal receipt", button: (
+          <Button
+            label={translations[selectedLanguage].Fiscal}
+            icon="pi pi-dollar"
+            className="p-button-warning"
+            onClick={handleDocdeliveryClick}
+            severity="success"
+            raised
+          />
+        ),
+        status: (
+          <Button
+            label={translations[selectedLanguage].SendFiscalReceipt}
+            icon="pi pi-send"
+            className="p-button-warning"
+            onClick={handleDocdeliveryClick}
+            severity="success"
+            raised
+          />
         )
       }
     ];
     setCmnBtnInfos(newData);
-  }, [selectedLanguage]);
+  }, [admUser]);
   /******************************************** */
+  useEffect(() => {
+    // Kreiranje niza objekata za cmnParInfos
+    const newData = [
+      {
+        col1: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ), col2: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ),
+        col3: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        )
+      },
+      {
+        col1: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ), col2: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ),
+        col3: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        )
+      },
+      {
+        col1: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ), col2: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        ),
+        col3: (
+          <Button
+            label={translations[selectedLanguage].Print}
+            icon="pi pi-print"
+            onClick={openStampa}
+            severity="success"
+            raised
+          />
+        )
+      }
+    ];
+    setCmnBtnActions(newData);
+  }, [selectedLanguage]);
+//******************************************************************************************************************** */
+//******************************************************************************************************************** */
+
 
   const rowClass = (rowData) => {
     const tableRow = document.querySelectorAll('.p-datatable-tbody');
@@ -157,24 +398,29 @@ export default function TicDocdeliveryL(props) {
 
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
-
-    let _ticDocdeliverys = [...ticDocdeliverys];
-    let _ticDocdelivery = { ...localObj.newObj.obj };
-    //setSubmitted(true);
-    if (localObj.newObj.docdeliveryTip === "CREATE") {
-      _ticDocdeliverys.push(_ticDocdelivery);
-    } else if (localObj.newObj.docdeliveryTip === "UPDATE") {
-      const index = findIndexById(localObj.newObj.obj.id);
-      _ticDocdeliverys[index] = _ticDocdelivery;
-    } else if ((localObj.newObj.docdeliveryTip === "DELETE")) {
-      _ticDocdeliverys = ticDocdeliverys.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery Delete', life: 3000 });
+    if (openDialog == 'PAR') {
+      const [firstname, lastname] = localObj.newObj.obj.textx.split(' ');
+      setCmnPar({ ...localObj.newObj.obj, firstname: firstname, lastname: lastname })
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery ?', life: 3000 });
+
+      let _ticDocdeliverys = [...ticDocdeliverys];
+      let _ticDocdelivery = { ...localObj.newObj.obj };
+      //setSubmitted(true);
+      if (localObj.newObj.docdeliveryTip === "CREATE") {
+        _ticDocdeliverys.push(_ticDocdelivery);
+      } else if (localObj.newObj.docdeliveryTip === "UPDATE") {
+        const index = findIndexById(localObj.newObj.obj.id);
+        _ticDocdeliverys[index] = _ticDocdelivery;
+      } else if ((localObj.newObj.docdeliveryTip === "DELETE")) {
+        _ticDocdeliverys = ticDocdeliverys.filter((val) => val.id !== localObj.newObj.obj.id);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery Delete', life: 3000 });
+      } else {
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocdelivery ?', life: 3000 });
+      }
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docdeliveryTip}`, life: 3000 });
+      setTicDocdeliverys(_ticDocdeliverys);
+      setTicDocdelivery(emptyTicDocdelivery);
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docdeliveryTip}`, life: 3000 });
-    setTicDocdeliverys(_ticDocdeliverys);
-    setTicDocdelivery(emptyTicDocdelivery);
   };
 
   const handleDocdeliveryClick = async (e) => {
@@ -200,6 +446,49 @@ export default function TicDocdeliveryL(props) {
       });
     }
   };
+
+  const handlePaymentClick = async (e) => {
+    try {
+      setTicPaymentLVisible(true);
+    } catch (error) {
+      console.error(error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to fetch cmnPar data",
+        life: 3000,
+      });
+    }
+  };
+
+  const handleTicPaymentLDialogClose = (newObj) => {
+    setTicPayment(newObj);
+    setTicPaymentLVisible(false)
+  };
+
+
+  const handleParClick = async (e) => {
+    // try {
+    // await setparRefresh (++parRefresh)
+    setOpenDialog("PAR")
+    setCmnParVisible(true);
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.current.show({
+    //     severity: "error",
+    //     summary: "Error",
+    //     detail: "Failed to fetch cmnPar data",
+    //     life: 3000,
+    //   });
+    // }
+  };
+
+
+  const handleCmnParLDialogClose = (newObj) => {
+    setCmnPar(newObj);
+    setCmnParVisible(false)
+  };
+
   async function fetchDocdelivery() {
     try {
       const ticDocService = new TicDocService();
@@ -367,36 +656,82 @@ export default function TicDocdeliveryL(props) {
     );
   };
 
+  const removeUserMenu = () => {
+    const userMenuDiv = iframeRef.current.contentDocument.querySelector('.user-menu');
+    if (userMenuDiv) {
+      userMenuDiv.remove();
+    }
+  };
+
+  const handleIframeLoad = () => {
+    removeUserMenu();
+  };
+  const transactionTemplate = (pId) => {
+    return (
+      <b>
+        {pId}
+      </b>
+    )
+  }
+  const neventTemplate = (rowData) => {
+    // Proveri da li postoji niz proizvoda
+    console.log(rowData.nevent, "rowData*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+
+    const nizObjekata = JSON.parse(rowData.nevent)
+
+    if (nizObjekata && nizObjekata.length > 0) {
+      console.log(nizObjekata.length, "nizObjekata.length*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+      return (
+        <div>
+          <table className="p-datatable" style={{ minWidth: "20rem" }}>
+            <tbody>
+              {nizObjekata.map((item) => (
+                <tr key={item.starttm}>
+                  <b>
+                    <td style={{ width: '45%' }}>{item.name}</td>
+                  </b>
+                  <td style={{ width: '40%' }}>{item.venue}</td>
+                  <td style={{ width: '10%' }}>{DateFunction.formatDate(item.startda)}</td>
+                  <td style={{ width: '5%' }}>{DateFunction.formatTimeMin(item.starttm)}</td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      // Ako nema proizvoda, možete prikazati odgovarajuću poruku ili ništa
+      return null;
+    }
+  }
   return (
     <>
       <div className="card">
         <div className="grid p-fluid formgrid nested-grid">
           <Toast ref={toast} />
-
-          {/* I */}
-          <div className="col-4">
+          <div className="col-5">
             <div class="grid">
               <div className="col-12">
-                {/* <div className="field col-4 md:col-4"> */}
                 <div className="card">
                   <DataTable
                     dataKey="id"
                     size={"small"}
                     rowClassName=" custom-row-color"
                     stripedRows
-                    selection={cmnParInfo}
-                    value={cmnParInfos}
+                    selection={ticOrderInfo}
+                    value={ticOrderInfos}
                     virtualScrollerOptions={{ itemSize: 46 }}
                   // onSelectionChange={(e) => setTicDocdelivery(e.value)}
                   >
                     <Column
                       field="code"
                       header={translations[selectedLanguage].Order_info}
-                      style={{ width: "10%" }}
+                      style={{ width: "20%" }}
                     ></Column>
                     <Column
                       field="value"
-                      style={{ width: "25%" }}
+                      style={{ width: "80%" }}
                     ></Column>
                   </DataTable>
                 </div>
@@ -404,9 +739,12 @@ export default function TicDocdeliveryL(props) {
             </div>
           </div>
           {/* </div> */}
-          <div className="col-8">
+          {/**** *********************/}
+
+          {/**** *********************/}
+          <div className="col-3">
             <div class="grid">
-              <div className="col-6">
+              <div className="col-12">
                 {/* II */}
                 <div className="card">
                   <DataTable
@@ -423,72 +761,44 @@ export default function TicDocdeliveryL(props) {
                     <Column
                       field="code"
                       header={translations[selectedLanguage].Customer_info}
-                      style={{ width: "10%" }}
+                      style={{ width: "30%" }}
                     ></Column>
                     <Column
+                      header={
+                        <div >
+                          <Button
+                            icon="pi pi-spin pi-cog"
+                            className="p-button-warning"
+                            onClick={handleParClick}
+                            severity="success"
+                            raised
+                          />
+                        </div>
+                      }
                       field="value"
-                      style={{ width: "25%" }}
+                      style={{ width: "70%" }}
                     ></Column>
                   </DataTable>
                 </div>
               </div>
-              <div className="col-6">
-                {/* III */}
-                <div className="card">
-                  <DataTable
-                    dataKey="id"
-                    size={"small"}
-                    // rowClassName={rowClass}
-                    rowClassName="custom-row-color"
-                    selection={ticDocdelivery}
-                    value={ticDocdeliverys}
-                    virtualScrollerOptions={{ itemSize: 46 }}
-                    onSelectionChange={(e) => setTicDocdelivery(e.value)}
-                  >
-                    <Column
-                      field="cpar"
-                      header={translations[selectedLanguage].Transaction_info}
-                      style={{ width: "10%" }}
-                    ></Column>
-                    <Column
-                      field="npar"
-                      style={{ width: "25%" }}
-                    ></Column>
-                  </DataTable>
-                </div>
-              </div>
-              <div className="col-6">
-                {/* IV */}
-                <div className="card">
-                  <DataTable
-                    dataKey="id"
-                    size={"small"}
-                    // rowClassName={rowClass}
-                    rowClassName="custom-row-color"
-                    selection={ticDocdelivery}
-                    value={ticDocdeliverys}
-                    virtualScrollerOptions={{ itemSize: 46 }}
-                    onSelectionChange={(e) => setTicDocdelivery(e.value)}
-                  >
-                    <Column
-                      field="cpar"
-                      header={translations[selectedLanguage].Transaction_info}
-                      style={{ width: "10%" }}
-                    ></Column>
-                    <Column
-                      field="npar"
-                      style={{ width: "25%" }}
-                    ></Column>
-                  </DataTable>
-                </div>
-              </div>
-              <div className="col-6">
+              {/**** *********************/}
+
+              {/**** *********************/}
+            </div>
+          </div>
+          {/**** *********************/}
+
+          {/**** *********************/}
+          <div className="col-4">
+            <div class="grid">
+              <div className="col-12">
                 {/* V */}
                 <div className="card">
                   <DataTable
                     dataKey="id"
                     size={"small"}
                     // rowClassName={rowClass}
+                    showHeaders={false}
                     rowClassName="custom-row-color"
                     selection={cmnBtnInfo}
                     value={cmnBtnInfos}
@@ -497,47 +807,74 @@ export default function TicDocdeliveryL(props) {
                   >
                     <Column
                       field="event"
-                      header={translations[selectedLanguage].Transaction_info}
-                      style={{ width: "10%" }}
+                      header={translations[selectedLanguage].Action}
+                      style={{ width: "20%" }}
                     ></Column>
                     <Column
                       field="button"
-                      style={{ width: "25%" }}
+                      style={{ width: "30%" }}
+                    ></Column>
+                    <Column
+                      field="status"
+                      style={{ width: "50%" }}
                     ></Column>
                   </DataTable>
                 </div>
+
               </div>
+              <div className="col-12">
+                {/* V */}
+                <div className="card">
+                  <DataTable
+                    dataKey="id"
+                    size={"small"}
+                    // rowClassName={rowClass}
+                    rowClassName="custom-row-color"
+                    selection={cmnBtnAction}
+                    value={cmnBtnActions}
+                    virtualScrollerOptions={{ itemSize: 46 }}
+                    onSelectionChange={(e) => setTicDocdelivery(e.value)}
+                  >
+                    <Column
+                      field="col1"
+                      style={{ width: "30%" }}
+                    ></Column>
+                    <Column
+                      field="col2"
+                      style={{ width: "30%" }}
+                    ></Column>
+                    <Column
+                      field="col3"
+                      style={{ width: "30%" }}
+                    ></Column>
+                  </DataTable>
+                </div>
+
+              </div>
+              {/**** *********************/}
+
+              {/**** *********************/}
             </div>
           </div>
         </div>
       </div>
-      <div className="card">
-        <DataTable
-          dataKey="id"
-          size={"small"}
-          // rowClassName={rowClass}
-          rowClassName="customa-row-color"
-          stripedRows
-          selection={cmnParInfo}
-          value={cmnParInfos}
-          virtualScrollerOptions={{ itemSize: 46 }}
-        // onSelectionChange={(e) => setTicDocdelivery(e.value)}
-        >
-          <Column
-            field="code"
-            header={translations[selectedLanguage].Customer_info}
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            field="value"
-            style={{ width: "25%" }}
-          ></Column>
-        </DataTable>
+
+      <div className="flex-grow-1">
+        <TicDocsL
+          parameter={"inputTextValue"}
+          ticDoc={ticDoc}
+          ticDocs={ticDocs}
+          cmnPar={cmnPar}
+          setVisible={true}
+          dialog={false}
+          docTip={props.docTip}
+        />
       </div>
+
       <Dialog
         header={translations[selectedLanguage].Docdelivery}
         visible={ticDocdeliveryVisible}
-        style={{ width: '90%' }}
+        style={{ width: '60%' }}
         onHide={() => {
           setTicDocdeliveryVisible(false);
           setShowMyComponent(false);
@@ -548,14 +885,15 @@ export default function TicDocdeliveryL(props) {
             parameter={"inputTextValue"}
             ticDoc={props.ticDoc}
             cmnPar={cmnPar}
+            proba={"PROBA"}
             docdeliveryTip={docdeliveryTip}
             ticDocdelivery={ticDocdelivery}
             handleDialogClose={handleDialogClose}
             handleTicDocdeliveryDialogClose={handleTicDocdeliveryDialogClose}
             setTicDocdeliveryVisible={setTicDocdeliveryVisible}
+            setVisible={setVisible}
             dialog={true}
             lookUp={true}
-            setVisible={setVisible}
           />
         )}
       </Dialog>
@@ -571,12 +909,60 @@ export default function TicDocdeliveryL(props) {
         {showMyComponent &&
           <TicStampaL parameter={'inputTextValue'}
             ticDoc={props.ticDoc}
+            cmnPar={cmnPar}
             handleTicStampaLDialogClose={handleTicStampaLDialogClose}
             setTicStampaLVisible={setTicStampaLVisible}
             dialog={true} lookUp={false}
           />}
       </Dialog>
+      <Dialog
+        header={translations[selectedLanguage].PaymentList}
+        visible={ticPaymentLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicPaymentLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {ticPaymentLVisible && (
+          <TicDocpaymentL
+            parameter={"inputTextValue"}
+            ticDoc={ticDoc}
+            cmnPar={cmnPar}
+            handleTicPaymentLDialogClose={handleTicPaymentLDialogClose}
+            setTicPaymentLVisible={setTicPaymentLVisible}
+            dialog={true}
+            lookUp={true}
+          />
+        )}
+      </Dialog>
 
+      <Dialog
+        header={translations[selectedLanguage].Par}
+        visible={cmnParVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setCmnParVisible(false);
+          setVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {cmnParVisible && (
+          <CmnPar
+            parameter={"inputTextValue"}
+            ticDoc={ticDoc}
+            cmnPar={cmnPar}
+            handleCmnParLDialogClose={handleCmnParLDialogClose}
+            handleDialogClose={handleDialogClose}
+            setCmnParVisible={setCmnParVisible}
+            setVisible={setVisible}
+            remote={false}
+            dialog={true}
+            lookUp={true}
+            parTip={"UPDATE"}
+          />
+        )}
+      </Dialog>
     </>
 
   );

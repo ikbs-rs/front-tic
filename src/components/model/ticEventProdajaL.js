@@ -324,13 +324,13 @@ export default function TicEventL(props) {
                 scrollable
                 sortField="code"
                 sortOrder={1}
-                scrollHeight="750px"
-                virtualScrollerOptions={{ itemSize: 46 }}
+                scrollHeight="670px"
+                // virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rows={50}
+                rowsPerPageOptions={[50, 100, 250, 500]}
                 onSelectionChange={(e) => setTicEvent(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
@@ -361,7 +361,20 @@ export default function TicEventL(props) {
                 <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
             </DataTable>
             <Dialog
-                header={translations[selectedLanguage].Event}
+                // header={translations[selectedLanguage].Doc}
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setVisible(false);
+                                // setShowMyComponent(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                        {/* <p>{translations[selectedLanguage].Doc}</p>                         */}
+                    </div>
+                }
                 visible={visible}
                 style={{ width: '50%' }}
                 onHide={() => {
@@ -380,7 +393,19 @@ export default function TicEventL(props) {
                     />}
             </Dialog>
             <Dialog
-                header={translations[selectedLanguage].webMap}
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setWebMapVisible(false);
+                                // setShowMyComponent(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                        {/* <span>"webMap"</span>                         */}
+                    </div>
+                }                
                 visible={webMapVisible}
                 style={{ width: '90%', height: '1100px' }}
                 onHide={() => {

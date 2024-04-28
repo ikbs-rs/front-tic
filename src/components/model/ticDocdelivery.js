@@ -11,10 +11,12 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
+import { CmnParService } from "../../service/model/cmn/CmnParService";
 
 const TicDocdelivery = (props) => {
-    //console.log(props, "*******************TicDocdelivery***********************")
+    console.log(props, "*******************TicDocdelivery***********************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const userId = localStorage.getItem('userId')
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticDocdelivery, setTicDocdelivery] = useState(props.ticDocdelivery);
     const [submitted, setSubmitted] = useState(false);
@@ -24,6 +26,7 @@ const TicDocdelivery = (props) => {
     const [cmnSpedicijaItems, setCmnSpedicijaItems] = useState(null);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
+    const [cmnPar, setCmnPar] = useState(null);
     const [dat, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.dat || DateFunction.currDate())));
     const [datdelivery, setDatdelivery] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.datdelivery || DateFunction.currDate())));
 
@@ -33,6 +36,33 @@ const TicDocdelivery = (props) => {
         { name: `${translations[selectedLanguage].Paid}`, code: '2' },
         { name: `${translations[selectedLanguage].Canceled}`, code: '3' }
     ];
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const cmnParService = new CmnParService();
+                if (props.ticDocdelivery.id) {
+                    const data = await cmnParService.getCmnPar(props.ticDoc.par);
+                    const [firstname, lastname] = data.textx.split(' ');
+                    const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
+                    setCmnPar(_cmnPar);
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        let _ticDocdelivery = { ...ticDocdelivery }
+        _ticDocdelivery.adress = ticDocdelivery?.adress||props.cmnPar?.address
+        _ticDocdelivery.city = ticDocdelivery?.city||props.cmnPar?.place
+        _ticDocdelivery.country = ticDocdelivery?.country||props.cmnPar?.country
+        _ticDocdelivery.amount = ticDocdelivery?.amount||props.ticDoc?.tickettotal
+        _ticDocdelivery.tel = ticDocdelivery?.tel||props.cmnPar?.tel
+        setTicDocdelivery({ ..._ticDocdelivery })
+    }, []);
 
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticDocdelivery.status));
@@ -44,7 +74,7 @@ const TicDocdelivery = (props) => {
 
     const findDropdownItemByCode = (code) => {
         return statusItems.find((item) => item.code === code) || null;
-    };    
+    };
 
     const calendarRef = useRef(null);
 
@@ -86,6 +116,8 @@ const TicDocdelivery = (props) => {
             setSubmitted(true);
             ticDocdelivery.dat = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(dat));
             ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));
+            ticDocdelivery.tmrec = DateFunction.currDatetime();
+            ticDocdelivery.usr = userId;
 
             const ticDocdeliveryService = new TicDocdeliveryService();
             const data = await ticDocdeliveryService.postTicDocdelivery(ticDocdelivery);
@@ -194,14 +226,14 @@ const TicDocdelivery = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Transaction}</label>
                             <InputText id="code"
-                                value={props.ticDocdelivery.doc}
+                                value={props.ticDocdelivery?.doc || props.ticDoc.id}
                                 disabled={true}
                             />
                         </div>
                         <div className="field col-12 md:col-5">
                             <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
                             <InputText id="npar"
-                                value={props.cmnPar.text || props.ticDocdelivery.npar}
+                                value={props.ticDocdelivery?.npar||cmnPar?.textx || props.ticDoc.npar}
                                 disabled={true}
                             />
                         </div>
@@ -211,7 +243,7 @@ const TicDocdelivery = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="paymenttp">{translations[selectedLanguage].Courier} *</label>
                             <Dropdown id="courier"
                                 value={ddCmnSpedicijaItem}
@@ -224,28 +256,51 @@ const TicDocdelivery = (props) => {
                             />
                             {submitted && !ticDocdelivery.courier && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                    </div>
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-8">
-                            <label htmlFor="adress">{translations[selectedLanguage].adress} *</label>
+                        <div className="field col-12 md:col-7">
+                            <label htmlFor="adress">{translations[selectedLanguage].address} *</label>
                             <InputText
                                 id="adress"
-                                value={ticDocdelivery.adress || props.cmnPar.adress}
+                                value={ticDocdelivery.adress}
                                 onChange={(e) => onInputChange(e, "text", 'adress')}
                             />
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-5">
+
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="city">{translations[selectedLanguage].place} *</label>
+                            <InputText
+                                id="city"
+                                value={ticDocdelivery.city}
+                                onChange={(e) => onInputChange(e, "text", 'city')}
+                            />
+                        </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="country">{translations[selectedLanguage].country} *</label>
+                            <InputText
+                                id="country"
+                                value={ticDocdelivery.country}
+                                onChange={(e) => onInputChange(e, "text", 'country')}
+                            />
+                        </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="tel">{translations[selectedLanguage].tel} *</label>
+                            <InputText
+                                id="tel"
+                                value={ticDocdelivery.tel}
+                                onChange={(e) => onInputChange(e, "text", 'tel')}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="amount">{translations[selectedLanguage].Amount} *</label>
                             <InputText
                                 id="amount"
                                 value={ticDocdelivery.amount} onChange={(e) => onInputChange(e, "text", 'amount')}
                             />
                         </div>
-                    </div>
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="dat">{translations[selectedLanguage].dat} *</label>
                             <Calendar
                                 value={dat}
@@ -254,7 +309,7 @@ const TicDocdelivery = (props) => {
                                 dateFormat="dd.mm.yy"
                             />
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="datdelivery">{translations[selectedLanguage].datdelivery} *</label>
                             <Calendar
                                 value={datdelivery}
@@ -263,20 +318,21 @@ const TicDocdelivery = (props) => {
                                 dateFormat="dd.mm.yy"
                             />
                         </div>
-
-                    <div className="field col-12 md:col-3">
-                        <label htmlFor="status">{translations[selectedLanguage].status} *</label>
-                        <Dropdown id="status"
-                            value={dropdownItem}
-                            options={dropdownItems}
-                            onChange={(e) => onInputChange(e, "options", 'status')}
-                            required
-                            optionLabel="name"
-                            placeholder="Select One"
-                            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.status })}
-                        />
-                        {submitted && !ticDocdelivery.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                     </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="status">{translations[selectedLanguage].status} *</label>
+                            <Dropdown id="status"
+                                value={dropdownItem}
+                                options={dropdownItems}
+                                onChange={(e) => onInputChange(e, "options", 'status')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticDocdelivery.status })}
+                            />
+                            {submitted && !ticDocdelivery.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-12">
@@ -288,11 +344,34 @@ const TicDocdelivery = (props) => {
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="parent">{translations[selectedLanguage].parent} *</label>
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="tmrec">{translations[selectedLanguage].tmrec} *</label>
                             <InputText
-                                id="parent"
-                                value={ticDocdelivery.parent} onChange={(e) => onInputChange(e, "text", 'parent')}
+                                id="tmrec"
+                                value={ticDocdelivery.tmrec} onChange={(e) => onInputChange(e, "text", 'tmrec')}
+                            />
+                        </div>
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="tmship">{translations[selectedLanguage].tmship} *</label>
+                            <InputText
+                                id="tmship"
+                                value={ticDocdelivery.tmship} onChange={(e) => onInputChange(e, "text", 'tmship')}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="tmcour">{translations[selectedLanguage].tmcour} *</label>
+                            <InputText
+                                id="tmcour"
+                                value={ticDocdelivery.tmcour} onChange={(e) => onInputChange(e, "text", 'tmcour')}
+                            />
+                        </div>
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="tmbck">{translations[selectedLanguage].tmbck} *</label>
+                            <InputText
+                                id="tmbck"
+                                value={ticDocdelivery.tmbck} onChange={(e) => onInputChange(e, "text", 'tmbck')}
                             />
                         </div>
                     </div>

@@ -99,8 +99,8 @@ console.log("*-*-*-*-*", url, newObj, jsonObj)
             };
             const jsonObj = JSON.stringify(newObj)
             const response = await axios.put(url, jsonObj, { headers });
-            //console.log("**************"  , response, "****************")
-            return response.data.items;
+            console.log("@@@@@@@@@@@@@@@@@**************"  , response.data, "****************@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            return response.data;
         } catch (error) {
             console.error(error);
             throw error;

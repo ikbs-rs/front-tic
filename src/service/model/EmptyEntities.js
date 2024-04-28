@@ -1,6 +1,3 @@
-import DateFunction from "../../utilities/DateFunction"
-
-const god = DateFunction.currYear
 
 const EmptyEntities = 
 {
@@ -13,24 +10,6 @@ const EmptyEntities =
     "begtm": "",
     "endtm": "",
     "valid": "1"
-  },
-  "cmn_par": {
-    "id": null,
-    "site": null,
-    "code": "",
-    "tp": null,
-    "text": "",
-    "short": "",
-    "address": "",
-    "place": "",
-    "postcode": "",
-    "tel": "",
-    "activity": "",
-    "pib": "",
-    "idnum": "",
-    "pdvnum": "",
-    "begda": "",
-    "endda": ""
   },
   "tic_agendatp": {
     "id": null,
@@ -316,9 +295,16 @@ const EmptyEntities =
 		"status": "0",
     "note": "",
     "parent": null,
-    "country": null,
+    "country": "",
     "zip": "",
-    "city": null    
+    "city": "",
+    "tmrec": "",
+    "tmship": "",
+    "tmcour": "",
+    "tmbck": "",
+    "usr": null,
+    "tel": "",
+    "email": ""      
 	},  
 	"tic_docpayment": {
 			"id": null,
@@ -536,8 +522,6 @@ const EmptyEntities =
     "loc": null,
     "begda": "",
     "endda": "",
-    "color": "",
-    "icon": "",
     "color": "",
     "icon": ""
   },
@@ -859,25 +843,28 @@ const EmptyEntities =
     "onoff": 0,
     "color": "",
     "icon": ""
-  },  
-  // "cmn_par": {
-  //   "id": null,
-  //   "site": null,
-  //   "code": "",
-  //   "tp": null,
-  //   "text": "",
-  //   "short": "",
-  //   "address": "",
-  //   "place": "",
-  //   "postcode": "",
-  //   "tel": "",
-  //   "activity": "",
-  //   "pib": "",
-  //   "idnum": "",
-  //   "pdvnum": "",
-  //   "begda": "",
-  //   "endda": ""
-  // },
+  },
+  "cmn_par": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "tp": null,
+    "text": "",
+    "short": "",
+    "address": "",
+    "place": "",
+    "postcode": "",
+    "tel": "",
+    "activity": "",
+    "pib": "",
+    "idnum": "",
+    "pdvnum": "",
+    "begda": "",
+    "endda": "",
+    "docid": "",
+    "country": "",
+    "email": ""
+  },
   "cmn_parlink": {
     "id": null,
     "site": null,

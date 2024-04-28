@@ -28,6 +28,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useSearchParams } from 'react-router-dom';
 import DeleteDialog from '../dialog/DeleteDialog';
 import TicEventProdajaL from './ticEventProdajaL';
+import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicTransactionL(props) {
     const [searchParams] = useSearchParams();
@@ -58,8 +59,17 @@ export default function TicTransactionL(props) {
     const [ddTicDocobjItem, setDdTicDocobjItem] = useState(null);
     const [ddTicDocobjItems, setDdTicDocobjItems] = useState(null);
     const [componentKey, setComponentKey] = useState(0);
+    let [refresh, setRefresh] = useState(0);
 
     const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
+
+    const [checked1, setChecked1] = useState(false);
+    const [checked2, setChecked2] = useState(true);
+    const [checked3, setChecked3] = useState(false);
+    const [checked4, setChecked4] = useState(false);
+    const [checked5, setChecked5] = useState(false);
+    const [checked6, setChecked6] = useState(false);
+
     let i = 0;
 
     const handleCancelClick = () => {
@@ -70,9 +80,10 @@ export default function TicTransactionL(props) {
         async function fetchData() {
             try {
                 ++i
-                if (i < 2) {
+                if (i < 2||refresh>0) {                 
                     const ticDocService = new TicDocService();
-                    const data = await ticDocService.getTransactionLista();
+                    const data = await ticDocService.getTransactionLista(checked1, checked2, checked3, checked4, checked5, checked6);
+                    console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")                       
                     setTicDocs(data);
                     initFilters();
                 }
@@ -82,7 +93,9 @@ export default function TicTransactionL(props) {
             }
         }
         fetchData();
-    }, [ddTicDocvrItem, ticDoc, componentKey]);
+    }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6]);
+
+  
 
     async function fetchDoc(rowData) {
         try {
@@ -261,26 +274,26 @@ export default function TicTransactionL(props) {
     };
 
     const handleEventProdajaClick = async (e, destination) => {
-      try {
-          setTicEventProdajaLDialog();
-      } catch (error) {
-          console.error(error);
-          toast.current.show({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch ticArt data',
-              life: 3000
-          });
-      }
+        try {
+            setTicEventProdajaLDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticArt data',
+                life: 3000
+            });
+        }
     };
 
     const setTicEventProdajaLDialog = (destination) => {
         setTicEventProdajaLVisible(true);
-      }; 
+    };
 
-      const handleTicEventProdajaLDialogClose = (newObj) => {
+    const handleTicEventProdajaLDialogClose = (newObj) => {
         setTicEventProdajaLVisible(false);
-      }; 
+    };
 
     const renderHeader = () => {
         return (
@@ -320,6 +333,10 @@ export default function TicTransactionL(props) {
 
     const formatTimeColumn = (rowData, field) => {
         return DateFunction.convertTimeToDisplayFormat(rowData[field]);
+    };
+
+    const formatDatetime = (rowData, field) => {
+        return DateFunction.formatDatetime(rowData[field]);
     };
 
     const stornoBodyTemplate = (rowData) => {
@@ -452,26 +469,157 @@ export default function TicTransactionL(props) {
                                                                                                                         ? 'highlight-row-28'
                                                                                                                         : rowData.trtp == '29'
                                                                                                                             ? 'highlight-row-29'
-                                                                                                                            : '';
+                                                                                                                            : rowData.canceled == '0'
+                                                                                                                                ? 'highlight-row-36 '
+                                                                                                                                : rowData.paid
+                                                                                                                                    ? 'highlight-row-31'
+                                                                                                                                    : rowData.istekla
+                                                                                                                                        ? 'highlight-row-30'
+                                                                                                                                        : '';
+    };
+
+    const neventTemplate = (rowData) => {
+        // Proveri da li postoji niz proizvoda
+        console.log(rowData.nevent, "rowData*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+
+        const nizObjekata = JSON.parse(rowData.nevent)
+        
+        if (nizObjekata && nizObjekata.length > 0) {
+            console.log(nizObjekata.length, "nizObjekata.length*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+            return (
+                <div>
+                    <table className="p-datatable" style={{ minWidth: "20rem" }}>
+                        <tbody>
+                            {nizObjekata.map((item) => (
+                                <tr key={item.starttm}>
+                                    <td style={{ width: '60%' }}>{item.name}</td>
+                                    <td style={{ width: '20%' }}>{DateFunction.formatDate(item.startda)}</td>
+                                    <td style={{ width: '20%' }}>{DateFunction.formatTimeMin(item.starttm)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        } else {
+            // Ako nema proizvoda, možete prikazati odgovarajuću poruku ili ništa
+            return null;
+        }
+    }
+
+    const buttonClassCustom1 = checked1 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom2 = checked2 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom3 = checked3 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom4 = checked4 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom5 = checked5 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom6 = checked6 ? "toggle-button-checked" : "toggle-button-unchecked";
+
+    const paidBodyTemplate = (rowData) => {
+        const setParentTdBackground = (element, paid) => {
+            const parentTd = element?.parentNode;
+            if (parentTd) {
+                console.log(paid, "######################################################################")
+                if (paid == false) {
+                    parentTd.style.backgroundColor = "red";
+                } else {
+                    parentTd.style.backgroundColor = "green";
+                }
+            }
+        };
+
+        return (
+            <div ref={(el) => setParentTdBackground(el, rowData.paid)} />
+        );
     };
 
     return (
         <div className="card">
             <Toast ref={toast} />
-            {/* <div className="col-12">
-                <div className="card">
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-                            <InputText id="code" value={props.ticEvent.code} disabled={true} />
-                        </div>
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-                            <InputText id="text" value={props.ticEvent.textx} disabled={true} />
-                        </div>
-                    </div>
+            <div className="p-fluid formgrid grid">
+                <div className="field col-12 md:col-1">
+
+                    <ToggleButton
+                        id={`tgAll}`}
+                        onLabel="All"
+                        offLabel="All"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked2}
+                        onChange={(e) => setChecked2(e.value)}
+                        className={`${buttonClassCustom2} custom2 w-9rem`}
+                    />
+
                 </div>
-            </div> */}
+                <div className="field col-12 md:col-1">
+
+                    <ToggleButton
+                        id={`tglInDelivery}`}
+                        onLabel="InDelivery"
+                        offLabel="InDelivery"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked3}
+                        onChange={(e) => setChecked3(e.value)}
+                        className={`${buttonClassCustom3} custom3 w-9rem`}
+                    />
+
+                </div>
+                <div className="field col-12 md:col-1">
+
+                    <ToggleButton
+                        id={`tglForDelivery`}
+                        onLabel="ForDelivery"
+                        offLabel="ForDelivery"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked1}
+                        onChange={(e) => setChecked1(e.value)}
+                        className={`${buttonClassCustom1} custom1 w-9rem`}
+                    />
+
+                </div>
+                <div className="field col-12 md:col-1">
+
+                    <ToggleButton
+                        id={`tglPaid`}
+                        onLabel="Paid"
+                        offLabel="Paid"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked5}
+                        onChange={(e) => setChecked5(e.value)}
+                        className={`${buttonClassCustom5} custom5 w-9rem`}
+                    />
+
+                </div>
+                <div className="field col-12 md:col-1">
+
+                    <ToggleButton
+                        id={`tglExpired`}
+                        onLabel="Expired"
+                        offLabel="Expired"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked4}
+                        onChange={(e) => setChecked4(e.value)}
+                        className={`${buttonClassCustom4} custom4 w-9rem`}
+                    />
+
+                </div>
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglCanceled}`}
+                        onLabel="Canceled"
+                        offLabel="Canceled"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked6}
+                        onChange={(e) => setChecked6(e.value)}
+                        className={`${buttonClassCustom6} custom6 w-9rem`}
+                    />
+                </div>
+            </div>
+
             <DataTable
                 key={componentKey}
                 dataKey="id"
@@ -488,27 +636,13 @@ export default function TicTransactionL(props) {
                 scrollable
                 sortField="date"
                 sortOrder={1}
-                scrollHeight="750px"
-                virtualScrollerOptions={{ itemSize: 46 }}
+                scrollHeight="640px"
                 tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
                 paginator
                 rows={125}
                 rowsPerPageOptions={[125, 150, 200]}
                 onSelectionChange={(e) => setTicDoc(e.value)}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
-            // rowClassName={(rowData) => {
-            //     const isEditing = rowData === ticEventatts;
-            //     const customClass = rowClass(rowData);
-
-            //     return {
-            //         'editing-row': isEditing,
-            //         [customClass]: customClass !== '',
-            //     };
-            // }}
-            //virtualScrollerOptions={{ itemSize: 46 }}
-            //metaKeySelection={false}
             >
                 {/* <Column
                     //bodyClassName="text-center"
@@ -529,48 +663,30 @@ export default function TicTransactionL(props) {
                     header={translations[selectedLanguage].Transaction}
                     sortable
                     filter
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
                 ></Column>
                 <Column
-                    field="ndocvr"
-                    header={translations[selectedLanguage].ndocvr}
+                    field="nevent"
+                    header={translations[selectedLanguage].nevent}                    
+                    body={neventTemplate}
                     sortable
                     filter
-                    style={{ width: "15%" }}
+                    style={{ width: "60%" }}
                 ></Column>
                 <Column
                     field="npar"
                     header={translations[selectedLanguage].npar}
                     sortable
                     filter
-                    style={{ width: "10%" }}
+                    style={{ width: "20%" }}
                 ></Column>
                 <Column
-                    field="nevent"
-                    header={translations[selectedLanguage].nevent}
+                    field="tmreserv"
+                    header={translations[selectedLanguage].tmreserv}
                     sortable
                     filter
                     style={{ width: "10%" }}
-                ></Column>
-                <Column
-                    field="status"
-                    filterField="status"
-                    dataType="numeric"
-                    header={translations[selectedLanguage].status}
-                    sortable
-                    filter
-                    filterElement={stornoFilterTemplate}
-                    style={{ width: "5%" }}
-                    bodyClassName="text-center"
-                    body={stornoBodyTemplate}
-                ></Column>
-                <Column
-                    field="begda"
-                    header={translations[selectedLanguage].date}
-                    sortable
-                    filter
-                    style={{ width: "10%" }}
-                    body={(rowData) => formatDateColumn(rowData, "begda")}
+                    body={(rowData) => formatDatetime(rowData, "tmreserv")}
                 ></Column>
                 <Column
                     field="tm"
@@ -580,29 +696,71 @@ export default function TicTransactionL(props) {
                     style={{ width: "10%" }}
                 ></Column>
                 <Column
-                    field="no_tick"
-                    header={translations[selectedLanguage].no_tick}
+                    field="potrazuje"
+                    header={translations[selectedLanguage].Amount}
                     sortable
                     filter
-                    style={{ width: "15%" }}
+                    style={{ width: "10%" }}
+                    bodyStyle={{ textAlign: 'right' }}
                 ></Column>
+                <Column
+                    field="output"
+                    header={translations[selectedLanguage].brojkarti}
+                    sortable
+                    filter
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>
+                <Column
+                    field="paid"
+                    header={translations[selectedLanguage].paid}
+                    body={paidBodyTemplate}
+                    style={{ width: "5%" }}
+                    paidBodyTemplate
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>
+                {/* <Column
+                    field="istekla"
+                    header={translations[selectedLanguage].Istekle}
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column> */}
+                <Column
+                    field="delivery"
+                    header={translations[selectedLanguage].Delivery}
+                    sortable
+                    filter
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>
+                {/* <Column
+                    field="canceled"
+                    header={translations[selectedLanguage].Canceled}
+                    sortable
+                    filter
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column> */}
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog
                 // header={translations[selectedLanguage].Doc}
                 header={
                     <div className="dialog-header">
-                        <Button 
-                            label={translations[selectedLanguage].Cancel} icon="pi pi-times" 
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
                             onClick={() => {
+                                ++refresh
+                                console.log(refresh, "########################")
+                                setRefresh(refresh)                                
                                 setVisible(false);
                                 // setShowMyComponent(false);
-                            }} 
-                            severity="secondary" raised 
+                            }}
+                            severity="secondary" raised
                         />
                         {/* <span>{translations[selectedLanguage].Doc}</span>                         */}
                     </div>
-                }                
+                }
                 visible={visible}
                 style={{ width: '95%', height: '1400px' }}
                 onHide={() => {
@@ -620,6 +778,7 @@ export default function TicTransactionL(props) {
                         ticDocvr={ticDocvr}
                         ticDocobj={ticDocobj}
                         docTip={docTip}
+                        eventTip={"SAL"}
                     />
                 )}
             </Dialog>
@@ -632,17 +791,17 @@ export default function TicTransactionL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {ticEventProdajaLVisible && 
-                    <TicEventProdajaL 
-                        parameter={'inputTextValue'} 
-                        ticDocs={ticDocs} 
-                        ticDoc={props.ticDoc} 
-                        onTaskComplete={handleTicEventProdajaLDialogClose} 
-                        setTicEventProdajaLVisible={setTicEventProdajaLVisible} 
-                        dialog={true} 
-                        lookUp={true} 
+                {ticEventProdajaLVisible &&
+                    <TicEventProdajaL
+                        parameter={'inputTextValue'}
+                        ticDocs={ticDocs}
+                        ticDoc={props.ticDoc}
+                        onTaskComplete={handleTicEventProdajaLDialogClose}
+                        setTicEventProdajaLVisible={setTicEventProdajaLVisible}
+                        dialog={true}
+                        lookUp={true}
                     />}
-            </Dialog>            
+            </Dialog>
             {/* <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} /> */}
         </div>
     );

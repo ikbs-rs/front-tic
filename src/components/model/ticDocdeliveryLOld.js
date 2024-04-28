@@ -1,24 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
+import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputSwitch } from "primereact/inputswitch";
-//import { ProductService } from "./service/ProductService";
-import { TicEventattsService } from "../../service/model/TicEventattsService";
-import { TicEventattService } from "../../service/model/TicEventattService";
-import { Button } from "primereact/button"; // Dodato za dugme
-import { translations } from "../../configs/translations";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { InputText } from "primereact/inputtext";
-import ConfirmDialog from '../dialog/ConfirmDialog';
-import { Toast } from 'primereact/toast';
-import DeleteDialog from '../dialog/DeleteDialog';
+import { Button } from "primereact/button";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { TriStateCheckbox } from "primereact/tristatecheckbox";
+import { Toast } from "primereact/toast";
 import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
 import TicDocdelivery from './ticDocdelivery';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
+import './index.css';
+import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 
+
 export default function TicDocdeliveryL(props) {
+
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -34,28 +33,20 @@ export default function TicDocdeliveryL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [docdeliveryTip, setDocdeliveryTip] = useState('');
-  const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);  
-
-  const [selectedProducts, setSelectedProducts] = useState(null);
-  const [rowClick, setRowClick] = useState(true);
-  const [selectedRowsData, setSelectedRowsData] = useState([]); // Novi state za selektovane redove
-  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [addItems, setAddItems] = useState(true);
-
-
-  // useEffect(() => {
-  //   ProductService.getProductsMini().then((data) => setProducts(data));
-  // }, []);
+  const [ticDocdeliveryVisible, setTicDocdeliveryVisible] = useState(false);
   let i = 0
+  
+  const handleCancelClick = () => {
+    props.setTicPaymentLVisible(false);
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
         ++i
         if (i < 2) {
           const ticDocdeliveryService = new TicDocdeliveryService();
-          const data = await ticDocdeliveryService.getListaL();
+          const data = await ticDocdeliveryService.getLista();
           setTicDocdeliverys(data);
 
           initFilters();
@@ -216,6 +207,9 @@ export default function TicDocdeliveryL(props) {
     );
   };
 
+  const formatDateColumn = (rowData, field) => {
+    return DateFunction.formatDate(rowData[field]);
+  };
 
   // <--- Dialog
   const setTicDocdeliveryDialog = (ticDocdelivery) => {
@@ -246,57 +240,96 @@ export default function TicDocdeliveryL(props) {
       </div>
     );
   };
-  const formatDateColumn = (rowData, field) => {
-    return DateFunction.formatDate(rowData[field]);
-  };
 
   return (
     <div className="card">
       <Toast ref={toast} />
-      {/* <div className="flex justify-content-center align-items-center mb-4 gap-2">
-        <InputSwitch
-          inputId="input-rowclick"
-          checked={rowClick}
-          onChange={(e) => setRowClick(e.value)}
-        />
-        <label htmlFor="input-rowclick">Row Click</label>
-        <Button
-          label="Get Selected Rows"
-          onClick={handleGetSelectedRowsClick}
-        />
-      </div> */}
       <DataTable
-        value={ticDocdeliverys}
-        size={"small"}
-        selectionMode={rowClick ? null : "checkbox"}
-        selection={selectedProducts}
-        onSelectionChange={(e) => setSelectedProducts(e.value)}
         dataKey="id"
-        tableStyle={{ minWidth: "50rem" }}
-        sortField="code" sortOrder={1}
+        rowClassName={rowClass}
+        selectionMode="single"
+        selection={ticDocdelivery}
+        loading={loading}
+        value={ticDocdeliverys}
         header={header}
-        scrollable
-        scrollHeight="650px"
         showGridlines
         removableSort
         filters={filters}
-        loading={loading}
+        scrollable
+        scrollHeight="550px"
+        virtualScrollerOptions={{ itemSize: 46 }}
+        tableStyle={{ minWidth: "50rem" }}
+        metaKeySelection={false}
+        paginator
+        rows={10}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        onSelectionChange={(e) => setTicDocdelivery(e.value)}
+        onRowSelect={onRowSelect}
+        onRowUnselect={onRowUnselect}
       >
         <Column
-          selectionMode="multiple"
-          headerStyle={{ width: "3rem" }}
+          //bodyClassName="text-center"
+          body={docdeliveryTemplate}
+          exportable={false}
+          headerClassName="w-10rem"
+          style={{ minWidth: '4rem' }}
+        />
+        <Column
+          field="doc"
+          header={translations[selectedLanguage].Transaction}
+          sortable
+          filter
+          style={{ width: "10%" }}
         ></Column>
-        <Column field="cpar" header={translations[selectedLanguage].cpar}></Column>
-        <Column field="npar" header={translations[selectedLanguage].npar}></Column>
-        <Column field="adress" header={translations[selectedLanguage].address}></Column>
-        <Column field="dat" header={translations[selectedLanguage].dat}
-                body={(rowData) => formatDateColumn(rowData, "dat")}
+        <Column
+          field="cpar"
+          header={translations[selectedLanguage].cpar}
+          sortable
+          filter
+          style={{ width: "10%" }}
         ></Column>
-        <Column field="amount" header={translations[selectedLanguage].amount}></Column>
-        <Column field="ncourier" header={translations[selectedLanguage].ncourier}></Column>
-        <Column field="status" header={translations[selectedLanguage].status}></Column>
-        <Column bodyClassName="text-center" body={docdeliveryTemplate} exportable={false} headerClassName="w-10rem" 
-              style={{ width: "5%" }}/>        
+        <Column
+          field="npar"
+          header={translations[selectedLanguage].npar}
+          sortable
+          filter
+          style={{ width: "25%" }}
+        ></Column>
+        <Column
+          field="adress"
+          header={translations[selectedLanguage].adress}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>
+        <Column
+          field="dat"
+          header={translations[selectedLanguage].dat}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="potrazuje"
+          header={translations[selectedLanguage].potrazuje}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="ncourier"
+          header={translations[selectedLanguage].ncourier}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
+        <Column
+          field="parent"
+          header={translations[selectedLanguage].parent}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Payment}
@@ -320,31 +353,12 @@ export default function TicDocdeliveryL(props) {
             docdeliveryTip={docdeliveryTip}
           />
         )}
-      </Dialog>
-
-      {selectedRowsData.length > 0 && (
-        <div className="mt-4">
-          <h5>Selected Rows Data:</h5>
-          <ul>
-            {selectedRowsData.map((row, index) => (
-              <li key={index}>{JSON.stringify(row)}</li>
-            ))}
-          </ul>
+        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+          <button className="p-dialog-header-close p-link">
+            <span className="p-dialog-header-close-icon pi pi-times"></span>
+          </button>
         </div>
-      )}
-      {/* <ConfirmDialog
-        visible={confirmDialogVisible}
-        onHide={() => setConfirmDialogVisible(false)}
-        onConfirm={handleConfirm}
-        uPoruka={'Копирањие поставки, да ли сте сигурни?'}
-      />
-      <DeleteDialog
-        visible={deleteDialogVisible}
-        inAction="delete"
-        onHide={hideDeleteDialog}
-        onDelete={handleDeleteClick}
-      //uPoruka={'Копирањие поставки, да ли сте сигурни?'}
-      /> */}
+      </Dialog>
     </div>
   );
 }

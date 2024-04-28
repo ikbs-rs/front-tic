@@ -87,24 +87,86 @@
   opacity: 1!important
 }
 
-/************************************/
+/*< **************TOGGLE*********************/
 
 .toggle-button-checked {
-  background-color: rgb(102, 147, 102) !important; /* Zelena za uključeno stanje */
-  font-size: 9px !important;
+  background-color: rgb(102, 147, 102) !important; 
+  font-size: 8px !important;
   border-color: none !important;
 }
 
 .toggle-button-unchecked {
-  background-color: rgb(234, 111, 111) !important; /* Crvena za isključeno stanje */
-  font-size: 9px !important;
+  background-color: rgb(234, 111, 111) !important; 
+  font-size: 8px !important;
   border-color: none !important;
 }
 
+.toggle-button-checked.custom1,
+.toggle-button-unchecked.custom1 {
+  background-color: rgb(190, 66, 66) !important;
+  /* font-size: 13px !important; */
+  border-color: none !important;
+  color:black;
+}
+
+.toggle-button-checked.custom2,
+.toggle-button-unchecked.custom2 {
+  background-color: rgb(200, 221, 244) !important; 
+  
+  border-color: none !important;
+  color:black;
+}
+
+.toggle-button-checked.custom3,
+.toggle-button-unchecked.custom3 {
+  background-color: rgb(207, 142, 73) !important; /* Zelena za uključeno stanje */
+  /* font-size: 13px !important; */
+  border-color: none !important;
+  color:black;
+}
+.toggle-button-checked.custom4,
+.toggle-button-unchecked.custom4 {
+  background-color: rgb(225, 236, 33) !important; /* Zelena za uključeno stanje */
+  /* font-size: 13px !important; */
+  border-color: none !important;
+  color:black;
+}
+.toggle-button-checked.custom5,
+.toggle-button-unchecked.custom5 {
+  background-color: rgb(25, 234, 25) !important; /* Zelena za uključeno stanje */
+  /* font-size: 13px !important; */
+  border-color: none !important;
+  color:black;
+}
+.toggle-button-checked.custom6,
+.toggle-button-unchecked.custom6 {
+  background-color: rgb(102, 147, 102) !important; /* Zelena za uključeno stanje */
+  
+  border-color: none !important;
+  color:black;
+}
+
+.p-togglebutton.p-button .p-button-icon-left,
+.p-togglebutton.p-button .p-button-icon-right {
+  font-size: 14px  !important;
+}
+
+.p-togglebutton.p-button.p-highlight .p-button-icon-left,
+.p-togglebutton.p-button.p-highlight .p-button-icon-right {
+  font-size: 14px  !important;
+}
+
+.p-button.p-togglebutton.p-component.toggle-button-unchecked,
+.p-togglebutton.p-component.p-highlight.toggle-button-checked,
+.p-togglebutton.p-component.p-highlight.toggle-button-unchecked {
+  color: #151414 !important; 
+  font-size: 14px !important;
+}
 .p-togglebutton.p-button.p-highlight {
 
   border-color: #fdfdfd !important;
 }
+/*> **************TOGGLE*********************/
 
 /* FONT */
 .p-component {

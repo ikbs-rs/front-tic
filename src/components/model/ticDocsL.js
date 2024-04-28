@@ -322,16 +322,19 @@ Click Handle *******************************************************************
         value={ticDocss}
         header={header}
         showGridlines
+        size={"small"}
+        rowClassName="customa-row-color"
+        stripedRows
         removableSort
         filters={filters}
-        scrollable
-        scrollHeight="550px"
-        virtualScrollerOptions={{ itemSize: 46 }}
+        // scrollable
+        // scrollHeight="550px"
+        // virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        // paginator
+        // rows={10}
+        // rowsPerPageOptions={[5, 10, 25, 50]}
         onSelectionChange={(e) => setTicDocs(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}

@@ -12,6 +12,7 @@ export default function TicDocW(props) {
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventobj = EmptyEntities[objName]
   emptyTicEventobj.event = props.ticEvent.id
+  const iframeRef = useRef(null);
 
   let i = 0
   const handleCancelClick = () => {
@@ -22,27 +23,38 @@ export default function TicDocW(props) {
     props.onTaskComplete(data);
   };
 
+  const removeUserMenu = () => {
+    const userMenuDiv = iframeRef.current.contentDocument.querySelector('.user-menu');
+    if (userMenuDiv) {
+      userMenuDiv.remove();
+    }
+  };
+
+  const handleIframeLoad = () => {
+    removeUserMenu();
+  };  
 
   return (
     <>
-      <div className="flex card-container">
-        {/* <Button onClick={() => handleTaskComplete()} label={translations[selectedLanguage].Confirm} text raised icon="pi pi-table" /> */}
+      {/* <div className="flex card-container">
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
-      </div>
-      <div className="card">
+      </div> */}
+      {/* <div className="card"> */}
         {props.eventTip == "SAL" && (
           <div className="grid">
             <div className="col-12">
-              <div className="card">
+              {/* <div className="card"> */}
                 <iframe
+                  ref={iframeRef}
                   src={`https://82.117.213.106/sal/seatmap/${props.ticEvent.id}/?parent=ADM`}
+                  onLoad={handleIframeLoad}
                   title="Sal iframe"
                   width="100%"
                   height="760px"
                   frameBorder="0"
                 // scrolling="no"
                 ></iframe>
-              </div>
+              {/* </div> */}
             </div>
           </div>
         )}
@@ -62,7 +74,7 @@ export default function TicDocW(props) {
             </div>
           </div>
         )}
-      </div>
+      {/* </div> */}
     </>
   );
 }
