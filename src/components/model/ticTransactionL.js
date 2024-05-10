@@ -80,10 +80,10 @@ export default function TicTransactionL(props) {
         async function fetchData() {
             try {
                 ++i
-                if (i < 2||refresh>0) {                 
+                if (i < 2 || refresh > 0) {
                     const ticDocService = new TicDocService();
                     const data = await ticDocService.getTransactionLista(checked1, checked2, checked3, checked4, checked5, checked6);
-                    console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")                       
+                    console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
                     setTicDocs(data);
                     initFilters();
                 }
@@ -95,7 +95,7 @@ export default function TicTransactionL(props) {
         fetchData();
     }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6]);
 
-  
+
 
     async function fetchDoc(rowData) {
         try {
@@ -336,7 +336,9 @@ export default function TicTransactionL(props) {
     };
 
     const formatDatetime = (rowData, field) => {
-        return DateFunction.formatDatetime(rowData[field]);
+        if (rowData[field]) {
+            return DateFunction.formatDatetime(rowData[field]);
+        }
     };
 
     const stornoBodyTemplate = (rowData) => {
@@ -483,7 +485,7 @@ export default function TicTransactionL(props) {
         console.log(rowData.nevent, "rowData*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
 
         const nizObjekata = JSON.parse(rowData.nevent)
-        
+
         if (nizObjekata && nizObjekata.length > 0) {
             console.log(nizObjekata.length, "nizObjekata.length*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
             return (
@@ -636,7 +638,7 @@ export default function TicTransactionL(props) {
                 scrollable
                 sortField="date"
                 sortOrder={1}
-                scrollHeight="640px"
+                scrollHeight="616px"
                 tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
                 paginator
@@ -667,7 +669,7 @@ export default function TicTransactionL(props) {
                 ></Column>
                 <Column
                     field="nevent"
-                    header={translations[selectedLanguage].nevent}                    
+                    header={translations[selectedLanguage].nevent}
                     body={neventTemplate}
                     sortable
                     filter
@@ -752,7 +754,7 @@ export default function TicTransactionL(props) {
                             onClick={() => {
                                 ++refresh
                                 console.log(refresh, "########################")
-                                setRefresh(refresh)                                
+                                setRefresh(refresh)
                                 setVisible(false);
                                 // setShowMyComponent(false);
                             }}

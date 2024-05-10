@@ -212,9 +212,189 @@ body {
   padding: 1rem;
 }
 .layout-wrapper.layout-topbar-blue .layout-topbar {
-  background-color: #0F8C50;
+  background-color: #0F8C5090;
 }
 
 .p-datatable .p-datatable-loading-icon {
   font-size: 7rem;
+}
+/*******************************************************************/
+body {
+  color: #252529;
+  background-color: #fdfdfd77;
+  background-image: url('./Z.jpg');
+  background-size: cover; /* Slika će pokrivati celu pozadinu */
+  background-position: center; /* Centriranje slike */
+  background-repeat: no-repeat; /* Da se slika ne ponavlja */
+  opacity: 0.95; 
+}
+
+
+.surface-card {
+
+  border-color: #074c9100 !important;
+}
+
+.surface-border {
+  border-color: #074c9100 !important;
+}
+/************************************************************/
+
+:root {
+  --surface-a: #ffffff;
+  --surface-b: #f8f9fa;
+  --surface-c: #e9ecef;
+  --surface-d: #dee2e6;
+  --surface-e: #ffffff;
+  --surface-f: #ffffff;
+  --text-color: #495057;
+  --text-color-secondary: #6c757d;
+  --primary-color: #4EA279;
+  --primary-color-text: #ffffff;
+  --font-family: Inter UI, sans-serif;
+  --surface-0: #ffffff;
+  --surface-50: #FAFAFA;
+  --surface-100: #F5F5F5;
+  --surface-200: #EEEEEE;
+  --surface-300: #E0E0E0;
+  --surface-400: #BDBDBD;
+  --surface-500: #9E9E9E;
+  --surface-600: #757575;
+  --surface-700: #616161;
+  --surface-800: #424242;
+  --surface-900: #212121;
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #EEEEEE;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-500: #9E9E9E;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  --content-padding: 1rem;
+  --inline-spacing: 0.5rem;
+  --border-radius: 3px;
+  --surface-ground: #f8f9fa;
+  --surface-section: #ffffff;
+  --surface-card: #ffffff00;
+  --surface-overlay: #ffffff;
+  --surface-border: #0c539b00;
+  --surface-hover: #0d75dd2a;
+  --maskbg: rgba(0, 0, 0, 0.4);
+}
+
+.card {
+  background: #ffffffdd;
+  /* padding: 1rem; 
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 2px; */
+}
+.cardhome {
+  background: #1f1e1eee;
+  padding: 1rem; 
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 2px; 
+  color: #8b8b90;
+}
+
+.surface-border {
+  border-color: #074c91e8 !important;
+}
+
+.p-dataview .p-dataview-content {
+  background: #ffffff00;
+  /* color: #495057;
+  border: 0 none;
+  padding: 0; */
+}
+
+.p-datatable.p-datatable-scrollable > .p-datatable-wrapper > .p-datatable-table > .p-datatable-thead,
+.p-datatable.p-datatable-scrollable > .p-datatable-wrapper > .p-datatable-table > .p-datatable-tfoot, .p-datatable.p-datatable-scrollable > .p-datatable-wrapper > .p-virtualscroller > .p-datatable-table > .p-datatable-thead,
+.p-datatable.p-datatable-scrollable > .p-datatable-wrapper > .p-virtualscroller > .p-datatable-table > .p-datatable-tfoot {
+  background-color: #f8f9fa77;
+}
+
+.p-datatable .p-sortable-column.p-highlight {
+  background: #f8f9fa;
+  color: #4EA279;
+}
+.p-datatable .p-datatable-header {
+  background: #f8f9fa;
+  color: #495057;
+}
+.p-datatable .p-datatable-thead > tr > th {
+  color: #495057;
+  background: #f8f9fa;
+}
+.p-datatable .p-datatable-tbody > tr {
+  background: #f8f9fa;
+  color: #495057;
+  transition: box-shadow 0.2s;
+}
+
+.p-datatable .p-datatable-tbody .editing-row {
+  /* background: rgb(194, 198, 230) !important; */
+  background: rgb(68, 83, 201) !important;
+  /* Dodajte ostale stilove prema potrebi */
+}
+.p-paginator {
+  background: #f8f9fa99;
+  color: #6c757d;
+}
+
+/********/
+.layout-wrapper.layout-menu-dark .layout-menu-container {
+  background-color: #25252960;
+}
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu ul {
+  background-color: #25252940;
+}
+
+.layout-wrapper.layout-topbar-teal .layout-topbar {
+  background-color: #337E5990;
+}
+
+/************************************************************/
+/* Za WebKit (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 7px; /* Širina skrol trake */
+}
+
+::-webkit-scrollbar-track {
+  background: #332d2d80; /* Boja pozadine skrol trake */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #33323280; /* Boja skrola */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5558; /* Boja skrola prilikom prelaska mišem */
+}
+
+/**********************************************************/
+.layout-footer {
+  background-color: #ffffff30;
+  color:#4EA279;
+  border-top: 0px solid #ebebef;
+}
+
+.layout-footer .footer-icons button i {
+  color: #4EA279;
+  font-size: 20px;
+}
+
+/******************************************************/
+.w-9 {
+  width: 25% !important;
+}
+
+.layout-wrapper .layout-main .layout-content {
+  padding-bottom: 0px;
 }

@@ -229,14 +229,14 @@ Click Handle *******************************************************************
       <div className="flex card-container">
         <div className="flex flex-wrap gap-1" />
         {(props.dialog) ? (<Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised/>): null}
-        <div className="flex flex-wrap gap-1">
+        {/* <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
-        </div>
-        {
+        </div> */}
+        {/* {
         <div className="flex flex-wrap gap-1">
             <Button label={translations[selectedLanguage].web} icon="pi pi-table" onClick={handleWebMapClick} severity="info" text raised />
         </div>
-        }
+        } */}
         <div className="flex flex-wrap gap-1">
             <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
         </div>  
@@ -327,20 +327,14 @@ Click Handle *******************************************************************
         stripedRows
         removableSort
         filters={filters}
-        // scrollable
-        // scrollHeight="550px"
-        // virtualScrollerOptions={{ itemSize: 46 }}
+
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
-        // paginator
-        // rows={10}
-        // rowsPerPageOptions={[5, 10, 25, 50]}
         onSelectionChange={(e) => setTicDocs(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
-          //bodyClassName="text-center"
           body={docsTemplate} 
           exportable={false}
           headerClassName="w-10rem"

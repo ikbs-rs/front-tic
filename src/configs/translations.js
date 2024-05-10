@@ -769,6 +769,8 @@ export const translations = {
         Fiscal: "Fiscal",
         SendFiscalReceipt: "Пошаљи рачун",
         notpaid: "notpaid",
+        received: "U pripremi",
+        Go: "Go ..."
     }
   };
   

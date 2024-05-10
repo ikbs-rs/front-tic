@@ -157,17 +157,17 @@
 
 .layout-wrapper .layout-topbar {
   top: 0;
-  height: 50px;
+  height: 60px;
   padding: 2px 2px;  
 }
 
 .layout-wrapper .layout-menu-container {
-  height: calc(100% - 50px);
-  top: 50px;
+  height: calc(100% - 60px);
+  top: 60px;
 }
 
 .layout-wrapper .layout-main {
-  padding-top: 40px;
+  padding-top: 50px;
 }
 
 .card {
