@@ -4,30 +4,95 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 import './index.css';
 import { translations } from "../../configs/translations";
 
+/********************************** */
+import { TicDocService } from "../../service/model/TicDocService";
+/********************************** */
+import { TabView, TabPanel } from 'primereact/tabview';
+import { Avatar } from 'primereact/avatar';
+import TicTransactionsL from './ticTransactionsL';
+import DateFunction from "../../utilities/DateFunction"
+import { Toast } from "primereact/toast";
+import { Dropdown } from 'primereact/dropdown';
 
 
 export default function TicDocW(props) {
-  console.log(props, "***************************************************************************************************")
-  const objName = "tic_eventobj"
+  console.log(props, "******************@@@@@@@@@@@@@@@@@@@@@@@*******************************", props.ticDoc)
   const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const emptyTicEventobj = EmptyEntities[objName]
-  emptyTicEventobj.event = props.ticEvent.id
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
+  const [ticDoc, setTicDoc] = useState(props.ticDoc);
+  const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
 
   const iframe = document.getElementById('myIframe');
   const iframeWindow = iframe?.contentWindow;
   const [iframeVariable, setIframeVariable] = useState(iframeWindow?.cartItems);
-  
+  const [expandIframe, setExpandIframe] = useState(false);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  let [iframeKey, setIframeKey] = useState(Math.random());
+  let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
+  const toast = useRef(null);
+
+  const [ddChannellItem, setDdChannellItem] = useState({});
+  const [ddChannellItems, setDdChannellItems] = useState([{}]);
+  const [channellItem, setChannellItem] = useState({});
+  const [channellItems, setChannellItems] = useState([{}]);
+
+  useEffect(() => {
+    async function fetchData() {
+      console.log("#00##################BMVBMV#####################", props.channells)
+      try {
+        if (props?.channells) {
+          console.log("#01##################BMVBMV#####################", props.channells)
+          setChannellItems(props.channells)
+          setChannellItem(props.channell)
+
+          const dataDD = props.channells.map(({ text, id }) => ({ name: text, code: id }));
+          setDdChannellItems(dataDD);
+          setDdChannellItem(dataDD.find((item) => item.code === props.channell.id) || null);
+        }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        ++i
+        // if (i < 2) {
+        console.log(ticDocId, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ticDocId@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        const ticDocService = new TicDocService();
+        const data = await ticDocService.getTicDoc(ticDocId);
+        if (ticDocId != -1) {
+          setTicDoc(data);
+        }
+        // }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [ticDocId]);
+
 
   /********************************************************************** */
+  const toggleIframeExpansion = () => {
+    setExpandIframe(!expandIframe); // Toggle the state
+  };
+
   const remountComponent = () => {
+    console.log(props.ticEvent, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticDoc)
     setKey(prevKey => prevKey + 1); // Promenimo ključ kako bi se komponenta ponovo montirala
   };
 
   const handleClickInsideIframe = () => {
     if (iframeRef.current?.contentWindow) {
-      const buttonInsideIframe = iframeRef.current.contentWindow.document.querySelector('.p-button.p-component.p-button-raised.p-button-primary.checkout-button');
+      const buttonInsideIframe = iframeRef.current.contentWindow.document.querySelector('#kupiBtn');
       if (buttonInsideIframe) {
         buttonInsideIframe.click();
       }
@@ -61,14 +126,27 @@ export default function TicDocW(props) {
       document.removeEventListener('click', handleClick);
     };
   }, []);
-
+  useEffect(() => {
+    console.log('TicTransactionsL montirana ili osvežena sa key:', ticTransactionsKey);
+    return () => {
+      console.log('TicTransactionsL demontirana');
+    }
+  }, []);
 
   /****************** */
   const handleMouseClick = (event) => {
-    console.log(event.srcElement, 'Mouse clicked inside iframe:', event.target.id || "NESTO DRUGO", "=======================", iframeRef.current?.getAttribute('src'));
-    setIframeVariable(iframeWindow?.cartItems)
-    addMouseClickListener();
-    console.log(iframeVariable, '############################################################')
+
+    const newDocId = iframeRef.current.contentWindow.document.querySelector('#docId').value;
+    setTicDocId(newDocId);
+    if (event.target.id == 'reserveBtn') {
+      console.log(event.srcElement, 'Mouse clicked inside iframe:', event.target.id || "NESTO DRUGO",
+        "======================= ##########################  DocId inside iframe:", iframeRef.current.contentWindow.document.querySelector('#docId').value)
+      if (newDocId != ticDocId) {
+        setTicDocId(newDocId);
+      }
+      setTicTransactionsKey(++ticTransactionsKey);
+    }
+    // addMouseClickListener();
   };
 
 
@@ -109,70 +187,216 @@ export default function TicDocW(props) {
       }
     }
   };
+  const removeCartSection = () => {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      if (iframeRef.current?.contentDocument) {
+        const cartSectionDiv = iframeRef.current.contentDocument.querySelector('.cart-section');
+        if (cartSectionDiv) {
+          cartSectionDiv.style.display = 'none'; // Hide the section instead of removing it
+        } else {
+          setTimeout(() => {
+            removeCartSection(); // Retry hiding the section after a short delay
+          }, 3000); // Timeout of 3 seconds to retry
+        }
+      }
+    }
+  };
 
 
   const handleIframeLoad = () => {
     removeUserMenu();
+    removeCartSection();
   };
+  /******************************************************************************** 
+   * 
+  ******************************************************************************** */
+
+  const onInputChange = (e, type, name, a) => {
+    let val = ''
+    if (type === "options") {
+      val = (e.target && e.target.value && e.target.value.code) || '';
+      if (name == "channell") {
+        setDdChannellItem(e.value);
+        const foundItem = channellItems.find((item) => item.id === val);
+        setChannellItem(foundItem || null);
+        // } else {
+        //     setDropdownItem(e.value);
+      }
+
+    } else {
+      val = (e.target && e.target.value) || '';
+    }
+  };
+  /******************************************************************************** 
+   * 
+  ******************************************************************************** */
+  function HeaderBtn() {
+    return (
+      <div className="flex card-container">
+        <div className="flex flex-wrap gap-1" >
+          <Button label="Simuliraj klik" onClick={handleClickInsideIframe} icon="pi pi-cog" raised />
+        </div>
+        <div className="flex flex-wrap gap-1" raised>
+          <Button label="Ponovo učitaj iframe" onClick={remountComponent} raised />
+        </div>
+      </div>
+    );
+  };
+
+  /******************************************************************************** 
+   * 
+  ******************************************************************************** */
+  const tab1HeaderTemplate = (options) => {
+    return (
+      <>
+        <div className="fieldH flex align-items-center">
+          <label htmlFor="myDropdown" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_kanal}</label>
+          <Dropdown id="channell"
+            value={ddChannellItem}
+            options={ddChannellItems}
+            onChange={(e) => onInputChange(e, "options", 'channell')}
+            optionLabel="name"
+            placeholder="Select One"
+
+          />
+        </div>
+        <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}> {/* onClick={options.onClick}>*/}
+          {/* <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" className="mx-2" /> */}
+          <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion} />
+        </div>
+      </>
+    )
+  };
+
+  function NavigateTemplate({ activeIndex, setActiveIndex, totalTabs }) {
+    return (
+      <div className="flex justify-content-between mt-2">
+        <Button
+          label="Back"
+          icon="pi pi-chevron-left"
+          onClick={() => setActiveIndex(Math.max(0, activeIndex - 1))}
+          className="p-button-text"
+          disabled={activeIndex === 0}
+        />
+        <Button
+          label="Next"
+          icon="pi pi-chevron-right"
+          iconPos="right"
+          onClick={() => setActiveIndex(Math.min(totalTabs - 1, activeIndex + 1))}
+          className="p-button-text"
+          disabled={activeIndex === totalTabs - 1}
+        />
+      </div>
+    );
+  }
 
   return (
     <div key={key}>
-      <div class="grid grid-nogutter">
-        <div class="col-6">
-          {props.eventTip == "SAL" && (
-            <div className="grid">
-              <div className="col-12">
-                {/* <div className="card"> */}
-                <iframe
-                  id="myIframe"
-                  ref={iframeRef}
-                  src={`https://82.117.213.106/sal/buy/card/event/${props.ticEvent.id}`}
-                  onLoad={handleIframeLoad}
-                  title="Sal iframe"
-                  width="100%"
-                  height="600px"
-                  frameBorder="0"
-                // scrolling="no"
-                ></iframe>
-                {/* </div> */}
-              </div>
+      <div className="card">
+        <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+          <TabPanel header="Избор седишта">
 
-            </div>
-          )}
-          {props.eventTip == "WEB" && (
-            <div className="grid">
-              <div className="col-12">
-                <div className="card">
-                  <iframe
-                    src={`https://dev.ticketline.rs/2023/08/22/sezonska-ulaznica-fk-napredak-2023-2024-vaucer/${props.ticEvent.id}/?parent=ADM`}
-                    title="Sal iframe"
-                    width="100%"
-                    height="760px"
-                    frameBorder="0"
-                  // scrolling="no"
-                  ></iframe>
+
+            <div className="grid grid-nogutter">
+              <div className={expandIframe ? "col-12" : "col-6"}> {/* IFRAME */}
+                {props.eventTip == "SAL" && (
+                  <div className="grid">
+                    <div className="col-12">
+                      <iframe key={iframeKey}
+                        id="myIframe"
+                        ref={iframeRef}
+                        src={`https://82.117.213.106/sal/buy/card/event/${props.ticEvent.id}/${ticDoc?.id}?par1=BACKOFFICE&channel=${channellItem.id}`}
+                        onLoad={handleIframeLoad}
+                        title="Sal iframe"
+                        width="100%"
+                        height="600px"
+                        frameBorder="0"
+                      // scrolling="no"
+                      ></iframe>
+                    </div>
+                  </div>
+                )}
+                {props.eventTip == "WEB" && (
+                  <div className="grid">
+                    <div className="col-12">
+                      <div className="card">
+                        <iframe
+                          src={`https://dev.ticketline.rs/2023/08/22/sezonska-ulaznica-fk-napredak-2023-2024-vaucer/${props.ticEvent.id}/?parent=ADM`}
+                          title="Sal iframe"
+                          width="100%"
+                          height="760px"
+                          frameBorder="0"
+                        // scrolling="no"
+                        ></iframe>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {!expandIframe && (
+                <div className="col-6"> {/* TABELA*/}
+                  <div className="grid">
+                    <div className="col-12">
+                      <div className="card">
+                        <HeaderBtn />
+                        <TicTransactionsL
+                          key={ticTransactionsKey}
+                          ticDoc={ticDoc}
+                          propsParent={props}
+                        />
+                        <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              )}
+            </div>
+
+          </TabPanel>
+          <TabPanel
+            // headerTemplate={tab1HeaderTemplate}
+            header="Header II"
+            headerClassName="flex align-items-center"
+          >
+            <div className="grid grid-nogutter">
+              <div className="col-6"> {/* TABELA */}
+                {/****************************************************************************************************************** */}
+                <div className="col-12">
+                  <div className="card">
+                    <TicTransactionsL
+                      key={ticTransactionsKey}
+                      ticDoc={ticDoc}
+                      propsParent={props}
+                    />
+                    <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
+                  </div>
+                </div>
+                {/****************************************************************************************************************** */}
               </div>
             </div>
-          )}
-        </div>
-        <div class="col-6">
-          <div class="grid">
-            <div className="col-4">
-              <Button label="Simuliraj klik" onClick={handleClickInsideIframe} />
-            </div>
-            <div className="col-4">
-              <Button label="Ponovo učitaj iframe" onClick={remountComponent} />
-            </div>
-          </div>
-        </div>
+          </TabPanel>
+          <TabPanel
+            // headerTemplate={tab1HeaderTemplate}
+            header="Header III"
+            headerClassName="flex align-items-center"
+          >
+            <b className="m-0">
+              Element III
+            </b>
+            <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
+          </TabPanel>
+          <TabPanel
+            headerTemplate={tab1HeaderTemplate}
+            header="Header IV"
+            headerClassName="flex align-items-center"
+          >
+            <b className="m-0">
+              Element IV
+            </b>
+            <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
+          </TabPanel>
+        </TabView>
       </div>
-      {/* <div className="flex card-container">
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
-      </div> */}
-      {/* <div className="card"> */}
-
-      {/* </div> */}
     </div>
   );
 }

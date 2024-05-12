@@ -17,10 +17,20 @@ import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
 import WebMap from './remoteComponentContainer';
 import WebSalMap from './ticDocW';
+import { Dropdown } from 'primereact/dropdown';
+import { TicCenatpService } from "../../service/model/TicCenatpService";
+import { TicDocService } from "../../service/model/TicDocService";
+
 
 export default function TicEventL(props) {
-    console.log(props, '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+    console.log(props, '+++++++++++++++++++++++++++++++++++TicEventL+++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
+    const objDoc = "tic_docs"
+    const userId = localStorage.getItem('userId') || -1
+    const emptyTicDoc = EmptyEntities[objDoc]
+    emptyTicDoc.id = -1
+    const [ticDoc, setTicDoc] = useState(props?.ticDoc || emptyTicDoc)
+
     const objName = 'tic_event';
     const docId = props.ticDoc?.id || 1
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -35,6 +45,16 @@ export default function TicEventL(props) {
     const [visible, setVisible] = useState(false);
     const [eventTip, setEventTip] = useState('');
     const [webMapVisible, setWebMapVisible] = useState(false);
+
+    const [ddTicCenatpItem, setDdTicCenatpItem] = useState(null);
+    const [ddTicCenatpItems, setDdTicCenatpItems] = useState(null);
+    const [ticCenatpItem, setTicCenatpItem] = useState(null);
+    const [ticCenatpItems, setTicCenatpItems] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
+
+    let [numberChannell, setNumberChannell] = useState(0)
+    let [channells, setChannells] = useState([{}])
+    let [channell, setChannell] = useState(null)
 
     const generateImageUrl = (id, relpath, selectedLanguage) => {
         return `${env.IMG_BACK_URL}/public/tic/${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
@@ -65,6 +85,28 @@ export default function TicEventL(props) {
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticCenatpService = new TicCenatpService();
+                const data = await ticCenatpService.getTicCenatps();
+                setTicCenatpItems(data)
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicCenatpItems(dataDD);
+                setDdTicCenatpItem(dataDD.find((item) => item.code === props.ticCena.tp) || null);
+                if (props.ticCena.tp) {
+                    const foundItem = data.find((item) => item.id === props.ticCena.tp);
+                    setTicCenatpItem(foundItem || null);
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
     const handleCancelClick = () => {
         props.setTicEventProdajaLVisible(false);
     };
@@ -170,15 +212,40 @@ export default function TicEventL(props) {
         setGlobalFilterValue(value1);
     };
 
+    const onInputChange = (e, type, name, a) => {
+        let val = ''
+        if (type === "options") {
+            val = (e.target && e.target.value && e.target.value.code) || '';
+            if (name == "tp") {
+                setDdTicCenatpItem(e.value);
+                const foundItem = ticCenatpItems.find((item) => item.id === val);
+                setTicCenatpItem(foundItem || null);
+                // } else {
+                //     setDropdownItem(e.value);
+            }
+
+        } else {
+            val = (e.target && e.target.value) || '';
+        }
+    };
+
     const renderHeader = () => {
         return (
             <div className="flex card-container">
                 {props.dialog && <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />}
-                {/** 
-                <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+
+                <div className="fieldH flex align-items-center">
+                    <label htmlFor="myDropdown" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_kanal}</label>
+                    <Dropdown id="tp"
+                        value={ddTicCenatpItem}
+                        options={ddTicCenatpItems}
+                        onChange={(e) => onInputChange(e, "options", 'tp')}
+                        optionLabel="name"
+                        placeholder="Select One"
+
+                    />
                 </div>
-                */}
+
                 <div className="flex flex-wrap gap-1">
                     {props.dialog && <Button label={translations[selectedLanguage].Confirm} icon="pi pi-table" onClick={handleTaskComplete} severity="info" text raised disabled={!ticEvent} />}
                 </div>
@@ -237,8 +304,79 @@ export default function TicEventL(props) {
     /*
     Web Map *********************************************************************************************************
     */
+    /**************************************************************************** */
+    /**************************************************************************** */
+
+    const createDoc = async () => {
+        try {
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@createDoc@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            ticDoc.id = null
+            ticDoc.tm = DateFunction.currDatetime();
+            ticDoc.timecreation = ticDoc.tm
+            ticDoc.date = DateFunction.currDate();
+            ticDoc.year = DateFunction.currYear()
+            ticDoc.usr = 1;
+            ticDoc.docvr = 22;
+            ticDoc.usersys = userId
+            ticDoc.curr = 1;
+            ticDoc.currrate = 1;
+            ticDoc.storno = 0;
+            ticDoc.channel = 0;
+            ticDoc.provera = 'PROVERA'
+
+            const ticDocService = new TicDocService();
+            const row = await ticDocService.postTicDoc(ticDoc);
+            console.log(row, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            ticDoc.id = row.id
+            ticDoc.broj = row.id
+            setTicDoc({ ...ticDoc });
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
+    /**************************************************************************** */
+    /**************************************************************************** */
+
+    const getChannell = async (rowData) => {
+        try {
+            console.log(rowData, "######################################################################################", userId)
+            const ticEventService = new TicEventService();
+            const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
+            console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+            if (data && data.length > 0) {
+                setNumberChannell(data.length);
+                setChannells(data);
+                setChannell(data[0]);
+                await createDoc()
+
+            } else {
+                // Prikazuje obaveštenje korisniku
+                toast.current.show({
+                    severity: "warn",
+                    summary: "Obaveštenje",
+                    detail: "Nemate pravo na channell",
+                    life: 3000,
+                });
+                throw new Error("Nemate pravo na channell"); // Izaziva grešku
+            }
+        } catch (err) {
+            // Logovanje greške
+            console.error("Error fetching channel permissions:", err.message);
+            // Obrada greške koja se može prikazati korisniku ili dalje logovati
+            throw err; // Propagira grešku dalje ako je potrebno
+        }
+    };
+
+
     const handleWebMapClick = async (rowData) => {
         try {
+            await getChannell(rowData)
+            console.log(rowData, "#########################@@@@@@@@@@@@@@@@@@@@@@@@@@@@##################################")
             setTicEvent(rowData)
             setWebMapDialog();
         } catch (error) {
@@ -246,7 +384,7 @@ export default function TicEventL(props) {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Failed to fetch cmnPar data',
+                detail: 'Failed to fetch Channell data',
                 life: 3000
             });
         }
@@ -306,7 +444,7 @@ export default function TicEventL(props) {
                 ></Button>
             </div>
         );
-    };    
+    };
 
     return (
         <div className="card">
@@ -348,7 +486,7 @@ export default function TicEventL(props) {
                     exportable={false}
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
-                />                
+                />
                 <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
                 <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
@@ -382,14 +520,14 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && 
-                    <TicEvent 
-                        parameter={'inputTextValue'} 
-                        ticEvent={ticEvent} 
-                        handleDialogClose={handleDialogClose} 
-                        setVisible={setVisible} 
-                        dialog={true} 
-                        eventTip={eventTip} 
+                {showMyComponent &&
+                    <TicEvent
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setVisible}
+                        dialog={true}
+                        eventTip={eventTip}
                     />}
             </Dialog>
             <Dialog
@@ -405,7 +543,7 @@ export default function TicEventL(props) {
                         />
                         {/* <span>"webMap"</span>                         */}
                     </div>
-                }                
+                }
                 visible={webMapVisible}
                 style={{ width: '90%', height: '1100px' }}
                 onHide={() => {
@@ -415,13 +553,17 @@ export default function TicEventL(props) {
             >
                 {webMapVisible && (
                     <WebSalMap
-                    parameter={'inputTextValue'} 
-                    ticEvent={ticEvent} 
-                    handleDialogClose={handleDialogClose} 
-                    setVisible={setVisible} 
-                    dialog={true} 
-                    eventTip={eventTip}                     
-                    onTaskComplete={handleWebMapDialogClose}
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setVisible}
+                        dialog={true}
+                        eventTip={eventTip}
+                        ticDoc={ticDoc}
+                        onTaskComplete={handleWebMapDialogClose}
+                        numberChannell={numberChannell}
+                        channells={channells}
+                        channell={channell}
                     />
                 )}
                 {/* {webMapVisible && (

@@ -325,5 +325,25 @@ export class TicEventService {
       throw error;
     }
   }
+
+
+  async getTicEventchpermissL(eventId, userId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventchpermiss_v&objid=${eventId}&par1=${userId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+        Authorization: tokenLocal.token
+    };
+
+    try {
+        const response = await axios.get(url, { headers });
+        console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
+        return response.data.item;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}  
+
 }
 

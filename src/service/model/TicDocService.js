@@ -132,7 +132,7 @@ export class TicDocService {
   async postTicDoc(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.date.trim() === '' || newObj.npar.trim() === '' || newObj.pib === null) {
+      if (!newObj?.provera && (newObj?.date.trim() === '' || newObj?.npar.trim() === '' || newObj?.pib === null)) {
         throw new Error(
           "Items must be filled!"
         );
@@ -145,7 +145,7 @@ export class TicDocService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      console.log("***response.data.items***********"  , response.data.items, "****************")
+      console.log("###################***response.data.items***********"  , response.data.items, "****************#######################")
       return response.data.items;
     } catch (error) {
       console.error(error);

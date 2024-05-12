@@ -34,6 +34,7 @@ import SeattpAtt from './components/model/ticSeattpattL';
 import SeatTp from './components/model/ticSeattpL';
 import Atest from './components/model/1test';
 import Sal from './components/model/ticSal';
+import ProdajaTab from './components/model/ticProdajaTab';
 
 import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
@@ -117,6 +118,7 @@ const App = () => {
                         { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXTCTP, icon: 'pi pi-fw pi-clone', to: '/objtctp/XTCTP' },
                         { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXDOC, icon: 'pi pi-fw pi-clone', to: '/objdoc/XDOC' },
                         { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXBL, icon: 'pi pi-fw pi-clone', to: '/objdoc/XBL' },
+                        { action: 'pobjMenu', label: translations[selectedLanguage].ObjectsXPV, icon: 'pi pi-fw pi-clone', to: '/objpv/XPV' },
                         { action: 'pobjMenu', label: translations[selectedLanguage].Objects, icon: 'pi pi-fw pi-clone', to: '/obj/-1' },                      
                         { action: 'objattMenu', label: translations[selectedLanguage].Properties_object, icon: 'pi pi-fw pi-clone', to: '/objatt' },
                         { action: 'objatttpMenu', label: translations[selectedLanguage].Group_of_properties, icon: 'pi pi-fw pi-clone', to: '/objatttp' },
@@ -533,6 +535,7 @@ const App = () => {
                         <Route path="/objorg/:objtpCode" element={<ObjW endpoint="objend" />} />
                         <Route path="/objtctp/:objtpCode" element={<ObjW endpoint="objend" />} />
                         <Route path="/objdoc/:objtpCode" element={<ObjW endpoint="objend" />} />
+                        <Route path="/objpv/:objtpCode" element={<ObjW endpoint="objend" />} />
                         <Route path="/obj/:objtpCode" element={<ObjW endpoint="objend" />} />   
                         <Route path="/objatt" element={<ObjW endpoint="objattend" />} />  
                         <Route path="/objatttp" element={<ObjW endpoint="objatttpend" />} />                       
@@ -562,6 +565,7 @@ const App = () => {
 
                         <Route path="/atest" element={<Atest />} />
                         <Route path="/sal" element={<Sal />} />
+                        <Route path="/prodajatab" element={<ProdajaTab />} />
                     </Routes>
                 </div>
 

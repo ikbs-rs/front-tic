@@ -1090,6 +1090,7 @@ export default function TicDocdeliveryL(props) {
         {webMapVisible && (
           <WebSalMap
             parameter={'inputTextValue'}
+            ticDoc={ticDoc}
             ticEvent={ticEvent}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}

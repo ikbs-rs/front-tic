@@ -49,7 +49,7 @@ export default function EmpA() {
                 navigate('/sal');
                 break;            
             case 2:
-                navigate('/doc?docVr=RC');
+                navigate('/prodajatab');
                 break;
             case 1:
                 navigate('/doc?docVr=RZ');

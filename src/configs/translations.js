@@ -770,7 +770,9 @@ export const translations = {
         SendFiscalReceipt: "Пошаљи рачун",
         notpaid: "notpaid",
         received: "U pripremi",
-        Go: "Go ..."
+        Go: "Go ...",
+        ObjectsXPV: "Вредновање места",
+        Izaberite_kanal: "Изаберите канал:",
     }
   };
   

@@ -398,3 +398,18 @@ body {
 .layout-wrapper .layout-main .layout-content {
   padding-bottom: 0px;
 }
+
+
+/********************СЛОВА МЕНИЈА***********************************/
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li.layout-root-menuitem > .layout-menuitem-root-text {
+  color: #dddddf;
+}
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li a .layout-menuitem-text,
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li .p-link .layout-menuitem-text {
+  color: #d1d1d5;
+}
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li a .layout-menuitem-icon, .layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li a .layout-submenu-toggler,
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li .p-link .layout-menuitem-icon,
+.layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li .p-link .layout-submenu-toggler {
+  color: #d9d7d7;
+}
