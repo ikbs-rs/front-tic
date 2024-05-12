@@ -5,11 +5,11 @@ export default function AA({ setInputValueInParent, setMessageInParent, external
     const [inputValue, setInputValue] = useState("");
 
     // Pokreće akciju za A2 kada se triggerA2Action promeni
-useEffect(() => {
-    if (triggerA2Action) {
-        handleButtonA2Click();
-    }
-}, [triggerA2Action]);
+    useEffect(() => {
+        if (triggerA2Action) {
+            handleButtonA2Click();
+        }
+    }, [triggerA2Action]);
 
 
     // Reaguj na promene externalInputValue
