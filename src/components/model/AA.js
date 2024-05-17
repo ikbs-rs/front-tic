@@ -1,37 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 
-export default function AA({ setInputValueInParent, setMessageInParent, externalInputValue, triggerA2Action }) {
+export default function AA({ updateInput, executeAction }) {
     const [inputValue, setInputValue] = useState("");
 
-    // Pokreće akciju za A2 kada se triggerA2Action promeni
     useEffect(() => {
-        if (triggerA2Action) {
-            handleButtonA2Click();
+        if (updateInput !== null) {
+            setInputValue(updateInput);
         }
-    }, [triggerA2Action]);
+    }, [updateInput]);
 
-
-    // Reaguj na promene externalInputValue
     useEffect(() => {
-        setInputValue(externalInputValue);
-    }, [externalInputValue]);
-
-    // Pokreće akciju za A2 kada se triggerA2Action promeni
-    useEffect(() => {
-        if (triggerA2Action) {
-            handleButtonA2Click();
+        if (executeAction) {
+            console.log("Akcija A2 pokrenuta");
         }
-    }, [triggerA2Action]);
-
-    const handleButtonA2Click = () => {
-        console.log("Akcija dugmeta A2");
-        setMessageInParent("Akcija A2 pokrenuta");
-    };
-
-    const handleButtonB2Click = () => {
-        setInputValueInParent(inputValue);
-    };
+    }, [executeAction]);
 
     return (
         <div>
@@ -41,8 +24,7 @@ export default function AA({ setInputValueInParent, setMessageInParent, external
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Unesite vrednost..."
             />
-            <Button onClick={handleButtonA2Click}>A2</Button>
-            <Button onClick={handleButtonB2Click}>B2</Button>
+            <Button label="A2" onClick={() => console.log("Dugme A2 je kliknuto")}>A2</Button>
         </div>
     );
 }

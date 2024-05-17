@@ -21,7 +21,7 @@ export default function TicTransactionsL(props) {
     const objName = "tic_docs"
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicDocs = EmptyEntities[objName]
-    emptyTicDocs.doc = props.ticDoc.id
+    emptyTicDocs.doc = props.ticDoc?.id
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocss, setTicDocss] = useState([]);
     const [ticDocs, setTicDocs] = useState(emptyTicDocs);
@@ -43,7 +43,7 @@ export default function TicTransactionsL(props) {
                 ++i
                 if (i < 2) {
                     const ticDocsService = new TicDocsService();
-                    const data = await ticDocsService.getLista(props.ticDoc.id);
+                    const data = await ticDocsService.getLista(props.ticDoc?.id);
                     console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                     setTicDocss(data);
                     initFilters();
@@ -96,22 +96,13 @@ export default function TicTransactionsL(props) {
     };
 
     const onRowSelect = (event) => {
-        toast.current.show({
-            severity: "info",
-            summary: "Action Selected",
-            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-            life: 3000,
-        });
+        props.handleFirstColumnClick(event.data)
     };
 
     const onRowUnselect = (event) => {
-        toast.current.show({
-            severity: "warn",
-            summary: "Action Unselected",
-            detail: `Id: ${event.data.id} Name: ${event.data.text}`,
-            life: 3000,
-        });
+        onRowSelect (event)
     };
+
     // <heder za filter
     const initFilters = () => {
         setFilters({
@@ -238,8 +229,8 @@ export default function TicTransactionsL(props) {
                 rows={10}
                 // rowsPerPageOptions={[5, 10, 25, 50]}
                 onSelectionChange={(e) => setTicDocs(e.value)}
-                // onRowSelect={onRowSelect}
-                // onRowUnselect={onRowUnselect}
+                onRowSelect={onRowSelect}
+                onRowUnselect={onRowUnselect}
             >
                 {/* <Column
                     //bodyClassName="text-center"
@@ -252,6 +243,7 @@ export default function TicTransactionsL(props) {
                     field="nevent"
                     header={translations[selectedLanguage].nevent}
                     sortable
+                    // body={(rowData) => <span onClick={() => props.handleFirstColumnClick(rowData)}>{rowData.nevent}</span>}
                     //filter
                     style={{ width: "15%" }}
                 ></Column>

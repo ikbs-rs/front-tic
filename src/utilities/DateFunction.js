@@ -13,6 +13,14 @@ const currDatetime =  () => {
     return moment().format('YYYYMMDDHHmmss');
 }
 
+const currDatetimePlusMinutes = (minutes) => {
+  return moment().add(minutes, 'minutes').format('YYYYMMDDHHmmss');
+}
+
+const currDatetimePlusHours = (hours) => {
+  return moment().add(hours, 'hours').format('YYYYMMDDHHmmss');
+}
+
 const currTime =  () => {
     return moment().format('HHmmss');
 }
@@ -145,4 +153,6 @@ export default {
     dateGetValue,
     convertTimeToDisplayFormat,
     convertTimeToDBFormat,
+    currDatetimePlusMinutes,
+    currDatetimePlusHours,
 };

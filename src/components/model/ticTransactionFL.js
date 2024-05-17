@@ -30,7 +30,7 @@ import DeleteDialog from '../dialog/DeleteDialog';
 import TicEventProdajaL from './ticEventProdajaL';
 import { ToggleButton } from 'primereact/togglebutton';
 
-export default function TicTransactionL(props) {
+export default function TicTransactionFL(props) {
     const [searchParams] = useSearchParams();
     const docVr = searchParams.get('docVr');
     const objName = 'tic_doc';
@@ -82,7 +82,7 @@ export default function TicTransactionL(props) {
                 ++i
                 if (i < 2 || refresh > 0) {
                     const ticDocService = new TicDocService();
-                    const data = await ticDocService.getTransactionLista(checked1, checked2, checked3, checked4, checked5, checked6);
+                    const data = await ticDocService.getTransactionFLista(checked1, checked2, checked3, checked4, checked5, checked6);
                     console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
                     setTicDocs(data);
                     initFilters();
@@ -624,7 +624,7 @@ export default function TicTransactionL(props) {
 
             <DataTable
                 key={componentKey}
-                dataKey="id"
+                dataKey="ide"
                 size={"small"}
                 rowClassName={rowClass}
                 selectionMode="single"
@@ -668,13 +668,36 @@ export default function TicTransactionL(props) {
                     style={{ width: "10%" }}
                 ></Column>
                 <Column
-                    field="nevent"
+                    field="text"
                     header={translations[selectedLanguage].nevent}
-                    body={neventTemplate}
+                    // body={neventTemplate}
                     sortable
                     filter
-                    style={{ width: "60%" }}
+                    style={{ width: "30%" }}
                 ></Column>
+                <Column
+                    field="venue"
+                    header={translations[selectedLanguage].hall}
+                    sortable
+                    filter
+                    style={{ width: "20%" }}
+                ></Column>   
+                <Column
+                    field="startda"
+                    header={translations[selectedLanguage].begda}
+                    body={(rowData) => formatDateColumn(rowData, "startda")}
+                    sortable
+                    filter
+                    style={{ width: "20%" }}
+                ></Column>  
+                <Column
+                    field="starttm"
+                    header={translations[selectedLanguage].begtm}
+                    body={(rowData) => formatTimeColumn(rowData, "starttm")}
+                    sortable
+                    filter
+                    style={{ width: "20%" }}
+                ></Column>                                             
                 <Column
                     field="npar"
                     header={translations[selectedLanguage].npar}

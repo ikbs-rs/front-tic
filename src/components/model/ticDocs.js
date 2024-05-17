@@ -326,7 +326,7 @@ const TicDocs = (props) => {
     };
 
     const setTicArtDialog = (destination) => {
-        
+
         if (ticEvent && ticEvent.id !== undefined && ticEvent.id !== null) {
             setTicEventartLVisible(true);
         } else {
@@ -395,6 +395,8 @@ const TicDocs = (props) => {
                             />
                             {submitted && !ticDocs.nevent && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                    </div>
+                    <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-3">
                             <label htmlFor="cart">{translations[selectedLanguage].cart}</label>
                             <div className="p-inputgroup flex-1">

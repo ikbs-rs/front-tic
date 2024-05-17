@@ -10,6 +10,7 @@ import { Toast } from "primereact/toast";
 import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService";
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import { CmnParService } from "../../service/model/cmn/CmnParService";
+import { TicEventService } from '../../service/model/TicEventService';
 import CmnPar from "./cmn/cmnPar";
 import TicDocdelivery from './ticDocdelivery';
 import TicStampaL from './ticStampaL';
@@ -84,6 +85,11 @@ export default function TicDocdeliveryL(props) {
   const [ticEvent, setTicEvent] = useState({});
   const [eventTip, setEventTip] = useState('');
   const [webMapVisible, setWebMapVisible] = useState(false);
+
+  
+  let [numberChannell, setNumberChannell] = useState(0)
+  let [channells, setChannells] = useState([{}])
+  let [channell, setChannell] = useState(null)
 
   const iframeRef = useRef(null);
 
@@ -519,8 +525,44 @@ export default function TicDocdeliveryL(props) {
     }
   };
 
+  /**************************************************************************************** */
+  /**************************************************************************************** */
+  const getChannell = async (rowData) => {
+    try {
+        console.log(rowData, "######################################################################################", userId)
+        const ticEventService = new TicEventService();
+        const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
+        console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+        if (data && data.length > 0) {
+            setNumberChannell(data.length);
+            setChannells(data);
+            const foundItem = data.find((item) => item.id === ticDoc.channel);
+            setChannell(foundItem);
+            // DO - OVDE NE TREBA DA SE KREIRIA DOKUMENT JER DOLAZIM SA TRANSAKCIJE
+
+        } else {
+            // Prikazuje obaveštenje korisniku
+            toast.current.show({
+                severity: "warn",
+                summary: "Obaveštenje",
+                detail: "Nemate pravo na channell",
+                life: 3000,
+            });
+            throw new Error("Nemate pravo na channell"); // Izaziva grešku
+        }
+    } catch (err) {
+        // Logovanje greške
+        console.error("Error fetching channel permissions:", err.message);
+        // Obrada greške koja se može prikazati korisniku ili dalje logovati
+        throw err; // Propagira grešku dalje ako je potrebno
+    }
+};
+
+  /**************************************************************************************** */
+  /**************************************************************************************** */
   const handleWebMapClick = async (rowData) => {
     try {
+      await getChannell(rowData)
       setTicEvent(rowData)
       setWebMapDialog();
     } catch (error) {
@@ -772,7 +814,7 @@ export default function TicDocdeliveryL(props) {
   }
   const neventTemplate = (rowData) => {
     // Proveri da li postoji niz proizvoda
-    console.log(rowData.nevent, "rowData*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+    console.log(rowData, "rowData*-*-*-*-*-*-*-*-*-*-*!!!!!!!!!!!-*-*-*-*-*-*-*-*-*-*-*--*-*-*!!!!!!!!!!", JSON.parse(rowData.nevent))
 
     const nizObjekata = JSON.parse(rowData.nevent)
 
@@ -785,7 +827,7 @@ export default function TicDocdeliveryL(props) {
               {nizObjekata.map((item) => (
                 <tr key={item.starttm}>
                   <b>
-                    <td style={{ width: '45%' }}>{item.name}</td>
+                    <td style={{ width: '45%' }}>{item.text}</td>
                   </b>
                   <td style={{ width: '35%' }}>{item.venue}</td>
                   <td style={{ width: '10%' }}>{DateFunction.formatDate(item.startda)}</td>
@@ -805,7 +847,6 @@ export default function TicDocdeliveryL(props) {
         </div>
       );
     } else {
-      // Ako nema proizvoda, možete prikazati odgovarajuću poruku ili ništa
       return null;
     }
   }
@@ -1097,6 +1138,9 @@ export default function TicDocdeliveryL(props) {
             dialog={true}
             eventTip={eventTip}
             onTaskComplete={handleWebMapDialogClose}
+            numberChannell={numberChannell}
+            channells={channells}
+            channell={channell}            
           />
         )}
       </Dialog>

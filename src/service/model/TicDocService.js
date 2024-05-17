@@ -39,6 +39,24 @@ export class TicDocService {
     }
   }
 
+  async getTransactionFLista(par1, par2, par3, par4, par5, par6) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transactionf_v&par1=${par1}&par2=${par2}&par3=${par3}&par4=${par4}&par5=${par5}&par6=${par6}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********getTransactionLista*************",url)
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getTicListaByItem(tab, route, view, item, objId) {
     
     const selectedLanguage = localStorage.getItem('sl') || 'en'

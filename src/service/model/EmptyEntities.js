@@ -261,7 +261,9 @@ const EmptyEntities =
     "timecreation": "",
     "storno": "0",
     "year": `${new Date().getFullYear().toString()}`,
-    "channel": null
+    "channel": null,
+    "usersys": null,
+    "endtm": ""
   },
 	"tic_docb": {
 		"id": null,
@@ -339,9 +341,15 @@ const EmptyEntities =
     "status": 1,
     "fee": 0,
 		"par": null,
-		"descript": "string",
+		"descript": "",
     "storno": 0,
-		"nart": ""
+		"nart": "",
+    "row": "",
+		"label": "",
+		"seat": "",
+    "vreme": null,
+		"ticket": "",
+		"services": ""
   },
   "tic_docslink": {
     "id": null,

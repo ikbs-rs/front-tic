@@ -22,7 +22,7 @@ import { TicCenatpService } from "../../service/model/TicCenatpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
 
-export default function TicEventL(props) {
+export default function TicProdajaL(props) {
     console.log(props, '+++++++++++++++++++++++++++++++++++TicEventL+++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
     const objDoc = "tic_docs"
@@ -431,7 +431,7 @@ export default function TicEventL(props) {
                 scrollable
                 sortField="code"
                 sortOrder={1}
-                scrollHeight="670px"
+                scrollHeight="570px"
                 // virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}
@@ -449,20 +449,14 @@ export default function TicEventL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column
+                {/* <Column
                     //bodyClassName="text-center"
                     body={actionTemplate}
                     exportable={false}
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column
-                    //bodyClassName="text-center"
-                    body={webTemplate}
-                    exportable={false}
-                    headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
-                />
+ */}
                 <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
                 <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
@@ -473,6 +467,13 @@ export default function TicEventL(props) {
                 <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                 <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
                 <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                <Column
+                    //bodyClassName="text-center"
+                    body={webTemplate}
+                    exportable={false}
+                    headerClassName="w-10rem"
+                    style={{ minWidth: '4rem' }}
+                />                
             </DataTable>
             <Dialog
                 // header={translations[selectedLanguage].Doc}

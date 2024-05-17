@@ -4,31 +4,22 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 import './index.css';
 import { translations } from "../../configs/translations";
 
-/********************************** */
 import { TicDocService } from "../../service/model/TicDocService";
-/********************************** */
 import { TabView, TabPanel } from 'primereact/tabview';
-import { Avatar } from 'primereact/avatar';
 import TicTransactionsL from './ticTransactionsL';
-import DateFunction from "../../utilities/DateFunction"
-import { Toast } from "primereact/toast";
-import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import TicEventProdajaL from './ticEventProdajaL';
 
 
-export default function TicDocW(props) {
-  console.log(props, "******************@@@@@@@@@@@@@@@@@@@@@@@*******************************", props.ticDoc)
+export default function TicProdajaW(props) {
+  console.log(props, "* props *****************@@@@@@@@@@@@@@@@@@@@@@@*******************************")
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
   const [ticDoc, setTicDokument] = useState(props.ticDoc);
   const [ticDocId, setTicDokumentId] = useState(props.ticDoc?.id);
 
-  const iframe = document.getElementById('myIframe');
-  const iframeWindow = iframe?.contentWindow;
-  const [iframeVariable, setIframeVariable] = useState(iframeWindow?.cartItems);
   const [expandIframe, setExpandIframe] = useState(false);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -43,6 +34,7 @@ export default function TicDocW(props) {
   const [ticEvent, setTicEvent] = useState(props.ticEvent);
   const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   const [showMyComponent, setShowMyComponent] = useState(true);
+  
   /************************************************************************************ */
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -51,7 +43,6 @@ export default function TicDocW(props) {
       if (iframe && iframe.contentWindow) {
         const iframeDocument = iframe.contentWindow.document;
 
-        // Dodavanje listener-a na div unutar iframe-a
         const targetDiv = iframeDocument.querySelector('.leaflet-pane .leaflet-overlay-pane');
         if (targetDiv) {
           targetDiv.style.display = 'none'; // Ako želite da div bude skriven
@@ -62,23 +53,12 @@ export default function TicDocW(props) {
 
     const handleDivClick = () => {
       console.log('Div inside iframe clicked');
-      // Vaš kod za obradu klika ovde
     };
 
-    // Dodavanje load event listener-a na iframe
     if (iframe) {
       iframe.addEventListener('load', handleIframeLoad);
     }
 
-    // Čišćenje event listener-a kada se komponenta demontira
-    // return () => {
-    //   if (iframe) {
-    //     iframe.removeEventListener('load', handleIframeLoad);
-    //   }
-    // };
-    // }, [iframeKey]); // Dodavanje iframeKey kao zavisnosti za ponovno pokretanje kada se promeni
-    // useEffect(() => {
-    // Presretanje console.log u glavnoj stranici
     const originalConsoleLog = console.log;
     console.log = function (message) {
       originalConsoleLog.apply(console, arguments);
@@ -157,12 +137,6 @@ export default function TicDocW(props) {
     }
   };
 
-  // const addMouseClickListener = () => {
-  //   if (iframeRef.current?.contentWindow) {
-  //     iframeRef.current.contentWindow.addEventListener('click', handleMouseClick);
-  //   }
-  // };
-
   useEffect(() => {
     const handleClick = (event) => {
 
@@ -217,21 +191,12 @@ export default function TicDocW(props) {
 
     addMouseClickListener();
 
-    // return () => {
-    //   removeMouseClickListener();
-    // };
   }, [iframeRef.current]);
 
   /********************************************************* */
 
   let i = 0
-  // const handleCancelClick = () => {
-  //   props.handleDialogClose(false);
-  // };
 
-  // const handleTaskComplete = (data) => {
-  //   props.onTaskComplete(data);
-  // };
 
   const removeUserMenu = async () => {
     if (iframeRef.current?.contentDocument) {
@@ -250,7 +215,7 @@ export default function TicDocW(props) {
       if (iframeRef.current?.contentDocument) {
         const cartSectionDiv = iframeRef.current.contentDocument.querySelector('.cart-section');
         if (cartSectionDiv) {
-          cartSectionDiv.style.display = 'none'; // Hide the section instead of removing it
+          // cartSectionDiv.style.display = 'none'; // TO DO
         } else {
           setTimeout(() => {
             removeCartSection(); // Retry hiding the section after a short delay
@@ -284,41 +249,7 @@ export default function TicDocW(props) {
     }
   };
 
-  // const handleDivClick = () => {
-  //   console.log('Div inside iframe clicked');
-  //   // Vaš kod za obradu klika ovde
-  // };
 
-  /******************************************************************************** 
-   * 
-  ******************************************************************************** */
-
-  const onInputChange = (e, type, name, a) => {
-    let val = ''
-    if (type === "options") {
-      val = (e.target && e.target.value && e.target.value.code) || '';
-      if (name == "channell") {
-        setDdChannellItem(e.value);
-        const foundItem = channellItems.find((item) => item.id === val);
-        setChannellItem(foundItem || null);
-        ++iframeKey
-        setIframeKey(++iframeKey)
-        // } else {
-        //     setDropdownItem(e.value);
-      }
-
-    } else {
-      val = (e.target && e.target.value) || '';
-      let _ticEvent = { ...ticEvent };
-      _ticEvent[`${name}`] = val;
-      _ticEvent.cevent = val
-      // if (name === `textx`) _ticEvent[`text`] = val;
-      ticEvent(_ticEvent);
-    }
-  };
-  /******************************************************************************** 
-   * 
-  ******************************************************************************** */
   function HeaderBtn() {
     return (
       <div className="flex card-container">
@@ -355,46 +286,10 @@ export default function TicDocW(props) {
   /******************************************************************************** 
    * 
   ******************************************************************************** */
-  const tab1HeaderTemplate = (options) => {
+  const Tab2Header = (options) => {
     return (
       <>
-        <div className="fieldH flex align-items-center"><b>
-          <label htmlFor="myDropdown" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_kanal}</label>
-        </b>
-          <Dropdown id="channell"
-            value={ddChannellItem}
-            options={ddChannellItems}
-            onChange={(e) => onInputChange(e, "options", 'channell')}
-            optionLabel="name"
-            placeholder="Select One"
-
-          />
-        </div>
-        <div className="fieldH flex align-items-center px-3"><b>
-          <label htmlFor="cevent" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_event}</label>
-        </b>
-          <div className="p-inputgroup flex-1">
-            <InputText id="cevent" autoFocus value={ticEvent.code}
-              onChange={(e) => onInputChange(e, 'text', 'cevent')}
-            />
-            <Button icon="pi pi-search" onClick={(e) => handleEventProdajaClick(e)} className="p-button" />
-          </div>
-          <InputText id="nevent" value={ticEvent.text}
-          // onChange={(e) => onInputChange(e, 'text', 'nevent')}
-          />
-        </div>
-        {/* <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}> 
-          <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion} severity="warning" />
-        </div> */}
-      </>
-    )
-  };
-
-  const tab2HeaderTemplate = (options) => {
-    return (
-      <>
-        <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}> {/* onClick={options.onClick}>*/}
-          {/* <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" className="mx-2" /> */}
+        <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
           <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
             severity="warning"
           />
@@ -446,135 +341,73 @@ export default function TicDocW(props) {
     // alert(`Kliknuo ${rowData.event} ** ${ticEvent.id}`);
   };
 
+
   return (
     <div key={key}>
-      <div className="card">
-        <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-          <TabPanel header="Избор седишта">
-
-
-            <div className="grid grid-nogutter">
-              <div className={expandIframe ? "col-12" : "col-6"}> {/* IFRAME */}
-                {props.eventTip == "SAL" && (
-                  <div className="grid">
-                    <div className="col-12">
-                      <iframe key={iframeKey}
-                        id="myIframe"
-                        ref={iframeRef}
-                        src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
-                        onLoad={handleIframeLoad}
-                        title="Sal iframe"
-                        width="100%"
-                        height="600px"
-                        frameBorder="0"
-                      // scrolling="no"
-                      ></iframe>
-                    </div>
-                  </div>
-                )}
-                {props.eventTip == "WEB" && (
-                  <div className="grid">
-                    <div className="col-12">
-                      <div className="card">
-                        <iframe
-                          src={`https://dev.ticketline.rs/2023/08/22/sezonska-ulaznica-fk-napredak-2023-2024-vaucer/${ticEvent.id}/?parent=ADM`}
-                          title="Sal iframe"
-                          width="100%"
-                          height="760px"
-                          frameBorder="0"
-                        // scrolling="no"
-                        ></iframe>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {!expandIframe && (
-                <div className="col-6"> {/* TABELA*/}
-                  <div className="grid">
-                    <div className="col-12">
-                      <div className="card">
-                        <HeaderBtn />
-                        <TicTransactionsL
-                          key={ticTransactionsKey}
-                          ticDoc={ticDoc}
-                          propsParent={props}
-                          handleFirstColumnClick={handleFirstColumnClick}
-                        />
-                        <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-          </TabPanel>
-          <TabPanel
-            // headerTemplate={tab1HeaderTemplate}
-            header="Header II"
-            headerClassName="flex align-items-center"
-          >
-            <div className="grid grid-nogutter">
-              <div className="col-6"> {/* TABELA */}
-                {/****************************************************************************************************************** */}
-                <div className="col-12">
-                  <div className="card">
-                    <TicTransactionsL
-                      key={ticTransactionsKey}
-                      ticDoc={ticDoc}
-                      propsParent={props}
-                      handleFirstColumnClick={handleFirstColumnClick}
-                    />
-                    <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
-                  </div>
-                </div>
-                {/****************************************************************************************************************** */}
-              </div>
-            </div>
-          </TabPanel>
-          <TabPanel
-            // headerTemplate={tab1HeaderTemplate}
-            header="Header III"
-            headerClassName="flex align-items-center"
-          >
-            <b className="m-0">
-              Element III
-            </b>
-            <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
-          </TabPanel>
-          <TabPanel
-            headerTemplate={tab1HeaderTemplate}
-            header="Header IV"
-            headerClassName="flex align-items-center"
-            style={{ backgroundColor: '#95e397' }}
-          >
-            <b className="m-0">
-              Element IV
-            </b>
-            <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} />
-          </TabPanel>
-          <TabPanel
-            headerTemplate={tab2HeaderTemplate}
-            header="Header V"
-            headerClassName="flex align-items-center"
-          >
-            <b className="m-0">
-              Element V
-            </b>
-          </TabPanel>
-        </TabView>
-        <div className="fieldH flex align-items-center px-3"><b>
-          <label htmlFor="cevent" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_event}</label>
-        </b>
-          <div className="p-inputgroup flex-1">
-            <InputText id="cevent" value={ticEvent.id} />
+      <div className="card" >
+        {/* <div className="grid">
+          <div className="col-1">
+            <Tab2Header />
           </div>
-          <div className="p-inputgroup flex-1">
-            <InputText id="cdoc" value={props.ticDoc?.id} />
+        </div> */}
+        {/* <div style={{ maxWidth: "95%" }}> */}
+          <div className="grid grid-nogutter">
+            <div className={props.expandIframe ? "col-12" : "col-6"}> {/* IFRAME */}
+              <div className="grid">
+                <div className="col-12">
+                  <iframe key={iframeKey}
+                    id="myIframe"
+                    ref={iframeRef}
+                    src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                    onLoad={handleIframeLoad}
+                    title="Sal iframe"
+                    width="100%"
+                    height="600px"
+                    frameBorder="0"
+                  // scrolling="no"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            {!props.expandIframe && (
+              <div className="col-6">
+                <div className="grid">
+                  <div className="col-12">
+                    <div className="card">
+                      <HeaderBtn />
+                      <TicTransactionsL
+                        key={ticTransactionsKey}
+                        ticDoc={ticDoc}
+                        propsParent={props}
+                        handleFirstColumnClick={handleFirstColumnClick}
+                      />
+                      {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+        {/* </div> */}
+      </div>
+      {/* <div className="card">
+        <div>
+          <div className="fieldH flex align-items-center px-3"><b>
+            <label htmlFor="cevent" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_event}</label>
+          </b>
+            <div className="p-inputgroup flex-1">
+              <InputText id="cevent" value={ticEvent.id} />
+            </div>
+            <div className="p-inputgroup flex-1">
+              <InputText id="cdoc" value={props.ticDoc?.id} />
+            </div>
+            <div className="p-inputgroup flex-1">
+              <InputText id="cdoc" value={props.channell?.id} />
+            </div>            
           </div>
         </div>
-      </div>
+      </div > */}
       <Dialog
         header={translations[selectedLanguage].EventList}
         visible={ticEventProdajaLVisible}
@@ -595,6 +428,6 @@ export default function TicDocW(props) {
             lookUp={true}
           />}
       </Dialog>
-    </div>
+    </div >
   );
 }

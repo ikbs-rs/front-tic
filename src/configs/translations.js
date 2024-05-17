@@ -677,6 +677,7 @@ export const translations = {
         Season: "Сезона",
         SeasonList: "Сезоне Листа",
         Transaction: "Трансакције",
+        TransactionF: "Трансакције Ф",
         TransactionList: "Трансакције Листа",
         Payment: "Плаћање",
         PaymentList: "Листа плаћања",
@@ -773,6 +774,10 @@ export const translations = {
         Go: "Go ...",
         ObjectsXPV: "Вредновање места",
         Izaberite_kanal: "Изаберите канал:",
+        Izaberite_event: "Изаберите догађај",
+        begda: "Датум од",
+        hall: "Место",
+        View: "Прегледи"
     }
   };
   
