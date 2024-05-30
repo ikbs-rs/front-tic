@@ -24,6 +24,7 @@ import TicEventcenatpL from './ticEventcenatpL';
 import TicEventobjL from './ticEventobjL';
 import TicEventWL from './ticEventWL';
 import TicEventTmpL from './ticEventTmpL';
+import TicPrintGrpL from './ticPrintGrpL';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
 export default function TicEventL(props) {
@@ -52,6 +53,7 @@ export default function TicEventL(props) {
     const [ticEventWLVisible, setTicEventWLVisible] = useState(false);
     const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
     const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+    const [ticPrintGrpLVisible, setTicPrintGrpLVisible] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
     const copyItems = [
@@ -168,7 +170,7 @@ export default function TicEventL(props) {
         console.log(ticEvent, "***********handleConfirm********************")
         setSubmitted(true);
         const ticEventService = new TicEventService();
-        await ticEventService.postActivateEvent(ticEvent.id);       
+        await ticEventService.postActivateEvent(ticEvent.id);
         //props.handleTicEventattsLDialogClose({ obj: props.ticEvent, docTip: 'UPDATE' });
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Догађај успешно активиран ?', life: 3000 });
         setVisible(false);
@@ -196,6 +198,14 @@ export default function TicEventL(props) {
         setTicEventlocDialog();
     };
 
+    const setTicPrintGrpDialog = () => {
+        setTicPrintGrpLVisible(true)
+    }
+
+    const openPrintGrpL = () => {
+        setTicPrintGrpDialog();
+    };
+
     const openEventcenatp = () => {
         setTicEventcenatpDialog();
     };
@@ -211,7 +221,7 @@ export default function TicEventL(props) {
     const openEventW = () => {
         setTicEventoWDialog();
     };
-    
+
     const openEventTmp = () => {
         setTicEventTmpDialog();
     };
@@ -271,7 +281,7 @@ export default function TicEventL(props) {
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Preparation} icon="pi pi-map" onClick={openEventW} severity="info" text raised disabled={!ticEvent} />
-                </div>                
+                </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventobj} severity="info" text raised disabled={!ticEvent} />
                 </div>
@@ -289,6 +299,9 @@ export default function TicEventL(props) {
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
+                </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Print} icon="pi pi-print" severity="warning" onClick={openPrintGrpL} text raised />
                 </div>
                 {/*
                 <div className="flex flex-wrap gap-1">
@@ -401,7 +414,7 @@ export default function TicEventL(props) {
         setShowMyComponent(true);
         setTicEventWLVisible(true);
     };
-    
+
     const setTicEventTmpDialog = () => {
         setShowMyComponent(true);
         setTicEventTmpLVisible(true);
@@ -410,7 +423,11 @@ export default function TicEventL(props) {
 
     const handleWebMapDialogClose = (newObj) => {
         setTicEventWLVisible(false);
-    };    
+    };
+
+    const handleTicPrintGrpLDialogClose = (newObj) => {
+        const localObj = { newObj };
+    };
     //  Dialog --->
 
     const header = renderHeader();
@@ -461,8 +478,8 @@ export default function TicEventL(props) {
                 rows={125}
                 rowsPerPageOptions={[125, 250, 500, 1000]}
                 onSelectionChange={(e) => setTicEvent(e.value)}
-                // onRowSelect={onRowSelect}
-                // onRowUnselect={onRowUnselect}
+            // onRowSelect={onRowSelect}
+            // onRowUnselect={onRowUnselect}
             >
                 <Column
                     //bodyClassName="text-center"
@@ -650,7 +667,7 @@ export default function TicEventL(props) {
                         eventArt={true}
                         onTaskComplete={handleWebMapDialogClose}
                     />}
-            </Dialog>            
+            </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventTmpList}
                 visible={ticEventTmpLVisible}
@@ -670,6 +687,25 @@ export default function TicEventL(props) {
                         lookUp={true}
                         eventArt={true}
                     />}
+            </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].PrintGrp}
+                visible={ticPrintGrpLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicPrintGrpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <TicPrintGrpL
+                        parameter={"inputTextValue"}
+                        ticEvent={ticEvent}
+                        handleTicPrintGrpLDialogClose={handleTicPrintGrpLDialogClose}
+                        setTicPrintGrpLVisible={setTicPrintGrpLVisible}
+                        dialog={true}
+                    />
+                )}
             </Dialog>
             <ConfirmDialog
                 visible={confirmDialogVisible}

@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
+import { TicDocService } from "../../service/model/TicDocService";
 import { TicDocsService } from "../../service/model/TicDocsService";
 import TicDocs from './ticDocs';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
@@ -14,17 +15,29 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
-
+import { AutoComplete } from "primereact/autocomplete";
+import CmnParL from './cmn/cmnParL';
+import { CmnParService } from "../../service/model/cmn/CmnParService";
+import { InputSwitch } from "primereact/inputswitch";
+import { Dropdown } from 'primereact/dropdown';
 
 export default function TicTransactionsL(props) {
+    console.log(props, "@@ PROPS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    const _doc = { ...props.ticDoc }
+    if (_doc.usr == '1') _doc.usr = null
 
     const objName = "tic_docs"
+    const parTp = '-1'
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicDocs = EmptyEntities[objName]
     emptyTicDocs.doc = props.ticDoc?.id
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocss, setTicDocss] = useState([]);
     const [ticDocs, setTicDocs] = useState(emptyTicDocs);
+
+    const [ticDoc, setTicDoc] = useState(_doc);
+    const [ticDocItems, setTicDocItems] = useState(null);
+
     const [filters, setFilters] = useState('');
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [loading, setLoading] = useState(false);
@@ -32,6 +45,25 @@ export default function TicTransactionsL(props) {
     const [visible, setVisible] = useState(false);
     const [docsTip, setObjattsTip] = useState('');
     const [refresh, setRefesh] = useState(0)
+
+    /************************AUTOCOMPLIT**************************** */
+    const [cmnParLVisible, setCmnParLVisible] = useState(false);
+    const [allPara, setAllPars] = useState([]);
+    const [parValue, setParValue] = useState(props.ticEvent?.cpar);
+    const [filteredPars, setFilteredPars] = useState([]);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const [selectedPar, setSelectedPar] = useState(null);
+    /************************AUTOCOMPLIT**************************** */
+
+    const [checkedRezervacija, setCheckedRezervacija] = useState(ticDoc?.status == "1" || false);
+    const [checkedIsporuka, setCheckedIsporuka] = useState(props.ticDoc?.delivery == "1" || false); 
+    const [ddPaymenttpItem, setDdPaymenttpItem] = useState({});
+    const [ddPaymenttpItems, setDdPaymenttpItems] = useState([{}]);
+    const [ddChannellItem, setDdChannellItem] = useState({});
+    const [ddChannellItems, setDdChannellItems] = useState([{}]);
+    const [channellItem, setChannellItem] = useState({});
+
     let i = 0
     const handleCancelClick = () => {
         props.setTicDocsLVisible(false);
@@ -100,7 +132,7 @@ export default function TicTransactionsL(props) {
     };
 
     const onRowUnselect = (event) => {
-        onRowSelect (event)
+        onRowSelect(event)
     };
 
     // <heder za filter
@@ -206,9 +238,286 @@ export default function TicTransactionsL(props) {
         );
     };
 
+    /*************************AUTOCOMPLIT************************************PAR************* */
+    const onInputChange = (e, type, name) => {
+        let val = ''
+        if (type === "auto") {
+            let timeout = null
+            switch (name) {
+                case "par":
+                    const _ticDoc = {}
+                    if (selectedPar === null) {
+                        setParValue(e.target.value.textx || e.target.value);
+                    } else {
+                        setSelectedPar(null);
+                        setParValue(e.target.value.textx || e.target.value.textx);
+                    }
+                    console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", e.target.value)
+                    ticDoc.par = e.target.value.id
+                    ticDoc.npar = e.target.value.textx
+                    ticDoc.cpar = e.target.value.code
+                    // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
+                    clearTimeout(searchTimeout);
+                    timeout = setTimeout(() => {
+                        setDebouncedSearch(e.target.value);
+                    }, 400);
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
+        }
+    }
+    /**************** */
+    useEffect(() => {
+        async function fetchData() {
+            const cmnParService = new CmnParService();
+            const data = await cmnParService.getLista(-1);
+            setAllPars(data);
+            //setParValue(data.find((item) => item.id === props.ticDoc.par) || null);
+        }
+        fetchData();
+    }, []);
+    /**************** */
+    useEffect(() => {
+        if (debouncedSearch && selectedPar === null) {
+            // Filtrirajte podatke na osnovu trenutnog unosa
+            console.log("9999999999999999999999999debouncedLocSearch9999999999999999999999999999", debouncedSearch, "=============================")
+            const query = debouncedSearch.toLowerCase();
+            const filtered = allPara.filter(
+                (item) =>
+                    item.textx.toLowerCase().includes(query) ||
+                    item.code.toLowerCase().includes(query) ||
+                    item.email?.toLowerCase().includes(query) ||
+                    item.address?.toLowerCase().includes(query)
+            );
+
+            setSelectedPar(null);
+            setFilteredPars(filtered);
+        }
+    }, [debouncedSearch, allPara]);
+    /*** */
+
+    useEffect(() => {
+        setParValue(parValue);
+        if (parValue) {
+            alert(parValue, "Izmena")
+        }
+    }, [parValue, selectedPar]);
+
+    const handleSelect = (e) => {
+        // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
+        setSelectedPar(e.value.code);
+        setParValue(e.value.code);
+    };
+    /************************** */
+    const handleParLClick = async (e, destination) => {
+        try {
+            console.log(destination, "*********************handleParLClick****************************")
+            if (destination === 'local') setCmnParDialog();
+            else setCmnParDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+    const setCmnParDialog = (destination) => {
+        setCmnParLVisible(true);
+    };
+    /************************** */
+    const handleCmnParLDialogClose = (newObj) => {
+        console.log(newObj, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
+        setParValue(newObj.code);
+        ticDoc.par = newObj.id;
+        ticDoc.npar = newObj.textx;
+        ticDoc.cpar = newObj.code;
+        setTicDoc(ticDoc)
+        //ticDocs.potrazuje = newObj.cena * ticDocs.output;
+        setCmnParLVisible(false);
+    };
+    const itemTemplate = (item) => {
+        return (
+            <>
+                <div>
+                    {item.textx}
+                    {` `}
+                    {item.code}
+                </div>
+                <div>
+                    {item.email}
+                    {` `}
+                    {item.address}
+                </div>
+            </>
+        );
+    };
+    /**************************AUTOCOMPLIT************************************************ */
+    // Interna komponenta DocZaglavlje
+
+/***************************************************************************************** */   
+
+    /********************************************************************************/
+
+    const handleChangeIsporuka = async (value) => {
+        setCheckedIsporuka(value);
+        let _ticDoc = { ...ticDoc }
+        value ? _ticDoc.status = `1` : _ticDoc.status = `0`
+        _ticDoc.channel = ddChannellItem.code
+
+        setTicDoc(_ticDoc)
+        await handleUpdateIspTicDoc(_ticDoc)
+    };
+
+    const handleChangeRezervacija = async (value) => {
+        const previousValue = checkedRezervacija;
+
+        let _ticDoc = { ...ticDoc }
+        const pStatus = _ticDoc.status
+        value ? _ticDoc.status = `1` : _ticDoc.status = `0`
+        _ticDoc.reservation = _ticDoc.status
+        setCheckedRezervacija(value);
+        setTicDoc(_ticDoc)
+        await handleUpdateRezTicDoc(_ticDoc, pStatus, previousValue)
+    };
+
+    const handleUpdateIspTicDoc = async (newObj) => {
+        try {
+            // console.log(newObj, "handleUpdateTicDoc *****************************************************####################")
+            const ticDocService = new TicDocService();
+            await ticDocService.putTicDoc(newObj);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    }
+    const handleUpdateRezTicDoc = async (newObj, pStatus, previousValue) => {
+        try {
+            // console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+            const ticDocService = new TicDocService();
+            await ticDocService.obradaProdajeRezervacija(newObj, 'RZV');
+        } catch (err) {
+            // console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
+            const _ticDoc = { ...newObj }
+            _ticDoc.status = pStatus
+            setTicDoc(_ticDoc)
+            setCheckedRezervacija(previousValue);
+
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    }
+    /********************************************************************************/
+
+
+/***************************************************************************************** */
+    const DocZaglavlje = () => {
+        return (
+            <div className="grid">
+                <div className="field col-12 md:col-4">
+                    <label htmlFor="par">{translations[selectedLanguage].Kupac} *</label>
+                    <div className="p-inputgroup flex-1">
+                        <AutoComplete
+                            value={parValue}
+                            suggestions={filteredPars}
+                            completeMethod={() => { }}
+                            onSelect={handleSelect}
+                            onChange={(e) => onInputChange(e, "auto", 'par')}
+                            itemTemplate={itemTemplate}
+                            placeholder="Pretraži"
+                        />
+                        <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" />
+                    </div>
+                </div>
+                <div className="field col-12 md:col-6">
+                    <label htmlFor="par">{translations[selectedLanguage].KupacNaziv}</label>
+                    <div className="p-inputgroup flex-1">
+                        <InputText
+                            id="npar"
+                            value={props.ticDoc?.npar || ticDoc.npar}
+                            required
+                        />
+                    </div>
+                </div>
+                <>
+                    <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+                        <b>
+                            <label htmlFor="rezervacija" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Rezervacija}</label>
+                        </b>
+                        <InputSwitch id="rezervacija" checked={checkedRezervacija} onChange={(e) => handleChangeRezervacija(e.value)} />
+                    </div>
+                    <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+                        <b>
+                            <label htmlFor="isporuka" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Isporuka}</label>
+                        </b>
+                        <InputSwitch id="isporuka" checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)} />
+                    </div>
+                    <>
+                        <div className="fieldH flex align-items-center"><b>
+                            <label htmlFor="myDropdown" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_kanal}</label>
+                        </b>
+                            <Dropdown id="paymenttp"
+                                value={ddPaymenttpItem}
+                                options={ddPaymenttpItems}
+                                onChange={(e) => onInputChange(e, "options", 'paymenttp')}
+                                optionLabel="name"
+                                placeholder="Select One"
+
+                            />
+                        </div>
+
+                    </>
+
+                </>
+
+            </div>
+        );
+    };
+
     return (
         <div className="card">
             <Toast ref={toast} />
+            {/* <div className="grid">
+                <div className="field col-12 md:col-4">
+                    <label htmlFor="par">{translations[selectedLanguage].Kupac} *</label>
+                    <div className="p-inputgroup flex-1">
+                        <AutoComplete
+                            value={parValue}
+                            suggestions={filteredPars}
+                            completeMethod={() => { }}
+                            onSelect={handleSelect}
+                            onChange={(e) => onInputChange(e, "auto", 'par')}
+                            itemTemplate={itemTemplate} 
+                            placeholder="Pretraži"
+                        />
+                        <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" />
+                    </div>
+                </div>
+                <div className="field col-12 md:col-6">
+                    <label htmlFor="par">{translations[selectedLanguage].KupacNaziv}</label>
+                    <div className="p-inputgroup flex-1">
+                        <InputText
+                            id="npar"
+                            value={props.ticDoc?.npar||ticDoc.npar}
+                            required
+                        />
+                    </div>
+                </div>
+
+            </div> */}
+
+            <DocZaglavlje />
             <DataTable
                 dataKey="id"
                 size={"small"}
@@ -221,7 +530,7 @@ export default function TicTransactionsL(props) {
                 removableSort
                 // filters={filters}
                 scrollable
-                scrollHeight="550px"
+                scrollHeight="350px"
                 // virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
@@ -325,6 +634,10 @@ export default function TicTransactionsL(props) {
                     style={{ width: "10%" }}
                 ></Column> */}
             </DataTable>
+            {/* <div className="card"> */}
+
+            {/* </div> */}
+
             <Dialog
                 header={translations[selectedLanguage].Objatts}
                 visible={visible}
@@ -351,6 +664,27 @@ export default function TicTransactionsL(props) {
                     </button>
                 </div>
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].ParList}
+                visible={cmnParLVisible}
+                style={{ width: '90%', height: '1400px' }}
+                onHide={() => {
+                    setCmnParLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {cmnParLVisible &&
+                    <CmnParL
+                        parameter={'inputTextValue'}
+                        ticDoc={ticDoc}
+                        onTaskComplete={handleCmnParLDialogClose}
+                        setCmnParLVisible={setCmnParLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        parentData={true}
+                    />}
+            </Dialog>
+
         </div>
     );
 }

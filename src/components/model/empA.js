@@ -4,34 +4,74 @@ import { DataView } from 'primereact/dataview';
 import { translations } from '../../configs/translations';
 import Event from './ticEventProdajaL';
 import Doc from './ticDocL';
+import { TicDocService } from "../../service/model/TicDocService";
 
-export default function EmpA() {
+export default function EmpA(props) {
+    let i = 0
+    const PRODAJNI_KANAL = 'XPK';
+    const WEB = 'WEB';
+    const BLAGAJNA = 'PCTC00';
+    const PRODAJNO_MESTO = 'PCPM';
+    const ORGANIZATOR = 'PK00';
     const navigate = useNavigate();
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [products, setProducts] = useState([]);
+    const [channells, setChannells] = useState([]);
     const [layout] = useState('grid');
     const rootDir = '/tic'
 
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                ++i
+                if (i < 2) {
+                    const ticDocService = new TicDocService();
+                    const data = await ticDocService.getTicListaByItem('doc', 'listabytxt', 'cmn_channel_v', 'aa.code', PRODAJNI_KANAL);
+                    setChannells(data);
+                    console.log(data, "@@ CHANNEL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
     const localProducts = [
-        {
-            id: 1,
-            name: 'Reservation',
-            image: 'rez.jpg'
-        },
+        // {
+        //     id: 1,
+        //     name: 'WEB',
+        //     image: 'rez.jpg'
+        // },
         {
             id: 2,
-            name: 'Bill',
+            name: 'Благајна',
             image: 'rac.png'
         },
         {
             id: 3,
-            name: 'Sales',
+            name: 'Продајноместо',
             image: 'prod.jpg'
-        },
+        }
+        ,
         {
             id: 4,
-            name: 'Tmp',
+            name: 'Трансакција',
             image: 'tmp.jpg'
+        }
+        ,
+        {
+            id: 5,
+            name: 'WEB',
+            image: 'web.jpg'
+        }
+        ,
+        {
+            id: 6,
+            name: 'Организатор',
+            image: 'org.jpg'
         }
     ];
 
@@ -42,18 +82,27 @@ export default function EmpA() {
     const f1 = (param) => {
         console.log('Funkcija f1 je pozvana sa parametrom:', param);
         switch (param) {
-            case 4:
-                navigate('/eventprodaja');
+            case 6:
+                navigate('/salO', { state: { channel: channells.find(obj => obj.code == ORGANIZATOR) } });
                 break;            
-            case 3:
+            case 5:
                 navigate('/sal');
-                break;            
+                break;
+            case 4:
+                navigate('/transactionf');
+                break;
+            case 3:
+                navigate('/salB', { state: { channel: channells.find(obj => obj.code == BLAGAJNA) } });
+                break;
             case 2:
-                navigate('/prodajatab');
+                navigate('/salPM', { state: { channel: channells.find(obj => obj.code == PRODAJNO_MESTO) } });
                 break;
-            case 1:
-                navigate('/doc?docVr=RZ');
-                break;
+            // case 1:
+            //     navigate('/salW', { state: { channel: channells.find(obj => obj.code == WEB) } });
+            //     break;
+            // case 1:
+            //     navigate('/doc?docVr=RZ');
+            //     break;
             default:
                 break;
         }
@@ -65,7 +114,7 @@ export default function EmpA() {
                 <div className="p-4 border-1 surface-border surface-card border-round">
                     <div className="flex flex-column align-items-center gap-1 py-0">
                         <img className="w-9 shadow-2 border-round" src={`${rootDir}/images/${product.image}`} alt={product.name} />
-                        <div className="text-2xl font-bold" style={{color: "#8b8b90"}}>{translations[selectedLanguage]?.[product.name] || product.name}</div>
+                        <div className="text-2xl font-bold" style={{ color: "#8b8b90" }}>{translations[selectedLanguage]?.[product.name] || product.name}</div>
                     </div>
                 </div>
             </div>

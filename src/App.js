@@ -566,6 +566,11 @@ const App = () => {
                         <Route path="/transactionf" element={<TransactionF />} />
                         <Route path="/delivery" element={<Delivery />} />
 
+                        <Route path="/salW" element={<ProdajaTab />} />
+                        <Route path="/salB" element={<ProdajaTab />} />
+                        <Route path="/salPM" element={<ProdajaTab />} />
+                        <Route path="/salO" element={<ProdajaTab />} />
+
                         <Route path="/atest" element={<Atest />} />
                         <Route path="/sal" element={<Sal />} />
                         <Route path="/prodajatab" element={<ProdajaTab />} />

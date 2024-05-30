@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { CmnParService } from "../../../service/model/cmn/CmnParService";
 import { CmnPartpService } from "../../../service/model/cmn/CmnPartpService";
-import { CmnTerrService } from "../../../service/model/cmn/CmnTerrService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -15,15 +14,13 @@ import DateFunction from "../../../utilities/DateFunction";
 import env from '../../../configs/env';
 
 const CmnPar = (props) => {
-    //console.log(props, "*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+    console.log(props, "*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [submitted, setSubmitted] = useState(false);
     const [ddCmnParItem, setDdCmnParItem] = useState(null);
     const [ddCmnParItems, setDdCmnParItems] = useState(null);
-    const [ddCountryItem, setDdCountryItem] = useState(null);
-    const [ddCountryItems, setDdCountryItems] = useState(null);
     const [cmnParItem, setCmnParItem] = useState(null);
     const [cmnParItems, setCmnParItems] = useState(null);
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar.begda || DateFunction.currDate())));
@@ -61,34 +58,6 @@ const CmnPar = (props) => {
     }, []);
     // Autocomplit>
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const cmnTerrService = new CmnTerrService();
-                const data = await cmnTerrService.getTpLista('2');
-
-                setCmnParItems(data)
-                //console.log("******************", cmnParItem)
-
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
-                setDdCountryItems(dataDD);
-                setDdCountryItem(dataDD.find((item) => item.code === props.cmnPar.countryid) || null);
-                if (props.cmnPar.tp) {
-                    const foundItem = data.find((item) => item.id === props.cmnPar.countryid);
-                    setCmnParItem(foundItem || null);
-                    cmnPar.ctp = foundItem.code
-                    cmnPar.ntp = foundItem.textx
-                }
-
-            } catch (error) {
-                console.error(error);
-                // Obrada greške ako je potrebna
-            }
-        }
-        fetchData();
-    }, []);
-
-
     // const handleCancelClick = () => {
     //     props.setVisible(false);
     // };
@@ -98,6 +67,7 @@ const CmnPar = (props) => {
             sendToParent(dataToSend);
         } else {
             props.setVisible(false);
+            props?.setCmnParVisible(false);
         }
     };
     const sendToParent = (data) => {
@@ -122,7 +92,7 @@ const CmnPar = (props) => {
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -134,15 +104,18 @@ const CmnPar = (props) => {
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             const cmnParService = new CmnParService();
 
-            await cmnParService.putCmnPar(cmnPar);
+            const message = await cmnParService.putCmnPar(cmnPar);
+            console.log('Response data:', message); // Dodajte ovaj red
             props.handleDialogClose({ obj: cmnPar, parTip: props.parTip });
             props.setVisible(false);
+            props?.setCmnParVisible(false)
         } catch (err) {
+            console.error(err);
             toast.current.show({
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -164,7 +137,7 @@ const CmnPar = (props) => {
                 severity: "error",
                 summary: "CmnPar ",
                 detail: `${err.response.data.error}`,
-                life: 5000,
+                life: 1000,
             });
         }
     };
@@ -173,19 +146,11 @@ const CmnPar = (props) => {
         let val = ''
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
-            if (name == 'tp') {
-                setDdCmnParItem(e.value);
-                const foundItem = cmnParItems.find((item) => item.id === val);
-                setCmnParItem(foundItem || null);
-                cmnPar.ntp = e.value.name
-                cmnPar.ctp = foundItem?.code
-            } else {
-                setDdCountryItem(e.value);
-                const foundItem = cmnParItems.find((item) => item.id === val);
-                // setCmnParItem(foundItem || null);
-                // cmnPar.ntp = e.value.name
-                // cmnPar.ctp = foundItem.code
-            }
+            setDdCmnParItem(e.value);
+            const foundItem = cmnParItems.find((item) => item.id === val);
+            setCmnParItem(foundItem || null);
+            cmnPar.ntp = e.value.name
+            cmnPar.ctp = foundItem.code
         } else if (type === "Calendar") {
             //const dateVal = DateFunction.dateGetValue(e.value)
             val = (e.target && e.target.value) || '';
@@ -205,6 +170,8 @@ const CmnPar = (props) => {
             console.log(val, "*******************", e.target)
         }
         let _cmnPar = { ...cmnPar };
+        if (name == "textx") _cmnPar[`text`] = val;
+
         _cmnPar[`${name}`] = val;
         setCmnPar(_cmnPar);
     };
@@ -229,14 +196,14 @@ const CmnPar = (props) => {
                             {submitted && !cmnPar.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
-                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
+                            <label htmlFor="textx">{translations[selectedLanguage].Text}</label>
                             <InputText
-                                id="text"
-                                value={cmnPar.text} onChange={(e) => onInputChange(e, "text", 'text')}
+                                id="textx"
+                                value={cmnPar.textx} onChange={(e) => onInputChange(e, "text", 'textx')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !cmnPar.text })}
+                                className={classNames({ 'p-invalid': submitted && !cmnPar.textx })}
                             />
-                            {submitted && !cmnPar.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !cmnPar.textx && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-7">
                             <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
@@ -279,19 +246,12 @@ const CmnPar = (props) => {
                         </div>
 
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="countryid">{translations[selectedLanguage].Country} *</label>
-                            <Dropdown id="countryid"
-                                value={ddCountryItem}
-                                options={ddCountryItems}
-                                onChange={(e) => onInputChange(e, "options", 'countryid')}
-                                required
-                                optionLabel="name"
-                                placeholder="Select One"
-                                className={classNames({ 'p-invalid': submitted && !cmnPar.countryid })}
+                            <label htmlFor="country">{translations[selectedLanguage].country}</label>
+                            <InputText
+                                id="country"
+                                value={cmnPar.country} onChange={(e) => onInputChange(e, "text", 'country')}
                             />
-                            {submitted && !cmnPar.countryid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-
 
                         <div className="field col-12 md:col-4">
                             <label htmlFor="postcode">{translations[selectedLanguage].postcode}</label>
@@ -313,7 +273,7 @@ const CmnPar = (props) => {
                                 id="email"
                                 value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
                             />
-                        </div>
+                        </div>                        
                         <div className="field col-12 md:col-6">
                             <label htmlFor="activity">{translations[selectedLanguage].activity}</label>
                             <InputText

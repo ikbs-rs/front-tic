@@ -363,7 +363,7 @@ export default function CmnParL(props) {
         filters={filters}
         scrollable
         scrollHeight="550px"
-        virtualScrollerOptions={{ itemSize: 46 }}
+        // virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
@@ -389,7 +389,7 @@ export default function CmnParL(props) {
         ></Column>
         <Column
           field="text"
-          header={translations[selectedLanguage].text}
+          header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "20%" }}

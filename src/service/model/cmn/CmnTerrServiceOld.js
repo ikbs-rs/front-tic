@@ -4,25 +4,7 @@ import Token from "../../../utilities/Token";
 
 export class CmnTerrService {
 
-    async getTpLista(objId) {
-        const selectedLanguage = localStorage.getItem('sl') || 'en'
-        const url = `${env.CMN_BACK_URL}/cmn/x/terr/_v/lista/?stm=cmn_terrtp_v&objid=${objId}&sl=${selectedLanguage}`;
-        const tokenLocal = await Token.getTokensLS();
-        const headers = {
-          Authorization: tokenLocal.token
-        };
-    
-        try {
-          const response = await axios.get(url, { headers });
-          console.log(url, "++++++++++++++++++++", response)
-          return response.data.item;
-        } catch (error) {
-          console.error(error);
-          throw error;
-        }
-      }
-
-      async getLista(objId) {
+    async getLista(objId) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.CMN_BACK_URL}/cmn/x/terr/_v/lista/?stm=cmn_terr_v&objid=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();

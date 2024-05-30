@@ -61,6 +61,7 @@ export class TicDocService {
     
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
+    console.log(url, "* 0000000000000000000000000000000000000000 ******************************************************************")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -75,6 +76,24 @@ export class TicDocService {
     }
   }
   
+  async getTicListaByItemId(tab, route, view, item, objId) {
+    
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&objid=${objId}&sl=${selectedLanguage}`;
+    console.log(url, "* 0000000000000000000000000000000000000000 ******************************************************************")
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
  // ('obj', 'listabytxt', 'cmn_obj_tp_v', 'aa.doc', 'O');
 
   async getCmnListaByItem(tab, route, view, item, objId) {
@@ -149,8 +168,9 @@ export class TicDocService {
 
   async postTicDoc(newObj) {
     try {
+      console.log(newObj, "@ 00 @@@@ postTicDoc @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (!newObj?.provera && (newObj?.date.trim() === '' || newObj?.npar.trim() === '' || newObj?.pib === null)) {
+      if (!newObj?.provera && (newObj?.date.broj() === '' )) {
         throw new Error(
           "Items must be filled!"
         );
@@ -175,7 +195,7 @@ export class TicDocService {
   async putTicDoc(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.date.trim() === '' || newObj.npar.trim() === '' || newObj.pib === null) {
+      if (newObj.broj.trim() === ''||newObj?.channel === '') {
         throw new Error(
           "Items must be filled!"
         );
@@ -266,6 +286,53 @@ export class TicDocService {
       throw error;
     }
   }
+
+  async getCmnPaymenttps() {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/paymenttp/?sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }  
   
+
+
+  async obradaProdajeRezervacija(newObj, par1) {
+    try {
+      console.log("*0000000000000000000000#################", newObj, "****************00000000000000000000000000000000000000000000000")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.broj.trim() === ''||newObj?.channel === '') {
+        throw new Error(
+          "Items must be filled!"
+        );
+      }
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_prodaja_s&par1=${par1}&par2=${newObj.id}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      //console.log("*#################", jsonObj, "****************")
+      const response = await axios.post(url, jsonObj, { headers });
+      //console.log("**************"  , response, "****************")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
 }
 

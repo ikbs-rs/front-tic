@@ -22,6 +22,7 @@ import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { AutoComplete } from "primereact/autocomplete";
 import { Dialog } from 'primereact/dialog';
 import CmnParL from './cmn/cmnParL';
+import { Divider } from 'primereact/divider';
 
 const TicEvent = (props) => {
     let i = 0
@@ -409,7 +410,7 @@ const TicEvent = (props) => {
         console.log(newObj, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
         setParValue(newObj.code);
         ticEvent.par = newObj.id;
-        ticEvent.npar = newObj.textx;
+        ticEvent.npar = newObj.text;
         ticEvent.cpar = newObj.code;
         setTicEvent(ticEvent)
         //ticDocs.potrazuje = newObj.cena * ticDocs.output;
@@ -569,7 +570,7 @@ const TicEvent = (props) => {
                     clearTimeout(searchTimeout);
                     timeout = setTimeout(() => {
                         setDebouncedLocSearch(e.target.value);
-                    }, 400);                    
+                    }, 400);
                     break;
                 default:
                     console.error("Pogresan naziv polja")
@@ -732,7 +733,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div> */}
-                        <div className="field col-12 md:col-6">
+                        {/* <div className="field col-12 md:col-6">
                             <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
                             <Dropdown id="event"
                                 value={ddEventItem}
@@ -742,8 +743,8 @@ const TicEvent = (props) => {
                                 optionLabel="name"
                                 placeholder="Select One"
                             />
-                        </div>
-
+                        </div> */}
+                        <Divider />
 
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Descript}</label>
@@ -781,7 +782,7 @@ const TicEvent = (props) => {
                             {submitted && !ticEvent.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
+                            <label htmlFor="begda">{translations[selectedLanguage].DatProd} *</label>
                             <Calendar
                                 value={begda}
                                 onChange={(e) => onInputChange(e, "Calendar", 'begda', this)}
@@ -791,7 +792,7 @@ const TicEvent = (props) => {
 
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="roenddal">{translations[selectedLanguage].Endda} *</label>
+                            <label htmlFor="roenddal">{translations[selectedLanguage].DatEvent} *</label>
                             <Calendar
                                 value={endda}
                                 onChange={(e) => onInputChange(e, "Calendar", 'endda')}
@@ -800,7 +801,7 @@ const TicEvent = (props) => {
                             />
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="begtm">{translations[selectedLanguage].BegTM}</label>
+                            <label htmlFor="begtm">{translations[selectedLanguage].TmProd}</label>
                             <InputText
                                 id="begtm"
                                 mask="99:99"
@@ -813,7 +814,7 @@ const TicEvent = (props) => {
                             {submitted && !ticEvent.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="endtm">{translations[selectedLanguage].EndTM}</label>
+                            <label htmlFor="endtm">{translations[selectedLanguage].TmEvent}</label>
                             <InputText
                                 id="endtm"
                                 mask="99:99"
@@ -825,6 +826,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <Divider />                        
                         <div className="field col-12 md:col-12">
                             <label htmlFor="note">{translations[selectedLanguage].Note}</label>
                             <InputText

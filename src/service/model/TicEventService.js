@@ -326,24 +326,60 @@ export class TicEventService {
     }
   }
 
-
   async getTicEventchpermissL(eventId, userId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventchpermiss_v&objid=${eventId}&par1=${userId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
-        Authorization: tokenLocal.token
+      Authorization: tokenLocal.token
     };
 
     try {
-        const response = await axios.get(url, { headers });
-        console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
-        return response.data.item;
+      const response = await axios.get(url, { headers });
+      console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
+      return response.data.item;
     } catch (error) {
-        console.error(error);
-        throw error;
+      console.error(error);
+      throw error;
     }
-}  
+  }
+
+  async getTicChpermissL(userId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_chpermiss_v&par1=${userId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTicPrintgrpL(objId, cena) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_printgrp_v&objid=${objId}&par1=${cena}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log(url, "******************************getTicEventchpermissL*********************************")
+      const response = await axios.get(url, { headers });
+      
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
 }
 

@@ -316,7 +316,7 @@ export default function TicDocdeliveryL(props) {
             raised
           />
         ),
-        status: admUser.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser.firstname} ${admUser.lastname}`:''
+        status: admUser?.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser?.firstname} ${admUser?.lastname}`:''
       },
       {
         event: "Fiscal receipt", button: (

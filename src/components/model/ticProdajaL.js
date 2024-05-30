@@ -21,10 +21,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { TicCenatpService } from "../../service/model/TicCenatpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
-
 export default function TicProdajaL(props) {
-    console.log(props, '+++++++++++++++++++++++++++++++++++TicEventL+++++++++++++++++++++++++++++++++++++++++++++++');
+    console.log(props, '+++++++++++++++++++++++++++++++++++TicProdajaL+++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
+
     const objDoc = "tic_docs"
     const userId = localStorage.getItem('userId') || -1
     const emptyTicDoc = EmptyEntities[objDoc]
@@ -49,6 +49,7 @@ export default function TicProdajaL(props) {
     let [numberChannell, setNumberChannell] = useState(0)
     let [channells, setChannells] = useState([{}])
     let [channell, setChannell] = useState(null)
+
 
     const generateImageUrl = (id, relpath, selectedLanguage) => {
         return `${env.IMG_BACK_URL}/public/tic/${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
@@ -394,7 +395,7 @@ export default function TicProdajaL(props) {
                 ></Button>
             </div>
         );
-    };    
+    };
     const webTemplate = (rowData) => {
         return (
             <div className="flex flex-wrap gap-1">
@@ -416,40 +417,41 @@ export default function TicProdajaL(props) {
     };
 
     return (
-        <div className="card">
-            <Toast ref={toast} />
-            <DataTable
-                dataKey="id"
-                selectionMode="single"
-                selection={ticEvent}
-                loading={loading}
-                value={ticEvents}
-                header={header}
-                //showGridlines
-                removableSort
-                filters={filters}
-                scrollable
-                sortField="code"
-                sortOrder={1}
-                scrollHeight="570px"
-                // virtualScrollerOptions={{ itemSize: 46 }}
-                tableStyle={{ minWidth: '50rem' }}
-                metaKeySelection={false}
-                paginator
-                rows={50}
-                rowsPerPageOptions={[50, 100, 250, 500]}
-                onSelectionChange={(e) => setTicEvent(e.value)}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
-            >
-                <Column
-                    //bodyClassName="text-center"
-                    body={newTemplate}
-                    exportable={false}
-                    headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
-                />
-                {/* <Column
+        <>
+            <div className="card">
+                <Toast ref={toast} />
+                <DataTable
+                    dataKey="id"
+                    selectionMode="single"
+                    selection={ticEvent}
+                    loading={loading}
+                    value={ticEvents}
+                    header={header}
+                    //showGridlines
+                    removableSort
+                    filters={filters}
+                    scrollable
+                    sortField="code"
+                    sortOrder={1}
+                    scrollHeight="570px"
+                    // virtualScrollerOptions={{ itemSize: 46 }}
+                    tableStyle={{ minWidth: '50rem' }}
+                    metaKeySelection={false}
+                    paginator
+                    rows={50}
+                    rowsPerPageOptions={[50, 100, 250, 500]}
+                    onSelectionChange={(e) => setTicEvent(e.value)}
+                    onRowSelect={onRowSelect}
+                    onRowUnselect={onRowUnselect}
+                >
+                    <Column
+                        //bodyClassName="text-center"
+                        body={newTemplate}
+                        exportable={false}
+                        headerClassName="w-10rem"
+                        style={{ minWidth: '4rem' }}
+                    />
+                    {/* <Column
                     //bodyClassName="text-center"
                     body={actionTemplate}
                     exportable={false}
@@ -457,93 +459,94 @@ export default function TicProdajaL(props) {
                     style={{ minWidth: '4rem' }}
                 />
  */}
-                <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
-                <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
-                <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="nevent" header={translations[selectedLanguage].Event} sortable filter style={{ width: '15%' }}></Column>
-                <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
-                <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
-                <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
-                <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
-                <Column
-                    //bodyClassName="text-center"
-                    body={webTemplate}
-                    exportable={false}
-                    headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
-                />                
-            </DataTable>
-            <Dialog
-                // header={translations[selectedLanguage].Doc}
-                header={
-                    <div className="dialog-header">
-                        <Button
-                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
-                            onClick={() => {
-                                setVisible(false);
-                                // setShowMyComponent(false);
-                            }}
-                            severity="secondary" raised
-                        />
-                        {/* <p>{translations[selectedLanguage].Doc}</p>                         */}
-                    </div>
-                }
-                visible={visible}
-                style={{ width: '50%' }}
-                onHide={() => {
-                    setVisible(false);
-                    setShowMyComponent(false);
-                }}
-            >
-                {showMyComponent &&
-                    <TicEvent
-                        parameter={'inputTextValue'}
-                        ticEvent={ticEvent}
-                        handleDialogClose={handleDialogClose}
-                        setVisible={setVisible}
-                        dialog={true}
-                        eventTip={eventTip}
-                    />}
-            </Dialog>
-            <Dialog
-                header={
-                    <div className="dialog-header">
-                        <Button
-                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
-                            onClick={() => {
-                                setWebMapVisible(false);
-                                // setShowMyComponent(false);
-                            }}
-                            severity="secondary" raised
-                        />
-                        {/* <span>"webMap"</span>                         */}
-                    </div>
-                }
-                visible={webMapVisible}
-                style={{ width: '90%', height: '1100px' }}
-                onHide={() => {
-                    setWebMapVisible(false);
-                    setShowMyComponent(false);
-                }}
-            >
-                {webMapVisible && (
-                    <WebSalMap
-                        parameter={'inputTextValue'}
-                        ticEvent={ticEvent}
-                        handleDialogClose={handleDialogClose}
-                        setVisible={setVisible}
-                        dialog={true}
-                        eventTip={eventTip}
-                        ticDoc={ticDoc}
-                        onTaskComplete={handleWebMapDialogClose}
-                        numberChannell={numberChannell}
-                        channells={channells}
-                        channell={channell}
+                    <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
+                    <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
+                    <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
+                    <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
+                    <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
+                    <Column field="nevent" header={translations[selectedLanguage].Event} sortable filter style={{ width: '15%' }}></Column>
+                    <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
+                    <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
+                    <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
+                    <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                    <Column
+                        //bodyClassName="text-center"
+                        body={webTemplate}
+                        exportable={false}
+                        headerClassName="w-10rem"
+                        style={{ minWidth: '4rem' }}
                     />
-                )}
-                {/* {webMapVisible && (
+                </DataTable>
+
+                <Dialog
+                    // header={translations[selectedLanguage].Doc}
+                    header={
+                        <div className="dialog-header">
+                            <Button
+                                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                                onClick={() => {
+                                    setVisible(false);
+                                    // setShowMyComponent(false);
+                                }}
+                                severity="secondary" raised
+                            />
+                            {/* <p>{translations[selectedLanguage].Doc}</p>                         */}
+                        </div>
+                    }
+                    visible={visible}
+                    style={{ width: '50%' }}
+                    onHide={() => {
+                        setVisible(false);
+                        setShowMyComponent(false);
+                    }}
+                >
+                    {showMyComponent &&
+                        <TicEvent
+                            parameter={'inputTextValue'}
+                            ticEvent={ticEvent}
+                            handleDialogClose={handleDialogClose}
+                            setVisible={setVisible}
+                            dialog={true}
+                            eventTip={eventTip}
+                        />}
+                </Dialog>
+                <Dialog
+                    header={
+                        <div className="dialog-header">
+                            <Button
+                                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                                onClick={() => {
+                                    setWebMapVisible(false);
+                                    // setShowMyComponent(false);
+                                }}
+                                severity="secondary" raised
+                            />
+                            {/* <span>"webMap"</span>                         */}
+                        </div>
+                    }
+                    visible={webMapVisible}
+                    style={{ width: '90%', height: '1100px' }}
+                    onHide={() => {
+                        setWebMapVisible(false);
+                        setShowMyComponent(false);
+                    }}
+                >
+                    {webMapVisible && (
+                        <WebSalMap
+                            parameter={'inputTextValue'}
+                            ticEvent={ticEvent}
+                            handleDialogClose={handleDialogClose}
+                            setVisible={setVisible}
+                            dialog={true}
+                            eventTip={eventTip}
+                            ticDoc={ticDoc}
+                            onTaskComplete={handleWebMapDialogClose}
+                            numberChannell={numberChannell}
+                            channells={channells}
+                            channell={channell}
+                        />
+                    )}
+                    {/* {webMapVisible && (
                     <WebMap
                         remoteUrl= {`http://ws11.ems.local:3000/#/seatmap/${ticEvent.id}?docid=${docId}&sl=sr_cyr`}
                         queryParams={{ sl: 'sr_cyr', lookUp: false, dialog: false, ticDoc: props.ticDoc, parentOrigin: 'http://192.168.72.96:8354' }} // Dodajte ostale parametre po potrebi
@@ -551,7 +554,8 @@ export default function TicProdajaL(props) {
                         originUrl="http://192.168.72.96:8353"
                     />
                 )} */}
-            </Dialog>
-        </div>
+                </Dialog>
+            </div>
+        </>
     );
 }

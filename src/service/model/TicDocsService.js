@@ -73,6 +73,49 @@ export class TicDocsService {
     }
   }
 
+  async postProdajaTicDocs(ticDoc, ticDocs, ) {
+    try {
+      if (ticDoc.status == "") {
+        //TO DO
+        // dell /pull postojece reyervacije
+        //nadji tarifnu grupu rezervacije
+        // preracunaj iznos % >= limit + porez
+        // push u niz
+      }        
+        // proveri tip karte
+        // ponovi kao za rezervaciju
+        
+        // proveri isporuku
+        // ponovi kao za rezervaciju
+
+
+      let locObj = { ...ticDocs };
+      locObj.begtm = DateFunction.currDatetime()
+      locObj.endtm = '99991231000000'
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (ticDocs.curr === null || ticDocs.art === null || ticDocs.status === null) {
+        throw new Error(
+          "Items must be filled!"
+        );
+      }
+      const url = `${env.TIC_BACK_URL}/tic/docs/?sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      
+      const jsonObj = JSON.stringify(locObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      //console.log("**************"  , response, "****************")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
 
   async postTicDocs(newObj) {
     try {

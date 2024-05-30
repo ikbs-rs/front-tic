@@ -13,12 +13,12 @@ import TicEventProdajaL from './ticEventProdajaL';
 
 
 export default function TicProdajaW(props) {
-  console.log(props, "* props *****************@@@@@@@@@@@@@@@@@@@@@@@*******************************")
+  console.log(props, "* props * ######  ****************@@@@@@@@@@@@@@@@@@@@@@@*****************************TicProdajaW**")
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
-  const [ticDoc, setTicDokument] = useState(props.ticDoc);
-  const [ticDocId, setTicDokumentId] = useState(props.ticDoc?.id);
+  const [ticDoc, setTicDoc] = useState(props.ticDoc);
+  const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
 
   const [expandIframe, setExpandIframe] = useState(false);
 
@@ -34,7 +34,9 @@ export default function TicProdajaW(props) {
   const [ticEvent, setTicEvent] = useState(props.ticEvent);
   const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   const [showMyComponent, setShowMyComponent] = useState(true);
-  
+
+ 
+
   /************************************************************************************ */
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -106,7 +108,7 @@ export default function TicProdajaW(props) {
         const ticDocService = new TicDocService();
         const data = await ticDocService.getTicDoc(ticDocId);
         if (ticDocId != -1) {
-          setTicDokument(data);
+          setTicDoc(data);
         }
         // }
       } catch (error) {
@@ -133,6 +135,7 @@ export default function TicProdajaW(props) {
       const buttonInsideIframe = iframeRef.current.contentWindow.document.querySelector('#kupiBtn');
       if (buttonInsideIframe) {
         buttonInsideIframe.click();
+        props.toggleIframeExpansion()
       }
     }
   };
@@ -169,12 +172,12 @@ export default function TicProdajaW(props) {
   const handleMouseClick = (event) => {
 
     const newDocId = iframeRef.current.contentWindow.document.querySelector('#docId')?.value;
-    setTicDokumentId(newDocId);
+    setTicDocId(newDocId);
     if (event.target.id == 'reserveBtn') {
       console.log(event.srcElement, 'Mouse clicked inside iframe:', event.target.id || "NESTO DRUGO",
         "======================= ##########################  DocId inside iframe:", iframeRef.current.contentWindow.document.querySelector('#docId').value)
       if (newDocId != ticDocId) {
-        setTicDokumentId(newDocId);
+        setTicDocId(newDocId);
       }
       setTicTransactionsKey(++ticTransactionsKey);
     }
@@ -252,12 +255,14 @@ export default function TicProdajaW(props) {
 
   function HeaderBtn() {
     return (
-      <div className="flex card-container">
-        <div className="flex flex-wrap gap-1" >
-          <Button label="Simuliraj klik" onClick={handleClickInsideIframe} icon="pi pi-cog" raised />
-        </div>
-        <div className="flex flex-wrap gap-1" raised>
-          <Button label="Ponovo učitaj iframe" onClick={remountComponent} raised />
+      <div className="card">
+        <div className="flex card-container">
+          <div className="flex flex-wrap gap-1" >
+            <Button label={translations[selectedLanguage].Kupi} onClick={handleClickInsideIframe} icon="pi pi-cog" raised />
+          </div>
+          <div className="flex flex-wrap gap-1" raised>
+            <Button label={translations[selectedLanguage].UcitajMapu} onClick={remountComponent} raised />
+          </div>
         </div>
       </div>
     );
@@ -341,6 +346,10 @@ export default function TicProdajaW(props) {
     // alert(`Kliknuo ${rowData.event} ** ${ticEvent.id}`);
   };
 
+  const handleAction = (rowData) => {
+    console.log(rowData, "********************************************************************")
+    setTicDoc(rowData)
+  }
 
   return (
     <div key={key}>
@@ -351,43 +360,45 @@ export default function TicProdajaW(props) {
           </div>
         </div> */}
         {/* <div style={{ maxWidth: "95%" }}> */}
-          <div className="grid grid-nogutter">
-            <div className={props.expandIframe ? "col-12" : "col-6"}> {/* IFRAME */}
-              <div className="grid">
-                <div className="col-12">
-                  <iframe key={iframeKey}
-                    id="myIframe"
-                    ref={iframeRef}
-                    src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
-                    onLoad={handleIframeLoad}
-                    title="Sal iframe"
-                    width="100%"
-                    height="600px"
-                    frameBorder="0"
-                  // scrolling="no"
-                  ></iframe>
-                </div>
+        <div className="grid grid-nogutter">
+          <div className={props.expandIframe ? "col-12" : "col-7"}> {/* IFRAME */}
+            <div className="grid">
+              <div className="col-12">
+                <iframe key={iframeKey}
+                  id="myIframe"
+                  ref={iframeRef}
+                  src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                  onLoad={handleIframeLoad}
+                  title="Sal iframe"
+                  width="100%"
+                  height="600px"
+                  frameBorder="0"
+                // scrolling="no"
+                ></iframe>
               </div>
             </div>
-            {!props.expandIframe && (
-              <div className="col-6">
-                <div className="grid">
-                  <div className="col-12">
-                    <div className="card">
-                      <HeaderBtn />
-                      <TicTransactionsL
-                        key={ticTransactionsKey}
-                        ticDoc={ticDoc}
-                        propsParent={props}
-                        handleFirstColumnClick={handleFirstColumnClick}
-                      />
-                      {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
+          {!props.expandIframe && (
+            <div className="col-5">
+              <div className="grid">
+                <div className="col-12">
+
+                  <HeaderBtn />
+
+                    <TicTransactionsL
+                      key={ticTransactionsKey}
+                      ticDoc={ticDoc}
+                      propsParent={props}
+                      handleFirstColumnClick={handleFirstColumnClick}
+                      handleAction={handleAction}
+                    />
+                    {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
+                  </div>
+
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* </div> */}
       </div>

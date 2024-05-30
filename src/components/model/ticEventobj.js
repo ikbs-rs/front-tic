@@ -127,7 +127,7 @@ const TicEventobj = (props) => {
             const ticEventobjService = new TicEventobjService();
             const newTicEventobj = { ...ticEventobj, id: null };
             const data = await ticEventobjService.postTicEventobj(newTicEventobj);
-            ticEventobj.id = data
+            //ticEventobj.id = data
             props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
             //props.setVisible(false);
         } catch (err) {

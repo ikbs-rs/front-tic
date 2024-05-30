@@ -19,7 +19,7 @@ import { ColorPicker } from 'primereact/colorpicker';
 
 
 export default function TicEventobjL(props) {
-
+console.log(props, "**********************")
   const objName = "tic_eventobj"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventobj = EmptyEntities[objName]
