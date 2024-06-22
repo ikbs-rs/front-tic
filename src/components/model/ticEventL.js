@@ -110,6 +110,8 @@ export default function TicEventL(props) {
         //setSubmitted(true);
         if (localObj.newObj.eventTip === 'CREATE') {
             _ticEvents.push(_ticEvent);
+        } else if (localObj.newObj.eventTip === 'COPY') {
+            _ticEvents.push(_ticEvent);
         } else if (localObj.newObj.eventTip === 'UPDATE') {
             const index = findIndexById(localObj.newObj.obj.id);
             _ticEvents[index] = _ticEvent;
@@ -178,6 +180,7 @@ export default function TicEventL(props) {
     };
 
     const openNew = () => {
+        setEventTip('CREATE');
         setTicEventDialog(emptyTicEvent);
     };
 
@@ -371,7 +374,7 @@ export default function TicEventL(props) {
     // <--- Dialog
     const setTicEventDialog = (ticEvent) => {
         setVisible(true);
-        setEventTip('CREATE');
+        // setEventTip('CREATE');
         setTicEvent({ ...ticEvent });
     };
 
@@ -453,6 +456,23 @@ export default function TicEventL(props) {
         );
     };
 
+    const actionTemplateC = (rowData) => {
+        return (
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-copy"
+                    style={{ width: '24px', height: '24px' }}
+                    onClick={() => {
+                        setTicEventDialog(rowData);
+                        setEventTip('COPY');
+                    }}
+                    severity="warning"
+                    raised
+                ></Button>
+            </div>
+        );
+    };
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -470,7 +490,7 @@ export default function TicEventL(props) {
                 scrollable
                 sortField="code"
                 sortOrder={1}
-                scrollHeight="650px"
+                scrollHeight="600px"
                 virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}
@@ -510,6 +530,13 @@ export default function TicEventL(props) {
                     bodyClassName="text-center"
                     body={statusBodyTemplate}
                 ></Column>
+                <Column
+                    //bodyClassName="text-center"
+                    body={actionTemplateC}
+                    exportable={false}
+                    headerClassName="w-10rem"
+                    style={{ minWidth: '4rem' }}
+                />
             </DataTable>
             <Dialog
                 header={translations[selectedLanguage].Event}
@@ -520,7 +547,15 @@ export default function TicEventL(props) {
                     setShowMyComponent(false);
                 }}
             >
-                {showMyComponent && <TicEvent parameter={'inputTextValue'} ticEvent={ticEvent} handleDialogClose={handleDialogClose} setVisible={setVisible} dialog={true} eventTip={eventTip} />}
+                {showMyComponent &&
+                    <TicEvent
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setVisible}
+                        dialog={true}
+                        eventTip={eventTip}
+                    />}
             </Dialog>
             <Dialog
                 header={translations[selectedLanguage].EventlinkLista}

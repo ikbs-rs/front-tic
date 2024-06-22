@@ -22,7 +22,7 @@ const AppTopbar = (props) => {
                 if (i < 2) {
                     const admUserService = new AdmUserService();
                     const data = await admUserService.getAdmUser(userId);
-                    console.log(data, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
+                    // console.log(data, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
                     setUser(data);
                     setSlika(`https://localhost/btic/assets/img/zap/${data.id}.jpg`)
                 }

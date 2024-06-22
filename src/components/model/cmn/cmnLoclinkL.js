@@ -46,7 +46,7 @@ export default function CmnLoclinkL(props) {
         if (i < 2) {
           const loctpCode = props.loctpCode ? props.loctpCode : props.cmnLoc.loctpCode
           const cmnLoclinkService = new CmnLoclinkService();
-          //console.log(props.cmnLoc.id, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
+          // console.log(props.cmnLoc.id, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
           const data = await cmnLoclinkService.getListaLL(props.cmnLoc.id, loctpCode);
           setCmnLoclinks(data);
           initFilters();

@@ -23,8 +23,11 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Dialog } from 'primereact/dialog';
 import CmnParL from './cmn/cmnParL';
 import { Divider } from 'primereact/divider';
+import ConfirmDialog from '../dialog/ConfirmDialog';
+
 
 const TicEvent = (props) => {
+    console.log(props, "************************************TicEvent*****************************************")
     let i = 0
     const parTp = 'XOR'
     const objName = "tic_events"
@@ -32,6 +35,7 @@ const TicEvent = (props) => {
     const emptyTicEvents = EmptyEntities[objName]
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [deleteAllDialogVisible, setDeleteAllDialogVisible] = useState(false);
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
 
@@ -72,6 +76,8 @@ const TicEvent = (props) => {
     const [debouncedLocSearch, setDebouncedLocSearch] = useState("");
     //const [searchLocTimeout, setSearchLocTimeout] = useState(null);
     const [selectedLoc, setSelectedLoc] = useState(null);
+    const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
     /************************AUTOCOMPLIT**************************** */
 
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.ticEvent.begda || DateFunction.currDate())));
@@ -465,10 +471,89 @@ const TicEvent = (props) => {
         }
     };
 
+    const handleSaveDateClick = async () => {
+        try {
+            setSubmitted(true);
+            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const ticEventService = new TicEventService();
+            await ticEventService.postTicEventSaveDate(ticEvent);
+            props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
+            props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
+
+    const handleCopyClick = () => {
+        setConfirmDialogVisible(true);
+    };
+
+    const handleConfirm = async () => {
+        try {
+            console.log(ticEvent, "***********handleConfirm********************")
+            setSubmitted(true);
+            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const ticEventService = new TicEventService();
+            console.log('*00********************handleCopyClick*************************')
+            const pId = await ticEventService.postTicEventCopy(ticEvent);
+            const _ticEvent = { ...ticEvent };
+            _ticEvent.id = pId;
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Догађај успешно активиран ?', life: 3000 });
+            props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
+            setConfirmDialogVisible(false);
+            setVisible(false);
+            props.setVisible(false);
+
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
+
+    // const handleCopyClick = async () => {
+    //     try {
+    //         setSubmitted(true);
+    //         ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+    //         ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+    //         ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+    //         ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+    //         const ticEventService = new TicEventService();
+    //         console.log('*00********************handleCopyClick*************************')
+    //         await ticEventService.postTicEventCopy(ticEvent);
+
+    //         props.setVisible(false);
+    //     } catch (err) {
+    //         toast.current.show({
+    //             severity: "error",
+    //             summary: "Action ",
+    //             detail: `${err.response.data.error}`,
+    //             life: 1000,
+    //         });
+    //     }
+    // };
+
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
     };
 
+    const showDeleteAllDialog = () => {
+        setDeleteAllDialogVisible(true);
+    };
     const handleDeleteClick = async () => {
         try {
             setSubmitted(true);
@@ -486,7 +571,23 @@ const TicEvent = (props) => {
             });
         }
     };
-
+    const handleDeleteAllClick = async () => {
+        try {
+            setSubmitted(true);
+            const ticEventService = new TicEventService();
+            await ticEventService.deleteAllTicEvent(ticEvent);
+            props.handleDialogClose({ obj: ticEvent, eventTip: 'DELETE' });
+            props.setVisible(false);
+            hideDeleteAllDialog();
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
     const onInputChange = (e, type, name) => {
         let val = ''
         if (type === "options") {
@@ -594,6 +695,9 @@ const TicEvent = (props) => {
         setDeleteDialogVisible(false);
     };
 
+    const hideDeleteAllDialog = () => {
+        setDeleteAllDialogVisible(false);
+    };
 
     const itemTemplate = (item) => {
         return (
@@ -623,6 +727,10 @@ const TicEvent = (props) => {
             </>
         );
     };
+
+
+
+
     return (
         <div className="grid">
             <Toast ref={toast} />
@@ -826,7 +934,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <Divider />                        
+                        <Divider />
                         <div className="field col-12 md:col-12">
                             <label htmlFor="note">{translations[selectedLanguage].Note}</label>
                             <InputText
@@ -884,27 +992,60 @@ const TicEvent = (props) => {
                                         outlined
                                     />
                                 ) : null}
-                                {(props.eventTip !== 'CREATE') ? (
-                                    <Button
-                                        label={translations[selectedLanguage].Delete}
-                                        icon="pi pi-trash"
-                                        onClick={showDeleteDialog}
-                                        className="p-button-outlined p-button-danger"
-                                        outlined
-                                    />
+                                {(props.eventTip !== 'CREATE' && props.eventTip !== 'COPY') ? (
+                                    <>
+                                        <Button
+                                            label={translations[selectedLanguage].Delete}
+                                            icon="pi pi-trash"
+                                            onClick={showDeleteDialog}
+                                            className="p-button-outlined p-button-danger"
+                                            outlined
+                                        />
+                                        <Button
+                                            label={translations[selectedLanguage].DeleteAll}
+                                            icon="pi pi-trash"
+                                            onClick={showDeleteAllDialog}
+                                            // className="p-button-outlined p-button-danger"
+                                            severity="danger"
+                                        // outlined
+                                        />
+                                    </>
                                 ) : null}
-                                {(props.eventTip !== 'CREATE') ? (
+                                {(props.eventTip !== 'CREATE' && props.eventTip !== 'COPY') ? (
+                                    <>
+                                        <Button
+                                            label={translations[selectedLanguage].SaveDate}
+                                            icon="pi pi-calendar-plus"
+                                            onClick={handleSaveDateClick}
+                                            severity="warning"
+                                        />
+                                        <Button
+                                            label={translations[selectedLanguage].Save}
+                                            icon="pi pi-check"
+                                            onClick={handleSaveClick}
+                                            severity="success"
+                                            outlined
+                                        />
+                                    </>
+                                ) : null}
+                                {(props.eventTip === 'COPY') ? (
                                     <Button
-                                        label={translations[selectedLanguage].Save}
+                                        label={translations[selectedLanguage].Copy}
                                         icon="pi pi-check"
-                                        onClick={handleSaveClick}
-                                        severity="success"
-                                        outlined
+                                        onClick={handleCopyClick}
+                                        severity="warning"
+                                        raised
                                     />
                                 ) : null}
                             </div>
                         </div>
                     </div>
+                    <ConfirmDialog
+                        visible={confirmDialogVisible}
+                        onHide={() => setConfirmDialogVisible(false)}
+                        onConfirm={handleConfirm}
+                        uPoruka={'Aktivacija događaja, da li ste sigurni?'}
+                    />
                     {/*
                     {showMyComponent && (
                         <TicEvents
@@ -929,6 +1070,13 @@ const TicEvent = (props) => {
                 item={ticEvent.text}
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
+            />
+            <DeleteDialog
+                visible={deleteAllDialogVisible}
+                inAction="deleteall"
+                item={ticEvent.text}
+                onHide={hideDeleteAllDialog}
+                onDelete={handleDeleteAllClick}
             />
             <Dialog
                 header={translations[selectedLanguage].ParList}

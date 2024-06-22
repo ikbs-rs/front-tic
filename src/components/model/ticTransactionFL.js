@@ -27,7 +27,7 @@ import DateFunction from "../../utilities/DateFunction"
 import { Dropdown } from 'primereact/dropdown';
 import { useSearchParams } from 'react-router-dom';
 import DeleteDialog from '../dialog/DeleteDialog';
-import TicEventProdajaL from './ticEventProdajaL';
+import TicEventProdajaL from './ticProdajaTab';
 import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicTransactionFL(props) {
@@ -475,7 +475,7 @@ export default function TicTransactionFL(props) {
                                                                                                                                 ? 'highlight-row-36 '
                                                                                                                                 : rowData.paid
                                                                                                                                     ? 'highlight-row-31'
-                                                                                                                                    : rowData.istekla ==true
+                                                                                                                                    : rowData.istekla == true
                                                                                                                                         ? 'highlight-row-30'
                                                                                                                                         : '';
     };
@@ -681,7 +681,7 @@ export default function TicTransactionFL(props) {
                     sortable
                     filter
                     style={{ width: "20%" }}
-                ></Column>   
+                ></Column>
                 <Column
                     field="startda"
                     header={translations[selectedLanguage].begda}
@@ -689,7 +689,7 @@ export default function TicTransactionFL(props) {
                     sortable
                     filter
                     style={{ width: "20%" }}
-                ></Column>  
+                ></Column>
                 <Column
                     field="starttm"
                     header={translations[selectedLanguage].begtm}
@@ -697,7 +697,7 @@ export default function TicTransactionFL(props) {
                     sortable
                     filter
                     style={{ width: "20%" }}
-                ></Column>                                             
+                ></Column>
                 <Column
                     field="npar"
                     header={translations[selectedLanguage].npar}
@@ -808,7 +808,22 @@ export default function TicTransactionFL(props) {
                 )}
             </Dialog>
             <Dialog
-                // header={translations[selectedLanguage].EventList}
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                ++refresh
+                                console.log(refresh, "########################")
+                                setRefresh(refresh)
+                                setTicEventProdajaLVisible(false);
+                                // setShowMyComponent(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                        {/* <span>{translations[selectedLanguage].Doc}</span>                         */}
+                    </div>
+                }
                 visible={ticEventProdajaLVisible}
                 style={{ width: '95%', height: '1400px' }}
                 onHide={() => {

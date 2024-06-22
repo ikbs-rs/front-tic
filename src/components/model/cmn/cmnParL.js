@@ -20,7 +20,7 @@ import TicParprivilegeL from '../ticParprivilegeL';
 import env from '../../../configs/env';
 
 export default function CmnParL(props) {
-  console.log(props, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+  // console.log(props, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
   const objName = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyCmnPar = EmptyEntities[objName]

@@ -1,28 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Button } from "primereact/button";
-import { EmptyEntities } from '../../service/model/EmptyEntities';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import './index.css';
 import { translations } from "../../configs/translations";
 
 import { TicDocService } from "../../service/model/TicDocService";
-import { TabView, TabPanel } from 'primereact/tabview';
 import TicTransactionsL from './ticTransactionsL';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import TicEventProdajaL from './ticEventProdajaL';
+import TicDocsuidProdajaL from "./ticDocsuidProdajaL";
 
-
-export default function TicProdajaW(props) {
-  console.log(props, "* props * ######  ****************@@@@@@@@@@@@@@@@@@@@@@@*****************************TicProdajaW**")
+const TicProdajaW = forwardRef((props, ref) => {
+  // console.log(props, "######2222222222222222222222222222222222222222222222222222222222222222")
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
   const [ticDoc, setTicDoc] = useState(props.ticDoc);
   const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
 
-  const [expandIframe, setExpandIframe] = useState(false);
-
-  const [activeIndex, setActiveIndex] = useState(0);
   let [iframeKey, setIframeKey] = useState(Math.random());
   let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
   const toast = useRef(null);
@@ -34,10 +28,21 @@ export default function TicProdajaW(props) {
   const [ticEvent, setTicEvent] = useState(props.ticEvent);
   const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   const [showMyComponent, setShowMyComponent] = useState(true);
+  let [refresh, setRefresh] = useState(0);
+  let [uidKey, setUidKey] = useState(0);
 
- 
+
 
   /************************************************************************************ */
+  useImperativeHandle(ref, () => ({
+    handleClickInsideIframe,
+    remountComponent,
+    remountStavke
+  }));
+
+  const remountStavke = () => {
+    setTicTransactionsKey(++ticTransactionsKey);
+  }
   useEffect(() => {
     const iframe = iframeRef.current;
 
@@ -54,7 +59,7 @@ export default function TicProdajaW(props) {
     };
 
     const handleDivClick = () => {
-      console.log('Div inside iframe clicked');
+      //console.log('Div inside iframe clicked');
     };
 
     if (iframe) {
@@ -66,7 +71,7 @@ export default function TicProdajaW(props) {
       originalConsoleLog.apply(console, arguments);
 
       if (message && typeof message === 'string' && message.includes('iframe log')) {
-        console.log('Presretnuta poruka iz iframe:', message);
+        //console.log('Presretnuta poruka iz iframe:', message);
       }
     };
 
@@ -80,10 +85,8 @@ export default function TicProdajaW(props) {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("#00##################BMVBMV#####################", props.channells)
       try {
         if (props?.channells) {
-          console.log("#01##################BMVBMV#####################", props.channells)
           setChannellItems(props.channells)
           setChannellItem(props.channell)
 
@@ -104,10 +107,14 @@ export default function TicProdajaW(props) {
       try {
         ++i
         // if (i < 2) {
-        console.log(ticDocId, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ticDocId@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         const ticDocService = new TicDocService();
-        const data = await ticDocService.getTicDoc(ticDocId);
+        let data = await ticDocService.getTicDoc(ticDocId);
         if (ticDocId != -1) {
+          const cmnParService = new cmnParService()
+          let dataPar = await cmnParService.getPar(data.usr);
+          data.cpar = dataPar.code
+          data.npar = dataPar.text
+          console.log(data, "5555555555555555555555555555555555555555555555555555555555555555555")
           setTicDoc(data);
         }
         // }
@@ -117,36 +124,33 @@ export default function TicProdajaW(props) {
       }
     }
     fetchData();
-  }, [ticDocId]);
+  }, [ticDocId, ticDoc]);
 
-
-  /********************************************************************** */
-  const toggleIframeExpansion = () => {
-    setExpandIframe(!expandIframe); // Toggle the state
-  };
 
   const remountComponent = () => {
-    console.log(props.ticEvent, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticDoc)
+    //console.log(props.ticEvent, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticDoc)
     setKey(prevKey => prevKey + 1); // Promenimo ključ kako bi se komponenta ponovo montirala
+    setUidKey(0)
   };
 
   const handleClickInsideIframe = () => {
     if (iframeRef.current?.contentWindow) {
       const buttonInsideIframe = iframeRef.current.contentWindow.document.querySelector('#kupiBtn');
-      if (buttonInsideIframe) {
-        buttonInsideIframe.click();
-        props.toggleIframeExpansion()
-      }
+      // if (buttonInsideIframe) {
+        // buttonInsideIframe.click();
+        // props.toggleIframeExpansion()
+        setUidKey(1)
+      // }
     }
   };
 
   useEffect(() => {
     const handleClick = (event) => {
 
-      console.log('Kliknuto je na element unutar grid-a:', event.target);
+      //console.log('Kliknuto je na element unutar grid-a:', event.target);
       const iframes = document.querySelectorAll('.grid iframe');
       iframes.forEach((iframe) => {
-        console.log('########### Iframe:', iframe);
+        //console.log('########### Iframe:', iframe);
       });
       const addMouseClickListener = () => {
         if (iframeRef.current?.contentWindow) {
@@ -161,10 +165,11 @@ export default function TicProdajaW(props) {
       document.removeEventListener('click', handleClick);
     };
   }, []);
+
   useEffect(() => {
-    console.log('TicTransactionsL montirana ili osvežena sa key:', ticTransactionsKey);
+    //console.log('TicTransactionsL montirana ili osvežena sa key:', ticTransactionsKey);
     return () => {
-      console.log('TicTransactionsL demontirana');
+      //console.log('TicTransactionsL demontirana');
     }
   }, []);
 
@@ -174,8 +179,7 @@ export default function TicProdajaW(props) {
     const newDocId = iframeRef.current.contentWindow.document.querySelector('#docId')?.value;
     setTicDocId(newDocId);
     if (event.target.id == 'reserveBtn') {
-      console.log(event.srcElement, 'Mouse clicked inside iframe:', event.target.id || "NESTO DRUGO",
-        "======================= ##########################  DocId inside iframe:", iframeRef.current.contentWindow.document.querySelector('#docId').value)
+      //console.log(event.srcElement, 'Mouse clicked inside iframe:', event.target.id || "NESTO DRUGO", "======================= ##########################  DocId inside iframe:", iframeRef.current.contentWindow.document.querySelector('#docId').value)
       if (newDocId != ticDocId) {
         setTicDocId(newDocId);
       }
@@ -196,14 +200,16 @@ export default function TicProdajaW(props) {
 
   }, [iframeRef.current]);
 
+  /********************************************************* *
+   *        BRISANJE ELEMENATA UNUTAR IFRAME                 * 
   /********************************************************* */
-
   let i = 0
 
 
   const removeUserMenu = async () => {
     if (iframeRef.current?.contentDocument) {
-      const userMenuDiv = iframeRef.current.contentDocument.querySelector('.user-menu');
+      const userMenuDiv = iframeRef.current.contentDocument.querySelector('.p-card-body');
+      // const userMenuDiv = iframeRef.current.contentDocument.querySelector('.user-menu');
       if (userMenuDiv) {
         userMenuDiv.remove();
       } else {
@@ -216,18 +222,20 @@ export default function TicProdajaW(props) {
   const removeCartSection = async () => {
     for (let attempt = 0; attempt < 10; attempt++) {
       if (iframeRef.current?.contentDocument) {
-        const cartSectionDiv = iframeRef.current.contentDocument.querySelector('.cart-section');
+        // const cartSectionDiv = iframeRef.current.contentDocument.querySelector('.cart-section');
+        const cartSectionDiv = iframeRef.current.contentDocument.querySelector('.p-card.p-component');
         if (cartSectionDiv) {
           // cartSectionDiv.style.display = 'none'; // TO DO
         } else {
           setTimeout(() => {
-            removeCartSection(); // Retry hiding the section after a short delay
-          }, 3000); // Timeout of 3 seconds to retry
+            removeCartSection();
+          }, 3000);
         }
       }
     }
   };
 
+  /****************************************************************************************** */
 
   const handleIframeLoad = async () => {
 
@@ -244,86 +252,17 @@ export default function TicProdajaW(props) {
           // Vaš kod za presretanje poruke iz iframe-a ovde
           if (message && typeof message === 'string' && message.includes('rezervaciju')) {
             setTicTransactionsKey(++ticTransactionsKey);
-            console.log("######################## Radim rezervaciju za dokument ####################################");
+            //console.log("######################## Radim rezervaciju za dokument ####################################");
           }
-          // console.log('Presretnuta poruka iz iframe:', message);
+          // //console.log('Presretnuta poruka iz iframe:', message);
         };
       }
     }
   };
 
-
-  function HeaderBtn() {
-    return (
-      <div className="card">
-        <div className="flex card-container">
-          <div className="flex flex-wrap gap-1" >
-            <Button label={translations[selectedLanguage].Kupi} onClick={handleClickInsideIframe} icon="pi pi-cog" raised />
-          </div>
-          <div className="flex flex-wrap gap-1" raised>
-            <Button label={translations[selectedLanguage].UcitajMapu} onClick={remountComponent} raised />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   /******************************************************************************** 
    * 
   ******************************************************************************** */
-  const handleEventProdajaClick = async (e, destination) => {
-    try {
-      setTicEventProdajaLDialog();
-    } catch (error) {
-      console.error(error);
-      toast.current.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to fetch ticArt data',
-        life: 3000
-      });
-    }
-  };
-
-  const setTicEventProdajaLDialog = (destination) => {
-    setTicEventProdajaLVisible(true);
-  };
-  /******************************************************************************** 
-   * 
-  ******************************************************************************** */
-  const Tab2Header = (options) => {
-    return (
-      <>
-        <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
-          <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
-            severity="warning"
-          />
-        </div>
-      </>
-    )
-  };
-
-  function NavigateTemplate({ activeIndex, setActiveIndex, totalTabs }) {
-    return (
-      <div className="flex justify-content-between mt-2">
-        <Button
-          label="Back"
-          icon="pi pi-chevron-left"
-          onClick={() => setActiveIndex(Math.max(0, activeIndex - 1))}
-          className="p-button-text"
-          disabled={activeIndex === 0}
-        />
-        <Button
-          label="Next"
-          icon="pi pi-chevron-right"
-          iconPos="right"
-          onClick={() => setActiveIndex(Math.min(totalTabs - 1, activeIndex + 1))}
-          className="p-button-text"
-          disabled={activeIndex === totalTabs - 1}
-        />
-      </div>
-    );
-  }
   const handleTicEventProdajaLDialogClose = (newObj) => {
     setTicEvent(newObj);
     ticEvent.id = newObj.id;
@@ -335,7 +274,7 @@ export default function TicProdajaW(props) {
   };
 
   const handleFirstColumnClick = (rowData) => {
-    console.log(rowData.event, "#############################handleFirstColumnClick##################################", ticEvent.id)
+    //console.log(rowData.event, "#############################handleFirstColumnClick##################################", ticEvent.id)
     if (ticEvent.id != rowData.event) {
       let _ticEvent = { ...ticEvent }
       _ticEvent.id = rowData.event
@@ -347,78 +286,71 @@ export default function TicProdajaW(props) {
   };
 
   const handleAction = (rowData) => {
-    console.log(rowData, "********************************************************************")
+    console.log(rowData, "******************************EEEEEEEEEEEEEEEE**************************************")
     setTicDoc(rowData)
+    setRefresh(++refresh)
   }
 
   return (
     <div key={key}>
       <div className="card" >
-        {/* <div className="grid">
-          <div className="col-1">
-            <Tab2Header />
-          </div>
-        </div> */}
-        {/* <div style={{ maxWidth: "95%" }}> */}
         <div className="grid grid-nogutter">
-          <div className={props.expandIframe ? "col-12" : "col-7"}> {/* IFRAME */}
-            <div className="grid">
-              <div className="col-12">
-                <iframe key={iframeKey}
-                  id="myIframe"
-                  ref={iframeRef}
-                  src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
-                  onLoad={handleIframeLoad}
-                  title="Sal iframe"
-                  width="100%"
-                  height="600px"
-                  frameBorder="0"
-                // scrolling="no"
-                ></iframe>
-              </div>
-            </div>
-          </div>
-          {!props.expandIframe && (
-            <div className="col-5">
+          {uidKey == '0' && (
+            <div className={props.expandIframe ? "col-12" : "col-6"}>
               <div className="grid">
                 <div className="col-12">
+                  <iframe key={iframeKey}
+                    id="myIframe"
+                    ref={iframeRef}
+                    src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                    onLoad={handleIframeLoad}
+                    title="Sal iframe"
+                    width="100%"
+                    height="600px"
+                    frameBorder="0"
+                  // scrolling="no"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          )}
+          {(!props.expandIframe && uidKey == '1') && (
+            <div className="col-6 fixed-height">
+              <div className="grid">
+                <div className="col-12 fixed-height">
+                  <TicDocsuidProdajaL
+                    key={ticTransactionsKey}
+                    ticDoc={ticDoc}
+                    propsParent={props}
+                    handleFirstColumnClick={handleFirstColumnClick}
+                    handleAction={handleAction}
+                  />
+                </div>
+              </div>
+            </div>
 
-                  <HeaderBtn />
-
-                    <TicTransactionsL
-                      key={ticTransactionsKey}
-                      ticDoc={ticDoc}
-                      propsParent={props}
-                      handleFirstColumnClick={handleFirstColumnClick}
-                      handleAction={handleAction}
-                    />
-                    {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
-                  </div>
+          )}
+          {!props.expandIframe && (
+            <div className="col-6">
+              <div className="grid">
+                <div className="col-12">
+                  <TicTransactionsL
+                    key={ticTransactionsKey}
+                    ticDoc={ticDoc}
+                    propsParent={props}
+                    handleFirstColumnClick={handleFirstColumnClick}
+                    handleAction={handleAction}
+                  />
+                  {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
+                </div>
 
               </div>
             </div>
           )}
         </div>
 
-        {/* </div> */}
       </div>
-      {/* <div className="card">
-        <div>
-          <div className="fieldH flex align-items-center px-3"><b>
-            <label htmlFor="cevent" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Izaberite_event}</label>
-          </b>
-            <div className="p-inputgroup flex-1">
-              <InputText id="cevent" value={ticEvent.id} />
-            </div>
-            <div className="p-inputgroup flex-1">
-              <InputText id="cdoc" value={props.ticDoc?.id} />
-            </div>
-            <div className="p-inputgroup flex-1">
-              <InputText id="cdoc" value={props.channell?.id} />
-            </div>            
-          </div>
-        </div>
-      </div > */}
+
       <Dialog
         header={translations[selectedLanguage].EventList}
         visible={ticEventProdajaLVisible}
@@ -441,4 +373,6 @@ export default function TicProdajaW(props) {
       </Dialog>
     </div >
   );
-}
+})
+
+export default TicProdajaW;

@@ -239,6 +239,7 @@ const TicDoc = (props) => {
                 setTicDoc({ ...ticDoc });                
                 props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             } else {
+                console.log("333333333333333333333333333333333333333333333")
                 await ticDocService.putTicDoc(ticDoc);
             }
             setDocTip('UPDATE');
@@ -259,6 +260,7 @@ const TicDoc = (props) => {
             ticDoc.tm = DateFunction.formatDateTimeToDBFormat(tm);
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(ticDoc);
+            console.log("333333333333333333333333333333333333333333333333333")
             props.handleDialogClose({ obj: ticDoc, docTip: props.docTip });
             props.setVisible(false);
         } catch (err) {
@@ -290,7 +292,7 @@ const TicDoc = (props) => {
             const rowPar = await fetchPar()
             setCmnPar(rowPar.item)
             const rowDocdelivery = await fetchDocdelivery()
-            console.log(rowPar, "***************rowDocdelivery************rowPar****", rowDocdelivery)
+            // console.log(rowPar, "***************rowDocdelivery************rowPar****", rowDocdelivery)
             if (rowDocdelivery && rowDocdelivery.length > 0) {
                 setDocdeliveryTip("UPDATE");
                 setTicDocdelivery(rowDocdelivery[0])

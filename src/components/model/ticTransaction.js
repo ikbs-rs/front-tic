@@ -23,11 +23,11 @@ import { TicDocService } from "../../service/model/TicDocService";
 import TicDocsL from './ticDocsL';
 import TicDocpaymentL from './ticDocpaymentL';
 import { AdmUserService } from "../../service/model/cmn/AdmUserService";
-import WebSalMap from './ticDocW';
+import WebSalMap from './ticProdajaTab';
 
 
 export default function TicDocdeliveryL(props) {
-  console.log(props, "*-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
+  // console.log(props, "*22222222222222222222222222222-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -489,7 +489,7 @@ export default function TicDocdeliveryL(props) {
       const rowPar = await fetchPar()
       setCmnPar(rowPar.item)
       const rowDocdelivery = await fetchDocdelivery()
-      console.log(rowPar, "***************rowDocdelivery************rowPar****", rowDocdelivery)
+      // console.log(rowPar, "***************rowDocdelivery************rowPar****", rowDocdelivery)
       if (rowDocdelivery && rowDocdelivery.length > 0) {
         setDocdeliveryTip("UPDATE");
         setTicDocdelivery(rowDocdelivery[0])
@@ -511,7 +511,7 @@ export default function TicDocdeliveryL(props) {
   /***************************************************************************************** */
   const handleSalClick = async (e, rowData) => {
     try {
-      console.log(rowData, "***************rowDocdelivery************rowPar****", e)
+      // console.log(rowData, "***************rowDocdelivery************rowPar****", e)
       handleWebMapClick(rowData)
       setEventTip('SAL');
     } catch (error) {
@@ -529,10 +529,10 @@ export default function TicDocdeliveryL(props) {
   /**************************************************************************************** */
   const getChannell = async (rowData) => {
     try {
-        console.log(rowData, "######################################################################################", userId)
+        // console.log(rowData, "######################################################################################", userId)
         const ticEventService = new TicEventService();
         const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-        console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+        // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
         if (data && data.length > 0) {
             setNumberChannell(data.length);
             setChannells(data);
@@ -1140,7 +1140,8 @@ export default function TicDocdeliveryL(props) {
             onTaskComplete={handleWebMapDialogClose}
             numberChannell={numberChannell}
             channells={channells}
-            channell={channell}            
+            channell={channell} 
+            activeIndex={1}           
           />
         )}
       </Dialog>

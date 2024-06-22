@@ -63,7 +63,7 @@ export default function TicLoclinkL(props) {
         if (i < 2) {
           const loctpCode = props.loctpCode ? props.loctpCode : props.ticEventloc.loctpCode
           const ticLoclinkService = new TicLoclinkService();
-          console.log(props.loctpCode, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
+          // console.log(props.loctpCode, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
           const data = await ticLoclinkService.getTicListaLL(props.ticEventloc.loc, props.ticEvent.id, loctpCode);
           setTicLoclinks(data);
           initFilters();

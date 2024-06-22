@@ -6,11 +6,19 @@ const currYear =  () => {
 }
 
 const currDate =  () => {
-    return moment().format('YYYYMMDD');
+  return moment().format('YYYYMMDD');
+}
+
+const toDate =  (stringDate) => {
+    return moment(stringDate, 'YYYYMMDD').toDate(); 
 }
 
 const currDatetime =  () => {
     return moment().format('YYYYMMDDHHmmss');
+}
+
+const toDatetime =  (stringDate) => {
+  return moment(stringDate, 'YYYYMMDDHHmmss').toDate(); 
 }
 
 const currDatetimePlusMinutes = (minutes) => {
@@ -23,6 +31,14 @@ const currDatetimePlusHours = (hours) => {
 
 const currTime =  () => {
     return moment().format('HHmmss');
+}
+
+const toTime =  (stringDate) => {
+  return moment(stringDate, 'HHmmss').toDate(); 
+}
+
+const toHM =  (stringDate) => {
+  return moment(stringDate, 'HHmm').toDate(); 
 }
 
 const formatDate =  (inputDate) => {
@@ -155,4 +171,8 @@ export default {
     convertTimeToDBFormat,
     currDatetimePlusMinutes,
     currDatetimePlusHours,
+    toDatetime,
+    toDate,
+    toTime,
+    toHM,
 };

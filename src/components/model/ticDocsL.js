@@ -21,7 +21,7 @@ import DeleteDialog from '../dialog/DeleteDialog';
 
 export default function TicDocsL(props) {
 
- //console.log(props,"*******************TicDocsL************************")
+ ////console.log(props,"*******************TicDocsL************************")
   const objName = "tic_docs"
   const objName2 = "tic_event"
   const selectedLanguage = localStorage.getItem('sl')||'en'
@@ -51,9 +51,9 @@ export default function TicDocsL(props) {
         ++i
         if (i < 2) {
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getLista(props.ticDoc.id);
+          const data = await ticDocsService.getArtikliLista(props.ticDoc.id);
           //const data = await ticDocsService.getLista("1698042558175121408");
-          //console.log(data, "***************** Date ******************")
+          ////console.log(data, "***************** Date ******************")
           setTicDocss(data);
 
           initFilters();
@@ -364,12 +364,19 @@ Click Handle *******************************************************************
           style={{ width: "15%" }}
         ></Column>   
         <Column
-          field="nloc"
-          header={translations[selectedLanguage].nloc}
+          field="row"
+          header={translations[selectedLanguage].row}
           sortable
           //filter
           style={{ width: "15%" }}
         ></Column> 
+        <Column
+          field="seat"
+          header={translations[selectedLanguage].seat}
+          sortable
+          //filter
+          style={{ width: "15%" }}
+        ></Column>        
         <Column
           field="nart"
           header={translations[selectedLanguage].nart}

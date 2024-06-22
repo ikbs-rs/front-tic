@@ -299,7 +299,7 @@ export default function TicEventL(props) {
             console.log(rowData, "######################################################################################", userId)
             const ticEventService = new TicEventService();
             const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-            console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+            // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
             if (data && data.length > 0) {
                 setNumberChannell(data.length);
                 setChannells(data);

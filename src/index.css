@@ -413,3 +413,38 @@ body {
 .layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li .p-link .layout-submenu-toggler {
   color: #d9d7d7;
 }
+
+/********************************************************************/
+.fixed-height {
+  height: 640px;
+  overflow: hidden; /* Osigurava da spoljašnji div ne skroluje */
+}
+
+.scrollable-content {
+  height: 100%;
+  overflow-y: auto; /* Omogućava vertikalno skrolovanje */
+}
+
+/* .scrollable-content > * {
+  height: 100%;
+  overflow-y: auto;
+} */
+
+
+.active-menuitem-routelinx{
+  color: yellow !important;
+}
+
+.layout-menuitem-text {
+  color: inherit; /* osnovna boja */
+}
+
+.layout-menuitem-active-text {
+  color: yellow; /* boja kada je stavka aktivna */
+}
+
+
+
+
+
+

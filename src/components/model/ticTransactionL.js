@@ -27,7 +27,7 @@ import DateFunction from "../../utilities/DateFunction"
 import { Dropdown } from 'primereact/dropdown';
 import { useSearchParams } from 'react-router-dom';
 import DeleteDialog from '../dialog/DeleteDialog';
-import TicEventProdajaL from './ticEventProdajaL';
+import TicEventProdajaL from './ticProdajaTab';
 import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicTransactionL(props) {
@@ -83,7 +83,7 @@ export default function TicTransactionL(props) {
                 if (i < 2 || refresh > 0) {
                     const ticDocService = new TicDocService();
                     const data = await ticDocService.getTransactionLista(checked1, checked2, checked3, checked4, checked5, checked6);
-                    console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
+                    // console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
                     setTicDocs(data);
                     initFilters();
                 }

@@ -22,7 +22,7 @@ import { TicCenatpService } from "../../service/model/TicCenatpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
 export default function TicProdajaL(props) {
-    console.log(props, '+++++++++++++++++++++++++++++++++++TicProdajaL+++++++++++++++++++++++++++++++++++++++++++++++');
+    //console.log(props, '+++++++++++++++++++++++++++++++++++TicProdajaL+++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
 
     const objDoc = "tic_docs"
@@ -110,7 +110,7 @@ export default function TicProdajaL(props) {
     };
 
     const handleTaskComplete = () => {
-        console.log(ticEvent, '**********************handleTaskComplete**************************');
+        //console.log(ticEvent, '**********************handleTaskComplete**************************');
         if (ticEvent) {
             props.onTaskComplete(ticEvent);
         } else {
@@ -261,7 +261,7 @@ export default function TicProdajaL(props) {
 
     const createDoc = async (channel) => {
         try {
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@createDoc@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@createDoc@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             ticDoc.id = null
             ticDoc.tm = DateFunction.currDatetime();
             ticDoc.timecreation = ticDoc.tm
@@ -279,7 +279,7 @@ export default function TicProdajaL(props) {
 
             const ticDocService = new TicDocService();
             const row = await ticDocService.postTicDoc(ticDoc);
-            console.log(row, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            //console.log(row, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             ticDoc.id = row.id
             ticDoc.broj = row.id
             setTicDokument({ ...ticDoc });
@@ -297,10 +297,10 @@ export default function TicProdajaL(props) {
 
     const getChannell = async (rowData) => {
         try {
-            console.log(rowData, "######################################################################################", userId)
+            //console.log(rowData, "######################################################################################", userId)
             const ticEventService = new TicEventService();
             const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-            console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+            //console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
             if (data && data.length > 0) {
                 setNumberChannell(data.length);
                 setChannells(data);
@@ -329,7 +329,7 @@ export default function TicProdajaL(props) {
     const handleWebMapClick = async (rowData) => {
         try {
             await getChannell(rowData)
-            console.log(rowData, "#########################@@@@@@@@@@@@@@@@@@@@@@@@@@@@##################################")
+            //console.log(rowData, "#########################@@@@@@@@@@@@@@@@@@@@@@@@@@@@##################################")
             setTicEvent(rowData)
             setWebMapDialog();
         } catch (error) {

@@ -267,6 +267,60 @@ export class TicEventService {
 
   }
 
+  async postTicEventCopy(newObj) {
+    try {
+      console.log("*00*************************postTicEventCopy***************************")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
+        throw new Error(
+          "Items must be filled!"
+        );
+      }
+      // const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_eventcopy_s&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("**************"  , response.data.item.tic_event_copy, "****************")
+      return response.data.item.tic_event_copy;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
+  async postTicEventSaveDate(newObj) {
+    try {
+      console.log("*00*************************postTicEventCopy***************************")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.code.trim() === '' || newObj.text.trim() === '' || newObj.valid === null) {
+        throw new Error(
+          "Items must be filled!"
+        );
+      }
+      // const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_eventsavedate_s&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("**************"  , response.data.item, "****************")
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
   async putTicEvent(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -309,6 +363,28 @@ export class TicEventService {
 
   }
 
+  async deleteAllTicEvent(newObj) {
+    try {
+      console.log("*00*************************postTicEventCopy***************************")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      // const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_eventdeleteall_s&objId1=${newObj.id}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("**************"  , response.data.item, "****************")
+      return response.data.item.id;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
   async generateImageUrl(id, relpath, selectedLanguage) {
     try {
       // const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -336,7 +412,7 @@ export class TicEventService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
+      // console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -354,7 +430,7 @@ export class TicEventService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
+      // console.log(url, "******************************getTicEventchpermissL*********************************", response.data.item)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -371,7 +447,7 @@ export class TicEventService {
     };
 
     try {
-      console.log(url, "******************************getTicEventchpermissL*********************************")
+      // console.log(url, "******************************getTicEventchpermissL*********************************")
       const response = await axios.get(url, { headers });
       
       return response.data.item;

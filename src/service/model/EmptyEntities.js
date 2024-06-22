@@ -263,7 +263,11 @@ const EmptyEntities =
     "year": `${new Date().getFullYear().toString()}`,
     "channel": null,
     "usersys": null,
-    "endtm": ""
+    "endtm": "",
+    "reservation": null,
+    "delivery": null,
+    "paymenttp": null,
+    "services": "1"
   },
 	"tic_docb": {
 		"id": null,
@@ -349,7 +353,9 @@ const EmptyEntities =
 		"seat": "",
     "vreme": null,
 		"ticket": "",
-		"services": ""
+		"services": "",
+		"tickettp": null,
+		"delivery": null
   },
   "tic_docslink": {
     "id": null,

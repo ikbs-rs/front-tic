@@ -47,12 +47,12 @@ export default function EmpA(props) {
         // },
         {
             id: 2,
-            name: 'Благајна',
+            name: 'Продајноместо',
             image: 'rac.png'
         },
         {
             id: 3,
-            name: 'Продајноместо',
+            name: 'Благајна',
             image: 'prod.jpg'
         }
         ,
@@ -80,12 +80,18 @@ export default function EmpA(props) {
     }, []);
 
     const f1 = (param) => {
+        let _channel = {}
+        let user = {}
         console.log('Funkcija f1 je pozvana sa parametrom:', param);
         switch (param) {
             case 6:
                 navigate('/salO', { state: { channel: channells.find(obj => obj.code == ORGANIZATOR) } });
                 break;            
             case 5:
+                _channel = channells.find(obj => obj.code == WEB)
+                user = JSON.parse(localStorage.getItem('user'))
+                user.kanal = _channel.id
+                localStorage.setItem('user', JSON.stringify(user));                
                 navigate('/sal');
                 break;
             case 4:
@@ -94,7 +100,7 @@ export default function EmpA(props) {
             case 3:
                 navigate('/salB', { state: { channel: channells.find(obj => obj.code == BLAGAJNA) } });
                 break;
-            case 2:
+            case 2:                
                 navigate('/salPM', { state: { channel: channells.find(obj => obj.code == PRODAJNO_MESTO) } });
                 break;
             // case 1:

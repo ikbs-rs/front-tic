@@ -159,6 +159,15 @@ export default function TicDocpaymentL(props) {
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Kes} icon="pi pi-euro" severity="info" onClick={openNew}   />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Kartica} icon="pi pi-credit-card" severity="help" onClick={openNew}   />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Cekovi} icon="pi pi-clone" severity="danger" onClick={openNew}   />
+        </div>                        
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].DocpaymentList}</b>
         <div className="flex-grow-1"></div>
