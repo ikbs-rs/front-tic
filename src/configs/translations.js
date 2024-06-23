@@ -816,6 +816,10 @@ export const translations = {
         Naknade: "Накнаде",
         delivery: "Достава",
         tickettp: "Карта",
+        Posetioci: "Посетиоци",
+        Razdvajanje: "Раздвајање",
+        Spajanje: "Спајање",
+        Logovi: "Логови",
     }
   };
   

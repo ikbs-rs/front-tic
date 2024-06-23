@@ -437,35 +437,30 @@ export default function TicProdajaTab(props) {
                         </>
                     ) : null
                     } */}
-                    <div className="flex flex-wrap gap-1" >
+
+                    <div className="flex flex-wrap gap-1" raised>
                         <Button
-                            // label={translations[selectedLanguage].Cancel}
-                            icon={"pi pi-sign-out"}
-                            style={{ width: '50px' }}
-                            onClick={toggleIframeExpansion} severity="danger" raised />
-                    </div>
+                            // label={translations[selectedLanguage].Mapa}
+                            icon="pi pi-map-marker"
+                            style={{ width: '60px' }}
+                            onClick={remountComponent} raised />
+                    </div>                    
                     <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].KupacNext}
                             icon="pi pi-user-edit"
                             onClick={handleClickInsideIframe}
-                            style={{ width: '50px' }}
+                            style={{ width: '60px' }}
                             // icon="pi pi-cog" 
                             raised />
-                    </div>
-                    <div className="flex flex-wrap gap-1" raised>
-                        <Button
-                            // label={translations[selectedLanguage].Mapa}
-                            icon="pi pi-map-marker"
-                            style={{ width: '50px' }}
-                            onClick={remountComponent} raised />
-                    </div>
+
+                    </div>                  
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
                             icon="pi pi-euro"
                             // label={translations[selectedLanguage].Placanje} 
                             onClick={handlePaymentClick} raised severity="warning"
-                            style={{ width: '50px' }} />
+                            style={{ width: '60px' }} />
                     </div>
                     <Button
                         // label={translations[selectedLanguage].Print}
@@ -473,20 +468,30 @@ export default function TicProdajaTab(props) {
                         onClick={openStampa}
                         severity="warning"
                         raised
-                        style={{ width: '50px' }}
+                        style={{ width: '60px' }}
                     />
+
+                    <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
+                                    severity="warning" raised style={{ width: '60px' }} 
+                                />
                     <div>
                         <CountdownTimer targetDate={ticDoc?.endtm} />
                     </div>
+                    <div className="flex flex-wrap gap-1" >
+                        <Button
+                            // label={translations[selectedLanguage].Cancel}
+                            icon={"pi pi-sign-out"}
+                            style={{ width: '60px' }}
+                            onClick={toggleIframeExpansion} severity="danger" raised />
+                    </div>                    
                 </>
 
                 {
                     activeIndex >= "1" ? (
                         <>
+                              
                             <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
-                                <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
-                                    severity="warning"
-                                />
+
                             </div>
                         </>
 

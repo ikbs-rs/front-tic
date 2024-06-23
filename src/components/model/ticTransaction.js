@@ -12,6 +12,7 @@ import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import { CmnParService } from "../../service/model/cmn/CmnParService";
 import { TicEventService } from '../../service/model/TicEventService';
 import CmnPar from "./cmn/cmnPar";
+import { InputSwitch } from "primereact/inputswitch";
 import TicDocdelivery from './ticDocdelivery';
 import TicStampaL from './ticStampaL';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
@@ -24,7 +25,9 @@ import TicDocsL from './ticDocsL';
 import TicDocpaymentL from './ticDocpaymentL';
 import { AdmUserService } from "../../service/model/cmn/AdmUserService";
 import WebSalMap from './ticProdajaTab';
-
+import TicDocsuidProdajaL from "./ticDocsuidProdajaL";
+import TicDocsNaknadeL from "./ticDocsNaknadeL";
+import TicDocsKarteL from "./ticDocsKarteL";
 
 export default function TicDocdeliveryL(props) {
   // console.log(props, "*22222222222222222222222222222-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
@@ -79,17 +82,20 @@ export default function TicDocdeliveryL(props) {
   const [admUserPayment, setAdmUserPayment] = useState({});
   const [admUser, setAdmUser] = useState({});
 
-    const [ticDocpayments, setTicDocpayments] = useState([]);
+  const [ticDocpayments, setTicDocpayments] = useState([]);
   const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocdelivery);
 
   const [ticEvent, setTicEvent] = useState({});
   const [eventTip, setEventTip] = useState('');
   const [webMapVisible, setWebMapVisible] = useState(false);
-
+  const [ticDocsuidProdajaLVisible, setTicDocsuidProdajaLVisible] = useState(false);
   
+
   let [numberChannell, setNumberChannell] = useState(0)
   let [channells, setChannells] = useState([{}])
   let [channell, setChannell] = useState(null)
+
+  let [refresh, setRefresh] = useState(0)
 
   const iframeRef = useRef(null);
 
@@ -97,6 +103,9 @@ export default function TicDocdeliveryL(props) {
     props.setVisible(false);
   };
 
+  const remoteRefresh = () => {
+    setRefresh(++refresh)
+  }
   //******************************************************************************************************************** */
   //******************************************************************************************************************** */
 
@@ -221,14 +230,14 @@ export default function TicDocdeliveryL(props) {
     fetchData();
   }, []);
   //******************************************************************************************************************** */
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log( "**************************************setAdmUserPayment***********************************************")
+        console.log("**************************************setAdmUserPayment***********************************************")
         const ticDocpaymentService = new TicDocpaymentService();
         const dataD = await ticDocpaymentService.getTicListaByItem("docpayment", "listabynum", "tic_docpayment_v", "doc", ticDoc.id);
-        console.log( "**************************************setAdmUserPayment***********************************************")
+        console.log("**************************************setAdmUserPayment***********************************************")
         if (dataD[0]) {
           await setTicDocpayment(dataD[0])
           const admUserService = new AdmUserService();
@@ -282,8 +291,8 @@ export default function TicDocdeliveryL(props) {
           />
         ),
         status: (admUserPayment && admUserPayment.firstname && admUserPayment.lastname) ?
-        `${DateFunction.formatDatetime(ticDocpayment.tm)} ${admUserPayment.firstname} ${admUserPayment.lastname}` :
-        ''
+          `${DateFunction.formatDatetime(ticDocpayment.tm)} ${admUserPayment.firstname} ${admUserPayment.lastname}` :
+          ''
       },
       {
         event:
@@ -316,7 +325,7 @@ export default function TicDocdeliveryL(props) {
             raised
           />
         ),
-        status: admUser?.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser?.firstname} ${admUser?.lastname}`:''
+        status: admUser?.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser?.firstname} ${admUser?.lastname}` : ''
       },
       {
         event: "Fiscal receipt", button: (
@@ -349,82 +358,83 @@ export default function TicDocdeliveryL(props) {
     const newData = [
       {
         col1: (
-          <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
-            onClick={openStampa}
-            severity="success"
-            raised
-          />
+          <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+            <label htmlFor="rezervacija" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Rezervacija}</label>
+            <InputSwitch id="rezervacija"
+            // checked={checkedRezervacija} 
+            // onChange={(e) => handleChangeRezervacija(e.value)} 
+            />
+          </div>
         ), col2: (
-          <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
-            onClick={openStampa}
-            severity="success"
-            raised
-          />
-        ),
+          <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+            <label htmlFor="isporuka" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Isporuka}</label>
+            <InputSwitch id="isporuka"
+            // checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)} 
+            />
+          </div>
+        )
+        ,
         col3: (
-          <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
-            onClick={openStampa}
-            severity="success"
-            raised
-          />
+          <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+            <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
+            <InputSwitch id="naknade"
+            // checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)} 
+            />
+          </div>
         )
       },
       {
         col1: (
           <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
-            onClick={openStampa}
+            label={translations[selectedLanguage].Posetioci}
+            icon="pi pi-users"
+            onClick={handleTicDocsuidProdajaLClick}
             severity="success"
             raised
           />
         ), col2: (
           <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
+            label={translations[selectedLanguage].Cancel}
+            icon="pi pi-times"
             onClick={openStampa}
-            severity="success"
-            raised
-          />
-        ),
-        col3: (
-          <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
-            onClick={openStampa}
-            severity="success"
+            severity="danger"
             raised
           />
         )
+        // ,
+        // col3: (
+        //   <Button
+        //     label={translations[selectedLanguage].Go}
+        //     icon="pi pi-cog"
+        //     onClick={openStampa}
+        //     severity="success"
+        //     raised
+        //   />
+        // )
       },
       {
         col1: (
           <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
+            label={translations[selectedLanguage].Razdvajanje}
+            icon="pi pi-file-export"
             onClick={openStampa}
-            severity="success"
+            severity="warning"
             raised
           />
         ), col2: (
           <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
+            label={translations[selectedLanguage].Spajanje}
+            icon="pi pi-file-import"
             onClick={openStampa}
-            severity="success"
+            severity="warning"
             raised
           />
-        ),
+        )
+        ,
         col3: (
           <Button
-            label={translations[selectedLanguage].Go}
-            icon="pi pi-cog"
+            label={translations[selectedLanguage].Logovi}
+            icon="pi pi-history"
             onClick={openStampa}
             severity="success"
             raised
@@ -523,40 +533,40 @@ export default function TicDocdeliveryL(props) {
         life: 3000,
       });
     }
-  };
-
+  }; 
+  
   /**************************************************************************************** */
   /**************************************************************************************** */
   const getChannell = async (rowData) => {
     try {
-        // console.log(rowData, "######################################################################################", userId)
-        const ticEventService = new TicEventService();
-        const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-        // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
-        if (data && data.length > 0) {
-            setNumberChannell(data.length);
-            setChannells(data);
-            const foundItem = data.find((item) => item.id === ticDoc.channel);
-            setChannell(foundItem);
-            // DO - OVDE NE TREBA DA SE KREIRIA DOKUMENT JER DOLAZIM SA TRANSAKCIJE
+      // console.log(rowData, "######################################################################################", userId)
+      const ticEventService = new TicEventService();
+      const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
+      // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+      if (data && data.length > 0) {
+        setNumberChannell(data.length);
+        setChannells(data);
+        const foundItem = data.find((item) => item.id === ticDoc.channel);
+        setChannell(foundItem);
+        // DO - OVDE NE TREBA DA SE KREIRIA DOKUMENT JER DOLAZIM SA TRANSAKCIJE
 
-        } else {
-            // Prikazuje obaveštenje korisniku
-            toast.current.show({
-                severity: "warn",
-                summary: "Obaveštenje",
-                detail: "Nemate pravo na channell",
-                life: 3000,
-            });
-            throw new Error("Nemate pravo na channell"); // Izaziva grešku
-        }
+      } else {
+        // Prikazuje obaveštenje korisniku
+        toast.current.show({
+          severity: "warn",
+          summary: "Obaveštenje",
+          detail: "Nemate pravo na channell",
+          life: 3000,
+        });
+        throw new Error("Nemate pravo na channell"); // Izaziva grešku
+      }
     } catch (err) {
-        // Logovanje greške
-        console.error("Error fetching channel permissions:", err.message);
-        // Obrada greške koja se može prikazati korisniku ili dalje logovati
-        throw err; // Propagira grešku dalje ako je potrebno
+      // Logovanje greške
+      console.error("Error fetching channel permissions:", err.message);
+      // Obrada greške koja se može prikazati korisniku ili dalje logovati
+      throw err; // Propagira grešku dalje ako je potrebno
     }
-};
+  };
 
   /**************************************************************************************** */
   /**************************************************************************************** */
@@ -575,11 +585,28 @@ export default function TicDocdeliveryL(props) {
       });
     }
   };
+  
+  const handleTicDocsuidProdajaLClick = async () => {
+    try {
+      setTicDocsuidProdajaLDialog(true);
+    } catch (error) {
+      console.error(error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to fetch cmnPar data',
+        life: 3000
+      });
+    }
+  };
+
+  const setTicDocsuidProdajaLDialog = () => {
+    setTicDocsuidProdajaLVisible(true);
+  };
 
   const setWebMapDialog = () => {
     setWebMapVisible(true);
   };
-
   const handleWebMapDialogClose = (newObj) => {
     setWebMapVisible(false);
   };
@@ -850,6 +877,13 @@ export default function TicDocdeliveryL(props) {
       return null;
     }
   }
+  const handleFirstColumnClick = (rowData) => {
+    console.log("handleFirstColumnClick")
+  };
+  const handleAction = (rowData) => {
+    console.log("handleAction")
+  };
+
   return (
     <>
       <div className="card">
@@ -1005,7 +1039,7 @@ export default function TicDocdeliveryL(props) {
         </div>
       </div>
 
-      <div className="flex-grow-1">
+      {/* <div className="flex-grow-1">
         <TicDocsL
           parameter={"inputTextValue"}
           ticDoc={ticDoc}
@@ -1015,8 +1049,31 @@ export default function TicDocdeliveryL(props) {
           dialog={false}
           docTip={props.docTip}
         />
+      </div> */}
+      <div className="flex-grow-1">
+        <TicDocsKarteL
+          parameter={"inputTextValue"}
+          ticDoc={ticDoc}
+          ticDocs={ticDocs}
+          cmnPar={cmnPar}
+          setVisible={true}
+          dialog={false}
+          docTip={props.docTip}
+          remoteRefresh={remoteRefresh}
+        />
+      </div>      
+      <div className="flex-grow-1">
+        <TicDocsNaknadeL
+          parameter={"inputTextValue"}
+          ticDoc={ticDoc}
+          ticDocs={ticDocs}
+          cmnPar={cmnPar}
+          setVisible={true}
+          dialog={false}
+          docTip={props.docTip}
+          refresh={refresh}
+        />
       </div>
-
       <Dialog
         header={translations[selectedLanguage].Docdelivery}
         visible={ticDocdeliveryVisible}
@@ -1084,7 +1141,22 @@ export default function TicDocdeliveryL(props) {
       </Dialog>
 
       <Dialog
-        header={translations[selectedLanguage].Par}
+        header={
+          <div className="grid" style={{ paddingTop: 0, paddingBottom: 0 }}>
+            <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+              <Button
+                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                onClick={() => {
+                  setCmnParVisible(false);
+                }}
+                severity="secondary" raised
+              />
+            </div>
+            <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+              <span>{translations[selectedLanguage].Par}</span>
+            </div>
+          </div>
+        }
         visible={cmnParVisible}
         style={{ width: '60%' }}
         onHide={() => {
@@ -1140,8 +1212,36 @@ export default function TicDocdeliveryL(props) {
             onTaskComplete={handleWebMapDialogClose}
             numberChannell={numberChannell}
             channells={channells}
-            channell={channell} 
-            activeIndex={1}           
+            channell={channell}
+            activeIndex={1}
+          />
+        )}
+      </Dialog>
+      <Dialog
+        header={
+          <div className="dialog-header">
+            <Button
+              label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+              onClick={() => {
+                setTicDocsuidProdajaLVisible(false);
+              }}
+              severity="secondary" raised
+            />
+          </div>
+        }
+        visible={ticDocsuidProdajaLVisible}
+        style={{ width: '90%', height: '1100px' }}
+        onHide={() => {
+          setTicDocsuidProdajaLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {ticDocsuidProdajaLVisible && (
+          <TicDocsuidProdajaL
+            ticDoc={ticDoc}
+            propsParent={props}
+            handleFirstColumnClick={handleFirstColumnClick}
+            handleAction={handleAction}
           />
         )}
       </Dialog>

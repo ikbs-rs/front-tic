@@ -399,6 +399,27 @@ export class TicDocService {
     }
 
   }  
+
+  async putTicDocSet(newObj) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_set_s&par1=tic_doc&par2=usr&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("5555555555555555555551111**************"  , response, "****************")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
   
 }
 

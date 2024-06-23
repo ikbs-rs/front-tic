@@ -237,9 +237,11 @@ Click Handle *******************************************************************
             <Button label={translations[selectedLanguage].web} icon="pi pi-table" onClick={handleWebMapClick} severity="info" text raised />
         </div>
         } */}
-        <div className="flex flex-wrap gap-1">
+
+        {/* <div className="flex flex-wrap gap-1">
             <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
-        </div>  
+        </div>   */}
+        
         <div className="flex flex-wrap gap-1">
         <Button label={translations[selectedLanguage].afterSales} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-warning" raised />     
         </div>         

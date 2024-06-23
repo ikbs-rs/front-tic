@@ -475,7 +475,7 @@ export default function TicTransactionL(props) {
                                                                                                                                 ? 'highlight-row-36 '
                                                                                                                                 : rowData.paid
                                                                                                                                     ? 'highlight-row-31'
-                                                                                                                                    : rowData.istekla ==true
+                                                                                                                                    : rowData.istekla == true
                                                                                                                                         ? 'highlight-row-30'
                                                                                                                                         : '';
     };
@@ -785,6 +785,17 @@ export default function TicTransactionL(props) {
                 )}
             </Dialog>
             <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setTicEventProdajaLVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
                 // header={translations[selectedLanguage].EventList}
                 visible={ticEventProdajaLVisible}
                 style={{ width: '95%', height: '1400px' }}

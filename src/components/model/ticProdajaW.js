@@ -315,7 +315,7 @@ const TicProdajaW = forwardRef((props, ref) => {
             </div>
           )}
           {(!props.expandIframe && uidKey == '1') && (
-            <div className="col-6 fixed-height">
+            <div className="col-12 fixed-height">
               <div className="grid">
                 <div className="col-12 fixed-height">
                   <TicDocsuidProdajaL
@@ -330,7 +330,7 @@ const TicProdajaW = forwardRef((props, ref) => {
             </div>
 
           )}
-          {!props.expandIframe && (
+          {(!props.expandIframe && uidKey != '1') && (
             <div className="col-6">
               <div className="grid">
                 <div className="col-12">
