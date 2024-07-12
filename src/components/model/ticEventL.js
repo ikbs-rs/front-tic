@@ -36,7 +36,7 @@ export default function TicEventL(props) {
     const emptyTicEvent = EmptyEntities[objName];
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticEvents, setTicEvents] = useState([]);
-    const [ticEvent, setTicEvent] = useState(emptyTicEvent);
+    const [ticEvent, setTicEvent] = useState(null);
     const [filters, setFilters] = useState('');
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [loading, setLoading] = useState(false);
@@ -474,7 +474,7 @@ export default function TicEventL(props) {
         );
     };
     return (
-        <div className="card">
+        <div className="card"  style={{ height: "855px" }}>
             <Toast ref={toast} />
             <DataTable
                 dataKey="id"
@@ -490,7 +490,7 @@ export default function TicEventL(props) {
                 scrollable
                 sortField="code"
                 sortOrder={1}
-                scrollHeight="600px"
+                scrollHeight="690px"
                 virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}

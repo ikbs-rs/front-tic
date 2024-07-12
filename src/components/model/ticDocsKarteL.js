@@ -17,6 +17,8 @@ import { Row } from 'primereact/row';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Button } from "primereact/button";
 import DeleteDialog from '../dialog/DeleteDialog';
+import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
+import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
     // console.log(props, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
@@ -55,6 +57,8 @@ export default function TicTransactionsL(props) {
     const [channellItem, setChannellItem] = useState({});
 
     const [checked, setChecked] = useState(false);
+    const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
+    const [akcija, setAkcija] = useState('RAZ');
 
     let i = 0
     const handleCancelClick = () => {
@@ -89,7 +93,7 @@ export default function TicTransactionsL(props) {
             }
         }
         fetchData();
-    }, []);
+    }, [props.refresh]);
 
 
     const handleDialogClose = (newObj) => {
@@ -213,7 +217,7 @@ export default function TicTransactionsL(props) {
                 total += potrazuje;
             }
         }
-
+        props.handleKarteIznos(total)
         return total;
     };
     const footerArtikalGroup = (
@@ -225,6 +229,29 @@ export default function TicTransactionsL(props) {
         </ColumnGroup>
     );
     /*********************************************************************************** */
+
+    const onInputChange = async (e, type, name, rowData) => {
+        let val = '';
+        let _ticDocs = { ...rowData };
+        if (name === 'valid') {
+            rowData.valid = e.checked ? 1 : 0;
+            setTicDocss([...ticDocss]);
+            val = e.checked ? 1 : 0;
+        } else if (name === 'condition') {
+            val = (e.target && e.target.value) || '';
+            rowData.condition = e.target.value;
+            setTicDocss([...ticDocss]);
+        } else if (name === 'discount') {
+            val = (e.target && e.target.value) || '';
+            rowData.discount = e.target.value;
+            setTicDocss([...ticDocss]);
+        }
+        _ticDocs[`${name}`] = val;
+
+        setTicDocs(_ticDocs);
+        await updateDataInDatabase(_ticDocs);
+    };
+
     const onDDValueChange = async (e, type, name, rowData) => {
         let val = '';
         rowData.tickettp = e.value?.code;
@@ -241,7 +268,15 @@ export default function TicTransactionsL(props) {
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
         setRefesh(++refresh)
         props.remoteRefresh()
+        props.remoteRefresh()
 
+    };
+
+    const inputEditor = (options) => {
+        return <InputText
+            value={options.value}
+            onChange={(e) => onInputChange(e, 'input', 'discount', options.rowData, null)}
+        />;
     };
 
     const valueEditor = (rowData, field, e) => {
@@ -257,6 +292,18 @@ export default function TicTransactionsL(props) {
             optionLabel="name"
         />;
     };
+
+    // const discountTemplate = (rowData) => {
+    //     // const dropdownData = ddTickettpItems
+    //     if (ddTickettpItems) {
+    //         const dropdownValue = ddTickettpItems?.find((item) => item.code == rowData.tickettp);
+    //         if (dropdownValue) {
+    //             return <span>{dropdownValue.name}</span>;
+    //         }
+    //     }
+    //     return rowData.tickettp;
+    // };  
+
     const valueTemplate = (rowData) => {
         // const dropdownData = ddTickettpItems
         if (ddTickettpItems) {
@@ -268,23 +315,31 @@ export default function TicTransactionsL(props) {
         return rowData.tickettp;
     };
 
+    // const onCellEditComplete = async (e) => {
+    //     let { rowData, newValue, newRowData, field, originalEvent: event } = e;
+    //     let _rowData = { ...rowData };
+    //     let _newValue = newValue;
+
+    //     if (newValue != null) {
+    //         _rowData[field] = _newValue;
+    //         // Check if upload is pending and prevent exiting edit mode
+    //         if (rowData.inputtp === '4' && !_rowData.isUploadPending) {
+    //             event.preventDefault();
+    //         }
+    //     } else event.preventDefault();
+
+    //     // Ažuriramo stanje komponente
+    //     setTicDocss([...ticDocss]);
+    // };
     const onCellEditComplete = async (e) => {
-        let { rowData, newValue, newRowData, field, originalEvent: event } = e;
-        let _rowData = { ...rowData };
-        let _newValue = newValue;
-
-        if (newValue != null) {
-            _rowData[field] = _newValue;
-            // Check if upload is pending and prevent exiting edit mode
-            if (rowData.inputtp === '4' && !_rowData.isUploadPending) {
-                event.preventDefault();
-            }
-        } else event.preventDefault();
-
-        // Ažuriramo stanje komponente
-        setTicDocss([...ticDocss]);
+        let { rowData, newValue, field, originalEvent: event } = e;
+        if (newValue !== null) {
+            rowData[field] = newValue;
+            setTicDocss([...ticDocss]);
+        } else {
+            event.preventDefault();
+        }
     };
-
     /*********************************************************************************** */
     /*********************************************************************************** */
     useEffect(() => {
@@ -307,7 +362,8 @@ export default function TicTransactionsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(rowData);
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
@@ -320,7 +376,7 @@ export default function TicTransactionsL(props) {
     /*********************************************************************************** */
     const toggleBodyTemplate = (rowData, name, e) => {
 
-        const checked = rowData.delivery == 1; // Pretpostavimo da 'valid' određuje da li je dugme čekirano
+        const checked = rowData[name] == 1; // Pretpostavimo da 'valid' određuje da li je dugme čekirano
         const buttonClass = checked ? "toggle-button-checked" : "toggle-button-unchecked";
 
         return (
@@ -332,7 +388,7 @@ export default function TicTransactionsL(props) {
                     onIcon="pi pi-check"
                     offIcon="pi pi-times"
                     checked={checked}
-                    onChange={(e) => toggleChecked(e, 'delivery', rowData)} // Ako treba ažurirati stanje u komponenti
+                    onChange={(e) => toggleChecked(e, name, rowData)} // Ako treba ažurirati stanje u komponenti
                     // className={`w-9rem ${buttonClass}`}
                     className={`${buttonClass}`}
                 />
@@ -357,39 +413,72 @@ export default function TicTransactionsL(props) {
 
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
         setRefesh(++refresh)
+        props.remoteRefresh(++refresh)
     };
+
+    const handleAfterS = async () => {
+        try {
+            // setTicTransactiostornogrpLDialog(true);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+
+    const handleStorno = async () => {
+        try {
+            setTicTransactiostornogrpLDialog(true);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+    const setTicTransactiostornogrpLDialog = () => {
+        setTicTransactiostornogrpLVisible(true);
+    };
+    const handleStornoClose = (newObj) => {
+        setTicTransactiostornogrpLVisible(false);
+    }
+
     const renderHeader = () => {
         return (
             <div className="flex card-container">
                 <div className="flex flex-wrap gap-1" />
-                {(props.dialog) ? (<Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />) : null}
-                {/* <div className="flex flex-wrap gap-1">
-              <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
-            </div> */}
-                {/* {
-            <div className="flex flex-wrap gap-1">
-                <Button label={translations[selectedLanguage].web} icon="pi pi-table" onClick={handleWebMapClick} severity="info" text raised />
-            </div>
-            } */}
-
-                {/* <div className="flex flex-wrap gap-1">
-                <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
-            </div>   */}
-
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].afterSales} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-warning" raised />
-                </div>
-                <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={showDeleteDialog} className="p-button-outlined p-button-danger" raised />
+                    <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
                 </div>
                 <div className="flex-grow-1"></div>
-                <b>{translations[selectedLanguage].DocsList}</b>
+                <b>{translations[selectedLanguage].DocsKarteList}</b>
                 <div className="flex-grow-1"></div>
             </div>
         );
     };
-    const header = renderHeader();
+    const header = renderHeader()
     /*********************************************************************************** */
+    const onRowSelect = (event) => {
+        props.handleFirstColumnClick(event.data)
+    };
+
+    const onRowUnselect = (event) => {
+        onRowSelect(event)
+    };
+    const newTemplate = (rowData) => {
+        return (
+            <div className="flex flex-wrap gap-1">
+                <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
+            </div>
+        );
+    };
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -397,7 +486,7 @@ export default function TicTransactionsL(props) {
                 dataKey="id"
                 size={"small"}
                 selectionMode="single"
-                header={header}
+                // header={header}
                 selection={ticDocs}
                 loading={loading}
                 value={ticDocss}
@@ -410,10 +499,13 @@ export default function TicTransactionsL(props) {
                 metaKeySelection={false}
                 rows={10}
                 onSelectionChange={(e) => setTicDocs(e.value)}
+                onRowSelect={onRowSelect}
+                onRowUnselect={onRowUnselect}
             >
                 <Column
                     field="nevent"
-                    header={translations[selectedLanguage].nevent}
+                    // header={translations[selectedLanguage].nevent}
+                    header={newTemplate}
                     sortable
                     style={{ width: "15%" }}
                 ></Column>
@@ -451,6 +543,10 @@ export default function TicTransactionsL(props) {
                     header={translations[selectedLanguage].discount}
                     sortable
                     style={{ width: "5%" }}
+                    editor={inputEditor}
+                    // editor={(e) => inputEditor(e.rowData, e.field, e)}
+                    // body={discountTemplate}
+                    onCellEditComplete={onCellEditComplete}
                 ></Column>
                 <Column
                     field="potrazuje"
@@ -466,13 +562,40 @@ export default function TicTransactionsL(props) {
                     body={valueTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
-                <Column
+                {/* <Column
                     header={translations[selectedLanguage].delivery}
                     field="delivery"
                     dataType="numeric"
                     style={{ width: '1%' }}
                     bodyClassName="text-center"
                     body={(e) => toggleBodyTemplate(e, `delivery`)}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column> */}
+                <Column
+                    header={translations[selectedLanguage].print}
+                    field="print"
+                    dataType="numeric"
+                    style={{ width: '1%' }}
+                    bodyClassName="text-center"
+                    body={(e) => toggleBodyTemplate(e, `print`)}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>
+                <Column
+                    header={translations[selectedLanguage].pm}
+                    field="pm"
+                    dataType="numeric"
+                    style={{ width: '1%' }}
+                    bodyClassName="text-center"
+                    body={(e) => toggleBodyTemplate(e, `pm`)}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>
+                <Column
+                    header={translations[selectedLanguage].rez}
+                    field="rez"
+                    dataType="numeric"
+                    style={{ width: '1%' }}
+                    bodyClassName="text-center"
+                    body={(e) => toggleBodyTemplate(e, `rez`)}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
             </DataTable>
@@ -497,13 +620,39 @@ export default function TicTransactionsL(props) {
                         docsTip={docsTip}
                     />
                 )}
-                <div className="p-dialog-header-icons" style={{ display: 'none' }}>
-                    <button className="p-dialog-header-close p-link">
-                        <span className="p-dialog-header-close-icon pi pi-times"></span>
-                    </button>
-                </div>
             </Dialog>
-            <DeleteDialog visible={deleteDialogVisible} inAction="delete"  onHide={hideDeleteDialog}  />
+
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setTicTransactiostornogrpLVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
+                visible={ticTransactiostornogrpLVisible}
+                style={{ width: '80%' }}
+                onHide={() => {
+                    setTicTransactiostornogrpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <TicTransactiostornogrpL
+                        parameter={"inputTextValue"}
+                        ticDocs={ticDocs}
+                        ticDoc={props.ticDoc}
+                        handleStornoClose={handleStornoClose}
+                        dialog={true}
+                        akcija={akcija}
+                    />
+                )}
+            </Dialog>
+            <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
         </div>
     );
 }

@@ -373,7 +373,8 @@ export default function TicEventattsL(props) {
                 try {
                     // console.log('Custom upload started Bravo:', e);
                     const originalFileExtension = e.files[0].name.split('.').pop();
-                    const newFileName = `${ticEventatts.event}.${originalFileExtension}`;
+                    // const newFileName = `${ticEventatts.event}.${originalFileExtension}`;
+                    const newFileName = `${ticEventatts.event}.jpg`;
                     // console.log('Modified file name:', newFileName);
 
                     rowData.isUploadPending = false;

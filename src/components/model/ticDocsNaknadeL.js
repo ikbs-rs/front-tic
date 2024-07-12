@@ -38,7 +38,9 @@ function TicDocsNaknadeL(props) {
     }, [props.ticDoc.id, props.refresh]);
     
     const potrazujeNaknadeTotal = () => {
-        return ticDocsNs.reduce((acc, item) => acc + Number(item.potrazuje), 0);
+        let total = ticDocsNs.reduce((acc, item) => acc + Number(item.potrazuje), 0)
+        props.handleNaknadeIznos(total)
+        return total;
     };
 
 

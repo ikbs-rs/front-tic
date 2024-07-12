@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
+import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -28,9 +28,10 @@ import WebSalMap from './ticProdajaTab';
 import TicDocsuidProdajaL from "./ticDocsuidProdajaL";
 import TicDocsNaknadeL from "./ticDocsNaknadeL";
 import TicDocsKarteL from "./ticDocsKarteL";
+import TicDocDiscountL from './ticDocdiscountL'
 
 export default function TicDocdeliveryL(props) {
-  // console.log(props, "*22222222222222222222222222222-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
+  console.log(props, "*22222222222222222222222222222-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -89,13 +90,24 @@ export default function TicDocdeliveryL(props) {
   const [eventTip, setEventTip] = useState('');
   const [webMapVisible, setWebMapVisible] = useState(false);
   const [ticDocsuidProdajaLVisible, setTicDocsuidProdajaLVisible] = useState(false);
-  
+
 
   let [numberChannell, setNumberChannell] = useState(0)
   let [channells, setChannells] = useState([{}])
   let [channell, setChannell] = useState(null)
 
-  let [refresh, setRefresh] = useState(0)
+  let [refresh, setRefresh] = useState(1)
+  const [checkedRezervacija, setCheckedRezervacija] = useState(ticDoc?.reservation == "1" || false);
+  const [checkedIsporuka, setCheckedIsporuka] = useState(ticDoc?.delivery == "1" || false);
+  const [checkedNaknade, setCheckedNaknade] = useState(ticDoc?.services == "1" || false);
+  let [refreshKey, setRefreshKey] = useState(0);
+  let [refreshKeyN, setRefreshKeyN] = useState(0);
+
+  const [zaUplatu, setZaUplatu] = useState(0);
+  const [karteIznos, setKarteIznos] = useState(0);
+  const [naknadeIznos, setNaknadeIznos] = useState(0);
+  const [popustIznos, setPopustIznos] = useState(0);
+  // const [formattedZaUplatu, setFormattedZaUplatu] = useState(0);
 
   const iframeRef = useRef(null);
 
@@ -105,9 +117,153 @@ export default function TicDocdeliveryL(props) {
 
   const remoteRefresh = () => {
     setRefresh(++refresh)
+    // setRefreshKey(++refreshKey);
+    // setRefreshKeyN(++refreshKey);  
+    console.log(refreshKey, "000033333333333333333333333333333333333333333333355555555555555555555")
+  }
+  const handleRefresh = () => {
+    setRefreshKey(++refreshKey);
+    setRefreshKeyN(++refreshKey);
+    console.log(refreshKey, "33333333333333333333333333333333333333333333355555555555555555555")
+  };
+  //******************************************************************************************************************** */
+  //******************************************************************************************************************** */
+  const ticProdajaWRef = useRef();
+
+  const handleClickInsideIframe = () => {
+    if (ticProdajaWRef.current) {
+      ticProdajaWRef.current.handleClickInsideIframe();
+    }
+  };
+
+  const remountComponent = () => {
+    if (ticProdajaWRef.current) {
+      ticProdajaWRef.current.remountComponent();
+    }
+  };
+
+
+  const remountStavke = () => {
+    if (ticProdajaWRef.current) {
+      ticProdajaWRef.current.remountStavke();
+    }
+  };
+
+  const handleChangeNaknade = async (value) => {
+    const previousValue = checkedNaknade;
+    setCheckedNaknade(value);
+
+    let _ticDoc = { ...ticDoc }
+    value ? _ticDoc.services = `1` : _ticDoc.services = `0`
+    // _ticDoc.delivery? _ticDoc.delivery = 1 : _ticDoc.delivery = 0
+    // _ticDoc.reservation? _ticDoc.reservation = 1 : _ticDoc.reservation = 0
+    setTicDoc(_ticDoc)
+    // console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
+    await handleUpdateNakTicDoc(_ticDoc, previousValue)
+    remoteRefresh()
+    setRefresh(++refresh)
+    // remountStavke();
+  };
+
+  const handleChangeRezervacija = async (value) => {
+    const previousValue = checkedRezervacija;
+    setCheckedRezervacija(value);
+
+    let _ticDoc = { ...ticDoc }
+    value ? _ticDoc.reservation = `1` : _ticDoc.reservation = `0`
+    // _ticDoc.delivery? _ticDoc.delivery = 1 : _ticDoc.delivery = 0
+    // _ticDoc.services? _ticDoc.services = 1 : _ticDoc.services = 0
+    await setTicDoc(_ticDoc)
+    // console.log(_ticDoc, "333333333333333333333333333333333333333333333333333333000", value)
+    await handleUpdateRezTicDoc(_ticDoc, previousValue)
+    remoteRefresh()
+    setRefresh(++refresh)
+    // remountStavke();
+  };
+
+  const handleChangeIsporuka = async (value) => {
+
+    const previousValue = checkedIsporuka;
+    setCheckedIsporuka(value);
+
+    let _ticDoc = { ...ticDoc }
+    value ? _ticDoc.delivery = `1` : _ticDoc.delivery = `0`
+    // _ticDoc.services ? _ticDoc.services = 1 : _ticDoc.services = 0
+    // _ticDoc.reservation ? _ticDoc.reservation = 1 : _ticDoc.reservation = 0
+    setTicDoc(_ticDoc)
+    // console.log(refresh, "333333333333333333333333333333333333333333333333333333111")
+    await handleUpdateIspTicDoc(_ticDoc, previousValue)
+
+    // console.log(refresh, "333333333333333333333333333333333333333333333333333333111")
+    // remountStavke();
+  };
+
+  const handleUpdateIspTicDoc = async (newObj, previousValue) => {
+    const _ticDoc = newObj
+    try {
+      // console.log(newObj, "handleUpdateTicDoc 1115555555555555555555555555555555555555555555555555555555555", previousValue)
+      const ticDocService = new TicDocService();
+      await ticDocService.putTicDoc(newObj);
+      remoteRefresh()
+      setRefresh(++refresh)
+    } catch (err) {
+      _ticDoc.delivery = previousValue
+      setTicDoc(_ticDoc)
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
+  }
+  const handleUpdateRezTicDoc = async (newObj, previousValue) => {
+    const _ticDoc = newObj
+    try {
+      // console.log(newObj, "handleUpdateTicDoc 000 5555555555555555555555555555555555555555555555555555555555", previousValue)
+      const ticDocService = new TicDocService();
+      await ticDocService.putTicDoc(newObj);
+      remoteRefresh()
+      setRefresh(++refresh)
+      // console.log("handleUpdateTicDoc 001 5555555555555555555555555555555555555555555555555555555555")      
+    } catch (err) {
+      // console.log("HHHHHHHHHHHHHHHHHHHHHHHHHH")
+      _ticDoc.reservation = previousValue ? '1' : '0'
+      setTicDoc(_ticDoc)
+      setCheckedRezervacija(previousValue);
+
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
+  }
+
+  const handleUpdateNakTicDoc = async (newObj, previousValue) => {
+    const _ticDoc = newObj
+    try {
+      // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+      const ticDocService = new TicDocService();
+      await ticDocService.putTicDoc(newObj);
+      remoteRefresh()
+      setRefresh(++refresh)
+    } catch (err) {
+      _ticDoc.services = previousValue
+      setTicDoc(_ticDoc)
+      setCheckedNaknade(previousValue);
+
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
   }
   //******************************************************************************************************************** */
-  //******************************************************************************************************************** */
+  //******************************************************************************************************************** */  
 
   useEffect(() => {
     async function fetchData() {
@@ -134,7 +290,7 @@ export default function TicDocdeliveryL(props) {
       }
     }
     fetchData();
-  }, [cmnPar]);
+  }, [cmnPar, refreshKey]);
 
   useEffect(() => {
     async function fetchData() {
@@ -149,8 +305,9 @@ export default function TicDocdeliveryL(props) {
           dataO.push({ code: `Transaction time`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
           dataO.push({ code: `Number of ticket`, value: props.ticDoc.ticketcount });
           dataO.push({ code: `Ticket total price`, value: props.ticDoc.tickettotal });
-          dataO.push({ code: `Discount`, value: props.ticDoc?.discount });
-          dataO.push({ code: `Order total price`, value: props.ticDoc.potrazuje });
+          dataO.push({ code: `Fee total price`, value: naknadeIznos });
+          dataO.push({ code: `Discount`, value: popustIznos });
+          dataO.push({ code: `Order total price`, value: zaUplatu });
           setTicOrderInfos(dataO);
 
           initFilters();
@@ -161,7 +318,7 @@ export default function TicDocdeliveryL(props) {
       }
     }
     fetchData();
-  }, []);
+  }, [zaUplatu]);
 
   useEffect(() => {
     async function fetchData() {
@@ -207,7 +364,7 @@ export default function TicDocdeliveryL(props) {
       }
     }
     fetchData();
-  }, [parRefresh]);
+  }, [parRefresh, refreshKey]);
   /******************************************** */
 
   useEffect(() => {
@@ -256,6 +413,7 @@ export default function TicDocdeliveryL(props) {
   //******************************************************************************************************************** */
   useEffect(() => {
     // Kreiranje niza objekata za cmnParInfos
+    remoteRefresh()
     const newData = [
       {
         event: "Print", button: (
@@ -361,15 +519,15 @@ export default function TicDocdeliveryL(props) {
           <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
             <label htmlFor="rezervacija" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Rezervacija}</label>
             <InputSwitch id="rezervacija"
-            // checked={checkedRezervacija} 
-            // onChange={(e) => handleChangeRezervacija(e.value)} 
+              checked={checkedRezervacija}
+              onChange={(e) => handleChangeRezervacija(e.value)}
             />
           </div>
         ), col2: (
           <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
             <label htmlFor="isporuka" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Isporuka}</label>
             <InputSwitch id="isporuka"
-            // checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)} 
+              checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)}
             />
           </div>
         )
@@ -378,7 +536,7 @@ export default function TicDocdeliveryL(props) {
           <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
             <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
             <InputSwitch id="naknade"
-            // checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)} 
+              checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)}
             />
           </div>
         )
@@ -400,37 +558,7 @@ export default function TicDocdeliveryL(props) {
             severity="danger"
             raised
           />
-        )
-        // ,
-        // col3: (
-        //   <Button
-        //     label={translations[selectedLanguage].Go}
-        //     icon="pi pi-cog"
-        //     onClick={openStampa}
-        //     severity="success"
-        //     raised
-        //   />
-        // )
-      },
-      {
-        col1: (
-          <Button
-            label={translations[selectedLanguage].Razdvajanje}
-            icon="pi pi-file-export"
-            onClick={openStampa}
-            severity="warning"
-            raised
-          />
-        ), col2: (
-          <Button
-            label={translations[selectedLanguage].Spajanje}
-            icon="pi pi-file-import"
-            onClick={openStampa}
-            severity="warning"
-            raised
-          />
-        )
-        ,
+        ),
         col3: (
           <Button
             label={translations[selectedLanguage].Logovi}
@@ -441,9 +569,41 @@ export default function TicDocdeliveryL(props) {
           />
         )
       }
+      // ,
+      // {
+      //   col1: (
+      //     <Button
+      //       label={translations[selectedLanguage].Razdvajanje}
+      //       icon="pi pi-file-export"
+      //       onClick={openStampa}
+      //       severity="warning"
+      //       raised
+      //     />
+      //   ), col2: (
+      //     <Button
+      //       label={translations[selectedLanguage].Spajanje}
+      //       icon="pi pi-file-import"
+      //       onClick={openStampa}
+      //       severity="warning"
+      //       raised
+      //     />
+      //   )
+      //   ,
+      //   col3: (
+      //     <Button
+      //       label={translations[selectedLanguage].Logovi}
+      //       icon="pi pi-history"
+      //       onClick={openStampa}
+      //       severity="success"
+      //       raised
+      //     />
+      //   )
+      // }
     ];
     setCmnBtnActions(newData);
-  }, [selectedLanguage]);
+    remoteRefresh()
+  }, [selectedLanguage, checkedRezervacija, checkedIsporuka, checkedNaknade]);
+  //******************************************************************************************************************** */
   //******************************************************************************************************************** */
   //******************************************************************************************************************** */
 
@@ -533,8 +693,8 @@ export default function TicDocdeliveryL(props) {
         life: 3000,
       });
     }
-  }; 
-  
+  };
+
   /**************************************************************************************** */
   /**************************************************************************************** */
   const getChannell = async (rowData) => {
@@ -585,7 +745,7 @@ export default function TicDocdeliveryL(props) {
       });
     }
   };
-  
+
   const handleTicDocsuidProdajaLClick = async () => {
     try {
       setTicDocsuidProdajaLDialog(true);
@@ -883,7 +1043,36 @@ export default function TicDocdeliveryL(props) {
   const handleAction = (rowData) => {
     console.log("handleAction")
   };
+  /************************************************************************************* */
+  function formatNumberAsText(iznos) {
+    console.log(iznos, "************************************************")
+    if (!iznos) {
+      return ''; // ili vratite neki podrazumevani tekst, npr. '0.00'
+    }
+    const parts = iznos.toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
 
+  // setFormattedZaUplatu( formatNumberAsText(zaUplatu))
+
+  const handleZaUplatu = (iznos) => {
+    setZaUplatu(iznos);
+    // setFormattedZaUplatu(formatNumberAsText(iznos))
+  };
+  const handleKarteIznos = (iznos) => {
+    setKarteIznos(iznos);
+    handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+  };
+  const handleNaknadeIznos = (iznos) => {
+    setNaknadeIznos(iznos);
+    handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+  };
+  const handlePopustIznos = (iznos) => {
+    setPopustIznos(iznos);
+    handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+  };
+  /************************************************************************************* */
   return (
     <>
       <div className="card">
@@ -928,6 +1117,7 @@ export default function TicDocdeliveryL(props) {
                 <div className="card">
                   <DataTable
                     dataKey="id"
+                    key={refreshKey}
                     size={"small"}
                     // rowClassName={rowClass}
                     rowClassName="custom-row-color"
@@ -1051,7 +1241,8 @@ export default function TicDocdeliveryL(props) {
         />
       </div> */}
       <div className="flex-grow-1">
-        <TicDocsKarteL
+        <TicDocDiscountL
+          key={refreshKey}
           parameter={"inputTextValue"}
           ticDoc={ticDoc}
           ticDocs={ticDocs}
@@ -1060,10 +1251,32 @@ export default function TicDocdeliveryL(props) {
           dialog={false}
           docTip={props.docTip}
           remoteRefresh={remoteRefresh}
+          refresh={refresh}
+          parentC={"BL"}
+          handlePopustIznos={handlePopustIznos}
+          karteIznos={karteIznos}
         />
-      </div>      
+      </div>
+      <div className="flex-grow-1">
+        <TicDocsKarteL
+          key={refreshKey}
+          parameter={"inputTextValue"}
+          ticDoc={ticDoc}
+          ticDocs={ticDocs}
+          cmnPar={cmnPar}
+          setVisible={true}
+          dialog={false}
+          docTip={props.docTip}
+          remoteRefresh={remoteRefresh}
+          refresh={refresh}
+          parentC={"TR"}
+          handleKarteIznos={handleKarteIznos}
+          zaUplatu={zaUplatu}
+        />
+      </div>
       <div className="flex-grow-1">
         <TicDocsNaknadeL
+          key={refreshKeyN}
           parameter={"inputTextValue"}
           ticDoc={ticDoc}
           ticDocs={ticDocs}
@@ -1072,7 +1285,28 @@ export default function TicDocdeliveryL(props) {
           dialog={false}
           docTip={props.docTip}
           refresh={refresh}
+          handleNaknadeIznos={handleNaknadeIznos}
         />
+      </div>
+      <div className="card">
+        <div className="p-fluid formgrid grid">
+          <div className="field col-12 md:col-12">
+
+            <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
+            <InputTextarea
+              id="napomena"
+              rows={5}
+              autoResize
+              style={{ width: '100%' }}
+            // cols={100}
+            // value={ticDocdiscount.napomena}
+            // onChange={(e) => onInputChange(e, 'text', 'napomena')}
+            />
+            <Button icon="pi pi-save"
+              // onClick={handleParLClick}
+              className="p-button" />
+          </div>
+        </div>
       </div>
       <Dialog
         header={translations[selectedLanguage].Docdelivery}
@@ -1234,6 +1468,8 @@ export default function TicDocdeliveryL(props) {
         onHide={() => {
           setTicDocsuidProdajaLVisible(false);
           setShowMyComponent(false);
+          remoteRefresh()
+          setRefresh(++refresh)
         }}
       >
         {ticDocsuidProdajaLVisible && (
@@ -1242,6 +1478,7 @@ export default function TicDocdeliveryL(props) {
             propsParent={props}
             handleFirstColumnClick={handleFirstColumnClick}
             handleAction={handleAction}
+            handleRefresh={handleRefresh}
           />
         )}
       </Dialog>

@@ -763,7 +763,7 @@ export default function TicTransactionsL(props) {
                     body={valueTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
-                <Column
+                {/* <Column
                     header={translations[selectedLanguage].delivery}
                     field="delivery"
                     dataType="numeric"
@@ -771,7 +771,7 @@ export default function TicTransactionsL(props) {
                     bodyClassName="text-center"
                     body={(e) => toggleBodyTemplate(e, `delivery`)}
                     onCellEditComplete={onCellEditComplete}
-                ></Column>                
+                ></Column>                 */}
             </DataTable>
 
             <span>Naknade:</span>

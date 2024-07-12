@@ -397,6 +397,8 @@ body {
 
 .layout-wrapper .layout-main .layout-content {
   padding-bottom: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 

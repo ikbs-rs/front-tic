@@ -3,7 +3,7 @@ import './index.css';
 import { translations } from "../../configs/translations";
 
 import { TicDocService } from "../../service/model/TicDocService";
-import TicTransactionsL from './ticTransactionsL';
+import TicTranssL from './ticTranssL';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import TicEventProdajaL from './ticEventProdajaL';
@@ -30,7 +30,6 @@ const TicProdajaW = forwardRef((props, ref) => {
   const [showMyComponent, setShowMyComponent] = useState(true);
   let [refresh, setRefresh] = useState(0);
   let [uidKey, setUidKey] = useState(0);
-
 
 
   /************************************************************************************ */
@@ -137,9 +136,9 @@ const TicProdajaW = forwardRef((props, ref) => {
     if (iframeRef.current?.contentWindow) {
       const buttonInsideIframe = iframeRef.current.contentWindow.document.querySelector('#kupiBtn');
       // if (buttonInsideIframe) {
-        // buttonInsideIframe.click();
-        // props.toggleIframeExpansion()
-        setUidKey(1)
+      // buttonInsideIframe.click();
+      // props.toggleIframeExpansion()
+      setUidKey(1)
       // }
     }
   };
@@ -167,9 +166,9 @@ const TicProdajaW = forwardRef((props, ref) => {
   }, []);
 
   useEffect(() => {
-    //console.log('TicTransactionsL montirana ili osvežena sa key:', ticTransactionsKey);
+    //console.log('TicTranssL montirana ili osvežena sa key:', ticTransactionsKey);
     return () => {
-      //console.log('TicTransactionsL demontirana');
+      //console.log('TicTranssL demontirana');
     }
   }, []);
 
@@ -250,7 +249,7 @@ const TicProdajaW = forwardRef((props, ref) => {
         iframeConsole.log = function (message) {
           originalIframeConsoleLog.apply(iframeConsole, arguments);
           // Vaš kod za presretanje poruke iz iframe-a ovde
-          if (message && typeof message === 'string' && message.includes('rezervaciju')) {
+          if (message && typeof message === 'string' && ((message.includes('******GLOBAL CART********') || (message.includes('====OSVEZI STAVKE BLAGAJNE===='))))) {
             setTicTransactionsKey(++ticTransactionsKey);
             //console.log("######################## Radim rezervaciju za dokument ####################################");
           }
@@ -281,6 +280,7 @@ const TicProdajaW = forwardRef((props, ref) => {
       _ticEvent.code = rowData.cevent
       _ticEvent.text = rowData.nevent
       setTicEvent({ ..._ticEvent })
+      setIframeKey(++iframeKey)
     }
     // alert(`Kliknuo ${rowData.event} ** ${ticEvent.id}`);
   };
@@ -290,12 +290,17 @@ const TicProdajaW = forwardRef((props, ref) => {
     setTicDoc(rowData)
     setRefresh(++refresh)
   }
+  const handleRefresh = () => {
+    // setRefreshKey(++refreshKey);
+    setRefresh(++refresh)
+  };
+
 
   return (
     <div key={key}>
-      <div className="card" >
+      <div className="card " style={{ height: "805px" }}>
         <div className="grid grid-nogutter">
-          {uidKey == '0' && (
+          {(uidKey == '0' && !props.expandStavke) && (
             <div className={props.expandIframe ? "col-12" : "col-6"}>
               <div className="grid">
                 <div className="col-12">
@@ -306,7 +311,7 @@ const TicProdajaW = forwardRef((props, ref) => {
                     onLoad={handleIframeLoad}
                     title="Sal iframe"
                     width="100%"
-                    height="600px"
+                    height="730px"
                     frameBorder="0"
                   // scrolling="no"
                   ></iframe>
@@ -316,7 +321,7 @@ const TicProdajaW = forwardRef((props, ref) => {
           )}
           {(!props.expandIframe && uidKey == '1') && (
             <div className="col-12 fixed-height">
-              <div className="grid">
+              <div className="grid" >
                 <div className="col-12 fixed-height">
                   <TicDocsuidProdajaL
                     key={ticTransactionsKey}
@@ -324,6 +329,7 @@ const TicProdajaW = forwardRef((props, ref) => {
                     propsParent={props}
                     handleFirstColumnClick={handleFirstColumnClick}
                     handleAction={handleAction}
+                    handleRefresh={handleRefresh}
                   />
                 </div>
               </div>
@@ -331,10 +337,10 @@ const TicProdajaW = forwardRef((props, ref) => {
 
           )}
           {(!props.expandIframe && uidKey != '1') && (
-            <div className="col-6">
-              <div className="grid">
+            <div className={props.expandStavke ? "col-12" : "col-6"}>
+              <div className="grid " >
                 <div className="col-12">
-                  <TicTransactionsL
+                  <TicTranssL
                     key={ticTransactionsKey}
                     ticDoc={ticDoc}
                     propsParent={props}

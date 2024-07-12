@@ -26,7 +26,7 @@ class FileService {
     try {
       const selectedLanguage = localStorage.getItem("sl") || "en";
       //const url = `http://ws11.ems.local:8305/public/tic/upload/?sl=${selectedLanguage}`;
-      const url = `${env.IMG_BACK_URL}/public/tic/upload/?relpath=${relpath}&sl=${selectedLanguage}`;
+      const url = `${env.IMG_BACK_URL}/public/tic/upload/?filename=${fileName}&relpath=${relpath}&sl=${selectedLanguage}`;
       const formData = new FormData();
       formData.append("file", file, fileName);
       const tokenLocal = await Token.getTokensLS();

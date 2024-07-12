@@ -5,7 +5,7 @@ import DateFunction from "../../utilities/DateFunction"
 
 export class TicDocsuidService {
   async getProdajaLista(objId) {
-    console.log( "**11***************11**********************11********************************11*****************************11*************************")
+  
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docsuid/_v/lista/?stm=tic_docsuidprodaja_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -14,9 +14,10 @@ export class TicDocsuidService {
     };
 
     try {
-      console.log(url, "**11***************11**********************11********************************11*****************************11*************************")
+      
       const response = await axios.get(url, { headers });
-      return response.data.item;
+      console.log(response.data, "1111111111111111111111111111111getProdajaLista111111111111111111111111111111111111111111")
+      return response.data.item||response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
@@ -180,9 +181,9 @@ export class TicDocsuidService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      //console.log("*#################", jsonObj, "****************")
+      console.log("*#################", jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
-      //console.log("**************"  , response, "****************")
+      console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);

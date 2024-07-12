@@ -577,7 +577,7 @@ const App = () => {
                     </Routes>
                 </div>
 
-                <AppConfig
+                {/* <AppConfig
                     configActive={configActive}
                     onConfigClick={onConfigClick}
                     onConfigButtonClick={onConfigButtonClick}
@@ -597,9 +597,9 @@ const App = () => {
                     onLayoutModeChange={onLayoutModeChange}
                     lightMenu={lightMenu}
                     onMenuColorChange={onMenuColorChange}
-                ></AppConfig>
+                ></AppConfig> */}
 
-                <AppFooter />
+                {/* <AppFooter /> */}
             </div>
 
             <div className="layout-content-mask"></div>

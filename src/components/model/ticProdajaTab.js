@@ -24,6 +24,7 @@ import { useLocation } from 'react-router-dom';
 import CountdownTimer from './CountdownTimer';
 import TicDocpaymentL from './ticDocpaymentL';
 import { Dialog } from 'primereact/dialog';
+import TicDocsprintgrpL from './ticDocsprintgrpL'
 
 export default function TicProdajaTab(props) {
     const location = useLocation();
@@ -76,15 +77,17 @@ export default function TicProdajaTab(props) {
     const [checkedIsporuka, setCheckedIsporuka] = useState(ticDoc?.delivery == "1" || false);
     const [checkedNaknade, setCheckedNaknade] = useState(ticDoc?.services == "1" || false);
 
+    const [ticDocsprintgrpgrpLVisible, setTicDocsprintgrpgrpLVisible] = useState(false)
 
     const iframeRef = useRef(null);
     let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
     const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
     const [ticPayment, setTicPayment] = useState(null);
-    const [ticStampaLVisible, setTicStampaLVisible] = useState(false);
+    // const [ticStampaLVisible, setTicStampaLVisible] = useState(false);
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [cmnPar, setCmnPar] = useState(null);
     const [paymenttpId, setPaymenttpId] = useState(null);
+    const [akcija, setAkcija] = useState(null);
 
 
 
@@ -444,7 +447,7 @@ export default function TicProdajaTab(props) {
                             icon="pi pi-map-marker"
                             style={{ width: '60px' }}
                             onClick={remountComponent} raised />
-                    </div>                    
+                    </div>
                     <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].KupacNext}
@@ -454,7 +457,7 @@ export default function TicProdajaTab(props) {
                             // icon="pi pi-cog" 
                             raised />
 
-                    </div>                  
+                    </div>
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
                             icon="pi pi-euro"
@@ -472,8 +475,11 @@ export default function TicProdajaTab(props) {
                     />
 
                     <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
-                                    severity="warning" raised style={{ width: '60px' }} 
-                                />
+                        severity="warning" raised style={{ width: '60px' }}
+                    />
+                    <Button icon={expandStavke ? "pi pi-angle-double-right" : "pi pi-angle-double-left"} onClick={toggleStavkeExpansion}
+                        severity="warning" raised style={{ width: '60px' }}
+                    />                    
                     <div>
                         <CountdownTimer targetDate={ticDoc?.endtm} />
                     </div>
@@ -483,13 +489,13 @@ export default function TicProdajaTab(props) {
                             icon={"pi pi-sign-out"}
                             style={{ width: '60px' }}
                             onClick={toggleIframeExpansion} severity="danger" raised />
-                    </div>                    
+                    </div>
                 </>
 
                 {
                     activeIndex >= "1" ? (
                         <>
-                              
+
                             <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
 
                             </div>
@@ -551,7 +557,7 @@ export default function TicProdajaTab(props) {
 
     const setTicStampaDialog = () => {
         setShowMyComponent(true);
-        setTicStampaLVisible(true);
+        setTicDocsprintgrpgrpLVisible(true);
     };
 
     /****************************************************************************************** */
@@ -615,11 +621,15 @@ export default function TicProdajaTab(props) {
     /******************************************************************* */
     /******************************************************************* */
     const [expandIframe, setExpandIframe] = useState(false);
+    const [expandStavke, setExpandStavke] = useState(false);
 
     const toggleIframeExpansion = () => {
         setExpandIframe(!expandIframe);
     };
-
+    
+    const toggleStavkeExpansion = () => {
+        setExpandStavke(!expandStavke);
+    };    
     // const handleBBClick = () => {
     //     toggleIframeExpansion();
     // };
@@ -854,9 +864,14 @@ export default function TicProdajaTab(props) {
     const handleDialogClose = (newObj) => {
 
     }
+
+    const handDocsprintgrpClose = (newObj) => {
+        setTicDocsprintgrpgrpLVisible(false);
+    }
     const handleWebMapDialogClose = (newObj) => {
         setWebMapVisible(false);
     };
+
 
     const handleB1Click = () => {
         setInputForAA(inputValueI1);
@@ -889,7 +904,7 @@ export default function TicProdajaTab(props) {
     return (
         <div key={key}>
             <Toast ref={toast} />
-            <div className="card">
+            <div  >
                 <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                     <TabPanel header="Догађаји">
                         <TicProdajaL
@@ -901,6 +916,8 @@ export default function TicProdajaTab(props) {
                     <TabPanel
                         header="Selekcija"
                         headerClassName="flex align-items-center"
+                        style={{ height: "100%" }}
+                        
                     >
                         <TicProdajaW
                             parameter={'inputTextValue'}
@@ -915,6 +932,7 @@ export default function TicProdajaTab(props) {
                             channells={channells}
                             channell={channell}
                             expandIframe={expandIframe}
+                            expandStavke={expandStavke}
                             toggleIframeExpansion={toggleIframeExpansion}
                             ref={ticProdajaWRef}
                         />
@@ -957,6 +975,36 @@ export default function TicProdajaTab(props) {
                     />
                 )}
             </Dialog>
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setTicDocsprintgrpgrpLVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
+                visible={ticDocsprintgrpgrpLVisible}
+                style={{ width: '80%' }}
+                onHide={() => {
+                    setTicDocsprintgrpgrpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <TicDocsprintgrpL
+                        parameter={"inputTextValue"}
+                        ticDoc={ticDoc}
+                        handDocsprintgrpClose={handDocsprintgrpClose}
+                        dialog={true}
+                        akcija={akcija}
+                    />
+                )}
+            </Dialog>
+
         </div>
     );
 }

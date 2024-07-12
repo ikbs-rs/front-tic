@@ -24,6 +24,7 @@ export default function TicDocsuidProdajaL(props) {
     const emptyTicEvent = EmptyEntities[objName];
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocsuids, setTicDocsuids] = useState([]);
+    const [_ticDocsuids, set_ticDocsuids] = useState([]);
     const [ticDoc, setTicDoc] = useState(props.ticDoc);
 
     const [cmnTickettps, setCmnTickettps] = useState([]);
@@ -34,7 +35,9 @@ export default function TicDocsuidProdajaL(props) {
 
     const [valueTA, setValueTA] = useState('');
     const [note, setNote] = useState('');
-    let [refresh, setRefresh] = useState(0); 
+    let [refresh, setRefresh] = useState(0);
+    const [uniqueDocs, setUniqueDocs] = useState([]);
+    const [ppNobj, setPpNobj] = useState([]);
 
     /************************AUTOCOMPLIT**************************** */
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
@@ -52,6 +55,8 @@ export default function TicDocsuidProdajaL(props) {
             try {
                 const ticDocsuidService = new TicDocsuidService();
                 const data = await ticDocsuidService.getProdajaLista(props.ticDoc.id);
+                const uniqueDocsArray = Array.from(new Set(data.map(item => item.event)));
+                setUniqueDocs(uniqueDocsArray);
                 // Sortiranje podataka pre postavljanja u state
                 const sortedData = data.sort((a, b) => {
                     // Poređenje po 'nevent'
@@ -67,7 +72,8 @@ export default function TicDocsuidProdajaL(props) {
                     return a.seat - b.seat;
                 });
 
-                setTicDocsuids(sortedData);
+                setTicDocsuids(sortedData)
+                set_ticDocsuids(sortedData)
                 await setSelectedValues(sortedData.reduce((acc, item) => ({
                     ...acc,
                     [item.id]: item.tickettp
@@ -83,6 +89,33 @@ export default function TicDocsuidProdajaL(props) {
     }, [props.ticDoc.id, refresh]);
 
     useEffect(() => {
+        async function fetchAdditionalData() {
+            try {
+                const ticDocsService = new TicDocsService();
+                const allNobjs = [];
+                const attCodes = ['11.01.', '11.02']
+                for (const row of attCodes) {
+                    for (const doc of uniqueDocs) {
+                        const data = await ticDocsService.getEventattsobjcode(doc, row, 'XATTB');
+                        data.forEach(item => {
+                            if (!allNobjs.some(obj => obj.nobj === item.nobj)) {
+                                allNobjs.push(item);
+                            }
+                        });
+                    }
+                }
+                console.log(allNobjs, '5555555555555555555555555555555555555555555555555555555555555555', uniqueDocs)
+                setPpNobj(allNobjs);
+            } catch (error) {
+                console.error("Error fetching additional data:", error);
+            }
+        }
+        if (uniqueDocs.length > 0) {
+            fetchAdditionalData();
+        }
+    }, [uniqueDocs]);
+
+    useEffect(() => {
         async function fetchData() {
             try {
                 const ticDocsService = new TicDocsService();
@@ -95,32 +128,44 @@ export default function TicDocsuidProdajaL(props) {
         fetchData();
     }, []);
 
-    const handleChange = (e, itemId, item) => {
+    const handleChange = async (e, itemId, item) => {
         console.log(itemId, "55555555555555555555555555555555", e.value, "5555555555555555", item)
         setSelectedValues(prev => ({
             ...prev,
             [itemId]: e.value
         }));
-        console.log(itemId, "55555555555555555555555555555555", e.value, "5555555555555555222")
+        const ticDocService = new TicDocService();
+        await ticDocService.postTicDocSetValue('tic_docs', 'tickettp', e.value, item.docs);
+        props.handleRefresh()
     };
 
-    const handleSwitchChange = (e, itemId) => {
+    const handleSwitchChange = async (e, itemId, item) => {
+
         setActiveStates(prev => ({ ...prev, [itemId]: e.value }));
+        // const _ticDocs = ticDocsuids.find((item) => item.id === itemId)
+        const value = e.value ? '1' : '0'
+        const ticDocService = new TicDocService();
+        await ticDocService.postTicDocSetValue('tic_docs', 'delivery', value, item.docs);
+        props.handleRefresh()
     };
-    
-    const handleAllParr = (e, item) => {
+
+    const handleAllParr = async (e, item) => {
         e.preventDefault(); // Prevent default action if necessary
         setRefresh(++refresh)
         // setHighlightedId(item.id);
         console.log(e, "******* Clicked item details:", item);
+        // const ticDocsuidService = new TicDocsuidService();
+        // await ticDocsuidService.putTicDocsuid( item);
         // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
     };
 
-    const handleClick = (item, e) => {
+    const handleClick = async (item, e) => {
         e.preventDefault(); // Prevent default action if necessary
+        const ticDocsuidService = new TicDocsuidService();
+        await ticDocsuidService.putTicDocsuid( item);
         setHighlightedId(item.id);
         console.log(e, "******* Clicked item details:", item);
-        // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
+
     };
 
     const handleDeleteClick = (item, e) => {
@@ -130,10 +175,21 @@ export default function TicDocsuidProdajaL(props) {
         // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
     };
 
-    const onInputChangeL = (e, field, index, item) => {
-        const value = e.target.value;
-        const _ticDocsuids = [...ticDocsuids];
-        console.log(value, "**WWW****************", _ticDocsuids, "**WWW****************#######################################", index);
+    const onInputChangeL = (e, field, itemId, item) => {
+
+        const index = ticDocsuids.findIndex((row) => row.id === item.id);
+        if (index !== -1) {
+            const updatedTicDocsuids = [...ticDocsuids];
+
+            updatedTicDocsuids[index] = {
+                ...updatedTicDocsuids[index],
+                [field]: e.target.value
+            };
+
+            setTicDocsuids(updatedTicDocsuids);
+            console.log(updatedTicDocsuids[index][field], index, field, '333333333333333333333333333333333333333333333444444444444444444444444444444444', ticDocsuids)
+        }
+
         // _ticDocsuids[index][field] = value;
         // setFormData(newFormData);
     };
@@ -241,6 +297,7 @@ export default function TicDocsuidProdajaL(props) {
         await ticDocService.putTicDocSet(ticDoc);
 
         props.handleAction(ticDoc)
+        props.handleRefresh()
         //ticDocs.potrazuje = newObj.cena * ticDocs.output;
         setCmnParLVisible(false);
     };
@@ -367,7 +424,7 @@ export default function TicDocsuidProdajaL(props) {
                                         <InputSwitch
                                             id={`delivery-${item.id}`}
                                             checked={activeStates[item.id]}
-                                            onChange={(e) => handleSwitchChange(e, item.id)}
+                                            onChange={(e) => handleSwitchChange(e, item.id, item)}
                                         />
                                         <label htmlFor={`delivery-${item.id}`} style={{ marginRight: '1em' }}>{translations[selectedLanguage].delivery}</label>
                                     </div>

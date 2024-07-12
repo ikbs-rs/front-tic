@@ -433,7 +433,7 @@ export default function TicProdajaL(props) {
                     scrollable
                     sortField="code"
                     sortOrder={1}
-                    scrollHeight="570px"
+                    scrollHeight="665px"
                     // virtualScrollerOptions={{ itemSize: 46 }}
                     tableStyle={{ minWidth: '50rem' }}
                     metaKeySelection={false}

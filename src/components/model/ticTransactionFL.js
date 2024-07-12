@@ -29,6 +29,7 @@ import { useSearchParams } from 'react-router-dom';
 import DeleteDialog from '../dialog/DeleteDialog';
 import TicEventProdajaL from './ticProdajaTab';
 import { ToggleButton } from 'primereact/togglebutton';
+import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 
 export default function TicTransactionFL(props) {
     const [searchParams] = useSearchParams();
@@ -40,7 +41,7 @@ export default function TicTransactionFL(props) {
 
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocs, setTicDocs] = useState([]);
-    const [ticDoc, setTicDoc] = useState(emptyTicDoc);
+    const [ticDoc, setTicDoc] = useState(null);
 
     const [filters, setFilters] = useState('');
     const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -62,6 +63,8 @@ export default function TicTransactionFL(props) {
     let [refresh, setRefresh] = useState(0);
 
     const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
+    const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
+    const [akcija, setAkcija] = useState(null);
 
     const [checked1, setChecked1] = useState(false);
     const [checked2, setChecked2] = useState(true);
@@ -286,6 +289,27 @@ export default function TicTransactionFL(props) {
             });
         }
     };
+    /******************************************************************************************************************** */
+    const handleStorno = async () => {
+        try {
+            setTicTransactiostornogrpLDialog(true);
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch cmnPar data',
+                life: 3000
+            });
+        }
+    };
+    const setTicTransactiostornogrpLDialog = () => {
+        setTicTransactiostornogrpLVisible(true);
+    };
+    const handleStornoClose = (newObj) => {
+        setTicTransactiostornogrpLVisible(false);
+    }
+    /******************************************************************************************************************** */
 
     const setTicEventProdajaLDialog = (destination) => {
         setTicEventProdajaLVisible(true);
@@ -302,6 +326,18 @@ export default function TicTransactionFL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
                 </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={handleStorno} severity="danger" text raised disabled={!ticDoc} />
+                </div>    
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning"  raised disabled={!ticDoc}/>
+                </div> 
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Spajanje} icon="pi pi-file-import" onClick={handleStorno} severity="warning"  raised disabled={!ticDoc}/>
+                </div>    
+                <div className="flex flex-wrap gap-1">
+                    <Button  icon="pi pi-plus" onClick={handleStorno} severity="secondary"  raised disabled={!ticDoc}/>
+                </div>                  
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].TransactionList}</b>
                 <div className="flex-grow-1"></div>
@@ -638,7 +674,7 @@ export default function TicTransactionFL(props) {
                 scrollable
                 sortField="date"
                 sortOrder={1}
-                scrollHeight="616px"
+                scrollHeight="696px"
                 tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
                 paginator
@@ -662,11 +698,25 @@ export default function TicTransactionFL(props) {
                 />
                 <Column
                     field="id"
-                    header={translations[selectedLanguage].Transaction}
+                    header={translations[selectedLanguage].Id}
                     sortable
                     filter
                     style={{ width: "10%" }}
                 ></Column>
+                <Column
+                    field="broj"
+                    header={translations[selectedLanguage].Transaction}
+                    sortable
+                    filter
+                    style={{ width: "10%" }}
+                ></Column> 
+                <Column
+                    field="storno"
+                    header={translations[selectedLanguage].Storno}
+                    sortable
+                    filter
+                    style={{ width: "5%" }}
+                ></Column>                               
                 <Column
                     field="text"
                     header={translations[selectedLanguage].nevent}
@@ -842,6 +892,36 @@ export default function TicTransactionFL(props) {
                         lookUp={true}
                     />}
             </Dialog>
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setTicTransactiostornogrpLVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
+                visible={ticTransactiostornogrpLVisible}
+                style={{ width: '80%' }}
+                onHide={() => {
+                    setTicTransactiostornogrpLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <TicTransactiostornogrpL
+                        parameter={"inputTextValue"}
+                        ticDocs={ticDocs}
+                        ticDoc={ticDoc}
+                        handleStornoClose={handleStornoClose}
+                        dialog={true}
+                        akcija={akcija}
+                    />
+                )}
+            </Dialog>            
             {/* <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} /> */}
         </div>
     );

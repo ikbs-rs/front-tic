@@ -312,6 +312,19 @@ const EmptyEntities =
     "tel": "",
     "email": ""      
 	},  
+  "tic_docdiscount": {
+    "id": null,
+    "site": null,
+    "doc": null,
+    "discount": null,
+    "eksternibroj": "",
+    "procenat": "0",
+    "iznos": "0",
+    "bcontent": "",
+    "opis": "",
+    "napomena": "",
+    "postavka": ""
+  },
 	"tic_docpayment": {
 			"id": null,
 			"site": null,
@@ -355,7 +368,15 @@ const EmptyEntities =
 		"ticket": "",
 		"services": "",
 		"tickettp": null,
-		"delivery": null
+		"delivery": null,
+		"ulaz": "",
+		"sektor": "",
+		"barkod": "",
+		"online": null,
+		"print": null,
+		"pm": null,
+		"rez": null,
+		"sysuser": null
   },
   "tic_docslink": {
     "id": null,
@@ -380,6 +401,23 @@ const EmptyEntities =
     "lang": "",
     "grammcase": "1",
     "text": ""
+  },
+  
+  "tic_docsuid": {
+    "id": null,
+    "site": null,
+    "docs": null,
+    "first": "",
+    "last": "",
+    "uid": "",
+    "pib": "",
+    "adress": "",
+    "city": "",
+    "zip": "",
+    "country": "",
+    "phon": "",
+    "email": "",
+    "par": null
   },
   "tic_docvr": {
     "id": null,
