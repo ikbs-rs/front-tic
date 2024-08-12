@@ -108,6 +108,7 @@ export default function TicDocdeliveryL(props) {
   const [naknadeIznos, setNaknadeIznos] = useState(0);
   const [popustIznos, setPopustIznos] = useState(0);
   // const [formattedZaUplatu, setFormattedZaUplatu] = useState(0);
+  const [activeIndex, setActiveIndex] = useState('-1')
 
   const iframeRef = useRef(null);
 
@@ -1072,6 +1073,49 @@ export default function TicDocdeliveryL(props) {
     setPopustIznos(iznos);
     handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
   };
+  /************************************************************************************* */  
+  const onInputChange = (e, type, name) => {
+    let val = ''
+    if (type === "options") {
+      // setDropdownItem(e.value);
+      val = (e.target && e.target.value && e.target.value.code) || '';
+    } else {
+      val = (e.target && e.target.value) || '';
+    }
+
+    let _ticDoc = { ...ticDoc };
+    _ticDoc[`${name}`] = val;
+    if (name === `textx`) _ticDoc[`text`] = val
+
+    setTicDoc(_ticDoc);
+  };
+
+  const handleNapomenaClick = async () => {
+
+    let _ticDoc = { ...ticDoc }
+    setTicDoc(_ticDoc)
+    await handleUpdateNapDoc(_ticDoc)
+    // remountStavke();
+  };
+  const handleUpdateNapDoc = async (newObj) => {
+    try {
+        console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+        const ticDocService = new TicDocService();
+        await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
+    } catch (err) {
+        // console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
+        const _ticDoc = { ...newObj }
+        _ticDoc.opis = newObj.opis
+        setTicDoc(_ticDoc)
+
+        toast.current.show({
+            severity: "error",
+            summary: "Action ",
+            detail: `${err.response.data.error}`,
+            life: 1000,
+        });
+    }
+}  
   /************************************************************************************* */
   return (
     <>
@@ -1292,18 +1336,18 @@ export default function TicDocdeliveryL(props) {
         <div className="p-fluid formgrid grid">
           <div className="field col-12 md:col-12">
 
-            <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
+            <label htmlFor="opis">{translations[selectedLanguage].Napomena}</label>
             <InputTextarea
-              id="napomena"
+              id="opis"
               rows={5}
               autoResize
               style={{ width: '100%' }}
-            // cols={100}
-            // value={ticDocdiscount.napomena}
-            // onChange={(e) => onInputChange(e, 'text', 'napomena')}
+              // cols={100}
+              value={ticDoc.opis}
+              onChange={(e) => onInputChange(e, 'text', 'opis')}
             />
             <Button icon="pi pi-save"
-              // onClick={handleParLClick}
+              onClick={handleNapomenaClick}
               className="p-button" />
           </div>
         </div>
@@ -1370,6 +1414,7 @@ export default function TicDocdeliveryL(props) {
             setTicPaymentLVisible={setTicPaymentLVisible}
             dialog={true}
             lookUp={true}
+            setActiveIndex={setActiveIndex}
           />
         )}
       </Dialog>

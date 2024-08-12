@@ -309,8 +309,8 @@ export default function TicArtL(props) {
                 tableStyle={{ minWidth: '50rem' }}
                 metaKeySelection={false}
                 paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25, 50]}
+                rows={50}
+                rowsPerPageOptions={[50, 100, 250, 500]}
                 onSelectionChange={(e) => setTicArt(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
@@ -322,10 +322,10 @@ export default function TicArtL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '15%' }}></Column>
-                <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '30%' }}></Column>
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '15%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '35%' }}></Column>
+                <Column field="text" header={translations[selectedLanguage].TextArt} sortable filter style={{ width: '35%' }}></Column>
+                <Column field="code" header={translations[selectedLanguage].CodeArt} sortable filter style={{ width: '15%' }}></Column>                
+                <Column field="ntp" header={translations[selectedLanguage].TextTp} sortable filter style={{ width: '30%' }}></Column>
+                <Column field="ctp" header={translations[selectedLanguage].CodeTp} sortable filter style={{ width: '15%' }}></Column>                
                 <Column
                     field="color"
                     header={translations[selectedLanguage].Color}

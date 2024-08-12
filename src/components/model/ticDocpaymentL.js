@@ -19,7 +19,7 @@ import DateFunction from "../../utilities/DateFunction";
 export default function TicDocpaymentL(props) {
 
   const objName = "tic_docpayment"
-  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDocpayment = EmptyEntities[objName]
   emptyTicDocpayment.doc = props.ticDoc.id
   const [showMyComponent, setShowMyComponent] = useState(true);
@@ -31,11 +31,19 @@ export default function TicDocpaymentL(props) {
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [docpaymentTip, setDocpaymentTip] = useState('');
+  const [paymentTip, setPaymentTip] = useState('-1')
+  const [activeIndex, setActiveIndex] = useState('-1')
+
   let i = 0
   const handleCancelClick = () => {
     props.setTicPaymentLVisible(false);
   };
 
+  const handleConfirmClick = () => {
+    props.setActiveIndex(0);
+    props.setTicPaymentLVisible(false);
+  };
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -94,6 +102,21 @@ export default function TicDocpaymentL(props) {
     setTicDocpaymentDialog(emptyTicDocpayment);
   };
 
+  const openCach = () => {
+    setPaymentTip('1')
+    setTicDocpaymentDialog(emptyTicDocpayment);
+  };
+
+  const openCard = () => {
+    setPaymentTip('2')
+    setTicDocpaymentDialog(emptyTicDocpayment);
+  };
+
+  const openCek = () => {
+    setPaymentTip('7')
+    setTicDocpaymentDialog(emptyTicDocpayment);
+  };
+
   const onRowSelect = (event) => {
     //ticDocpayment.begda = event.data.begda
     toast.current.show({
@@ -122,16 +145,16 @@ export default function TicDocpaymentL(props) {
       },
       code: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       text: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
-      }      
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      }
     });
     setGlobalFilterValue("");
   };
@@ -156,18 +179,20 @@ export default function TicDocpaymentL(props) {
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
+        <div className="flex flex-wrap gap-1" />
+        <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised />
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Kes} icon="pi pi-euro" severity="info" onClick={openNew}   />
+          <Button label={translations[selectedLanguage].Kes} icon="pi pi-euro" severity="info" onClick={openCach} />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Kartica} icon="pi pi-credit-card" severity="help" onClick={openNew}   />
+          <Button label={translations[selectedLanguage].Kartica} icon="pi pi-credit-card" severity="help" onClick={openCard} />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Cekovi} icon="pi pi-clone" severity="danger" onClick={openNew}   />
-        </div>                        
+          <Button label={translations[selectedLanguage].Cekovi} icon="pi pi-clone" severity="secondary" onClick={openCek} />
+        </div>
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].DocpaymentList}</b>
         <div className="flex-grow-1"></div>
@@ -300,7 +325,7 @@ export default function TicDocpaymentL(props) {
           sortable
           filter
           style={{ width: "20%" }}
-        ></Column>  
+        ></Column>
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Payment}
@@ -320,6 +345,8 @@ export default function TicDocpaymentL(props) {
             setVisible={setVisible}
             dialog={true}
             docpaymentTip={docpaymentTip}
+            paymentTip={paymentTip}
+            setActiveIndex={setActiveIndex}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

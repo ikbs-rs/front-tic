@@ -1012,16 +1012,16 @@ export default function TicEventattsL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable filter style={{ width: '25%' }}></Column>
-                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable filter style={{ width: '25%' }}></Column>
-                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable filter style={{ width: '10%' }}></Column>
+                <Column field="ctp" header={translations[selectedLanguage].Code} sortable  style={{ width: '10%' }}></Column>
+                <Column field="ntp" header={translations[selectedLanguage].Text} sortable  style={{ width: '25%' }}></Column>
+                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable  style={{ width: '25%' }}></Column>
+                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable  style={{ width: '10%' }}></Column>
+                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable  style={{ width: '10%' }}></Column>
                 <Column
                     field="value"
                     header={translations[selectedLanguage].condition1}
                     sortable
-                    filter
+                    
                     style={{ width: '20%' }}
                     editor={(e) => valueEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
                     body={valueTemplate}
@@ -1031,7 +1031,7 @@ export default function TicEventattsL(props) {
                     field="text"
                     header={translations[selectedLanguage].condition2}
                     sortable
-                    filter
+                    
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => textEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
@@ -1042,7 +1042,7 @@ export default function TicEventattsL(props) {
                     field="condition"
                     header={translations[selectedLanguage].condition3}
                     sortable
-                    filter
+                    
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => conditionEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
@@ -1053,7 +1053,7 @@ export default function TicEventattsL(props) {
                     field="minfee"
                     header={translations[selectedLanguage].minfee}
                     sortable
-                    filter
+                    
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value

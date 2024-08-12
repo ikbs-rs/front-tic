@@ -239,7 +239,6 @@ const CmnPar = (props) => {
                             {submitted && !cmnPar.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
 
-
                         <div className="field col-12 md:col-8">
                             <label htmlFor="short">{translations[selectedLanguage].short}</label>
                             <InputText

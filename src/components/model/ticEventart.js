@@ -358,7 +358,7 @@ const TicEventart = (props) => {
             <div className="col-12">
                 <div className="card">
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-3">
                             <label htmlFor="art">{translations[selectedLanguage].Art} *</label>
                             <div className="p-inputgroup flex-1">
                                 <AutoComplete
@@ -376,7 +376,7 @@ const TicEventart = (props) => {
                             {submitted && !ticEventart.cart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
 
-                        <div className="field col-12 md:col-8">
+                        <div className="field col-12 md:col-7">
                             <label htmlFor="nart">{translations[selectedLanguage].nart}</label>
                             <InputText id="nart"
                                 value={ticEventart.nart}
@@ -386,6 +386,15 @@ const TicEventart = (props) => {
                             />
                             {submitted && !ticEventart.nart && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
+                        <div className="field col-12 md:col-2">
+                            <div className="flex-2 flex flex-column align-items-left">
+                                <label htmlFor="color">{translations[selectedLanguage].color}</label>
+                                <CustomColorPicker
+                                    color={ticEventart.color || '#ffffff'}
+                                    onChange={onColorChange}
+                                />
+                            </div>
+                        </div>                           
                         {/* <div className="field col-12 md:col-7">
                             <label htmlFor="art">{translations[selectedLanguage].Art} *</label>
                             <Dropdown
@@ -404,36 +413,33 @@ const TicEventart = (props) => {
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
-                            <InputText id="discount" value={ticEventart.discount} onChange={(e) => onInputChange(e, 'text', 'discount')} required className={classNames({ 'p-invalid': submitted && !ticEventart.discount })} />
-                            {submitted && !ticEventart.discount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            <InputText id="discount" value={ticEventart.discount} onChange={(e) => onInputChange(e, 'text', 'discount')}
+                            />
                         </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="maxkol">{translations[selectedLanguage].maxkol} *</label>
+                            <InputText id="maxkol" value={ticEventart.maxkol} onChange={(e) => onInputChange(e, 'text', 'maxkol')}
+                            />
+                        </div>
+                     
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Description}</label>
                             <InputText id="descript" value={ticEventart.descript} onChange={(e) => onInputChange(e, 'text', 'descript')} />
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
                             <Calendar value={begda} onChange={(e) => onInputChange(e, 'Calendar', 'begda', this)} showIcon dateFormat="dd.mm.yy" />
                         </div>
-                    </div>
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-5">
+
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="roenddal">{translations[selectedLanguage].Endda} *</label>
                             <Calendar value={endda} onChange={(e) => onInputChange(e, 'Calendar', 'endda')} showIcon dateFormat="dd.mm.yy" />
                         </div>
+
                     </div>
-                    <div className="field col-12 md:col-3">
-                        <div className="flex-2 flex flex-column align-items-left">
-                            <label htmlFor="color">{translations[selectedLanguage].color}</label>
-                            <CustomColorPicker
-                                color={ticEventart.color || '#ffffff'}
-                                onChange={onColorChange}
-                            />
-                            {/* <ColorPicker format="hex" id="color" value={ticEventobj.color} onChange={(e) => onInputChange(e, 'text', 'color')} /> */}
-                        </div>
-                    </div>
+
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" className="p-button-outlined p-button-secondary" onClick={handleCancelClick} outlined /> : null}
                         <div className="flex-grow-1"></div>

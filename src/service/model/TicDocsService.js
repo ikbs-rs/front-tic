@@ -32,6 +32,25 @@ export class TicDocsService {
 
     try {
       const response = await axios.get(url, { headers });
+      console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getArtikliPrintLista(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docsartikliprint_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -258,9 +277,9 @@ export class TicDocsService {
     }
   }
 
-  async getEventattsobjcode(objId, par1, par2) {
+  async getEventattsobjcode(docId, attCode, objCode) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_eventattsobjcodel_v&objid=${objId}&par1=${par1}&par2=${par2}&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_eventattsobjcodel_v&objid=${docId}&par1=${attCode}&par2=${objCode}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -268,14 +287,35 @@ export class TicDocsService {
 
     try {
       console.log(url, "2323232323232323232323232323232323232323")
-      if (par2 != undefined) {
-        const response = await axios.get(url, { headers });
-        return response.data.items || response.data.item;
-      }
+      // if (objCode != undefined) {
+      const response = await axios.get(url, { headers });
+      return response.data.items || response.data.item;
+      // }
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
+
+
+  async getHaveDiscount(docsId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docshavediscount_v&objid=${docsId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      // console.log(url, "2323232323232323232323232323232323232323")
+      const response = await axios.get(url, { headers });
+      // console.log(response.data, "2HHHHHHHHHHHHHHHHHHHHHHHHH323232323232323232323232323232323232323")
+      return response.data.items || response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }
 

@@ -22,9 +22,10 @@ import TicDocsNaknadeL from './ticDocsNaknadeL'
 import TicDocsKarteL from './ticDocsKarteL'
 import TicDocDiscountL from './ticDocdiscountL'
 import { Divider } from 'primereact/divider'
+import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 
 export default function TicTransactionsL(props) {
-    // console.log(props, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+    // console.log(props.mapa != 1, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", props.mapa)
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -75,6 +76,13 @@ export default function TicTransactionsL(props) {
     const [naknadeIznos, setNaknadeIznos] = useState(0);
     const [popustIznos, setPopustIznos] = useState(0);
 
+    const [ddCmnPaymenttpItem, setDdCmnPaymenttpItem] = useState(null);
+    const [ddCmnPaymenttpItems, setDdCmnPaymenttpItems] = useState(null);
+    const [cmnPaymenttpItem, setCmnPaymenttpItem] = useState(null);
+    const [cmnPaymenttpItems, setCmnPaymenttpItems] = useState(null);
+    const [paymentCode, setPaymentCode] = useState('XXX');
+    
+
 
     const remoteRefresh = () => {
         setRefresh(++refresh)
@@ -84,6 +92,25 @@ export default function TicTransactionsL(props) {
     const handleCancelClick = () => {
         props.setTicDocsLVisible(false);
     };
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+
+                    // const cmnParService = new CmnParService();
+                    // const data = await cmnParService.getCmnPar(props.ticDoc?.usr);
+                    console.log(paymentCode, "-------------------------------HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH------------------------")
+                    // setCmnPar(data);
+                    // ticDoc.npar = data.tex;
+                    // ticDoc.cpar = data.code;
+                    // setTicDoc(ticDoc)
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [paymentCode]);
 
     useEffect(() => {
         async function fetchData() {
@@ -105,6 +132,39 @@ export default function TicTransactionsL(props) {
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocpaymentService = new TicDocpaymentService();
+                const data = await ticDocpaymentService.getCmnPaymenttps();
+
+                const excludedIds = ['1', '2', '5', '6', '7', '1761685492354912256'];
+                const filteredData = data.filter(item => !excludedIds.includes(item.id));
+                console.log(data, "******************777777777777777777777777777777777777777", filteredData)
+
+                setCmnPaymenttpItems(filteredData)
+                const pPaymentTp = ticDoc.paymenttp
+
+                const dataDD = filteredData.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdCmnPaymenttpItems(dataDD);
+                setDdCmnPaymenttpItem(dataDD.find((item) => item.code == pPaymentTp) || null);
+                ticDoc.paymenttp = props.ticDoc.paymenttp
+                if (ticDoc.paymenttp) {
+                    const foundItem = filteredData.find((item) => item.id === pPaymentTp);
+                    
+                    setCmnPaymenttpItem(foundItem || null);
+                    ticDoc.paymenttp = ticDoc.paymenttp
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
 
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
@@ -234,11 +294,11 @@ export default function TicTransactionsL(props) {
     /********************************************************************************/
     const handleUpdateNapDoc = async (newObj) => {
         try {
-            // //console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+            console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
             const ticDocService = new TicDocService();
             await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
         } catch (err) {
-            // //console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
+            // console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
             const _ticDoc = { ...newObj }
             _ticDoc.opis = newObj.opis
             setTicDoc(_ticDoc)
@@ -257,7 +317,7 @@ export default function TicTransactionsL(props) {
         console.log(iznos, "************************************************")
         if (!iznos) {
             return ''; // ili vratite neki podrazumevani tekst, npr. '0.00'
-        }        
+        }
         const parts = iznos.toFixed(2).split('.');
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         return parts.join('.');
@@ -299,6 +359,17 @@ export default function TicTransactionsL(props) {
                                 </span>
                             </p>
                             </b>
+                        </div>
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="paymenttp">{translations[selectedLanguage].Paymenttp} *</label>
+                            <Dropdown id="paymenttp"
+                                value={ddCmnPaymenttpItem}
+                                options={ddCmnPaymenttpItems}
+                                onChange={(e) => onInputChange(e, "options", 'paymenttp')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                            />
                         </div>
                     </div>
                 </div>
@@ -485,6 +556,14 @@ export default function TicTransactionsL(props) {
         if (type === "options") {
             // setDropdownItem(e.value);
             val = (e.target && e.target.value && e.target.value.code) || '';
+            if (name == "paymenttp") {
+                setDdCmnPaymenttpItem(e.value);
+                const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
+                console.log(foundItem, "99999999999")
+                setCmnPaymenttpItem(foundItem || null);
+                ticDoc.paymenttp = val
+                setPaymentCode(foundItem.code)
+            }
         } else {
             val = (e.target && e.target.value) || '';
         }
@@ -509,40 +588,42 @@ export default function TicTransactionsL(props) {
     };
     const handleKarteIznos = (iznos) => {
         setKarteIznos(iznos);
-        handleZaUplatu(karteIznos+naknadeIznos-popustIznos)
-    };  
+        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+    };
     const handleNaknadeIznos = (iznos) => {
         setNaknadeIznos(iznos);
-        handleZaUplatu(karteIznos+naknadeIznos-popustIznos)
-    };  
+        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+    };
     const handlePopustIznos = (iznos) => {
         setPopustIznos(iznos);
-        handleZaUplatu(karteIznos+naknadeIznos-popustIznos)
-    };        
+        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+    };
     /*********************************************************************************** */
     return (
-        <div className="fixed-height-tabpanel" style={{ height: "795px" }}>
+        <div className="fixed-height-tabpanel" style={{ height: "790px" }}>
             <Toast ref={toast} />
             <DocZaglavlje
 
             />
-            <div className="flex-grow-1">
-                <TicDocDiscountL
-                    key={refreshKey}
-                    parameter={"inputTextValue"}
-                    ticDoc={ticDoc}
-                    ticDocs={ticDocs}
-                    cmnPar={cmnPar}
-                    setVisible={true}
-                    dialog={false}
-                    docTip={props.docTip}
-                    remoteRefresh={remoteRefresh}
-                    refresh={refresh}
-                    parentC={"BL"}
-                    handlePopustIznos={handlePopustIznos}
-                    karteIznos={karteIznos}
-                />
-            </div>
+            {(props.mapa != 1 && 0 == 1) && (
+                <div className="flex-grow-1">
+                    <TicDocDiscountL
+                        key={refreshKey}
+                        parameter={"inputTextValue"}
+                        ticDoc={ticDoc}
+                        ticDocs={ticDocs}
+                        cmnPar={cmnPar}
+                        setVisible={true}
+                        dialog={false}
+                        docTip={props.docTip}
+                        remoteRefresh={remoteRefresh}
+                        refresh={refresh}
+                        parentC={"BL"}
+                        handlePopustIznos={handlePopustIznos}
+                        karteIznos={karteIznos}
+                    />
+                </div>
+            )}
             <Divider />
             <div className="flex-grow-1">
                 <TicDocsKarteL
@@ -560,9 +641,9 @@ export default function TicTransactionsL(props) {
                     handleFirstColumnClick={props.handleFirstColumnClick}
                     handleKarteIznos={handleKarteIznos}
                     zaUplatu={zaUplatu}
+                    mapa={props.mapa}
                 />
             </div>
-            <span>Naknade:</span>
 
             <div className="flex-grow-1">
                 <TicDocsNaknadeL
@@ -578,26 +659,28 @@ export default function TicTransactionsL(props) {
                     handleNaknadeIznos={handleNaknadeIznos}
                 />
             </div>
-            <div className="card">
-                <div className="p-fluid formgrid grid">
-                    <div className="field col-12 md:col-12">
+            {(props.mapa != 1) && (
+                <div className="card">
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-12">
 
-                        <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
-                        <InputTextarea
-                            id="napomena"
-                            rows={5}
-                            autoResize
-                            style={{ width: '100%' }}
-                            // cols={100}
-                            value={ticDoc.napomena}
-                            onChange={(e) => onInputChange(e, 'text', 'napomena')}
-                        />
-                        <Button icon="pi pi-save"
-                            onClick={handleNapomenaClick}
-                            className="p-button" />
+                            <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
+                            <InputTextarea
+                                id="opis"
+                                rows={5}
+                                autoResize
+                                style={{ width: '100%' }}
+                                // cols={100}
+                                value={ticDoc.opis}
+                                onChange={(e) => onInputChange(e, 'text', 'opis')}
+                            />
+                            <Button icon="pi pi-save"
+                                onClick={handleNapomenaClick}
+                                className="p-button" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
             <Dialog
                 header={translations[selectedLanguage].Objatts}
                 visible={visible}

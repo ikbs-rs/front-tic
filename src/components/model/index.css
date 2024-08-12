@@ -191,3 +191,14 @@
   height: 660px; 
   overflow-y: auto; 
 }
+
+
+.select-button-warning .p-selectbutton .p-button {
+  background-color: #f0ad4e; /* Boja za warning */
+  border-color: #f0ad4e;
+}
+
+.select-button-warning .p-selectbutton .p-button.p-highlight {
+  background-color: #ec971f; /* Tamnija nijansa za aktivno stanje */
+  border-color: #ec971f;
+}

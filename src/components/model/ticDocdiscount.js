@@ -43,7 +43,7 @@ const TicDocdiscount = (props) => {
             try {
                 const ticDocdiscountService = new TicDocdiscountService();
                 const data = await ticDocdiscountService.getDiscounttpLista(props.ticDoc.id);
-
+                // console.log(data, "###############################################")
                 setTicDocdiscountItems(data)
 
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
@@ -139,6 +139,12 @@ const TicDocdiscount = (props) => {
                 ticDocdiscount.text = e.value.name;
                 const foundItem = ticDocdiscountItems.find((item) => item.id == e.value.code);
                 ticDocdiscount.postavka = foundItem.condition;
+                if (typeof foundItem.condition === 'string' && foundItem.condition.endsWith('%')) {
+                    ticDocdiscount.procenat = foundItem.condition.slice(0, -1);
+                    ticDocdiscount.iznos = Math.round((foundItem.condition.slice(0, -1)*0.01)*props.karteIznos);
+                } else {
+                    ticDocdiscount.iznos = foundItem.condition;
+                }
             }  else {
                 setDropdownItem(e.value);
             }

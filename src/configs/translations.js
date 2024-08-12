@@ -807,7 +807,6 @@ export const translations = {
         seat: "Седиште",
         Total: "Укупно",
         KupacNext: "Купац",
-        red: "Ред",
         Kes: "Кеш",
         Kartica: "Картица",
         Cekovi: "Чекови",
@@ -830,7 +829,6 @@ export const translations = {
         print: "Штампа",
         pm:"ПМ",
         rez: "Рез.",
-        DiscountList: "Попусти листа",
         Procenat: "Проценат",
         Napomena: "Напомена",
         Postavka: "Поставка",
@@ -840,6 +838,20 @@ export const translations = {
         NaknadeI: "Накнаде износ",
         PopustI: "Попуст износ",
         ZaUplatu: "За уплату",
+        maxkol: "Максимална количина",
+        CodeArt: "Шифра Артикла",
+        TextArt: "Назив артикла",
+        CodeTp: "Шифра Типа",
+        TextTp: "Назив типа",
+        Sector: "Сектор",
+        del: "Дел",
+        address: "Адреса",
+        procenat: "Проц.",
+        apsolut: "Апсол.",
+        discountvalue: "Попуст",
+        allitem: "Све",
+        Tip: "Тип",
+        proc: "Проц"
     }
   };
   

@@ -385,7 +385,7 @@ export default function CmnParL(props) {
           header={translations[selectedLanguage].code}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="text"
@@ -409,6 +409,13 @@ export default function CmnParL(props) {
           style={{ width: "20%" }}
         ></Column>
         <Column
+          field="address"
+          header={translations[selectedLanguage].address}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>        
+        <Column
           field="activity"
           header={translations[selectedLanguage].activity}
           sortable
@@ -429,6 +436,13 @@ export default function CmnParL(props) {
           filter
           style={{ width: "20%" }}
         ></Column>
+        <Column
+          field="email"
+          header={translations[selectedLanguage].email}
+          sortable
+          filter
+          style={{ width: "20%" }}
+        ></Column>        
       </DataTable>
       <Dialog
         header={translations[selectedLanguage].Par}

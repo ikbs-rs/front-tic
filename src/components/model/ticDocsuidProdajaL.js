@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
 import { TicDocsuidService } from "../../service/model/TicDocsuidService";
+import { TicDocsdiscountService } from "../../service/model/TicDocsdiscountService";
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Divider } from 'primereact/divider';
 import { Toast } from "primereact/toast";
@@ -16,12 +17,21 @@ import { TicDocService } from "../../service/model/TicDocService";
 import { AutoComplete } from "primereact/autocomplete";
 import { Dialog } from 'primereact/dialog';
 import CmnParL from './cmn/cmnParL';
+import TicDocsdiscountL from "./ticDocsdiscountL";
+
 
 export default function TicDocsuidProdajaL(props) {
+    // console.log(props, "^^-TicDocsuidProdajaL-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
     const objName = "tic_docsuid";
+    const objCmnPar = "cmn_par";
     const toast = useRef(null);
+    const objTicDocsdiscount = "tic_docsdiscount";
+    const emptyTicDocddiscount = EmptyEntities[objTicDocsdiscount];    
+
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const emptyTicEvent = EmptyEntities[objName];
+    const emptyCmnPar = EmptyEntities[objCmnPar];
+    const [cmnPar, setCmnPar] = useState(emptyCmnPar);
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocsuids, setTicDocsuids] = useState([]);
     const [_ticDocsuids, set_ticDocsuids] = useState([]);
@@ -38,6 +48,9 @@ export default function TicDocsuidProdajaL(props) {
     let [refresh, setRefresh] = useState(0);
     const [uniqueDocs, setUniqueDocs] = useState([]);
     const [ppNobj, setPpNobj] = useState([]);
+    const [ppPrikazi, setPpPrikazi] = useState([]);
+    const [showDiscount, setShowDiscount] = useState(false);
+    
 
     /************************AUTOCOMPLIT**************************** */
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
@@ -55,6 +68,7 @@ export default function TicDocsuidProdajaL(props) {
             try {
                 const ticDocsuidService = new TicDocsuidService();
                 const data = await ticDocsuidService.getProdajaLista(props.ticDoc.id);
+                // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 const uniqueDocsArray = Array.from(new Set(data.map(item => item.event)));
                 setUniqueDocs(uniqueDocsArray);
                 // Sortiranje podataka pre postavljanja u state
@@ -71,10 +85,15 @@ export default function TicDocsuidProdajaL(props) {
                     // Ako su 'nevent', 'nartikal', i 'row' isti, poređenje po 'seat'
                     return a.seat - b.seat;
                 });
+                const updatedData = sortedData.map(item => ({
+                    ...item,
+                    show: 'no'
+                }));
 
-                setTicDocsuids(sortedData)
-                set_ticDocsuids(sortedData)
-                await setSelectedValues(sortedData.reduce((acc, item) => ({
+                setTicDocsuids(updatedData)
+                set_ticDocsuids(updatedData)
+                // console.log(sortedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                await setSelectedValues(updatedData.reduce((acc, item) => ({
                     ...acc,
                     [item.id]: item.tickettp
                 }), {}));
@@ -93,19 +112,39 @@ export default function TicDocsuidProdajaL(props) {
             try {
                 const ticDocsService = new TicDocsService();
                 const allNobjs = [];
-                const attCodes = ['11.01.', '11.02']
+                const attCodes = ['11.01.', '11.02.', '11.03.'];
                 for (const row of attCodes) {
                     for (const doc of uniqueDocs) {
                         const data = await ticDocsService.getEventattsobjcode(doc, row, 'XATTB');
                         data.forEach(item => {
-                            if (!allNobjs.some(obj => obj.nobj === item.nobj)) {
-                                allNobjs.push(item);
+                            const _obj = { doc: doc, catt: item.catt, nobj: item.nobj };
+                            if (!allNobjs.some(obj => JSON.stringify(obj) === JSON.stringify(_obj))) {
+                                allNobjs.push(_obj);
                             }
                         });
                     }
                 }
-                console.log(allNobjs, '5555555555555555555555555555555555555555555555555555555555555555', uniqueDocs)
+                // console.log(allNobjs, 'H 02 HHHHHH-555555555555555555555555555555555555555555555555555555555555555', uniqueDocs);
                 setPpNobj(allNobjs);
+
+                const newAa = [];
+
+                for (const ticDocItem of ticDocsuids) {
+                    const doc = ticDocItem.doc;
+                    // console.log(doc, 'H 02.1 HHHHHH-555555555555555555555555555555555555555555555555555555555555555');
+                    for (const obj of allNobjs) {
+                        // console.log(ticDocItem.doc, obj.doc, 'H 02.1 HHHHHH-555555555555555555555555555555555555555555555555555555555555555');
+                        if (obj.doc === doc) {
+                            const catt = obj.catt;
+                            const first = obj.nobj === 'first';
+                            const last = obj.nobj === 'last';
+
+                            newAa.push({ doc, catt, first, last });
+                        }
+                    }
+                }
+                // console.log(newAa, 'H 02 HHHHHH-555555555555555555555555555555555555555555555555555555555555555');
+                setPpPrikazi(newAa)
             } catch (error) {
                 console.error("Error fetching additional data:", error);
             }
@@ -114,6 +153,7 @@ export default function TicDocsuidProdajaL(props) {
             fetchAdditionalData();
         }
     }, [uniqueDocs]);
+
 
     useEffect(() => {
         async function fetchData() {
@@ -128,6 +168,18 @@ export default function TicDocsuidProdajaL(props) {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const cmnParService = new CmnParService();
+                const data = await cmnParService.getCmnPar(ticDoc.usr);
+                setCmnPar(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        fetchData();
+    }, []);
     const handleChange = async (e, itemId, item) => {
         console.log(itemId, "55555555555555555555555555555555", e.value, "5555555555555555", item)
         setSelectedValues(prev => ({
@@ -151,23 +203,77 @@ export default function TicDocsuidProdajaL(props) {
 
     const handleAllParr = async (e, item) => {
         e.preventDefault(); // Prevent default action if necessary
-        setRefresh(++refresh)
+
         // setHighlightedId(item.id);
-        console.log(e, "******* Clicked item details:", item);
-        // const ticDocsuidService = new TicDocsuidService();
-        // await ticDocsuidService.putTicDocsuid( item);
+        const ticDocsuidService = new TicDocsuidService();
+        await ticDocsuidService.postTicDocsuidParAll(cmnPar, ticDoc.id);
+        setRefresh(++refresh)
+        // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
+    };
+
+    const handleAllNullParr = async (e, item) => {
+        e.preventDefault(); // Prevent default action if necessary
+
+        // setHighlightedId(item.id);
+        const ticDocsuidService = new TicDocsuidService();
+        await ticDocsuidService.postTicDocsuidParAllNull(cmnPar, ticDoc.id);
+        setRefresh(++refresh)
         // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
     };
 
     const handleClick = async (item, e) => {
         e.preventDefault(); // Prevent default action if necessary
         const ticDocsuidService = new TicDocsuidService();
-        await ticDocsuidService.putTicDocsuid( item);
+        await ticDocsuidService.putTicDocsuid(item);
         setHighlightedId(item.id);
         console.log(e, "******* Clicked item details:", item);
 
     };
 
+    const handleParClick = async (item, e) => {
+        e.preventDefault(); // Prevent default action if necessary
+        const ticDocsuidService = new TicDocsuidService();
+        await ticDocsuidService.postTicDocsuidPar(cmnPar, item.docs);
+        setRefresh(++refresh)
+        setHighlightedId(item.id);
+        console.log(e, "******* Clicked item details:", item);
+
+    };
+    
+    const handleDiscountClick = async (item, e) => {
+        const _showDiscount = showDiscount?false:true
+        setShowDiscount(_showDiscount)
+        const val = _showDiscount?"show":"no"
+        const field = "show"
+        const index = ticDocsuids.findIndex((row) => row.id === item.id);
+        if (index !== -1) {
+            const updatedTicDocsuids = [...ticDocsuids];
+
+            updatedTicDocsuids[index] = {
+                ...updatedTicDocsuids[index],
+                [field]: val
+            };
+
+            setTicDocsuids(updatedTicDocsuids);
+            // console.log(updatedTicDocsuids[index][field], index, field, '333333333333333333333333333333333333333333333444444444444444444444444444444444', ticDocsuids)
+        } 
+        emptyTicDocddiscount.docs = item.docs
+        const ticDocsdiscountService = new TicDocsdiscountService();
+        const data = await ticDocsdiscountService.postTicDocsdiscount(emptyTicDocddiscount);
+        setRefresh(++refresh)               
+        console.log(e, "******* Clicked item details:", item);
+
+    };
+
+    const handleParClickNull = async (item, e) => {
+        e.preventDefault(); // Prevent default action if necessary
+        const ticDocsuidService = new TicDocsuidService();
+        await ticDocsuidService.postTicDocsuidParNull(cmnPar, item.docs);
+        setRefresh(++refresh)
+        setHighlightedId(item.id);
+        console.log(e, "******* Clicked item details:", item);
+
+    };
     const handleDeleteClick = (item, e) => {
         e.preventDefault(); // Prevent default action if necessary
         setRefresh(++refresh)
@@ -287,7 +393,7 @@ export default function TicDocsuidProdajaL(props) {
     };
     /************************** */
     const handleCmnParLDialogClose = async (newObj) => {
-
+        setCmnPar(newObj)
         setParValue(newObj.code);
         ticDoc.usr = newObj.id;
         ticDoc.npar = newObj.textx;
@@ -342,7 +448,9 @@ export default function TicDocsuidProdajaL(props) {
                                 value={props.ticDoc?.npar || ticDoc.npar}
                                 required
                             />
-                            <Button icon="pi pi-users" onClick={(e) => handleAllParr(e, "ALL")} style={{ width: '60px' }} raised severity="warning" />
+                            <Button icon="pi pi-users" onClick={(e) => handleAllParr(e, "ALL")} style={{ width: '60px' }}
+                                raised />
+                            <Button icon="pi pi-users" onClick={(e) => handleAllNullParr(e, "ALL")} style={{ width: '60px' }} raised severity="danger" />
                         </div>
                     </div>
                 </div>
@@ -353,23 +461,34 @@ export default function TicDocsuidProdajaL(props) {
 
     return (
         <>
-            <div className="card  scrollable-content">
+            <div className="card  scrollable-content" >
                 <Accordion >
                     <AccordionTab header={translations[selectedLanguage].delivery}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>
-                            <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
+                            <div className="field col-11 md:col-10" style={{ paddingTop: 0, paddingBottom: 5 }}>
                                 <label htmlFor="address">{translations[selectedLanguage].address}</label>
-                                <InputTextarea value={valueTA}
+                                <InputTextarea
+                                    value={valueTA}
                                     id="address"
                                     onChange={(e) => setValueTA(e.target.value)}
                                     rows={3} cols={90}
                                     style={{ paddingTop: 20, width: "100%" }}
                                 />
                             </div>
+                            <div className="field col-12 md:col-1" style={{ paddingLeft: 0, paddingTop: 25 }}>
+                                <Button
+                                    icon="pi pi-user-plus"
+                                    className="p-button"
+                                    style={{ width: '60px' }}
+                                    raised severity="warning"
+                                    onClick={(e) => handleClick(ticDoc, e)}
+                                ></Button>
+                            </div>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
                                 <label htmlFor="note">{translations[selectedLanguage].note}</label>
-                                <InputTextarea value={note}
+                                <InputTextarea
+                                    value={note}
                                     id="note"
                                     onChange={(e) => setNote(e.target.value)}
                                     rows={3} cols={90}
@@ -401,7 +520,7 @@ export default function TicDocsuidProdajaL(props) {
                                     </b>
                                     <span style={{ color: '#800020' }}>{` - cena: ${item?.price} ${item?.ccurr}`}</span>
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                {/* <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <div className="flex flex-wrap gap-3">
                                         {cmnTickettps.map((option) => (
                                             <div key={option.id} className="p-field-radiobutton">
@@ -418,8 +537,8 @@ export default function TicDocsuidProdajaL(props) {
                                         ))}
                                     </div>
 
-                                </div>
-                                <div className="field col-12 md:col-8" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                </div> */}
+                                {/* <div className="field col-12 md:col-8" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <div className="flex flex-wrap gap-3">
                                         <InputSwitch
                                             id={`delivery-${item.id}`}
@@ -428,8 +547,8 @@ export default function TicDocsuidProdajaL(props) {
                                         />
                                         <label htmlFor={`delivery-${item.id}`} style={{ marginRight: '1em' }}>{translations[selectedLanguage].delivery}</label>
                                     </div>
-                                </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                </div> */}
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`first-${item.id}`}
@@ -441,7 +560,7 @@ export default function TicDocsuidProdajaL(props) {
                                         <label htmlFor={`first-${item.id}`}>First</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`last-${item.id}`}
@@ -453,7 +572,7 @@ export default function TicDocsuidProdajaL(props) {
                                         <label htmlFor={`last-${item.id}`}>Last</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`uid-${item.id}`}
@@ -466,7 +585,7 @@ export default function TicDocsuidProdajaL(props) {
                                     </span>
 
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`adress-${item.id}`}
@@ -478,7 +597,71 @@ export default function TicDocsuidProdajaL(props) {
                                         <label htmlFor={`adress-${item.id}`}>Adress</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`city-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.city}
+                                            onChange={(e) => onInputChangeL(e, 'city', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`city-${item.id}`}>city</label>
+                                    </span>
+                                </div>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`zip-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.zip}
+                                            onChange={(e) => onInputChangeL(e, 'zip', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`zip-${item.id}`}>zip</label>
+                                    </span>
+                                </div>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`country-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.adress}
+                                            onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`country-${item.id}`}>country</label>
+                                    </span>
+                                </div>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`phon-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.phon}
+                                            onChange={(e) => onInputChangeL(e, 'phon', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`phon-${item.id}`}>phon</label>
+                                    </span>
+                                </div>
+                                <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`email-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.email}
+                                            onChange={(e) => onInputChangeL(e, 'email', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`email-${item.id}`}>email</label>
+                                    </span>
+                                </div>
+                                
+                                {/* <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 5 }}>
+
+                                </div> */}
+                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end'  }}>
                                     <Button
                                         icon="pi pi-user-plus"
                                         className="p-button"
@@ -487,16 +670,35 @@ export default function TicDocsuidProdajaL(props) {
                                         onClick={(e) => handleClick(item, e)}
                                     ></Button>
                                     <Button
-                                        icon="pi pi-times"
+                                        icon="pi pi-user-plus"
+                                        className="p-button"
+                                        style={{ width: '60px' }}
+                                        raised
+                                        onClick={(e) => handleParClick(item, e)}
+                                    ></Button>
+                                    <Button
+                                        icon="pi pi-user"
                                         className="p-button"
                                         style={{ width: '60px' }}
                                         raised severity="danger"
-                                        onClick={(e) => handleDeleteClick(item, e)}
+                                        onClick={(e) => handleParClickNull(item, e)}
                                     ></Button>
+                                    <Button
+                                        icon="pi pi-percentage"
+                                        className="p-button"
+                                        style={{ width: '60px' }}
+                                        raised severity="info"
+                                        onClick={(e) => handleDiscountClick(item, e)}
+                                    ></Button>                                    
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
+                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                        <TicDocsdiscountL
+                                            showDiscount={item.show}
+                                            item={item}
+                                        />
 
-                                </div>
+                                </div>                             
+
                             </div>
                         </div>
                         <hr />

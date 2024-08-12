@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
+import { TicDocService } from "../../service/model/TicDocService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -10,7 +11,7 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 
 const TicDocpayment = (props) => {
-console.log(props, "*******************TicDocpayment***********************")
+console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH**************TicDocpayment***********************")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticDocpayment, setTicDocpayment] = useState(props.ticDocpayment);
@@ -24,6 +25,7 @@ console.log(props, "*******************TicDocpayment***********************")
     const [ddCmnCcardItems, setDdCmnCcardItems] = useState(null);
     const [cmnCcardItem, setCmnCcardItem] = useState(null);
     const [cmnCcardItems, setCmnCcardItems] = useState(null);    
+    const [zbirzbirniiznos, setZbirniiznos] = useState(null); 
 
     const calendarRef = useRef(null);
 
@@ -36,15 +38,21 @@ console.log(props, "*******************TicDocpayment***********************")
                 const data = await ticDocpaymentService.getCmnPaymenttps();
 
                 setCmnPaymenttpItems(data)
-                //console.log("******************", cmnPaymenttpItem)
+                const pPaymentTp = props.ticDocpayment.paymenttp||props.paymentTip
+                console.log(pPaymentTp, props.ticDocpayment.paymenttp, props.paymentTip, "H**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnPaymenttpItems(dataDD);
-                setDdCmnPaymenttpItem(dataDD.find((item) => item.code === props.ticDocpayment.paymenttp) || null);
-                if (props.ticDocpayment.paymenttp) {
-                    const foundItem = data.find((item) => item.id === props.ticDocpayment.paymenttp);
+                setDdCmnPaymenttpItem(dataDD.find((item) => item.code == pPaymentTp) || null);
+                ticDocpayment.paymenttp = props.ticDocpayment.paymenttp||props.paymentTip
+                if (props.ticDocpayment.paymenttp||props.paymentTip) {
+                    const foundItem = data.find((item) => item.id === pPaymentTp);
+                    console.log("******************777777777777777777777777777777777777777", foundItem)
                     setCmnPaymenttpItem(foundItem || null);
+                    ticDocpayment.paymenttp = props.ticDocpayment.paymenttp||props.paymentTip
                     ticDocpayment.begda = foundItem.begda
+                    ticDocpayment.npaymenttp = foundItem.textx
+                    ticDocpayment.cpaymenttp = foundItem.code
                 }
 
             } catch (error) {
@@ -63,7 +71,7 @@ console.log(props, "*******************TicDocpayment***********************")
                 const data = await ticDocpaymentService.getCmnCcards();
 
                 setCmnCcardItems(data)
-                //console.log("******************", cmnPaymenttpItem)
+                console.log("**************33333333333333333333333333333333****", data)
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnCcardItems(dataDD);
@@ -81,6 +89,23 @@ console.log(props, "*******************TicDocpayment***********************")
         }
         fetchData();
     }, []);    
+
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+                console.log(data, "444444444444444444444444444444444444444444444444444444444444444444444444444")
+                setZbirniiznos(data.iznos)
+                ticDocpayment.amount =data.iznos
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [props.ticDoc?.id]);      
     // Autocomplit>
 
     const handleCancelClick = () => {
@@ -91,10 +116,11 @@ console.log(props, "*******************TicDocpayment***********************")
         try {
             setSubmitted(true);
             setSubmitted(true);
-
+            ticDocpayment.doc=props.ticDoc.id;
             const ticDocpaymentService = new TicDocpaymentService();
             const data = await ticDocpaymentService.postTicDocpayment(ticDocpayment);
             ticDocpayment.id = data
+            props.setActiveIndex(0)
             props.handleDialogClose({ obj: ticDocpayment, docpaymentTip: props.docpaymentTip });
             props.setVisible(false);
         } catch (err) {
@@ -154,10 +180,12 @@ console.log(props, "*******************TicDocpayment***********************")
             if (name == "paymenttp") {
                 setDdCmnPaymenttpItem(e.value);
                 const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
+                console.log(foundItem, "99999999999HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 setCmnPaymenttpItem(foundItem || null);
+                ticDocpayment.paymenttp = val
                 // ticDocpayment.text = e.value.name
-                // ticDocpayment.code = foundItem.code
-                // ticDocpayment.begda = foundItem.begda  
+                ticDocpayment.cpaymenttp = foundItem.code
+                ticDocpayment.npaymenttp = foundItem.textx  
             } else if (name == "ccard") {
                 setDdCmnCcardItem(e.value);
                 const foundItem = cmnCcardItems.find((item) => item.id === val);
@@ -226,10 +254,11 @@ console.log(props, "*******************TicDocpayment***********************")
                             <label htmlFor="amount">{translations[selectedLanguage].Amount} *</label>
                             <InputText
                                 id="amount"
-                                value={ticDocpayment.amount} onChange={(e) => onInputChange(e, "text", 'amount')}
+                                value={ticDocpayment.amount||zbirzbirniiznos} onChange={(e) => onInputChange(e, "text", 'amount')}
                             />
                         </div>
                     </div>
+                    {props.paymentTip=='K' ? (
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="ccard">{translations[selectedLanguage].ccard} *</label>
@@ -244,7 +273,8 @@ console.log(props, "*******************TicDocpayment***********************")
                             />
                             {submitted && !ticDocpayment.ccard && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                    </div>                    
+                    </div> 
+                    ):null  }                 
                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button

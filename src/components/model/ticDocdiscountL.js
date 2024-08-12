@@ -16,7 +16,7 @@ import { Button } from "primereact/button";
 import DeleteDialog from '../dialog/DeleteDialog';
 
 export default function TicDocdiscountL(props) {
-    console.log(props, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+    // console.log(props, "00-TicDocdiscountL-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -52,6 +52,7 @@ export default function TicDocdiscountL(props) {
                 if (i < 2) {
                     const ticDocdiscountService = new TicDocdiscountService();
                     const data = await ticDocdiscountService.getLista(props.ticDoc?.id);
+
                     setTicDocdiscounts(data);
                     // initFilters();
                 }
@@ -280,6 +281,7 @@ export default function TicDocdiscountL(props) {
                         setVisible={setVisible}
                         dialog={true}
                         docdiscountTip={docdiscountTip}
+                        karteIznos={props.karteIznos}
                     />
                 )}
             </Dialog>
@@ -311,6 +313,7 @@ export default function TicDocdiscountL(props) {
                         handleStornoClose={handleStornoClose}
                         dialog={true}
                         akcija={akcija}
+                        karteIznos={props.karteIznos}
                     />
                 )}
             </Dialog>

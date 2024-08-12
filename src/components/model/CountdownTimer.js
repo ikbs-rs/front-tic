@@ -31,14 +31,14 @@ const CountdownTimer = ({ targetDate }) => {
     <div>
       {timeLeft.minutes !== undefined && timeLeft.seconds !== undefined ? (
         <>
-        <span>Preostalo<br/>vreme: </span>
+        <span>Preostalo vreme: </span>
         <span><b>
           {timeLeft.minutes}:{timeLeft.seconds.toString().padStart(2, '0')}
           </b>
         </span>
         </>        
       ) : (
-        <span>Време је истекло!</span>
+        <span>Vreme Vam je isteklo!</span>
       )}
     </div>
   );

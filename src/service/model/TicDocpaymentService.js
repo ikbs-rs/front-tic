@@ -93,11 +93,7 @@ export class TicDocpaymentService {
     async postTicDocpayment(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (newObj.action === null || newObj.roll === null) {
-                throw new Error(
-                    "Items must be filled!"
-                );
-            }
+            
             const url = `${env.TIC_BACK_URL}/tic/docpayment/?sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {
@@ -117,11 +113,11 @@ export class TicDocpaymentService {
     async putTicDocpayment(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (newObj.action === null || newObj.roll === null)  {
-                throw new Error(
-                    "Items must be filled!"
-                );
-            }
+            // if (newObj.action === null || newObj.roll === null)  {
+            //     throw new Error(
+            //         "Items must be filled!"
+            //     );
+            // }
             const url = `${env.TIC_BACK_URL}/tic/docpayment/?sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {

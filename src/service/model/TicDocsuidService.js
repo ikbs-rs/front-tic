@@ -224,5 +224,101 @@ export class TicDocsuidService {
       throw error;
     }
   }
+  
+  async postTicDocsuidPar(newObj, docsId) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidpar_s&objId1=${docsId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      const response = await axios.post(url, jsonObj, { headers });
+
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
+  async postTicDocsuidParAll(newObj, docId) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparall_s&objId1=${docId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      const response = await axios.post(url, jsonObj, { headers });
+
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
+
+  async postTicDocsuidParAllNull(newObj, docId) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparallnull_s&objId1=${docId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      const response = await axios.post(url, jsonObj, { headers });
+
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  } 
+
+  async postTicDocsuidParNull(newObj, docId) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparnull_s&objId1=${docId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      const response = await axios.post(url, jsonObj, { headers });
+
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }    
 }
 

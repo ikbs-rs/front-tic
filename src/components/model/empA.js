@@ -116,7 +116,7 @@ export default function EmpA(props) {
 
     const gridItem = (product) => {
         return (
-            <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-1 clickable-item" onClick={() => f1(product.id)}>
+            <div className="col-12 sm:col-6 lg:col-12 xl:col-2 p-1 clickable-item" onClick={() => f1(product.id)}>
                 <div className="p-4 border-1 surface-border surface-card border-round">
                     <div className="flex flex-column align-items-center gap-1 py-0">
                         <img className="w-9 shadow-2 border-round" src={`${rootDir}/images/${product.image}`} alt={product.name} />

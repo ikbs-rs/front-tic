@@ -421,18 +421,18 @@ export default function TicEventartL(props) {
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cart"
-          header={translations[selectedLanguage].Code}
-          sortable
-          filter
-          style={{ width: "10%" }}
-        ></Column>
-        <Column
           field="nart"
           header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "30%" }}
+        ></Column>        
+        <Column
+          field="cart"
+          header={translations[selectedLanguage].Code}
+          sortable
+          filter
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="discount"

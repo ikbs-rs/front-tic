@@ -21,7 +21,7 @@ import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
-    // console.log(props, "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+    console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111")
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -65,6 +65,7 @@ export default function TicTransactionsL(props) {
         props.setTicDocsLVisible(false);
     };
 
+    const mapa = (props.mapa == 1) ? 5 : 8
     useEffect(() => {
         async function fetchData() {
             try {
@@ -223,7 +224,7 @@ export default function TicTransactionsL(props) {
     const footerArtikalGroup = (
         <ColumnGroup>
             <Row>
-                <Column footer={translations[selectedLanguage].Total} colSpan={7} footerStyle={{ textAlign: 'right' }} />
+                <Column footer={translations[selectedLanguage].Total} colSpan={mapa} footerStyle={{ textAlign: 'right' }} />
                 <Column footer={potrazujeTotal} />
             </Row>
         </ColumnGroup>
@@ -254,7 +255,11 @@ export default function TicTransactionsL(props) {
 
     const onDDValueChange = async (e, type, name, rowData) => {
         let val = '';
+
         rowData.tickettp = e.value?.code;
+        const tip = e.value?.name.slice(0, 1)
+
+
         val = (e.target && e.target.value && e.target.value?.code) || '';
         await setDdTickettpItem(e.value);
 
@@ -264,7 +269,14 @@ export default function TicTransactionsL(props) {
 
         updatedTicDocss[rowIndex][`${name}`] = val;
         delete updatedTicDocss[rowIndex].vreme;
-
+        if (tip == 'R') {
+            updatedTicDocss[rowIndex][`print`] = 1
+            rowData.print = 1
+        } else {
+            updatedTicDocss[rowIndex][`print`] = 0
+            rowData.print = 0
+        }
+        console.log(updatedTicDocss[rowIndex], "777777777777777777777777777777777777777777777777777777")
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
         setRefesh(++refresh)
         props.remoteRefresh()
@@ -373,6 +385,18 @@ export default function TicTransactionsL(props) {
         }
     };
 
+    const deleteDataInDatabase = async (rowData) => {
+        try {
+            console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            rowData.vreme = null;
+            const ticDocsService = new TicDocsService();
+            await ticDocsService.deleteTicDocs(rowData);
+            // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
+        } catch (err) {
+            console.error('Error updating data:', err);
+            // Dodatno rukovanje greškom, ako je potrebno
+        }
+    };
     /*********************************************************************************** */
     const toggleBodyTemplate = (rowData, name, e) => {
 
@@ -410,8 +434,11 @@ export default function TicTransactionsL(props) {
 
         updatedTicDocss[rowIndex][`${name}`] = val;
         delete updatedTicDocss[rowIndex].vreme;
-
-        await updateDataInDatabase(updatedTicDocss[rowIndex]);
+        if (name == 'del') {
+            await deleteDataInDatabase(updatedTicDocss[rowIndex]);
+        } else {
+            await updateDataInDatabase(updatedTicDocss[rowIndex]);
+        }
         setRefesh(++refresh)
         props.remoteRefresh(++refresh)
     };
@@ -474,9 +501,13 @@ export default function TicTransactionsL(props) {
     };
     const newTemplate = (rowData) => {
         return (
-            <div className="flex flex-wrap gap-1">
-                <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
-            </div>
+            <>
+                {(props.mapa !== 1) && (
+                    <div className="flex flex-wrap gap-1">
+                        <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
+                    </div>
+                )}
+            </>
         );
     };
     return (
@@ -510,6 +541,12 @@ export default function TicTransactionsL(props) {
                     style={{ width: "15%" }}
                 ></Column>
                 <Column
+                    field="nloc"
+                    header={translations[selectedLanguage].Sector}
+                    style={{ width: "10%" }}
+                    sortable
+                ></Column>
+                <Column
                     field="row"
                     header={translations[selectedLanguage].red}
                     style={{ width: "5%" }}
@@ -526,76 +563,102 @@ export default function TicTransactionsL(props) {
                     sortable
                     style={{ width: "15%" }}
                 ></Column>
-                <Column
-                    field="price"
-                    header={translations[selectedLanguage].price}
-                    sortable
-                    style={{ width: "7%" }}
-                ></Column>
-                <Column
-                    field="output"
-                    header={translations[selectedLanguage].outputL}
-                    sortable
-                    style={{ width: "5%" }}
-                ></Column>
-                <Column
-                    field="discount"
-                    header={translations[selectedLanguage].discount}
-                    sortable
-                    style={{ width: "5%" }}
-                    editor={inputEditor}
-                    // editor={(e) => inputEditor(e.rowData, e.field, e)}
-                    // body={discountTemplate}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
+                {(props.mapa != 1) && (
+                    <Column
+                        field="price"
+                        header={translations[selectedLanguage].price}
+                        sortable
+                        style={{ width: "7%" }}
+                    ></Column>
+                )}
+                {(props.mapa != 1) && (
+                    <Column
+                        field="output"
+                        header={translations[selectedLanguage].outputL}
+                        sortable
+                        style={{ width: "5%" }}
+                    ></Column>
+                )}
+                {(props.mapa != 1) && (
+                    <Column
+                        field="discount"
+                        header={translations[selectedLanguage].discount}
+                        sortable
+                        style={{ width: "5%" }}
+                        editor={inputEditor}
+                        // editor={(e) => inputEditor(e.rowData, e.field, e)}
+                        // body={discountTemplate}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
                 <Column
                     field="potrazuje"
                     header={translations[selectedLanguage].potrazuje}
                     sortable
                     style={{ width: "8%" }}
                 ></Column>
+                {(props.mapa != 1) && (
+                    <Column
+                        field="tickettp"
+                        header={translations[selectedLanguage].tickettp}
+                        style={{ width: '8%' }}
+                        editor={(e) => valueEditor(e.rowData, e.field, e)}
+                        body={valueTemplate}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
+
+                {(props.mapa != 1) && (
+                    <Column
+                        header={translations[selectedLanguage].print}
+                        field="print"
+                        dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => toggleBodyTemplate(e, `print`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
+                {(props.mapa != 1) && (
+                    <Column
+                        header={translations[selectedLanguage].pm}
+                        field="pm"
+                        dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => toggleBodyTemplate(e, `pm`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
+                {(props.mapa != 1) && (
+                    <Column
+                        header={translations[selectedLanguage].delivery}
+                        field="delivery"
+                        dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => toggleBodyTemplate(e, `delivery`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}                
+                {(props.mapa != 1) && (
+                    <Column
+                        header={translations[selectedLanguage].rez}
+                        field="rez"
+                        dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => toggleBodyTemplate(e, `rez`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
                 <Column
-                    field="tickettp"
-                    header={translations[selectedLanguage].tickettp}
-                    style={{ width: '8%' }}
-                    editor={(e) => valueEditor(e.rowData, e.field, e)}
-                    body={valueTemplate}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                {/* <Column
-                    header={translations[selectedLanguage].delivery}
-                    field="delivery"
-                    dataType="numeric"
+                    header={translations[selectedLanguage].del}
+                    field="del"
+                    // dataType="numeric"
                     style={{ width: '1%' }}
                     bodyClassName="text-center"
-                    body={(e) => toggleBodyTemplate(e, `delivery`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column> */}
-                <Column
-                    header={translations[selectedLanguage].print}
-                    field="print"
-                    dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => toggleBodyTemplate(e, `print`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                <Column
-                    header={translations[selectedLanguage].pm}
-                    field="pm"
-                    dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => toggleBodyTemplate(e, `pm`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                <Column
-                    header={translations[selectedLanguage].rez}
-                    field="rez"
-                    dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => toggleBodyTemplate(e, `rez`)}
+                    body={(e) => toggleBodyTemplate(e, `del`)}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
             </DataTable>

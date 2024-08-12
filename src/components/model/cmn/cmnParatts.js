@@ -85,7 +85,7 @@ const CmnParatts = (props) => {
         try {
             setSubmitted(true);
             cmnParatts.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            cmnParatts.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));            
+            cmnParatts.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             const cmnParattsService = new CmnParattsService();
 
             await cmnParattsService.putCmnParatts(cmnParatts);
@@ -211,7 +211,15 @@ const CmnParatts = (props) => {
                                 value={cmnParatts.text} onChange={(e) => onInputChange(e, "text", 'text')}
                             />
                         </div>
+                        <div className="field col-12 md:col-3">
+                        <label htmlFor="zzcode">{translations[selectedLanguage].Code}</label>
+                        <InputText
+                            id="zzcode"
+                            value={cmnParatts.zzcode} onChange={(e) => onInputChange(e, "text", 'zzcode')}
+                        />
+                    </div>                        
                     </div>
+
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>

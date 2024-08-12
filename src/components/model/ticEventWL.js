@@ -94,7 +94,7 @@ export default function TicEventWL(props) {
   const handleTaskComplete = (data) => {
     props.onTaskComplete(data);
   };
-  const tabHeaderTemplate = () => {
+  const TabHeaderTemplate = () => {
 
     return (
       <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} severity="secondary" raised  />
@@ -108,7 +108,7 @@ export default function TicEventWL(props) {
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={() => handleTaskComplete(false)} text raised />
       </div> */}
       <TabView activeIndex={activeTabIndex}>
-        <TabPanel headerTemplate={tabHeaderTemplate} />
+        <TabPanel headerTemplate={TabHeaderTemplate} />
         <TabPanel header={translations[selectedLanguage].Channels}>
           <TicEventobjL
             key={"XSCT"}

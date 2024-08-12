@@ -51,7 +51,7 @@ function TicDocsNaknadeL(props) {
     const footerNaknadeGroup = (
         <ColumnGroup>
             <Row>
-                <Column footer="Total" colSpan={5} footerStyle={{ textAlign: 'right' }} />
+                <Column footer="Total" colSpan={4} footerStyle={{ textAlign: 'right' }} />
                 <Column footer={potrazujeNaknadeTotal()} />
             </Row>
         </ColumnGroup>
@@ -99,12 +99,12 @@ function TicDocsNaknadeL(props) {
                     //filter
                     style={{ width: "10%" }}
                 ></Column>
-                <Column
+                {/* <Column
                     field="discount"
                     header={translations[selectedLanguage].discount}
                     sortable
                     style={{ width: "5%" }}
-                ></Column>
+                ></Column> */}
                 <Column
                     field="potrazuje"
                     header={translations[selectedLanguage].potrazuje}

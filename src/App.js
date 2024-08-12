@@ -62,7 +62,7 @@ const App = () => {
     const urlParams = new URLSearchParams(window.location.search);
     let selectedLanguage = localStorage.getItem('sl')
     //let selectedLanguage = urlParams.get('sl');
-    const [layoutMode, setLayoutMode] = useState('static');
+    const [layoutMode, setLayoutMode] = useState('overlay');
     const [lightMenu, setLightMenu] = useState(false);
     const [overlayMenuActive, setOverlayMenuActive] = useState(false);
     const [staticMenuMobileActive, setStaticMenuMobileActive] = useState(false);

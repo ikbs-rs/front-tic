@@ -41,6 +41,9 @@ const TicEvent = (props) => {
 
     const [dropdownTmpItem, setDropdownTmpItem] = useState(null);
     const [dropdownTmpItems, setDropdownTmpItems] = useState(null);
+    const [dropdownMapaItem, setDropdownMapaItem] = useState(null);
+    const [dropdownMapaItems, setDropdownMapaItems] = useState(null);
+
 
     const [ticEvent, setTicEvent] = useState(props.ticEvent);
     const [ticEvents, setTicEvents] = useState(emptyTicEvents);
@@ -95,6 +98,11 @@ const TicEvent = (props) => {
         { name: `${translations[selectedLanguage].No}`, code: '0' },
     ];
 
+    const itemsMapa = [
+        { name: `${translations[selectedLanguage].Yes}`, code: '1' },
+        { name: `${translations[selectedLanguage].No}`, code: '0' },
+    ];
+
     useEffect(() => {
         setDropdownItem(findDropdownItemByCode(props.ticEvent.status));
     }, []);
@@ -102,6 +110,11 @@ const TicEvent = (props) => {
     useEffect(() => {
         setDropdownTmpItem(findDropdownTmpItemByCode(props.ticEvent.tmp));
     }, []);
+
+    useEffect(() => {
+        setDropdownMapaItem(findDropdownMapaItemByCode(props.ticEvent.mapa));
+    }, []);
+
     // **** TIP DOGADJAJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
@@ -226,6 +239,10 @@ const TicEvent = (props) => {
         setDropdownTmpItems(itemsTmp);
     }, []);
 
+    useEffect(() => {
+        setDropdownMapaItems(itemsMapa);
+    }, []);
+
     // useEffect(() => {
     //     async function fetchData() {
     //       try { 
@@ -271,6 +288,10 @@ const TicEvent = (props) => {
 
     const findDropdownTmpItemByCode = (code) => {
         return itemsTmp.find((item) => item.code === code) || null;
+    };
+
+    const findDropdownMapaItemByCode = (code) => {
+        return itemsMapa.find((item) => item.code === code) || null;
     };
 
     // EVENT-S ????????
@@ -617,6 +638,8 @@ const TicEvent = (props) => {
                 ticEvent.npar = e.value.name
             }*/ else if (name == "tmp") {
                 setDropdownTmpItem(e.value);
+            } else if (name == "mapa") {
+                setDropdownMapaItem(e.value);
             } else {
                 setDropdownItem(e.value);
             }
@@ -852,7 +875,11 @@ const TicEvent = (props) => {
                                 placeholder="Select One"
                             />
                         </div> */}
-                        <Divider />
+                        <Divider>
+                            <div className="inline-flex align-items-center">
+                                <i className="pi pi-tag mr-2"></i>
+                            </div>
+                        </Divider>
 
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Descript}</label>
@@ -934,7 +961,11 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.endtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <Divider />
+                        <Divider>
+                            <div className="inline-flex align-items-center" style={{ borderColor: 'blue' }}>
+                                <i className="pi pi-tags mr-2"></i>
+                            </div>
+                        </Divider>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="note">{translations[selectedLanguage].Note}</label>
                             <InputText
@@ -942,7 +973,20 @@ const TicEvent = (props) => {
                                 value={ticEvent.note} onChange={(e) => onInputChange(e, "text", 'note')}
                             />
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="mapa">{translations[selectedLanguage].Mapa}</label>
+                            <Dropdown id="mapa"
+                                value={dropdownMapaItem}
+                                options={dropdownMapaItems}
+                                onChange={(e) => onInputChange(e, "options", 'mapa')}
+                                required
+                                optionLabel="name"
+                                placeholder="Select One"
+                                className={classNames({ 'p-invalid': submitted && !ticEvent.mapa })}
+                            />
+                            {submitted && !ticEvent.tmp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="status">{translations[selectedLanguage].Status}</label>
                             <Dropdown id="status"
                                 value={dropdownItem}
@@ -955,7 +999,7 @@ const TicEvent = (props) => {
                             />
                             {submitted && !ticEvent.status && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-5">
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="tmp">{translations[selectedLanguage].Template}</label>
                             <Dropdown id="tmp"
                                 value={dropdownTmpItem}

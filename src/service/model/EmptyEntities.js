@@ -453,7 +453,8 @@ const EmptyEntities =
     "loc": null,
 		"par": null,
 		"tmp": 0,
-		"season": null
+		"season": null,
+    "mapa": 1
   },
   "tic_eventagenda": {
     "id": null,
@@ -473,7 +474,8 @@ const EmptyEntities =
   "discount": 0,  
   "nart": "string",
   "color": "",
-    "icon": ""
+  "icon": "",
+  "maxkol": null
   },
 	"tic_eventartcena": {
 		"id": null,
@@ -940,7 +942,24 @@ const EmptyEntities =
     "att": null,
     "text": "",
     "begda": "",
-    "endda": ""
+    "endda": "",
+    "zzcode": ""
+  },
+  "tic_docsdiscount": {
+    "id": null,
+    "site": null,
+    "docs": null,
+    "discount": null,
+    "eksternibroj": "",
+    "procenat": "",
+    "iznos": "",
+    "discountvalue": "0",
+    "allitem": "0",
+    "proc": "0",
+    "bcontent": "",
+    "opis": "",
+    "napomena": "",
+    "postavka": ""
   }
 }
 
