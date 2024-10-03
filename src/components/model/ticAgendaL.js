@@ -244,7 +244,7 @@ export default function TicAgendaL(props) {
         scrollable
         sortField="code"        
         sortOrder={1}
-        scrollHeight="750px"
+        scrollHeight="730px"
         virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}

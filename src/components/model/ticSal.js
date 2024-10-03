@@ -1,5 +1,6 @@
 import React from 'react';
 import { translations } from '../../configs/translations';
+import env from '../../configs/env';
 
 const SalPage = () => {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -9,7 +10,7 @@ const SalPage = () => {
                 <div className="col-12">
                     <div className="card">
                         <iframe
-                            src="https://82.117.213.106/sal/"
+                            src={`${env.DOMEN}/sal/`}
                             title="Sal iframe"
                             width="100%"
                             height="760px"

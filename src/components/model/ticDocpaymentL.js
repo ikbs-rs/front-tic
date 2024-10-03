@@ -17,7 +17,7 @@ import DateFunction from "../../utilities/DateFunction";
 
 
 export default function TicDocpaymentL(props) {
-
+  console.log(props, "H props HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
   const objName = "tic_docpayment"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicDocpayment = EmptyEntities[objName]
@@ -36,14 +36,16 @@ export default function TicDocpaymentL(props) {
 
   let i = 0
   const handleCancelClick = () => {
+    props.handleTicPaymentLDialogClose(ticDocpayment)
     props.setTicPaymentLVisible(false);
+    
   };
 
   const handleConfirmClick = () => {
     props.setActiveIndex(0);
     props.setTicPaymentLVisible(false);
   };
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -251,7 +253,11 @@ export default function TicDocpaymentL(props) {
       </div>
     );
   };
-
+  const formatDatetime = (rowData, field) => {
+    if (rowData[field]) {
+        return DateFunction.formatDatetime(rowData[field]);
+    }
+};
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -306,18 +312,26 @@ export default function TicDocpaymentL(props) {
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="cpaymenttp"
-          header={translations[selectedLanguage].Code}
+          field="username"
+          header={translations[selectedLanguage].User}
           sortable
           filter
-          style={{ width: "25%" }}
+          style={{ width: "15%" }}
+        ></Column>
+        <Column
+          field="tm"
+          header={translations[selectedLanguage].tm}
+          sortable
+          filter
+          style={{ width: "15%" }}
+          body={(rowData) => formatDatetime(rowData, "tm")}
         ></Column>
         <Column
           field="npaymenttp"
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "45%" }}
+          style={{ width: "30%" }}
         ></Column>
         <Column
           field="amount"

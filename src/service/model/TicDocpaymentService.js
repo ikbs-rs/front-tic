@@ -1,6 +1,7 @@
 import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
+import DateFunction from '../../utilities/DateFunction';
 
 export class TicDocpaymentService {
 
@@ -89,11 +90,34 @@ export class TicDocpaymentService {
         }
     }
 
+    async postTicDocpayments(newObj) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+      
+            const url = `${env.TIC_BACK_URL}/tic/docpayment/_s/param/?stm=tic_docpayments_s&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+              'Content-Type': 'application/json',
+              'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(newObj, "10.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", jsonObj)
+            const response = await axios.post(url, jsonObj, { headers });
+      
+            return response.data.items;
+          } catch (error) {
+            console.error(error);
+            throw error;
+          }
+      
+    }
 
     async postTicDocpayment(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            
+            const userId = localStorage.getItem('userId')
+            newObj.usr = userId
+            newObj.tm = DateFunction.currDatetime()
             const url = `${env.TIC_BACK_URL}/tic/docpayment/?sl=${selectedLanguage}`;
             const tokenLocal = await Token.getTokensLS();
             const headers = {

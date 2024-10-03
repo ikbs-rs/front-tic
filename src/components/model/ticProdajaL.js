@@ -380,20 +380,39 @@ export default function TicProdajaL(props) {
         );
     };
     const newTemplate = (rowData) => {
+        const handleNewClick = () => {
+            console.log("Ikona je kliknuta!");
+            // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+        };
         return (
-            <div className="flex flex-wrap gap-1">
-                <Button
-                    type="button"
-                    icon="pi pi-plus"
-                    style={{ width: '24px', height: '24px' }}
-                    className="p-button-outlined p-button-danger"
-                    onClick={() => {
-                        props.handleEventProdaja(rowData)
-                    }}
-                    text
-                    raised
-                ></Button>
-            </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button
+                        type="button"
+                        icon="pi pi-plus"
+                        style={{ width: '36px', height: '26px' }}
+                        className="p-button-danger"
+                        onClick={() => {
+                            props.handleEventProdaja(rowData, true)
+                        }}
+                        // text
+                        raised
+                        tooltip={translations[selectedLanguage].NovaTransakcija}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    ></Button>
+
+                    <Button
+                        type="button"
+                        icon="pi pi-cart-plus"
+                        style={{ width: '36px', height: '26px' }}
+                        className="p-button-success"
+                        onClick={() => {
+                            props.handleEventProdaja(rowData, false)
+                        }}
+                        raised
+                        tooltip={translations[selectedLanguage].DodajDogadja}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    ></Button>
+                </div>
         );
     };
     const webTemplate = (rowData) => {
@@ -449,7 +468,7 @@ export default function TicProdajaL(props) {
                         body={newTemplate}
                         exportable={false}
                         headerClassName="w-10rem"
-                        style={{ minWidth: '4rem' }}
+                        style={{ width: '10%' }}
                     />
                     {/* <Column
                     //bodyClassName="text-center"
@@ -459,23 +478,23 @@ export default function TicProdajaL(props) {
                     style={{ minWidth: '4rem' }}
                 />
  */}
-                    <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
-                    <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
-                    <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '20%' }}></Column>
+                    <Column field="text" header={translations[selectedLanguage].event} sortable filter style={{ width: '20%' }}></Column>
+                    <Column field="npar" header={translations[selectedLanguage].Organizer} sortable filter style={{ width: '20%' }}></Column>
+                    <Column field="nloc" header={translations[selectedLanguage].Scena} sortable filter style={{ width: '20%' }}></Column>
+                    <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '10%' }}></Column>
                     <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
                     <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
-                    <Column field="nevent" header={translations[selectedLanguage].Event} sortable filter style={{ width: '15%' }}></Column>
-                    <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
-                    <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
-                    <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
-                    <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
-                    <Column
+                    {/* <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column> */}
+                    <Column field="endda" header={translations[selectedLanguage].DatEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
+                    {/* <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column> */}
+                    <Column field="endtm" header={translations[selectedLanguage].TmEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                    {/* <Column
                         //bodyClassName="text-center"
                         body={webTemplate}
                         exportable={false}
                         headerClassName="w-10rem"
                         style={{ minWidth: '4rem' }}
-                    />
+                    /> */}
                 </DataTable>
 
                 <Dialog

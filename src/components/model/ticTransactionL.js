@@ -63,6 +63,8 @@ export default function TicTransactionL(props) {
     let [refresh, setRefresh] = useState(0);
     const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
     const [akcija, setAkcija] = useState(null);
+    const [rowClick, setRowClick] = useState(true);
+    const [selectedProducts, setSelectedProducts] = useState(null);
 
     const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
 
@@ -663,8 +665,9 @@ export default function TicTransactionL(props) {
                 dataKey="id"
                 size={"small"}
                 rowClassName={rowClass}
-                selectionMode="single"
-                selection={ticDoc}
+                // selectionMode="single"
+                selectionMode={rowClick ? null : "checkbox"}
+                selection={selectedProducts}
                 loading={loading}
                 value={ticDocs}
                 header={header}
@@ -689,6 +692,10 @@ export default function TicTransactionL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 /> */}
+                <Column
+                    selectionMode="multiple"
+                    headerStyle={{ width: "3rem" }}
+                ></Column>                
                 <Column
                     //bodyClassName="text-center"
                     body={actionTemplate}

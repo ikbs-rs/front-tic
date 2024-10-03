@@ -3,54 +3,42 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { TicDocsService } from "../../service/model/TicDocsService";
 
-import { TicEventlocService } from "../../service/model/TicEventlocService";
 import { Button } from "primereact/button"; // Dodato za dugme
 import { translations } from "../../configs/translations";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { InputText } from "primereact/inputtext";
-import ConfirmDocDialog from '../dialog/ConfirmDialog';
-import ConfirmStDialog from '../dialog/ConfirmDialog';
 import { Toast } from 'primereact/toast';
-import DeleteDialog from '../dialog/DeleteDialog';
-import { Dropdown } from 'primereact/dropdown';
-import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
 import { TicDocService } from "../../service/model/TicDocService";
+import DateFunction from "../../utilities/DateFunction"
+import { EmptyEntities } from '../../service/model/EmptyEntities';
 
-export default function CmnLoclinkgrpL(props) {
-  console.log("***** props *************####### props ################### props ######", props)
-  const emptyCmnloclink = "cmn_loclink"
+export default function TicDocsprintgrpL(props) {
+  console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
 
-  //const [products, setProducts] = useState([]);
+  const objName = "tic_stampa"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const [cmnLoclinkgrps, setCmnLoclinkgrps] = useState([]);
+  const userId = localStorage.getItem('userId')
+  const emptyTicStampa = EmptyEntities[objName]
+  emptyTicStampa.doc = props.ticDoc?.id
+  emptyTicStampa.usr = userId
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [rowClick, setRowClick] = useState(true);
   const [selectedRowsData, setSelectedRowsData] = useState([]); // Novi state za selektovane redove
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [confirmStornoDocVisible, setConfirmStornoDocVisible] = useState(false);
-  const [confirmStornoStVisible, setConfirmStornoStVisible] = useState(false);
+
   const toast = useRef(null);
   const [submitted, setSubmitted] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [addItems, setAddItems] = useState(true);
   const [ticDocss, setTicDocss] = useState([]);
+  const [ticDoc, setTicDoc] = useState([]);
+  const [printCopy, setPrintCopy] = useState(false);
 
   let [refresh, setRefresh] = useState(null);
   const [componentKey, setComponentKey] = useState(0);
 
-  const [ddCmnLoctpItem, setDdCmnLoctpItem] = useState(props.loctpCode);
-  const [ddCmnLoctpItems, setDdCmnLoctpItems] = useState(null);
-  const [cmnLoctp, setCmnLoctp] = useState({});
-  const [cmnLoctps, setCmnLoctps] = useState([]);
-  const [cmnEventloc, setCmnEventloc] = useState(emptyCmnloclink);
   const [refCode, setRefCode] = useState(props.loctpCode || -1);
 
-  // useEffect(() => {
-  //   ProductService.getProductsMini().then((data) => setProducts(data));
-  // }, []);
   let i = 0
   useEffect(() => {
     async function fetchData() {
@@ -72,6 +60,7 @@ export default function CmnLoclinkgrpL(props) {
           });
 
           setTicDocss(sortedData);
+          setSelectedProducts(sortedData); 
           initFilters();
         }
       } catch (error) {
@@ -80,22 +69,36 @@ export default function CmnLoclinkgrpL(props) {
       }
     }
     fetchData();
-  }, [refresh, componentKey, refCode]);
+  }, [refresh, componentKey, refCode])
 
-
-  const handleCancelClick = () => {
-    props.handDocsprintgrpClose({ obj: props.cmnLoc });
-    props.setTicLoclinkgrpLVisible(false);
-  };
-
-  const handleStornoDokumentClick = async () => {
-    setConfirmStornoDocVisible(true);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const ticDocService = new TicDocService();
+        const data = await ticDocService.getTicDoc(props.ticDoc?.id);
+        setTicDoc(data);
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [props.ticDoc]);
 
   const handlePrintClick = async () => {
-    handlePrintSt(true);
+    handlePrintSt(0);
+    setPrintCopy(false)
   };
 
+  const handlePrintCopyClick = async () => {
+    handlePrintCopySt(1);
+    setPrintCopy(true)
+  };
+
+  const handlePrint2Click = async () => {
+    handlePrintCopySt(2);
+    setPrintCopy(true)
+  };
 
   const initFilters = () => {
     setFilters({
@@ -121,52 +124,27 @@ export default function CmnLoclinkgrpL(props) {
   };
 
 
-  // const handleDocConfirm = async () => {
-  //   console.log(selectedProducts, "@DOC@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
-  //   setSubmitted(true);
-  //   const ticDocService = new TicDocService();
-  //   await ticDocService.postDocStorno( ticDocss, props.ticDoc, 'DOC');
-
-  //   props.handDocsprintgrpClose({ obj: props.ticEvent });
-  //   toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
-  //   setVisible(false);
-  //   setConfirmStornoDocVisible(false);
-  // };
-
-  const handlePrintSt = async () => {
+  const handlePrintSt = async (tp) => {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
+    emptyTicStampa.tp = tp
+    emptyTicStampa.time = DateFunction.currDatetime()
+    emptyTicStampa.ticket = JSON.stringify(selectedProducts);
     const ticDocService = new TicDocService();
-    await ticDocService.getgetPrintgrpLista( selectedProducts, props.ticDoc);
+    await ticDocService.getPrintgrpLista(selectedProducts, emptyTicStampa, 'ORIGINAL');
 
-    // props.handDocsprintgrpClose({ obj: props.ticEvent });
-    // toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
-    // setVisible(false);
-    // setConfirmStornoStVisible(false);
   };
 
-  const showDeleteDialog = () => {
-    setDeleteDialogVisible(true);
-  };
+  const handlePrintCopySt = async (tp) => {
+    console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
+    setSubmitted(true);
+    emptyTicStampa.tp = tp
+    emptyTicStampa.time = DateFunction.currDatetime()
+    emptyTicStampa.ticket = JSON.stringify(selectedProducts);
+    const ticDocService = new TicDocService();
+    await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, 'KOPIJA');
 
-  const handleDeleteClick = async () => {
-    try {
-      setSubmitted(true);
-      // const cmnLoclinkService = new CmnLoclinkService();
-      //await cmnLoclinkService.deleteTicEvent(cmnLoc);
-      props.handleDialogClose({ obj: props.cmnLoc, eventTip: 'DELETE' });
-      props.setVisible(false);
-      hideDeleteDialog();
-    } catch (err) {
-      toast.current.show({
-        severity: "error",
-        summary: "Action ",
-        detail: `${err.response.data.error}`,
-        life: 1000,
-      });
-    }
   };
-
   const clearFilter = () => {
     initFilters();
   };
@@ -181,23 +159,36 @@ export default function CmnLoclinkgrpL(props) {
     setGlobalFilterValue(value1);
   };
 
-  const hideDeleteDialog = () => {
-    setDeleteDialogVisible(false);
-  };
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-        {/* <div className="flex flex-wrap gap-1" />
-        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
-        /> */}
-        {/* <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Dokument} icon="pi pi-copy" severity="danger" onClick={handleStornoDokumentClick} text raised />
-        </div> */}
+
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Print} icon="pi pi-print" onClick={handlePrintClick} severity="warning" text raised />
+          <Button label={translations[selectedLanguage].Print}
+            icon="pi pi-print" onClick={handlePrintClick}
+            severity="warning"
+            // text
+            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            raised />
         </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].PrintCopy}
+            icon="pi pi-print" onClick={handlePrintCopyClick}
+            severity="success"
+            // text
+            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            raised />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Print2}
+            icon="pi pi-print" onClick={handlePrint2Click}
+            severity="success"
+            // text
+            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            raised />
+        </div>        
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].Storno_transakcije}</b>
+        <b>{translations[selectedLanguage].StampKarti}</b>
         <div className="flex-grow-1"></div>
 
         <div className="flex flex-wrap gap-1">
@@ -240,7 +231,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
               <InputText
                 id="broj"
-                value={props.ticDoc.broj}
+                value={ticDoc.broj}
                 disabled={true}
               />
             </div>
@@ -248,7 +239,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="kanal">{translations[selectedLanguage].Kanal}</label>
               <InputText
                 id="kanal"
-                value={props.ticDoc.kanal}
+                value={props.channel?.text}
                 disabled={true}
               />
             </div>
@@ -256,7 +247,8 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="date">{translations[selectedLanguage].Datum}</label>
               <InputText
                 id="date"
-                value={props.ticDoc.date}
+                value={props.ticDoc.date ? DateFunction.formatDate(props.ticDoc.date) : ''}
+                
                 disabled={true}
               />
             </div>
@@ -358,25 +350,7 @@ export default function CmnLoclinkgrpL(props) {
           </ul>
         </div>
       )}
-      {/* <ConfirmDocDialog
-        visible={confirmStornoDocVisible}
-        onHide={() => setConfirmStornoDocVisible(false)}
-        onConfirm={handleDocConfirm}
-        uPoruka={'Сторниранје документа, да ли сте сигурни?'}
-      /> */}
-      {/* <ConfirmStDialog
-        visible={confirmStornoStVisible}
-        onHide={() => setConfirmStornoStVisible(false)}
-        onConfirm={handleStConfirm}
-        uPoruka={'Сторнирање ставки, да ли сте сигурни?'}
-      /> */}
-      <DeleteDialog
-        visible={deleteDialogVisible}
-        inAction="delete"
-        onHide={hideDeleteDialog}
-        onDelete={handleDeleteClick}
-      //uPoruka={'Копирањие поставки, да ли сте сигурни?'}
-      />
+
     </div>
   );
 }

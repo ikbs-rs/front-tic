@@ -23,9 +23,20 @@ import TicDocsKarteL from './ticDocsKarteL'
 import TicDocDiscountL from './ticDocdiscountL'
 import { Divider } from 'primereact/divider'
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
+import { TicDocdiscountService } from "../../service/model/TicDocdiscountService";
 
 export default function TicTransactionsL(props) {
-    // console.log(props.mapa != 1, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", props.mapa)
+    console.log(props.ticDoc)
+    const objectString = String(props.ticDoc);
+
+    if (objectString == '[object Object]') {
+        console.log('Pravi podaci u ticDoc:', JSON.stringify(props.ticDoc, null, 2));
+        // Vaš kod za slučaj kada objekat ima podatke
+    } else {
+        console.log('ticDoc se prikazuje kao [object Object]');
+        // Vaš kod za slučaj kada je `[object Object]`
+    }
+    console.log("99999999999999999999999999999999999999999999999999999999999")
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -41,7 +52,7 @@ export default function TicTransactionsL(props) {
     const [ticDocsNs, setTicDocsNs] = useState([]);
     const [ticDocsN, setTicDocsN] = useState(emptyTicDocs);
 
-    const [ticDoc, setTicDoc] = useState(_doc);
+    const [ticDoc, setTicDoc] = useState(null);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [ticDocItems, setTicDocItems] = useState(null);
 
@@ -61,7 +72,7 @@ export default function TicTransactionsL(props) {
     const [cmnParLVisible, setCmnParLVisible] = useState(false);
 
 
-    const [checkedRezervacija, setCheckedRezervacija] = useState(ticDoc?.status == "1" || false);
+    const [checkedRezervacija, setCheckedRezervacija] = useState(props.ticDoc?.status == "1" || false);
     const [checkedIsporuka, setCheckedIsporuka] = useState(props.ticDoc?.delivery == "1" || false);
     const [ddPaymenttpItem, setDdPaymenttpItem] = useState({});
     const [ddPaymenttpItems, setDdPaymenttpItems] = useState([{}]);
@@ -71,6 +82,8 @@ export default function TicTransactionsL(props) {
 
     const [checked, setChecked] = useState(false);
     let [refreshKey, setRefreshKey] = useState(0);
+    let [refreshKeyK, setRefreshKeyK] = useState(1000);
+    let [refreshKeyN, setRefreshKeyN] = useState(10000);
     const [zaUplatu, setZaUplatu] = useState(0);
     const [karteIznos, setKarteIznos] = useState(0);
     const [naknadeIznos, setNaknadeIznos] = useState(0);
@@ -81,7 +94,7 @@ export default function TicTransactionsL(props) {
     const [cmnPaymenttpItem, setCmnPaymenttpItem] = useState(null);
     const [cmnPaymenttpItems, setCmnPaymenttpItems] = useState(null);
     const [paymentCode, setPaymentCode] = useState('XXX');
-    
+    const [pBroj, setPBroj] = useState(null);
 
 
     const remoteRefresh = () => {
@@ -96,21 +109,26 @@ export default function TicTransactionsL(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-
-                    // const cmnParService = new CmnParService();
-                    // const data = await cmnParService.getCmnPar(props.ticDoc?.usr);
-                    console.log(paymentCode, "-------------------------------HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH------------------------")
-                    // setCmnPar(data);
+                if (i <= 2) {
+                    const ticDocService = new TicDocService();
+                    const data = await ticDocService.getTicDoc(props.ticDoc?.id);
+                    if (!pBroj) {
+                        setPBroj(props.ticDoc?.broj)
+                    }
+                    // console.log(data, "-555555555555555555555555------------------------------HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH------------------------", props.ticDoc)
+                    setTicDoc(data);
                     // ticDoc.npar = data.tex;
                     // ticDoc.cpar = data.code;
                     // setTicDoc(ticDoc)
+                    ++i
+                }
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
         }
         fetchData();
-    }, [paymentCode]);
+    }, [props.ticDoc?.broj]);
 
     useEffect(() => {
         async function fetchData() {
@@ -121,9 +139,10 @@ export default function TicTransactionsL(props) {
                     const data = await cmnParService.getCmnPar(props.ticDoc?.usr);
                     // //console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                     setCmnPar(data);
-                    ticDoc.npar = data.tex;
-                    ticDoc.cpar = data.code;
-                    setTicDoc(ticDoc)
+                    const _ticDoc = ticDoc
+                    const _npar = data.tex;
+                    const _cpar = data.code;
+                    setTicDoc({ ..._ticDoc, npar: _npar, _cpar: _cpar })
                 }
             } catch (error) {
                 console.error(error);
@@ -141,21 +160,37 @@ export default function TicTransactionsL(props) {
 
                 const excludedIds = ['1', '2', '5', '6', '7', '1761685492354912256'];
                 const filteredData = data.filter(item => !excludedIds.includes(item.id));
-                console.log(data, "******************777777777777777777777777777777777777777", filteredData)
 
                 setCmnPaymenttpItems(filteredData)
-                const pPaymentTp = ticDoc.paymenttp
+
 
                 const dataDD = filteredData.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnPaymenttpItems(dataDD);
-                setDdCmnPaymenttpItem(dataDD.find((item) => item.code == pPaymentTp) || null);
-                ticDoc.paymenttp = props.ticDoc.paymenttp
-                if (ticDoc.paymenttp) {
-                    const foundItem = filteredData.find((item) => item.id === pPaymentTp);
-                    
+                setDdCmnPaymenttpItem(dataDD.find((item) => item.code == ticDoc?.paymenttp) || null);
+                // ticDoc.paymenttp = props.ticDoc.paymenttp
+                // const pPaymentTp = ticDoc.paymenttp
+                // console.log(ticDoc.paymenttp, "7777777777777777", ddCmnPaymenttpItem)
+                if (ticDoc?.paymenttp) {
+                    const foundItem = filteredData.find((item) => item.id === ticDoc.paymenttp);
+
                     setCmnPaymenttpItem(foundItem || null);
-                    ticDoc.paymenttp = ticDoc.paymenttp
+                    ticDoc.paymenttp = ticDoc?.paymenttp
                 }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticDoc]);
+
+    useEffect(() => {
+        async function fetchData() {
+            console.log("##################################################################ticDocdiscountService>>#", props.ticDoc)
+            try {
+                const ticDocdiscountService = new TicDocdiscountService();
+                const data = await ticDocdiscountService.getDiscountvalue(props.ticDoc.id);
 
             } catch (error) {
                 console.error(error);
@@ -165,6 +200,10 @@ export default function TicTransactionsL(props) {
         fetchData();
     }, []);
 
+    const handlePopustIznos = (iznos) => {
+        // setPopustIznos(iznos);
+        // handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+    };
 
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
@@ -278,7 +317,7 @@ export default function TicTransactionsL(props) {
 
     const handleUpdateIspTicDoc = async (newObj) => {
         try {
-            console.log(newObj, "handleUpdateTicDoc 4444444444444444444444444444444444444444444444444")
+            // console.log(newObj, "handleUpdateTicDoc 4444444444444444444444444444444444444444444444444")
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -294,7 +333,7 @@ export default function TicTransactionsL(props) {
     /********************************************************************************/
     const handleUpdateNapDoc = async (newObj) => {
         try {
-            console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+            // console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
             const ticDocService = new TicDocService();
             await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
         } catch (err) {
@@ -312,9 +351,33 @@ export default function TicTransactionsL(props) {
         }
     }
 
+    /********************************************************************************/
+    const handleUpdatePaymenttpDoc = async (newObj) => {
+        try {
+            setTicDoc(newObj)
+            // console.log(newObj, "PAYMENT ** 00 ***************************************************####################")
+            const ticDocService = new TicDocService();
+            await ticDocService.postTicDocSetValue('tic_doc', 'paymenttp', newObj.paymenttp, newObj.id);
+            setRefreshKey(prev => prev + 1)
+            setRefreshKeyK(prev => prev + 1)
+            setRefreshKeyN(prev => prev + 1)
+        } catch (err) {
+            // console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
+            const _ticDoc = { ...newObj }
+            _ticDoc.opis = newObj.opis
+            setTicDoc(_ticDoc)
+
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    }
     /***************************************************************************************** */
     function formatNumberAsText(iznos) {
-        console.log(iznos, "************************************************")
+        // console.log(iznos, "************************************************")
         if (!iznos) {
             return ''; // ili vratite neki podrazumevani tekst, npr. '0.00'
         }
@@ -360,17 +423,27 @@ export default function TicTransactionsL(props) {
                             </p>
                             </b>
                         </div>
-                        <div className="field col-12 md:col-3">
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="broj">{translations[selectedLanguage].Transakcija}:</label>
+                            <b><p>
+                                <span style={{ fontSize: '20px' }}>
+                                    {pBroj || ticDoc?.broj || props.ticDoc?.broj}
+                                </span>
+                            </p>
+                            </b>
+                        </div>
+                        {/* <div className="field col-12 md:col-3">
                             <label htmlFor="paymenttp">{translations[selectedLanguage].Paymenttp} *</label>
                             <Dropdown id="paymenttp"
                                 value={ddCmnPaymenttpItem}
                                 options={ddCmnPaymenttpItems}
                                 onChange={(e) => onInputChange(e, "options", 'paymenttp')}
                                 required
+                                showClear
                                 optionLabel="name"
                                 placeholder="Select One"
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
@@ -500,7 +573,7 @@ export default function TicTransactionsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            // console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(rowData);
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
@@ -551,7 +624,7 @@ export default function TicTransactionsL(props) {
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
         setRefresh(++refresh)
     };
-    const onInputChange = (e, type, name) => {
+    const onInputChange = async (e, type, name) => {
         let val = ''
         if (type === "options") {
             // setDropdownItem(e.value);
@@ -559,10 +632,10 @@ export default function TicTransactionsL(props) {
             if (name == "paymenttp") {
                 setDdCmnPaymenttpItem(e.value);
                 const foundItem = cmnPaymenttpItems.find((item) => item.id === val);
-                console.log(foundItem, "99999999999")
+                // console.log(foundItem, "99999999999")
                 setCmnPaymenttpItem(foundItem || null);
                 ticDoc.paymenttp = val
-                setPaymentCode(foundItem.code)
+                setPaymentCode(foundItem?.code || null)
             }
         } else {
             val = (e.target && e.target.value) || '';
@@ -572,32 +645,39 @@ export default function TicTransactionsL(props) {
         _ticDoc[`${name}`] = val;
         if (name === `textx`) _ticDoc[`text`] = val
 
+        if (name == 'paymenttp') {
+            await handleUpdatePaymenttpDoc(_ticDoc)
+        }
+
         setTicDoc(_ticDoc);
     };
 
 
     const handleNapomenaClick = async () => {
 
-        let _ticDoc = { ...ticDoc }
+        let _ticDoc = { ...ticDoc || props.ticDoc }
         setTicDoc(_ticDoc)
         await handleUpdateNapDoc(_ticDoc)
         // remountStavke();
     };
     const handleZaUplatu = (iznos) => {
-        setZaUplatu(iznos);
+        // setZaUplatu(iznos);
     };
     const handleKarteIznos = (iznos) => {
-        setKarteIznos(iznos);
-        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+        setZaUplatu(iznos + naknadeIznos);
     };
+
+    const handleNetoIznos = (iznos) => {
+    };
+
+    const handleBrojIznos = (iznos) => {
+    };
+
     const handleNaknadeIznos = (iznos) => {
         setNaknadeIznos(iznos);
-        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
+        // handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
     };
-    const handlePopustIznos = (iznos) => {
-        setPopustIznos(iznos);
-        handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
-    };
+
     /*********************************************************************************** */
     return (
         <div className="fixed-height-tabpanel" style={{ height: "790px" }}>
@@ -610,7 +690,7 @@ export default function TicTransactionsL(props) {
                     <TicDocDiscountL
                         key={refreshKey}
                         parameter={"inputTextValue"}
-                        ticDoc={ticDoc}
+                        ticDoc={ticDoc || props.ticDoc}
                         ticDocs={ticDocs}
                         cmnPar={cmnPar}
                         setVisible={true}
@@ -627,9 +707,9 @@ export default function TicTransactionsL(props) {
             <Divider />
             <div className="flex-grow-1">
                 <TicDocsKarteL
-                    key={refreshKey}
+                    key={refreshKeyK}
                     parameter={"inputTextValue"}
-                    ticDoc={ticDoc}
+                    ticDoc={ticDoc || props.ticDoc}
                     ticDocs={ticDocs}
                     cmnPar={cmnPar}
                     setVisible={true}
@@ -640,6 +720,9 @@ export default function TicTransactionsL(props) {
                     parentC={"BL"}
                     handleFirstColumnClick={props.handleFirstColumnClick}
                     handleKarteIznos={handleKarteIznos}
+                    handlePopustIznos={handlePopustIznos}
+                    handleNetoIznos={handleNetoIznos}
+                    handleBrojIznos={handleBrojIznos}
                     zaUplatu={zaUplatu}
                     mapa={props.mapa}
                 />
@@ -647,9 +730,9 @@ export default function TicTransactionsL(props) {
 
             <div className="flex-grow-1">
                 <TicDocsNaknadeL
-                    key={refreshKey}
+                    key={refreshKeyN}
                     parameter={"inputTextValue"}
-                    ticDoc={ticDoc}
+                    ticDoc={ticDoc || props.ticDoc}
                     ticDocs={ticDocs}
                     cmnPar={cmnPar}
                     setVisible={true}
@@ -671,7 +754,7 @@ export default function TicTransactionsL(props) {
                                 autoResize
                                 style={{ width: '100%' }}
                                 // cols={100}
-                                value={ticDoc.opis}
+                                value={ticDoc?.opis || props.ticDoc?.opis}
                                 onChange={(e) => onInputChange(e, 'text', 'opis')}
                             />
                             <Button icon="pi pi-save"

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TicEventobjService } from "../../service/model/TicEventobjService";
-import { TicEventService } from "../../service/model/TicEventService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -11,11 +10,8 @@ import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
-import { ColorPicker } from 'primereact/colorpicker';
-import env from "../../configs/env"
-import axios from 'axios';
-import Token from "../../utilities/Token";
 import CustomColorPicker from "../custom/CustomColorPicker.js"
+import { TicDocService } from '../../service/model/TicDocService';
 
 const TicEventobj = (props) => {
 
@@ -27,6 +23,8 @@ const TicEventobj = (props) => {
     const [ddTicEventobjItems, setDdTicEventobjItems] = useState(null);
     const [ticEventobjItem, setTicEventobjItem] = useState(null);
     const [ticEventobjItems, setTicEventobjItems] = useState(null);
+
+    const [channell, setChannell] = useState(null);
 
     const [ddTicEventobjtpItem, setDdTicEventobjtpItem] = useState(null);
     const [ddTicEventobjtpItems, setDdTicEventobjtpItems] = useState(null);
@@ -40,6 +38,23 @@ const TicEventobj = (props) => {
     const calendarRef = useRef(null);
 
     const toast = useRef(null);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const _ticEventobj = { ...ticEventobj}
+                const ticEventobjService = new TicEventobjService();
+                const data = await ticEventobjService.getIdByItem('XPK');
+                console.log(data, "#000#####################################################################################")
+                _ticEventobj.objtp =  data.id
+                setTicEventobj({..._ticEventobj});
+            } catch (error) {
+                console.error({error});
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [props.ticEvent]);
 
     useEffect(() => {
         async function fetchData() {
@@ -68,7 +83,7 @@ const TicEventobj = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const tp = ticEventobj.objtp || -1
+                const tp = ticEventobj.objtp || 1
                 const ticEventobjService = new TicEventobjService();
                 const data = await ticEventobjService.getCmnLista('obj', tp);
                 setTicEventobjItems(data)
@@ -190,19 +205,20 @@ const TicEventobj = (props) => {
     };
 
     const onInputChange = (e, type, name, a) => {
+        console.log(e, type, name, a, "555555555555555555555555555555555555555555555555555555555555555")
         let val = ''
         let foundItem = ''
 
         if (type === "options") {
             val = (e.target && e.target.value && e.target.value.code) || '';
             switch (name) {
-                case "objtp":
-                    setDdTicEventobjtpItem(e.value);
-                    foundItem = ticEventobjtpItems.find((item) => item.id === val);
-                    setTicEventobjtpItem(foundItem || null);
-                    ticEventobj.cobjtp = foundItem.code
-                    ticEventobj.nobjtp = e.value.name
-                    break;
+                // case "objtp":
+                //     setDdTicEventobjtpItem(e.value);
+                //     foundItem = ticEventobjtpItems.find((item) => item.id === val);
+                //     setTicEventobjtpItem(foundItem || null);
+                //     ticEventobj.cobjtp = foundItem.code
+                //     ticEventobj.nobjtp = e.value.name
+                //     break;
                 case "obj":
                     setDdTicEventobjItem(e.value);
                     foundItem = ticEventobjItems.find((item) => item.id === val);
@@ -264,7 +280,7 @@ const TicEventobj = (props) => {
             </div>
             <div className="col-12">
                 <div className="card">
-                    <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
                             <label htmlFor="objtp">{translations[selectedLanguage].Objtp} *</label>
                             <Dropdown id="objtp"
@@ -278,10 +294,10 @@ const TicEventobj = (props) => {
                             />
                             {submitted && !ticEventobj.objtp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                    </div>
+                    </div> */}
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="obj">{translations[selectedLanguage].Obj} *</label>
+                            <label htmlFor="obj">{translations[selectedLanguage].ProdajniKanal} *</label>
                             <Dropdown id="obj"
                                 value={ddTicEventobjItem}
                                 options={ddTicEventobjItems}

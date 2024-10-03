@@ -9,6 +9,7 @@ import TicProdajaL from './ticProdajaL';
 import { InputText } from 'primereact/inputtext';
 import { InputSwitch } from "primereact/inputswitch";
 import AA from './AA';
+import { Tooltip } from 'primereact/tooltip';
 
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Avatar } from 'primereact/avatar';
@@ -29,11 +30,12 @@ import { Dialog } from 'primereact/dialog';
 import TicDocsprintgrpL from './ticDocsprintgrpL'
 import { SelectButton } from 'primereact/selectbutton';
 import TicDocpayment from './ticDocpayment';
+import TicProdajaPlacanje from "./ticProdajaPlacanje";
+import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 
 export default function TicProdajaTab(props) {
     const location = useLocation();
     const { channel } = location.state || {};
-    //console.log(props, "5858585858585858585858585858585858585858585858585858585858585858585858585", channel, location)
     const objEvent = "tic_event"
     const objDoc = "tic_doc"
     const codeAttInterval = '60'
@@ -43,7 +45,6 @@ export default function TicProdajaTab(props) {
     const emptyTicDoc = EmptyEntities[objDoc]
     emptyTicDoc.status = '0'
 
-    const [key, setKey] = useState(0);
     const [activeIndex, setActiveIndex] = useState(props.activeIndex || 0);
     const [totalTabs, setTotalTabs] = useState(5);
     const [inputValueI1, setInputValueI1] = useState("");
@@ -84,6 +85,7 @@ export default function TicProdajaTab(props) {
     const [ticDocsprintgrpgrpLVisible, setTicDocsprintgrpgrpLVisible] = useState(false)
 
     const iframeRef = useRef(null);
+    const deliveryRef = useRef(null);
     let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
     const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
     const [ticPayment, setTicPayment] = useState(null);
@@ -93,15 +95,98 @@ export default function TicProdajaTab(props) {
     const [paymenttpId, setPaymenttpId] = useState(null);
     const [akcija, setAkcija] = useState(null);
 
-    /*********************************************************************************************** */    
-    const objDocPayment = "tic_docpayment";     
-    const emptyTicDocpayment = EmptyEntities[objDocPayment]   
+    /*********************************************************************************************** */
+    const objDocPayment = "tic_docpayment";
+    const emptyTicDocpayment = EmptyEntities[objDocPayment]
     const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
     const [docpaymentTip, setDocpaymentTip] = useState('');
     const [paymentTip, setPaymentTip] = useState('-1')
     const [visiblePT, setVisiblePT] = useState(false);
+    /*********************************************************************************************** */
+    /*********************************************************************************************** */
+    const placanjeRef = useRef();
+    const [zbirzbirniiznos, setZbirniiznos] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
+    /********************************************************************************/
+    const handlePayTicDoc = async () => {
+        try {
+            console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+            const userId = localStorage.getItem('userId')
+            setSubmitted(true);
+            const ticDocService = new TicDocService();
+            const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+            setTicDoc(dataDoc)
+            const _ticDocpayment = { ...ticDocpayment }
+            _ticDocpayment.doc = props.ticDoc.id;
+            _ticDocpayment.paymenttp = dataDoc.paymenttp;
+            _ticDocpayment.total = placanjeRef.current.zaUplatu;
+            _ticDocpayment.usr = userId
+            _ticDocpayment.tm = DateFunction.currDatetime()
+            const ticDocpaymentService = new TicDocpaymentService();
 
-    
+            if (placanjeRef.current) {
+                if (placanjeRef.current.izborMesovito) {
+                    console.log("00.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+                    if (placanjeRef.current.preostalo > 0) {
+                        toast.current.show({
+                            severity: "error",
+                            summary: "Greška",
+                            detail: "Mora biti ceo iznos za uplatu!",
+                            life: 3000,
+                        });
+                        return;  // Prekinuti izvršenje funkcije
+                    }
+                    const newArray = []
+                    if (placanjeRef.current.kes > 0) {
+                        const kesPayment = { ..._ticDocpayment };
+                        kesPayment.amount = placanjeRef.current.kes
+                        kesPayment.paymenttp = placanjeRef.current.kesTp
+                        newArray.push(kesPayment)
+                    }
+                    if (placanjeRef.current.kartica > 0) {
+                        const karticaPayment = { ..._ticDocpayment };
+                        karticaPayment.amount = placanjeRef.current.kartica
+                        karticaPayment.paymenttp = placanjeRef.current.karticaTp
+                        newArray.push(karticaPayment)
+                    }
+                    if (placanjeRef.current.cek > 0) {
+                        const cekPayment = { ..._ticDocpayment };
+                        cekPayment.amount = placanjeRef.current.cek
+                        cekPayment.paymenttp = placanjeRef.current.cekTp
+                        newArray.push(cekPayment)
+                    }
+                    const data = await ticDocpaymentService.postTicDocpayments(newArray);
+                } else {
+                    _ticDocpayment.amount = placanjeRef.current.zaUplatu
+                    console.log("01 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", _ticDocpayment)
+                    const data = await ticDocpaymentService.postTicDocpayment(_ticDocpayment);
+                }
+
+                // const dataIznos = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+                // const _ticDocpayment = {...ticDocpayment}
+                // ticDocpayment.amount = dataIznos.iznos
+                // setTicDocpayment({..._ticDocpayment})
+
+                // ticDocpayment.id = data
+                const _ticDoc = { ...ticDoc }
+                _ticDoc.status = 2
+                setTicDoc(_ticDoc)
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 2000 });
+                // setUidKey(++uidKey)
+            }
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "TicDocpayment ",
+                detail: `${err}`,
+                life: 1000,
+            });
+        }
+    }
+    /*********************************************************************************************** */
+    /*********************************************************************************************** */
+
+
     const setTicDocpaymentDialog = (ticDocpayment) => {
         setVisiblePT(true)
         setDocpaymentTip("CREATE")
@@ -123,7 +208,7 @@ export default function TicProdajaTab(props) {
     };
     const handleDialogClosePT = (newObj) => {
         const localObj = { newObj };
-    }     
+    }
     /*********************************************************************************************** */
     const [value, setValue] = useState(null);
     const items = [
@@ -154,6 +239,24 @@ export default function TicProdajaTab(props) {
     const toast = useRef(null);
 
     const ticProdajaWRef = useRef();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+
+                setZbirniiznos(data.iznos)
+                const _ticDocpayment = { ...ticDocpayment }
+                _ticDocpayment.amount = data.iznos
+                setTicDocpayment({ ..._ticDocpayment })
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [props.ticDoc?.id]);
 
     let ii = 0
     useEffect(() => {
@@ -411,7 +514,7 @@ export default function TicProdajaTab(props) {
             const ticDocService = new TicDocService();
             const row = await ticDocService.postTicDoc(_ticDoc);
             _ticDoc.id = row.id
-            _ticDoc.broj = row.id
+            _ticDoc.broj = row.broj
             setTicDoc(_ticDoc);
             return _ticDoc;
         } catch (err) {
@@ -455,15 +558,25 @@ export default function TicProdajaTab(props) {
 
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="rezervacija" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Rezervacija}</label>
-                    <InputSwitch id="rezervacija" checked={checkedRezervacija} onChange={(e) => handleChangeRezervacija(e.value)} />
+                    <InputSwitch id="rezervacija" checked={checkedRezervacija} onChange={(e) => handleChangeRezervacija(e.value)}
+                        tooltip={translations[selectedLanguage].RezervisiKarteKupca}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    />
                 </div>
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="isporuka" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Isporuka}</label>
-                    <InputSwitch id="isporuka" checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)} />
+                    <InputSwitch id="isporuka" checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)}
+                        ref={deliveryRef}
+                        tooltip={translations[selectedLanguage].OmoguciIsporukuKupcu}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    />
                 </div>
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
-                    <InputSwitch id="naknade" checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)} />
+                    <InputSwitch id="naknade" checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)}
+                        tooltip={translations[selectedLanguage].OmoguciNaknada}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    />
                 </div>
                 {/* <>
                     <div className="fieldH flex align-items-center"><b>
@@ -515,17 +628,23 @@ export default function TicProdajaTab(props) {
                         <Button
                             // label={translations[selectedLanguage].Mapa}
                             icon="pi pi-map-marker"
-                            style={{ width: '60px' }}
-                            onClick={remountComponent} raised />
+                            style={{ width: '40px' }}
+                            onClick={remountComponent} raised
+                            tooltip={translations[selectedLanguage].SelektujSedsteSamape}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
                     </div>
                     <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].KupacNext}
                             icon="pi pi-user-edit"
                             onClick={handleClickInsideIframe}
-                            style={{ width: '60px' }}
+                            style={{ width: '40px' }}
                             // icon="pi pi-cog" 
-                            raised />
+                            raised
+                            tooltip={translations[selectedLanguage].PopuniPodatkeKupcaPopusta}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
 
                     </div>
                     <div className="flex flex-wrap gap-1" raised>
@@ -534,15 +653,21 @@ export default function TicProdajaTab(props) {
                             // label={translations[selectedLanguage].Placanje} 
                             onClick={handlePaymentClick} raised
                             severity="secondary"
-                            style={{ width: '60px' }} />
+                            style={{ width: '40px' }}
+                            tooltip={translations[selectedLanguage].OstalaPlacanja}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
                     </div>
-                    <div className="flex flex-wrap gap-1" raised>
+                    {/* <div className="flex flex-wrap gap-1" raised>
                         <Button
                             icon="pi pi-wallet"
                             // label={translations[selectedLanguage].Placanje} 
                             onClick={openCach} raised
                             severity="secondary"
-                            style={{ width: '60px' }} />
+                            style={{ width: '40px' }}
+                            tooltip={translations[selectedLanguage].PlacanjeKesom}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
                     </div>
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
@@ -550,7 +675,10 @@ export default function TicProdajaTab(props) {
                             // label={translations[selectedLanguage].Placanje} 
                             onClick={openCard} raised
                             severity="secondary"
-                            style={{ width: '60px' }} />
+                            style={{ width: '40px' }}
+                            tooltip={translations[selectedLanguage].PlacanjeKarticom}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
                     </div>
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
@@ -558,29 +686,39 @@ export default function TicProdajaTab(props) {
                             // label={translations[selectedLanguage].Placanje} 
                             onClick={openCek} raised
                             severity="secondary"
-                            style={{ width: '60px' }} />
-                    </div>
+                            style={{ width: '40px' }}
+                            tooltip={translations[selectedLanguage].PlacanjeCekovima}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
+                    </div> */}
                     <Button
                         // label={translations[selectedLanguage].Print}
                         icon="pi pi-print"
                         onClick={openStampa}
                         severity="warning"
                         raised
-                        style={{ width: '60px' }}
+                        style={{ width: '40px' }}
+                        tooltip={translations[selectedLanguage].StampaKarti}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                     />
 
                     <Button icon={expandIframe ? "pi pi-angle-double-left" : "pi pi-angle-double-right"} onClick={toggleIframeExpansion}
-                        severity="warning" raised style={{ width: '60px' }}
+                        severity="warning" raised style={{ width: '40px' }}
+                        tooltip={translations[selectedLanguage].ProsiriMapu}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                     />
                     {/* <Button icon={expandStavke ? "pi pi-angle-double-right" : "pi pi-angle-double-left"} onClick={toggleStavkeExpansion}
-                        severity="warning" raised style={{ width: '60px' }}
+                        severity="warning" raised style={{ width: '40px' }}
                     /> */}
                     <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].Cancel}
                             icon={"pi pi-sign-out"}
-                            style={{ width: '60px' }}
-                            onClick={handleCancelSales} severity="danger" raised />
+                            style={{ width: '40px' }}
+                            onClick={handleCancelSales} severity="danger" raised
+                            tooltip={translations[selectedLanguage].OdustaniOdKupovine}
+                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        />
                     </div>
                     <div>
                         <CountdownTimer targetDate={ticDoc?.endtm} />
@@ -720,6 +858,13 @@ export default function TicProdajaTab(props) {
 
     const toggleIframeExpansion = () => {
         setExpandIframe(!expandIframe);
+    };
+    
+
+    const handleDelivery = () => {
+        const newValue = !checkedIsporuka; // Promenite trenutnu vrednost
+        setCheckedIsporuka(newValue); // Ažurirajte stanje
+        handleChangeIsporuka(newValue); // Ručno pokrenite onChange funkciju
     };
 
     const toggleStavkeExpansion = () => {
@@ -921,7 +1066,7 @@ export default function TicProdajaTab(props) {
         }
     }
     /********************************************************************************/
-    const handleEventProdaja = async (newObj) => {
+    const handleEventProdaja = async (newObj, newDoc) => {
         ++ii
         let localChannel = {}
         let timeout = null
@@ -967,7 +1112,7 @@ export default function TicProdajaTab(props) {
             }
         }
 
-        if (OK) {
+        if (OK || newDoc) {
             const _ticDoc = await createDoc(_channel)
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar.code
@@ -1026,24 +1171,44 @@ export default function TicProdajaTab(props) {
             </div>
         );
     }
+    const handleAllRefresh = () => {
+    }
 
+    const handlePlacanjetip = async (value) => {
+        const _ticDocpayment = { ...ticDocpayment }
+        _ticDocpayment.paymenttp = value
+        setTicDocpayment({ ..._ticDocpayment })
+        console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
+    }
+    const handleRefresh = () => {
+    }
+    const handleFirstColumnClick = () => {
+    }
     return (
-        <div key={key}>
+        <div>
             <Toast ref={toast} />
             <div  >
                 <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                    <TabPanel header="Догађаји">
+                    <TabPanel
+                        // header="Dogadjaji"
+                        header={<span id="dogadjaji-tab">Dogadjaji</span>}
+                        tooltip={translations[selectedLanguage].IzaberiDogadja}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    >
                         <TicProdajaL
                             ticDoc={ticDoc}
                             propsParent={props}
                             handleEventProdaja={handleEventProdaja}
+                            channel={channel}
                         />
                     </TabPanel>
                     <TabPanel
-                        header="Selekcija"
+                        // header="Selekcija"
+                        header={<span id="selekcija-tab">Selekcija</span>}
                         headerClassName="flex align-items-center"
                         style={{ height: "100%" }}
-
+                        tooltip={translations[selectedLanguage].SelektujSedisteIzabranogDogadjaja}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15, showDelay: 1000, hideDelay: 300 }}
                     >
                         <TicProdajaW
                             parameter={'inputTextValue'}
@@ -1057,9 +1222,12 @@ export default function TicProdajaTab(props) {
                             numberChannell={numberChannell}
                             channells={channells}
                             channell={channell}
+                            channel={channel}
+                            akcija={akcija}
                             expandIframe={expandIframe}
                             expandStavke={expandStavke}
                             toggleIframeExpansion={toggleIframeExpansion}
+                            handleDelivery={handleDelivery}
                             ref={ticProdajaWRef}
                         />
                         <div>
@@ -1076,6 +1244,9 @@ export default function TicProdajaTab(props) {
                         </TabPanel>
                     ) : null}
                 </TabView>
+
+                <Tooltip target="#dogadjaji-tab" content={translations[selectedLanguage].IzaberiDogadja} position="bottom" />
+                <Tooltip target="#selekcija-tab" content={translations[selectedLanguage].SelektujSedisteIzabranogDogadjaja} position="bottom" />
                 {/* <div>
                     <tabHeaderTemplat />
                 </div> */}
@@ -1099,6 +1270,7 @@ export default function TicProdajaTab(props) {
                         dialog={true}
                         lookUp={true}
                         setActiveIndex={setActiveIndex}
+                        channel={channel}
                     />
                 )}
             </Dialog>
@@ -1126,11 +1298,57 @@ export default function TicProdajaTab(props) {
                         parameter={"inputTextValue"}
                         ticDoc={ticDoc}
                         handDocsprintgrpClose={handDocsprintgrpClose}
-                        dialog={true}
+                        dialog={false}
                         akcija={akcija}
+                        channel={channel}
                     />
                 )}
             </Dialog>
+            {/* <Dialog
+                header={
+                    <div className="grid grid-nogutter">
+                        <div className="col-2">
+                            <Button
+                                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                                onClick={() => {
+                                    setTicPaymentLVisible(false);
+                                }}
+                                severity="secondary" raised
+                            />
+                        </div>
+                        {(Number(props.ticDoc.status) != 2) && (
+                        <div className="col-2">
+                            <Button label={translations[selectedLanguage].Payment}
+                                severity="warning" raised 
+                                onClick={(e) => handlePayTicDoc(e)}
+                            />
+
+                        </div>
+                        )}
+                    </div>
+                }
+                visible={ticPaymentLVisible}
+                style={{ width: '55%' }}
+                onHide={() => {
+                    setTicPaymentLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticPaymentLVisible && (
+                    <TicProdajaPlacanje
+                        key={ticTransactionsKey}
+                        ticDoc={ticDoc}
+                        propsParent={props}
+                        handleFirstColumnClick={handleFirstColumnClick}
+                        //   handleAction={handleAction}
+                        setRefresh={handleRefresh}
+                        handleAllRefresh={handleAllRefresh}
+                        handlePlacanjetip={handlePlacanjetip}
+                        ref={placanjeRef}
+                        modal={true}
+                    />
+                )}
+            </Dialog> */}
             <Dialog
                 header={translations[selectedLanguage].Payment}
                 visible={visiblePT}
@@ -1152,6 +1370,7 @@ export default function TicProdajaTab(props) {
                         paymentTip={paymentTip}
                         activeIndex={activeIndex}
                         setActiveIndex={setActiveIndex}
+                        channel={channel}
                     />
                 )}
                 <div className="p-dialog-header-icons" style={{ display: 'none' }}>

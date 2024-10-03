@@ -132,10 +132,48 @@ export class TicEventService {
       throw error;
     }
   }
+  
+  async getCmnObjXVLista(obj) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/loc/_v/lista/?stm=cmn_locxv_v&sl=${selectedLanguage}`;
+
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      //console.log(url, "******************getCmnObjXcsLista*********************", response.data)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   async getCmnObjXcsLista(obj) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/loc/_v/lista/?stm=cmn_xsc_v&sl=${selectedLanguage}`;
+
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      //console.log(url, "******************getCmnObjXcsLista*********************", response.data)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getCmnObjXcsIdLista(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/loc/_v/lista/?stm=cmn_xscid_v&objid=${objId||'-1'}&sl=${selectedLanguage}`;
 
     const tokenLocal = await Token.getTokensLS();
     const headers = {
@@ -258,7 +296,7 @@ export class TicEventService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      //console.log("**************"  , response, "****************")
+      console.log("**************"  , response.data, "****************WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
       return response.data.items;
     } catch (error) {
       console.error(error);

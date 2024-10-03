@@ -24,6 +24,8 @@ import { Dialog } from 'primereact/dialog';
 import CmnParL from './cmn/cmnParL';
 import { Divider } from 'primereact/divider';
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import TicEventWL from './ticEventWL';
+
 
 
 const TicEvent = (props) => {
@@ -44,6 +46,11 @@ const TicEvent = (props) => {
     const [dropdownMapaItem, setDropdownMapaItem] = useState(null);
     const [dropdownMapaItems, setDropdownMapaItems] = useState(null);
 
+    const [ticEventWLVisible, setTicEventWLVisible] = useState(false);
+    const [ticEventartLVisible, setTicEventartLVisible] = useState(false);
+    const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
+    const [ticEventattsLVisible, setTicEventattsLVisible] = useState(false);
+
 
     const [ticEvent, setTicEvent] = useState(props.ticEvent);
     const [ticEvents, setTicEvents] = useState(emptyTicEvents);
@@ -56,6 +63,8 @@ const TicEvent = (props) => {
     const [eventsTip, setEventsTip] = useState(false);
     const [ddLocItem, setDdLocItem] = useState(null);
     const [ddLocItems, setDdLocItems] = useState(null);
+    const [ddMestoItem, setDdMestoItem] = useState(null);
+    const [ddMestoItems, setDdMestoItems] = useState(null);
     const [ddSeasonItem, setDdSeasonItem] = useState(null);
     const [ddSeasonItems, setDdSeasonItems] = useState(null);
     const [ddEventItem, setDdEventItem] = useState(null);
@@ -74,7 +83,7 @@ const TicEvent = (props) => {
     /************************AUTOCOMPLIT**************************** */
     const [cmnLocLVisible, setCmnLocLVisible] = useState(false);
     const [allLoc, setAllLocs] = useState([]);
-    const [locValue, setLocValue] = useState(props.ticEvent.cloc);
+    const [mestoValue, setLocValue] = useState(props.ticEvent.cmesto);
     const [filteredLocs, setFilteredLocs] = useState([]);
     const [debouncedLocSearch, setDebouncedLocSearch] = useState("");
     //const [searchLocTimeout, setSearchLocTimeout] = useState(null);
@@ -202,7 +211,23 @@ const TicEvent = (props) => {
         async function fetchData() {
             try {
                 const ticEventService = new TicEventService();
-                const data = await ticEventService.getCmnObjXcsLista();
+                const data = await ticEventService.getCmnObjXVLista();
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdMestoItems(dataDD);
+                setDdMestoItem(dataDD.find((item) => item.code === ticEvent.mesto) || null);
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticEventService = new TicEventService();
+                const data = await ticEventService.getCmnObjXcsIdLista(ticEvent.mesto);
+                console.log(data, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdLocItems(dataDD);
                 setDdLocItem(dataDD.find((item) => item.code === props.ticEvent.loc) || null);
@@ -212,7 +237,7 @@ const TicEvent = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [ticEvent.mesto]);
     // **** NADREDJENI DOGADJAJA  DROPDOWN
     useEffect(() => {
         async function fetchData() {
@@ -304,7 +329,7 @@ const TicEvent = (props) => {
     useEffect(() => {
         async function fetchData() {
             const cmnLocService = new CmnLocService();
-            const data = await cmnLocService.getListaLL('XSC');
+            const data = await cmnLocService.getListaLL('XV');
             setAllLocs(data);
             //setParValue(data.find((item) => item.id === props.ticEvent.par) || null);
         }
@@ -331,9 +356,9 @@ const TicEvent = (props) => {
 
     useEffect(() => {
         // Samo kada je izabrani element `null`, izvršavamo `onChange`
-        console.log(locValue, "*********************parValue*****************@@@@@@@@@***********")
-        setLocValue(locValue);
-    }, [locValue, selectedLoc]);
+        console.log(mestoValue, "*********************parValue*****************@@@@@@@@@***********")
+        setLocValue(mestoValue);
+    }, [mestoValue, selectedLoc]);
 
     const handleLocSelect = (e) => {
         // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
@@ -363,9 +388,9 @@ const TicEvent = (props) => {
     const handleCmnLocLDialogClose = (newObj) => {
         console.log(newObj, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
         setLocValue(newObj.code);
-        ticEvent.loc = newObj.id;
-        ticEvent.nloc = newObj.textx;
-        ticEvent.cloc = newObj.code;
+        ticEvent.mesto = newObj.id;
+        ticEvent.nmesto = newObj.textx;
+        ticEvent.cmesto = newObj.code;
         setTicEvent(ticEvent)
         //ticDocs.potrazuje = newObj.cena * ticDocs.output;
         setCmnLocLVisible(false);
@@ -452,14 +477,18 @@ const TicEvent = (props) => {
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
-            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
-            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const _ticEvent = { ...ticEvent }
+            _ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            _ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            _ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            _ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            _ticEvent.tm = DateFunction.currDatetime();
+            setTicEvent(ticEvent)
             const ticEventService = new TicEventService();
-            const data = await ticEventService.postTicEvent(ticEvent);
-            ticEvent.id = data
-            props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
+            const data = await ticEventService.postTicEvent(_ticEvent);
+            console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
+            _ticEvent.id = data
+            props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -470,7 +499,35 @@ const TicEvent = (props) => {
             });
         }
     };
-
+    
+    const handleCreateClickNext = async () => {
+        try {
+            setSubmitted(true);
+            const _ticEvent = { ...ticEvent }
+            _ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            _ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            _ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            _ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            _ticEvent.tm = DateFunction.currDatetime();
+           
+            const ticEventService = new TicEventService();
+            const data = await ticEventService.postTicEvent(_ticEvent);
+            console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
+            _ticEvent.id = data
+            setTicEvent(_ticEvent)
+            props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
+            setTicEventWLVisible(true);
+            // props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
+    
     const handleSaveClick = async () => {
         try {
             setSubmitted(true);
@@ -481,7 +538,8 @@ const TicEvent = (props) => {
             const ticEventService = new TicEventService();
             await ticEventService.putTicEvent(ticEvent);
             props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
-            props.setVisible(false);
+            setTicEventWLVisible(true);
+            // props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
@@ -491,7 +549,29 @@ const TicEvent = (props) => {
             });
         }
     };
-
+        
+    const handleSaveClickNext = async () => {
+        try {
+            setSubmitted(true);
+            ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
+            ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            const ticEventService = new TicEventService();
+            await ticEventService.putTicEvent(ticEvent);
+            props.handleDialogClose({ obj: ticEvent, eventTip: props.eventTip });
+            setTicEventWLVisible(true);
+            // props.setVisible(false);
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
+    
     const handleSaveDateClick = async () => {
         try {
             setSubmitted(true);
@@ -620,10 +700,10 @@ const TicEvent = (props) => {
                 setDdCtgItem(e.value);
                 ticEvent.cctg = e.value.code
                 ticEvent.nctg = e.value.name
-            } else if (name == "loc") {
-                setDdLocItem(e.value);
-                ticEvent.cloc = e.value.code
-                ticEvent.nloc = e.value.name
+            } else if (name == "mesto") {
+                setDdMestoItem(e.value);
+                ticEvent.cmesto = e.value.code
+                ticEvent.nmesto = e.value.name
             } else if (name == "season") {
                 setDdSeasonItem(e.value);
                 ticEvent.cseason = e.value.code
@@ -632,11 +712,11 @@ const TicEvent = (props) => {
                 setDdEventItem(e.value);
                 ticEvent.cevent = e.value.code
                 ticEvent.nevent = e.value.name
-            } /*else if (name == "par") {
-                setDdOrganizatorItem(e.value);
-                ticEvent.cpar = e.value.code
-                ticEvent.npar = e.value.name
-            }*/ else if (name == "tmp") {
+            } else if (name == "loc") {
+                setDdLocItem(e.value);
+                ticEvent.cloc = e.value.code
+                ticEvent.nloc = e.value.name
+            } else if (name == "tmp") {
                 setDropdownTmpItem(e.value);
             } else if (name == "mapa") {
                 setDropdownMapaItem(e.value);
@@ -679,7 +759,7 @@ const TicEvent = (props) => {
                         setDebouncedSearch(e.target.value);
                     }, 400);
                     break;
-                case "loc":
+                case "mesto":
                     if (selectedLoc === null) {
                         setLocValue(e.target.value.textx || e.target.value);
                     } else {
@@ -687,9 +767,9 @@ const TicEvent = (props) => {
                         setLocValue(e.target.value.textx || e.target.value.textx);
                     }
                     console.log(e.target, "###########################-auto-##################setDebouncedLocSearch############", e.target.value)
-                    ticEvent.loc = e.target.value.id
-                    ticEvent.nloc = e.target.value.textx
-                    ticEvent.cloc = e.target.value.code
+                    ticEvent.mesto = e.target.value.id
+                    ticEvent.nmesto = e.target.value.textx
+                    ticEvent.cmesto = e.target.value.code
                     // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
                     clearTimeout(searchTimeout);
                     timeout = setTimeout(() => {
@@ -736,7 +816,7 @@ const TicEvent = (props) => {
             </>
         );
     };
-    const locTemplate = (item) => {
+    const mestoTemplate = (item) => {
         return (
             <>
                 <div>
@@ -751,7 +831,9 @@ const TicEvent = (props) => {
         );
     };
 
-
+    const handleWebMapDialogClose = (newObj) => {
+        setTicEventWLVisible(false);
+    };
 
 
     return (
@@ -828,31 +910,31 @@ const TicEvent = (props) => {
                                 placeholder="Select One"
                             />
                         </div> */}
-                        <div className="field col-12 md:col-4">
-                            <label htmlFor="loc">{translations[selectedLanguage].Venue} *</label>
+                        <div className="field col-12 md:col-2">
+                            <label htmlFor="mesto">{translations[selectedLanguage].MestoOdrzavanja} *</label>
                             <div className="p-inputgroup flex-1">
                                 <AutoComplete
-                                    value={locValue}
+                                    value={mestoValue}
                                     suggestions={filteredLocs}
                                     completeMethod={() => { }}
                                     onSelect={handleLocSelect}
-                                    onChange={(e) => onInputChange(e, "auto", 'loc')}
-                                    itemTemplate={locTemplate} // Koristite itemTemplate za prikazivanje objekata
+                                    onChange={(e) => onInputChange(e, "auto", 'mesto')}
+                                    itemTemplate={mestoTemplate} // Koristite itemTemplate za prikazivanje objekata
                                     placeholder="Pretraži"
                                 />
                                 <Button icon="pi pi-search" onClick={(e) => handleLocLClick(e, "local")} className="p-button" />
                             </div>
                         </div>
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="loc">...</label>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="mesto">...</label>
                             <InputText
-                                id="nloc"
-                                value={ticEvent.nloc}
+                                id="nmesto"
+                                value={ticEvent.nmesto}
                                 required
                             />
                         </div>
-                        {/* <div className="field col-12 md:col-6">
-                            <label htmlFor="loc">{translations[selectedLanguage].Venue} *</label>
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="loc">{translations[selectedLanguage].Scena} *</label>
                             <Dropdown id="loc"
                                 value={ddLocItem}
                                 options={ddLocItems}
@@ -863,7 +945,7 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.loc })}
                             />
                             {submitted && !ticEvent.loc && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div> */}
+                        </div>
                         {/* <div className="field col-12 md:col-6">
                             <label htmlFor="event">{translations[selectedLanguage].ParentEvent}</label>
                             <Dropdown id="event"
@@ -927,15 +1009,6 @@ const TicEvent = (props) => {
 
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="roenddal">{translations[selectedLanguage].DatEvent} *</label>
-                            <Calendar
-                                value={endda}
-                                onChange={(e) => onInputChange(e, "Calendar", 'endda')}
-                                showIcon
-                                dateFormat="dd.mm.yy"
-                            />
-                        </div>
-                        <div className="field col-12 md:col-3">
                             <label htmlFor="begtm">{translations[selectedLanguage].TmProd}</label>
                             <InputText
                                 id="begtm"
@@ -947,6 +1020,15 @@ const TicEvent = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !ticEvent.begtm })}
                             />
                             {submitted && !ticEvent.begtm && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                        </div>                        
+                        <div className="field col-12 md:col-3">
+                            <label htmlFor="roenddal">{translations[selectedLanguage].DatEvent} *</label>
+                            <Calendar
+                                value={endda}
+                                onChange={(e) => onInputChange(e, "Calendar", 'endda')}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="endtm">{translations[selectedLanguage].TmEvent}</label>
@@ -1028,13 +1110,22 @@ const TicEvent = (props) => {
                             <div className="flex-grow-1"></div>
                             <div className="flex flex-wrap gap-1">
                                 {(props.eventTip === 'CREATE') ? (
-                                    <Button
-                                        label={translations[selectedLanguage].Create}
-                                        icon="pi pi-check"
-                                        onClick={handleCreateClick}
-                                        severity="success"
-                                        outlined
-                                    />
+                                    <>
+                                        <Button
+                                            label={translations[selectedLanguage].Create}
+                                            icon="pi pi-check"
+                                            onClick={handleCreateClick}
+                                            severity="success"
+                                            outlined
+                                        />
+                                        <Button
+                                            label={translations[selectedLanguage].CreateNext}
+                                            icon="pi pi-check"
+                                            onClick={handleCreateClickNext}
+                                            severity="success"
+                                            outlined
+                                        />
+                                    </>
                                 ) : null}
                                 {(props.eventTip !== 'CREATE' && props.eventTip !== 'COPY') ? (
                                     <>
@@ -1070,6 +1161,13 @@ const TicEvent = (props) => {
                                             severity="success"
                                             outlined
                                         />
+                                        <Button
+                                            label={translations[selectedLanguage].SaveNext}
+                                            icon="pi pi-check"
+                                            onClick={handleSaveClickNext}
+                                            severity="success"
+                                            outlined
+                                        />                                        
                                     </>
                                 ) : null}
                                 {(props.eventTip === 'COPY') ? (
@@ -1160,9 +1258,33 @@ const TicEvent = (props) => {
                         dialog={true}
                         lookUp={true}
                         parentData={true}
-                        loctpId={'XSC'}
+                        loctpId={'XV'}
                     />}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].EventWList}
+                visible={ticEventWLVisible}
+                style={{ width: '90%' }}
+                onHide={() => {
+                    setTicEventWLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticEventWLVisible &&
+                    <TicEventWL
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        //setTicArtLVisible={setTicArtLVisible} 
+                        setTicEventWLVisible={setTicEventWLVisible}
+                        setTicEventobjLVisible={setTicEventobjLVisible}
+                        setTicEventartLVisible={setTicEventartLVisible}
+                        setTicEventattsLVisible={setTicEventattsLVisible}
+                        dialog={true}
+                        lookUp={true}
+                        eventArt={true}
+                        onTaskComplete={handleWebMapDialogClose}
+                    />}
+            </Dialog>            
         </div>
     );
 };

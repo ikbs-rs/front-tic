@@ -14,7 +14,7 @@ export class TicDocsdiscountService {
 
     try {
       const response = await axios.get(url, { headers });
-      return response.data.items||response.data.item;
+      return response.data.items || response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
@@ -25,17 +25,17 @@ export class TicDocsdiscountService {
     const url = `${env.TIC_BACK_URL}/tic/docdiscount/_v/lista/?stm=tic_docsdiscounttp_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
-        Authorization: tokenLocal.token
+      Authorization: tokenLocal.token
     };
 
     try {
-        const response = await axios.get(url, { headers });
-        return response.data.item;
+      const response = await axios.get(url, { headers });
+      return response.data.item;
     } catch (error) {
-        console.error(error);
-        throw error;
+      console.error(error);
+      throw error;
     }
-}
+  }
 
   async getTicDocsdiscounts() {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -61,7 +61,7 @@ export class TicDocsdiscountService {
     const headers = {
       Authorization: tokenLocal.token
     };
-    
+
     try {
       const response = await axios.get(url, { headers });
       return response.data.items;
@@ -88,7 +88,7 @@ export class TicDocsdiscountService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      //console.log("**************"  , response, "****************")
+      // console.log("00000000000000000000000000**************", response, "****************000000000000000000000")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -112,7 +112,7 @@ export class TicDocsdiscountService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "9999999999999999999999999999999HHHHHH99999999999999999999999")
+      // console.log(newObj, "9999999999999999999999999999999HHHHHH99999999999999999999999")
       const response = await axios.put(url, jsonObj, { headers });
       //console.log("**************"  , response, "****************")
       return response.data.items;
@@ -125,6 +125,7 @@ export class TicDocsdiscountService {
 
   async deleteTicDocsdiscount(newObj) {
     try {
+      // console.log(newObj, "9HHHHHHHHHHHHHH999999999999999999999999999999HHHHHH99999999999999999999999")
       const url = `${env.TIC_BACK_URL}/tic/docsdiscount/${newObj.id}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
@@ -138,5 +139,67 @@ export class TicDocsdiscountService {
     }
 
   }
+  async postTicDocsdiscountAll(newObj) {
+    try {
+      // console.log(newObj, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const url = `${env.TIC_BACK_URL}/tic/docsdiscount/_s/param/?stm=tic_docsdiscountall_s&par1=${newObj.event}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      // console.log("00000000000000000000000000**************", response, "****************000000000000000000000")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
+  async delTicDocsdiscountEventAll(newObj) {
+    try {
+      // console.log(newObj, "H00HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const url = `${env.TIC_BACK_URL}/tic/docsdiscount/_s/param/?stm=tic_deldocsdiscounteventall_s&par1=${newObj.event}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("00000000000000000000000000**************", response, "****************000000000000000000000")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
+  async delTicDocsdiscountAll(newObj) {
+    try {
+      // console.log(newObj, "H00HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const url = `${env.TIC_BACK_URL}/tic/docsdiscount/_s/param/?stm=tic_deldocsdiscountall_s&par1=${newObj.event}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("00000000000000000000000000**************", response, "****************000000000000000000000")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
 }
 

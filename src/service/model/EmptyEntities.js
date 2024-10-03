@@ -50,7 +50,8 @@ const EmptyEntities =
     "color": "",
     "icon": "",
     "amount": "1",
-    "combining": "1"
+    "combining": "1",
+			"ctp": ""
   },
   "tic_artcena": {
     "id": null,
@@ -267,7 +268,11 @@ const EmptyEntities =
     "reservation": null,
     "delivery": null,
     "paymenttp": null,
-    "services": "1"
+    "services": "1",
+    "nusrsys": "",
+    "nchannel": "",
+    "nusr": "",
+    "printfiskal": "1"
   },
 	"tic_docb": {
 		"id": null,
@@ -310,7 +315,8 @@ const EmptyEntities =
     "tmbck": "",
     "usr": null,
     "tel": "",
-    "email": ""      
+    "email": "",
+    "region": null    
 	},  
   "tic_docdiscount": {
     "id": null,
@@ -332,7 +338,11 @@ const EmptyEntities =
 			"paymenttp": null,
 			"amount": null,
 			"bcontent": null,
-      "ccard": null
+      "ccard": null,
+			"total": null,
+			"tm": "",
+			"usr": null,
+			"status": null
 	},  
   "tic_docs": {
     "id": null,
@@ -417,7 +427,8 @@ const EmptyEntities =
     "country": "",
     "phon": "",
     "email": "",
-    "par": null
+    "par": null,
+    "birthday": ""
   },
   "tic_docvr": {
     "id": null,
@@ -454,7 +465,9 @@ const EmptyEntities =
 		"par": null,
 		"tmp": 0,
 		"season": null,
-    "mapa": 1
+    "mapa": 1,
+    "tm": "",
+		"mesto": null
   },
   "tic_eventagenda": {
     "id": null,
@@ -493,9 +506,9 @@ const EmptyEntities =
 	"tic_eventartlink": {
 			"id": null,
 			"site": null,
-			"eventart1": null,
-			"eventart2": null,
-			"tp": "A"
+			"art": null,
+			"eventart": null,
+			"value": "A"
 	},
   "tic_eventatttp": {
     "id": null,
@@ -827,8 +840,18 @@ const EmptyEntities =
   "tic_stampa": {
     "id": null,
     "site": null,
-    "docs": null,
-    "time": ""
+    "doc": null,
+    "time": "",
+    "bcontent": "",
+			"valid": null,
+			"tp": "",
+			"vr": null,
+			"barcode": "",
+			"mail": "",
+			"usr": null,
+			"tmupdate": "",
+			"link": "",
+			"ticket": ""
   },
   "cmn_loc": {
     "id": null,
@@ -917,7 +940,9 @@ const EmptyEntities =
     "endda": "",
     "docid": "",
     "country": "",
-    "email": ""
+    "email": "",
+		"countryid": null,
+    "birthday": ""
   },
   "cmn_parlink": {
     "id": null,
@@ -951,15 +976,15 @@ const EmptyEntities =
     "docs": null,
     "discount": null,
     "eksternibroj": "",
-    "procenat": "",
-    "iznos": "",
+    "procenat": "0",
+    "iznos": "0",
     "discountvalue": "0",
     "allitem": "0",
     "proc": "0",
     "bcontent": "",
     "opis": "",
     "napomena": "",
-    "postavka": ""
+    "postavka": "0"
   }
 }
 

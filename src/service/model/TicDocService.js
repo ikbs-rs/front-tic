@@ -1,8 +1,49 @@
 import axios from 'axios';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
+import { PDFDocument } from 'pdf-lib';
+import { TicStampaService } from "../../service/model/TicStampaService";
+import DateFunction from '../../utilities/DateFunction';
 
 export class TicDocService {
+
+  async getObjTpL(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/obj/_v/lista/?stm=cmn_objtpcode_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********TicDocService*************",url)
+      const response = await axios.get(url, { headers });
+      console.log("**********TicDocService*************",response.data)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getDocPaymentS(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_docpayments_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********TicDocService*************",url)
+      const response = await axios.get(url, { headers });
+      console.log("**********TicDocService*************",response.data)
+      return response.data.item||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   async getDocZbirniiznos(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -22,6 +63,45 @@ export class TicDocService {
       throw error;
     }
   }
+
+  async getDocCountPrint(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doccountprint_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********TicDocService*************",url)
+      const response = await axios.get(url, { headers });
+      console.log("**********TicDocService*************",response.data)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+  
+  async getDocCountPay(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doccountpay_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********getDocCountPay*************",url)
+      const response = await axios.get(url, { headers });
+      console.log("**********getDocCountPay*************",response.data)
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+  
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doc_v&sl=${selectedLanguage}`;
@@ -80,7 +160,7 @@ export class TicDocService {
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    //console.log(url, "* 0000000000000000000000000000000000000000 ******************************************************************")
+    console.log(url, "HHHHH 01111111000000000000000000000000000000000000000 ******************************************************************")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -459,7 +539,7 @@ export class TicDocService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      console.log("5555555555555555555551111**************", response, "****************")
+      // console.log("5555555555555555555551111**************", response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -471,7 +551,7 @@ export class TicDocService {
   async postTicDocSetValue(par1, par2, objId1, objId2) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-
+      console.log("5555555555555555555551111************** PAYMENTTP ****************", par1, par2, objId1, objId2)
       const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_setvalue_s&par1=${par1}&par2=${par2}&objId1=${objId1}&objId2=${objId2}&sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {
@@ -513,42 +593,231 @@ export class TicDocService {
 
   }
 
-  async getgetPrintgrpLista(newObj, ticDoc) {
+  async getPrintgrpLista(newObj, ticStampa, tpStampa) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-  
+    const userObj = localStorage.getItem('user')
+    const user = userObj.username
+    const tm = DateFunction.currDatetime
+    const ticket = newObj.map(item => ({
+      nevent: item.nevent,
+      nart: item.nart,
+      seat: item.seat,
+      row: item.row,
+      potrazuje: item.potrazuje,
+      user: user,
+      tp:tpStampa,
+      tm: tm
+    }));
+    const ticketJsonString = JSON.stringify(ticket);
+    ticStampa.tp = tpStampa
+    ticStampa.ticket = ticketJsonString
+    ticStampa.tmupdate = user
+    const par1 = ''
+  console.log(ticket, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     /******************************************************************************* */
     const newArr = newObj.map(obj => obj.id);
     localStorage.removeItem('docsIds');
     localStorage.setItem('docsIds', JSON.stringify(newArr));
     /******************************************************************************* */
-    const url = `https://82.117.213.106/sal/print-tickets`;
+    const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docprintlog_s&par1=${par1}&par2=${newObj.id}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
     };
 
-    
-    const baseUrl = `https://82.117.213.106/sal/print-tickets`;
+    const baseUrl = `${env.DOMEN}/sal/print-tickets`;
     const urlWithToken = `${baseUrl}?token=${tokenLocal.token}`;
     window.open(urlWithToken, '_blank');
+
+    const ticStampaService = new TicStampaService();
+    await ticStampaService.postTicStampa(ticStampa);
   
-    // try {
-    //   console.log("**********TicDocService*************", url)
-    //   const response = await axios.get(url, { headers });
-    //   console.log("Response data: ", response.data);
+    try {
+      console.log("**********TicDocService*************", url)
+      const response = await axios.get(url, { headers });
+      console.log("Response data: ", response.data);
   
-    //   const newWindowUrl = response.data.item;
-    //   window.open(newWindowUrl, '_blank'); 
+      const newWindowUrl = response.data.item;
+      window.open(newWindowUrl, '_blank'); 
       
-    // } catch (error) {
-    //   console.error("Error fetching the URL: ", error);
-    //   if (error.response) {
-    //     console.error("Response status: ", error.response.status);
-    //     console.error("Response data: ", error.response.data);
-    //   }
-    //   throw error;
-    // }
+    } catch (error) {
+      console.error("Error fetching the URL: ", error);
+      if (error.response) {
+        console.error("Response status: ", error.response.status);
+        console.error("Response data: ", error.response.data);
+      }
+      throw error;
+    }
+  }
+
+  async getPrintgrpLPT(newObj, ticStampa, tpStampa) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const userObj = localStorage.getItem('user')
+    const user = userObj.username
+    const tm = DateFunction.currDatetime
+    const ticket = newObj.map(item => ({
+      nevent: item.nevent,
+      nart: item.nart,
+      seat: item.seat,
+      row: item.row,
+      potrazuje: item.potrazuje,
+      user: user,
+      tp:tpStampa,
+      tm: tm
+    }));
+    const ticketJsonString = JSON.stringify(ticket);
+    ticStampa.tp = tpStampa
+    ticStampa.ticket = ticketJsonString
+    ticStampa.tmupdate = user
+    const par1 = '';
+  
+    const newArr = newObj.map(obj => obj.id);
+    localStorage.removeItem('docsIds');
+    localStorage.setItem('docsIds', JSON.stringify(newArr));
+  
+    const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docprintlog_s&par1=${par1}&par2=${newObj.id}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token,
+    };
+  
+    const baseUrl = `${env.DOMEN}/sal/print-tickets`;
+    const urlWithToken = `${baseUrl}?token=${tokenLocal.token}`;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none'; // Skrivamo iframe
+    iframe.src = urlWithToken;
+    fetchAndPrintPdf2(urlWithToken)
+
+    const ticStampaService = new TicStampaService();
+    await ticStampaService.postTicStampa(ticStampa);
+    // document.body.appendChild(iframe);
+
+    // iframe.onload = function() {
+    //   iframe.contentWindow.print(); // Automatski pozivamo štampanje kada se učita PDF
+    // };
+    async function fetchAndPrintPdf(url) {
+      try {
+        const response = await fetch(url);
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || contentType !== 'application/pdf') {
+          throw new Error(`Fetched content is not a valid PDF -> ${contentType}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+    
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+    
+        const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+    
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = blobUrl;
+    
+        document.body.appendChild(iframe);
+        
+        iframe.onload = function () {
+          iframe.contentWindow.print();
+        };
+      } catch (error) {
+        console.error('Error fetching or printing the PDF: ', error);
+      }
+    }
+//**********************************************************************************
+async function fetchAndPrintPdf1(url) {
+  try {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+
+    const text = await response.text();
+
+    // Pretraga URL-a PDF-a unutar HTML sadržaja
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const embedTag = doc.querySelector('embed');
+    const objectTag = doc.querySelector('object');
+    
+    let pdfUrl;
+    if (embedTag) {
+      pdfUrl = embedTag.src;
+    } else if (objectTag) {
+      pdfUrl = objectTag.data;
+    }
+
+    if (pdfUrl) {
+      // Otvaramo PDF URL u iframe-u za automatsko štampanje
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = pdfUrl;
+
+      document.body.appendChild(iframe);
+
+      iframe.onload = function () {
+        iframe.contentWindow.print();
+      };
+    } else {
+      throw new Error('PDF URL not found in HTML content.');
+    }
+    
+  } catch (error) {
+    console.error('Error fetching or printing the PDF: ', error);
+  }
+}
+
+//**********************************************************************************
+async function fetchAndPrintPdf2(url) {
+  try {
+    console.log(url, "88888888888888888888888888888888888888888")
+    const response = await fetch(url);
+    
+    // Provera da li je sadržaj validan
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+
+    // Kreiramo Blob od odgovora
+    const blob = await response.blob();
+
+    // Kreiramo Blob URL
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Kreiramo iframe i dodajemo ga u DOM
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';  // Sakrivamo iframe
+    iframe.src = blobUrl;  // Postavljamo Blob URL kao src
+
+    document.body.appendChild(iframe);
+
+    iframe.onload = function() {
+      iframe.contentWindow.print();  // Automatski pozivamo štampanje kada se učita PDF
+    };
+    
+  } catch (error) {
+    console.error('Error fetching or printing the PDF: ', error);
+  }
+}
+
+    try {
+      console.log("**********TicDocService*************", url);
+      const response = await axios.get(url, { headers });
+      console.log("Response data: ", response.data);
+  
+      const pdfUrl = response.data.item;
+      
+    } catch (error) {
+      console.error("Error fetching the URL: ", error);
+      if (error.response) {
+        console.error("Response status: ", error.response.status);
+        console.error("Response data: ", error.response.data);
+      }
+      throw error;
+    }
   }
   
+
+
 }
 

@@ -59,6 +59,9 @@ export class TicDocsService {
   }
 
   async getNaknadeLista(objId) {
+    if (!objId) {
+      return null
+    }
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docsnaknade_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();

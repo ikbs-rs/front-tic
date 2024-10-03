@@ -286,6 +286,7 @@ export default function TicDocdeliveryL(props) {
           selectionMode="multiple"
           headerStyle={{ width: "3rem" }}
         ></Column>
+        <Column field="broj" header={translations[selectedLanguage].Transakcija}></Column>
         <Column field="cpar" header={translations[selectedLanguage].cpar}></Column>
         <Column field="npar" header={translations[selectedLanguage].npar}></Column>
         <Column field="adress" header={translations[selectedLanguage].address}></Column>

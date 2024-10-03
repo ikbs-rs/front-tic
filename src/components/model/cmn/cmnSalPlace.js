@@ -1,5 +1,6 @@
 import React from 'react';
 import { translations } from '../../../configs/translations';
+import env from '../../../configs/env';
 
 const cmnSalPlace = (props) => {
     console.log(props, "++++++++++++++++++++++++cmnSalPlace++++++++++++++++++++++++++++++++")
@@ -10,7 +11,7 @@ const cmnSalPlace = (props) => {
                 <div className="col-12">
                     <div className="card">
                         <iframe
-                            src={`https://82.117.213.106/sal/wizard/?locid${props.locId}&parent=ADM`}
+                            src={`${env.DOMEN}/sal/wizard/?${props.ticEvent.loc}/${props.ticEvent.id}&parent=ADM`}
                             title="Sal iframe"
                             width="100%"
                             height="760px"

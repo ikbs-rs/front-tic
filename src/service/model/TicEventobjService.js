@@ -4,24 +4,44 @@ import Token from "../../utilities/Token";
 
 export class TicEventobjService {
 
+
+    async getIdByItem(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.CMN_BACK_URL}/cmn/x/objtp/getid/code/${objId}/?sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            console.log(url, "*0**************getIdByItem*******************")
+            const response = await axios.get(url, { headers });
+            console.log(response.data, "*1**************getIdByItem*******************")
+            return response.data.items || response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getLista(objId) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/eventobj/_v/lista/?stm=tic_eventobj_v&objid=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
-          Authorization: tokenLocal.token
+            Authorization: tokenLocal.token
         };
-    
-        try {
-          const response = await axios.get(url, { headers });
-          return response.data.item;
-        } catch (error) {
-          console.error(error);
-          throw error;
-        }
-      }
 
-      async getCmnTpLista(uObjname) {
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async getCmnTpLista(uObjname) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.CMN_BACK_URL}/cmn/x/${uObjname}/?sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
@@ -48,7 +68,7 @@ export class TicEventobjService {
 
         try {
             const response = await axios.get(url, { headers });
-            return response.data.items||response.data.item;
+            return response.data.items || response.data.item;
         } catch (error) {
             console.error(error);
             throw error;
@@ -91,7 +111,7 @@ export class TicEventobjService {
 
 
     async postTicEventobj(newObj) {
-        try {            
+        try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
             if (newObj.action === null || newObj.roll === null) {
                 throw new Error(
@@ -116,7 +136,7 @@ export class TicEventobjService {
     async putTicEventobj(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (newObj.action === null || newObj.roll === null)  {
+            if (newObj.action === null || newObj.roll === null) {
                 throw new Error(
                     "Items must be filled!"
                 );

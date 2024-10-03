@@ -15,7 +15,7 @@ import DateFunction from "../../../utilities/DateFunction";
 import env from '../../../configs/env';
 
 const CmnPar = (props) => {
-    //console.log(props, "*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+    console.log(props, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
@@ -26,7 +26,7 @@ const CmnPar = (props) => {
     const [ddCountryItems, setDdCountryItems] = useState(null);
     const [cmnParItem, setCmnParItem] = useState(null);
     const [cmnParItems, setCmnParItems] = useState(null);
-    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar.begda || DateFunction.currDate())));
+    const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar?.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate('99991231' || DateFunction.currDate())))
 
     const calendarRef = useRef(null);
@@ -222,11 +222,11 @@ const CmnPar = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
                             <InputText id="code" autoFocus
-                                value={cmnPar.code} onChange={(e) => onInputChange(e, "text", 'code')}
+                                value={cmnPar?.code} onChange={(e) => onInputChange(e, "text", 'code')}
                                 required
-                                className={classNames({ 'p-invalid': submitted && !cmnPar.code })}
+                                className={classNames({ 'p-invalid': submitted && !cmnPar?.code })}
                             />
-                            {submitted && !cmnPar.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !cmnPar?.code && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="text">{translations[selectedLanguage].Text}</label>

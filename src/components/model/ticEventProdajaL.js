@@ -280,7 +280,7 @@ export default function TicEventL(props) {
             const row = await ticDocService.postTicDoc(ticDoc);
             console.log(row, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             ticDoc.id = row.id
-            ticDoc.broj = row.id
+            ticDoc.broj = row.broj
             setTicDokument({ ...ticDoc });
         } catch (err) {
             toast.current.show({

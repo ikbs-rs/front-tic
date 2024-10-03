@@ -5,11 +5,12 @@ import { translations } from "./configs/translations";
 import { AdmUserService } from "./service/model/cmn/AdmUserService";
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
+import env from './configs/env';
 
 const AppTopbar = (props) => {
     const navigate = useNavigate();
     let i = 0
-    const b = "https://82.117.213.106/btic/assets/img/zap/1774496601038262272.jpg"
+    const b =  `${env.DOMEN}/btic/assets/img/zap/1774496601038262272.jpg`
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const userId = localStorage.getItem('userId') || -1
     const [user, setUser] = useState({});
@@ -24,7 +25,7 @@ const AppTopbar = (props) => {
                     const data = await admUserService.getAdmUser(userId);
                     // console.log(data, "/////////////////////////////////////////////////////////////getListaLL////////////////////////////////////////////////////////////////////////")
                     setUser(data);
-                    setSlika(`https://localhost/btic/assets/img/zap/${data.id}.jpg`)
+                    setSlika(`${env.DOMEN}/btic/assets/img/zap/${data.id}.jpg`)
                 }
             } catch (error) {
                 console.error(error);

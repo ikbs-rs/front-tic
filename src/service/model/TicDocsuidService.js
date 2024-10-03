@@ -181,7 +181,7 @@ export class TicDocsuidService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log("*#################", jsonObj, "****************")
+      console.log(url, "*#################", jsonObj, "H-00-00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.put(url, jsonObj, { headers });
       console.log("**************"  , response, "****************")
       return response.data.items;
@@ -224,7 +224,32 @@ export class TicDocsuidService {
       throw error;
     }
   }
-  
+    
+  async postTicDocsuidPosetilac(newObj, docsId) {
+    try {
+      console.log(newObj, '8888-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH', docsId)
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidposetilac_s&objId1=${docsId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      const response = await axios.post(url, jsonObj, { headers });
+
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
   async postTicDocsuidPar(newObj, docsId) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -253,6 +278,7 @@ export class TicDocsuidService {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       const userId = localStorage.getItem('userId')
+      // console.log(newObj, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
 
       const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparall_s&objId1=${docId}&sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
@@ -262,7 +288,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;

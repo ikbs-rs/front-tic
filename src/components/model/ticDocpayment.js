@@ -9,9 +9,12 @@ import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
 import { translations } from "../../configs/translations";
 import { Dropdown } from 'primereact/dropdown';
+import AllSecurePaymentJSForm from '../custom/AllSecurePaymentJSForm';
 
 const TicDocpayment = (props) => {
 console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH**************TicDocpayment***********************")
+console.log("---AllSecurePaymentJSForm useEffect v1 ---")
+    
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticDocpayment, setTicDocpayment] = useState(props.ticDocpayment);
@@ -115,12 +118,11 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
-            setSubmitted(true);
             ticDocpayment.doc=props.ticDoc.id;
             const ticDocpaymentService = new TicDocpaymentService();
             const data = await ticDocpaymentService.postTicDocpayment(ticDocpayment);
             ticDocpayment.id = data
-            props.setActiveIndex(0)
+            // props.setActiveIndex(0)
             props.handleDialogClose({ obj: ticDocpayment, docpaymentTip: props.docpaymentTip });
             props.setVisible(false);
         } catch (err) {
@@ -258,10 +260,13 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                             />
                         </div>
                     </div>
-                    {props.paymentTip=='K' ? (
+                    {props.paymentTip=='2' ? (
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-4">
-                            <label htmlFor="ccard">{translations[selectedLanguage].ccard} *</label>
+                        <div className="field col-12 md:col-12">
+                        <p>AllSecurePaymentJSForm</p>
+                        <AllSecurePaymentJSForm transactionId={props?.ticDoc?.id}/>
+
+                            {/* <label htmlFor="ccard">{translations[selectedLanguage].ccard} *</label>
                             <Dropdown id="ccard"
                                 value={ddCmnCcardItem}
                                 options={ddCmnCcardItems}
@@ -271,11 +276,11 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !ticDocpayment.ccard })}
                             />
-                            {submitted && !ticDocpayment.ccard && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                            {submitted && !ticDocpayment.ccard && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>} */}
                         </div>
                     </div> 
                     ):null  }                 
-                    <div className="flex flex-wrap gap-1">
+                     <div className="flex flex-wrap gap-1">
                         {props.dialog ? (
                             <Button
                                 label={translations[selectedLanguage].Cancel}
@@ -285,7 +290,7 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                                 outlined
                             />
                         ) : null}
-                        <div className="flex-grow-1"></div>
+                       <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
                             {(props.docpaymentTip === 'CREATE') ? (
                                 <Button
@@ -296,7 +301,7 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                                     outlined
                                 />
                             ) : null}
-                            {(props.docpaymentTip !== 'CREATE') ? (
+                       {/*      {(props.docpaymentTip !== 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Delete}
                                     icon="pi pi-trash"
@@ -313,9 +318,9 @@ console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                                     severity="success"
                                     outlined
                                 />
-                            ) : null}
+                            ) : null}*/}
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
             <DeleteDialog

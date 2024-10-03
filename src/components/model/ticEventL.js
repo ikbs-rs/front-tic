@@ -103,7 +103,7 @@ export default function TicEventL(props) {
 
     const handleDialogClose = (newObj) => {
         const localObj = { newObj };
-
+        console.log(localObj, "88888888888888888888888888888888888888888888")
         let _ticEvents = [...ticEvents];
         let _ticEvent = { ...localObj.newObj.obj };
 
@@ -303,9 +303,9 @@ export default function TicEventL(props) {
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
                 </div>
-                <div className="flex flex-wrap gap-1">
+                {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Print} icon="pi pi-print" severity="warning" onClick={openPrintGrpL} text raised />
-                </div>
+                </div> */}
                 {/*
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Cenatp} icon="pi pi-dollar" onClick={openEventloc} text raised disabled={!ticEvent} />
@@ -458,6 +458,7 @@ export default function TicEventL(props) {
 
     const actionTemplateC = (rowData) => {
         return (
+
             <div className="flex flex-wrap gap-1">
                 <Button
                     type="button"
@@ -471,10 +472,29 @@ export default function TicEventL(props) {
                     raised
                 ></Button>
             </div>
+
         );
     };
+    const actionTemplateC2 = (rowData) => {
+        return (
+
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-copy"
+                    style={{ width: '24px', height: '24px' }}
+                    onClick={() => {
+                        setTicEventDialog(rowData);
+                        setEventTip('COPY');
+                    }}
+                    severity="danger"
+                    raised
+                ></Button>
+            </div>
+        );
+    };    
     return (
-        <div className="card"  style={{ height: "855px" }}>
+        <div className="card" style={{ height: "855px" }}>
             <Toast ref={toast} />
             <DataTable
                 dataKey="id"
@@ -488,8 +508,8 @@ export default function TicEventL(props) {
                 removableSort
                 filters={filters}
                 scrollable
-                sortField="code"
-                sortOrder={1}
+                sortField="tm"
+                sortOrder={-1}
                 scrollHeight="690px"
                 virtualScrollerOptions={{ itemSize: 46 }}
                 tableStyle={{ minWidth: '50rem' }}
@@ -509,24 +529,37 @@ export default function TicEventL(props) {
                     style={{ minWidth: '4rem' }}
                 />
                 <Column field="npar" header={translations[selectedLanguage].Organizer} sortable filter style={{ width: '20%' }}></Column>
-                <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column>
-                <Column field="text" header={translations[selectedLanguage].Text} sortable filter style={{ width: '20%' }}></Column>
+                {/* <Column field="code" header={translations[selectedLanguage].Code} sortable filter style={{ width: '10%' }}></Column> */}
+                <Column field="text" header={translations[selectedLanguage].Dogadjaj} sortable filter style={{ width: '20%' }}></Column>
+                <Column field="nmesto" header={translations[selectedLanguage].Mesto} sortable filter style={{ width: '20%' }}></Column>
+                <Column field="nloc" header={translations[selectedLanguage].Scena} sortable filter style={{ width: '20%' }}></Column>
                 <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
                 <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
-                {/* <Column field="nevent" header={translations[selectedLanguage].ParentEvent} sortable filter style={{ width: '15%' }}></Column> */}
-                <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
-                <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
-                <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
-                <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                <Column field="tm" header={translations[selectedLanguage].Kreiran}
+                    sortable
+                    // filter 
+                    style={{ width: '7%' }}></Column>
+                <Column field="begda" header={translations[selectedLanguage].Prodaja}
+                    // sortable 
+                    filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column>
+                <Column field="begtm" header={translations[selectedLanguage].BegTM}
+                    // sortable filter 
+                    style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
+                <Column field="endda" header={translations[selectedLanguage].Dogadjaj}
+                    // sortable 
+                    filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
+                <Column field="endtm" header={translations[selectedLanguage].BegTM}
+                    // sortable filter 
+                    style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
                 <Column
                     field="status"
                     filterField="status"
                     dataType="numeric"
                     header={translations[selectedLanguage].Status}
-                    sortable
-                    filter
+                    // sortable
+                    // filter
                     filterElement={statusFilterTemplate}
-                    style={{ width: '10%' }}
+                    style={{ width: '5%' }}
                     bodyClassName="text-center"
                     body={statusBodyTemplate}
                 ></Column>
@@ -535,8 +568,15 @@ export default function TicEventL(props) {
                     body={actionTemplateC}
                     exportable={false}
                     headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
+                    style={{ minWidth: '1rem' }}
                 />
+                <Column
+                    //bodyClassName="text-center"
+                    body={actionTemplateC2}
+                    exportable={false}
+                    headerClassName="w-10rem"
+                    style={{ minWidth: '1rem' }}
+                />                
             </DataTable>
             <Dialog
                 header={translations[selectedLanguage].Event}

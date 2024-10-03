@@ -18,7 +18,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { TicCenaService } from "../../service/model/TicCenaService";
 
 export default function TicPrintGrpL(props) {
-  console.log("***** props *************####### props ################### props ######", props)
+  console.log("***** props *************####### TicPrintGrpL ################### props ######", props)
   const emptyCmnloclink = "cmn_loclink"
 
   //const [products, setProducts] = useState([]);

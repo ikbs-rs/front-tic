@@ -16,6 +16,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import TicEventProdajaL from './ticEventProdajaL';
+import env from '../../configs/env';
 
 
 export default function TicDocW(props) {
@@ -34,6 +35,7 @@ export default function TicDocW(props) {
   const [activeIndex, setActiveIndex] = useState(0);
   let [iframeKey, setIframeKey] = useState(Math.random());
   let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
+  let [ticTransactionsKey1, setTicTransactionsKey1] = useState(1000);
   const toast = useRef(null);
 
   const [ddChannellItem, setDdChannellItem] = useState({});
@@ -43,7 +45,22 @@ export default function TicDocW(props) {
   const [ticEvent, setTicEvent] = useState(props.ticEvent);
   const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   const [showMyComponent, setShowMyComponent] = useState(true);
+  const [salUrl, setSalUrl] = useState(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id||props.ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`);
+
   /************************************************************************************ */
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setSalUrl(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id||props.ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
+        // console.log(salUrl, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [props.channell.id, props.ticDoc?.id, ticEvent?.id, props.ticEvent?.id]);
+
   useEffect(() => {
     const iframe = iframeRef.current;
 
@@ -202,7 +219,8 @@ export default function TicDocW(props) {
       if (newDocId != ticDocId) {
         setTicDokumentId(newDocId);
       }
-      setTicTransactionsKey(++ticTransactionsKey);
+      setTicTransactionsKey((prev) => prev +1);
+      setTicTransactionsKey1((prev) => prev +1);
     }
     // addMouseClickListener();
   };
@@ -275,7 +293,8 @@ export default function TicDocW(props) {
           originalIframeConsoleLog.apply(iframeConsole, arguments);
           // Vaš kod za presretanje poruke iz iframe-a ovde
           if (message && typeof message === 'string' && message.includes('rezervaciju')) {
-            setTicTransactionsKey(++ticTransactionsKey);
+            setTicTransactionsKey((prev) => prev +1);
+      setTicTransactionsKey1((prev) => prev +1);
             console.log("######################## Radim rezervaciju za dokument ####################################");
           }
           // console.log('Presretnuta poruka iz iframe:', message);
@@ -461,7 +480,8 @@ export default function TicDocW(props) {
                       <iframe key={iframeKey}
                         id="myIframe"
                         ref={iframeRef}
-                        src={`https://82.117.213.106/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                        src={salUrl}
+                        // src={`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}                        
                         onLoad={handleIframeLoad}
                         title="Sal iframe"
                         width="100%"
@@ -496,7 +516,7 @@ export default function TicDocW(props) {
                       <div className="card">
                         <HeaderBtn />
                         <TicTransactionsL
-                          key={ticTransactionsKey}
+                          key={ticTransactionsKey1}
                           ticDoc={ticDoc}
                           propsParent={props}
                           handleFirstColumnClick={handleFirstColumnClick}

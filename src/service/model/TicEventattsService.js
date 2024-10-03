@@ -10,17 +10,35 @@ export class TicEventattsService {
         const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventattstp_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
-          Authorization: tokenLocal.token
+            Authorization: tokenLocal.token
         };
-    
+
         try {
-          const response = await axios.get(url, { headers });
-          return response.data.item;
+            const response = await axios.get(url, { headers });
+            return response.data.item;
         } catch (error) {
-          console.error(error);
-          throw error;
+            console.error(error);
+            throw error;
         }
-      }
+    }
+
+    async getTicEventatts11L(objId, par1) {
+        // console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventatts11l_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 
     async getTicEventattss() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -83,7 +101,7 @@ export class TicEventattsService {
     async postAutoEventatts(objId) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (objId === null ) {
+            if (objId === null) {
                 throw new Error(
                     "objId must be filled!"
                 );
@@ -103,10 +121,10 @@ export class TicEventattsService {
         }
     }
 
-    async postGrpEventatts(objId,newObj, addItems) {
+    async postGrpEventatts(objId, newObj, addItems) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (objId === null ) {
+            if (objId === null) {
                 throw new Error(
                     "objId must be filled!"
                 );
@@ -119,7 +137,7 @@ export class TicEventattsService {
             };
             const jsonObj = JSON.stringify(newObj)
             console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
-            const response = await axios.post(url, {jsonObj}, { headers });
+            const response = await axios.post(url, { jsonObj }, { headers });
             return response.data.items;
         } catch (error) {
             console.error(error);
@@ -127,10 +145,10 @@ export class TicEventattsService {
         }
     }
 
-    async postCopyEventatts(objId,newObj) {
+    async postCopyEventatts(objId, newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (objId === null ) {
+            if (objId === null) {
                 throw new Error(
                     "objId must be filled!"
                 );
@@ -143,7 +161,7 @@ export class TicEventattsService {
             };
             const jsonObj = JSON.stringify(newObj)
             console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
-            const response = await axios.post(url, {jsonObj}, { headers });
+            const response = await axios.post(url, { jsonObj }, { headers });
             return response.data.items;
         } catch (error) {
             console.error(error);
@@ -154,7 +172,7 @@ export class TicEventattsService {
     async putTicEventatts(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (newObj.action === null || newObj.roll === null)  {
+            if (newObj.action === null || newObj.roll === null) {
                 throw new Error(
                     "Items must be filled!"
                 );

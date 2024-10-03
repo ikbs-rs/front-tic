@@ -21,7 +21,7 @@ import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
-    console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111")
+    // console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111")
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -65,7 +65,7 @@ export default function TicTransactionsL(props) {
         props.setTicDocsLVisible(false);
     };
 
-    const mapa = (props.mapa == 1) ? 5 : 8
+    const mapa = (props.mapa == 1) ? 5 : 6
     useEffect(() => {
         async function fetchData() {
             try {
@@ -221,11 +221,53 @@ export default function TicTransactionsL(props) {
         props.handleKarteIznos(total)
         return total;
     };
+    const netoTotal = () => {
+        let total = 0;
+
+        for (let stavka of ticDocss) {
+            let neto = Number(stavka.output * stavka.price); // ili parseFloat(stavka.potrazuje)
+            if (!isNaN(neto)) {
+                total += neto;
+            }
+        }
+        props.handleNetoIznos(total)
+        //return 0;
+    };
+    const brojTotal = () => {
+        let total = 0;
+
+        for (let stavka of ticDocss) {
+            let broj = Number(stavka.output); // ili parseFloat(stavka.potrazuje)
+            if (!isNaN(broj)) {
+                total += broj;
+            }
+        }
+        props.handleBrojIznos(total)
+        return total;
+    };
+    const discountTotal = () => {
+        let popust = 0
+
+        for (let stavka of ticDocss) {
+            let discount = Number(stavka.discount)
+            if (!isNaN(discount)) {
+                popust += discount
+            }
+        }
+        props.handlePopustIznos(popust)
+        return popust;
+    };
     const footerArtikalGroup = (
         <ColumnGroup>
             <Row>
                 <Column footer={translations[selectedLanguage].Total} colSpan={mapa} footerStyle={{ textAlign: 'right' }} />
+                {(props.mapa !== 1) && (
+                    <Column footer={brojTotal} />
+                )}
+                {(props.mapa !== 1) && (
+                    <Column footer={discountTotal} />)}
                 <Column footer={potrazujeTotal} />
+                <Column footer={netoTotal} />
             </Row>
         </ColumnGroup>
     );
@@ -640,7 +682,7 @@ export default function TicTransactionsL(props) {
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
-                )}                
+                )}
                 {(props.mapa != 1) && (
                     <Column
                         header={translations[selectedLanguage].rez}

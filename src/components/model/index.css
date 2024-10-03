@@ -202,3 +202,12 @@
   background-color: #ec971f; /* Tamnija nijansa za aktivno stanje */
   border-color: #ec971f;
 }
+
+.delivery-icon {
+  transition: transform 0.2s ease; /* Glatki prelaz kada se ikona podiže */
+}
+
+.delivery-icon:hover {
+  transform: scale(1.2); /* Ikona se povećava za 20% */
+  cursor: pointer; /* Ikona pokazuje da je klikabilna */
+}

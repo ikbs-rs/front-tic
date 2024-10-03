@@ -15,7 +15,9 @@ import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
 import TicEventrtcenaL from './ticEventartcenaL';
+import TicEventrtlinkL from './ticEventartlinkL';
 import { TicEventartcenaService } from "../../service/model/TicEventartcenaService";
+import TicArtlinkgrpL from "./ticArlinkgrpL"
 import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 export default function TicEventartL(props) {
@@ -34,6 +36,10 @@ export default function TicEventartL(props) {
   const [visible, setVisible] = useState(false);
   const [eventartTip, setEventartTip] = useState('');
   const [ticEventartcenaLVisible, setTicEventartcenaLVisible] = useState(false);
+  const [ticEventartlinkLVisible, setTicEventartlinkLVisible] = useState(false);
+  const [ticArtlinkgrpLVisible, setTicArtlinkgrpLVisible] = useState(false);
+  const [refresh, setRefresh] = useState(null);
+
   const [refreshForm, setRefreshForm] = useState('');
   let i = 0
   const handleCancelClick = () => {
@@ -51,7 +57,7 @@ export default function TicEventartL(props) {
         if (i < 2) {
           const ticEventartService = new TicEventartService();
           const data = await ticEventartService.getLista(props.ticEvent.id);
-  
+
           // Kreiraj niz obećanja za dohvat cena
           const pricePromises = data.map(async (item) => {
             const ticEventartcenaService = new TicEventartcenaService();
@@ -63,16 +69,16 @@ export default function TicEventartL(props) {
               begda: price.begda,
             }));
           });
-  
+
           // Sačekaj da sva obećanja budu ispunjena
           const pricesArray = await Promise.all(pricePromises);
-  
+
           // Dodajte polje 'products' u svaki red podataka sa vrednostima proizvoda
           const updatedData = data.map((item, index) => ({
             ...item,
             products: pricesArray[index],
           }));
-  console.log(updatedData, "************************************************************")
+          // console.log(updatedData, "************************************************************")
           setTicEventarts(updatedData);
           initFilters();
         }
@@ -81,10 +87,10 @@ export default function TicEventartL(props) {
         // Obrada greške ako je potrebna
       }
     }
-  
+
     fetchData();
   }, [refreshForm]);
-  
+
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -122,18 +128,7 @@ export default function TicEventartL(props) {
   //   }
   //   fetchData();
   // }, []);
-  const handleConfirmClick = () => {
-    console.log(ticEventart, "7777777777777777777777777777777777777777777777777777")
-    if (ticEventart) {
-      ticEventart.price = 1000;
-      ticEventart.loc1 = "1707106091126886400";
-      props.onTaskComplete(ticEventart);
-      // DODATI MIN LOKACIJU ZA KOJU JE VEZANA KATEGORIJA CENA
-      // DODATI I REGULARNU CENU
-    } else {
-      toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
-    }
-  };
+
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
@@ -156,6 +151,13 @@ export default function TicEventartL(props) {
     setTicEventart(emptyTicEventart);
   };
 
+
+  const handleTicArtlinkgrpLDialogClose = (newObj) => {
+    const localObj = { newObj };
+    console.log(props.ticEvent, "***********handleTicEventattsgrpLDialogClose********************")
+    setRefreshForm(prev => prev + 1);
+  };
+
   const findIndexById = (id) => {
     let index = -1;
 
@@ -176,6 +178,23 @@ export default function TicEventartL(props) {
   /*
   Event Prodaja *****************************************************************************************************
   */
+
+  const openGrpLink = () => {
+    setTicArtlinkgrpDialog();
+  };
+  const setTicArtlinkgrpDialog = () => {
+    setTicArtlinkgrpLVisible(true)
+  }
+
+  const handleEventartlinkLClick = () => {
+    setTicEventartlinkLDialog();
+  };
+
+  const setTicEventartlinkLDialog = (destination) => {
+    // setShowMyComponent(true);
+    setTicEventartlinkLVisible(true);
+  };
+
   const handleEventartcenaLClick = () => {
     setTicEventartcenaLDialog();
   };
@@ -258,20 +277,20 @@ export default function TicEventartL(props) {
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
-        {props.lookUp && (
-          <>
-            <div className="flex flex-wrap gap-1" />
-            <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised disabled={!ticEventart} />
-          </>
-        )}
+
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Cena} icon="pi pi-dollar" onClick={handleEventartcenaLClick} severity="info" text raised />
+          <Button label={translations[selectedLanguage].GrpLink} icon="pi pi-plus" severity="warning" onClick={openGrpLink} raised />
         </div>
-               
-        <div className="flex-grow-1"></div>
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Cena} icon="pi pi-dollar" onClick={handleEventartcenaLClick} severity="warning" raised disabled={!ticEventart} />
+        </div>
+        <div className="flex flex-wrap gap-1" >
+          <Button label={translations[selectedLanguage].Link} icon="pi pi-paperclip" onClick={handleEventartlinkLClick} severity="warning" raised disabled={!ticEventart} />
+        </div>
+        <div className="flex flex-wrap gap-1" />
         <b>{translations[selectedLanguage].EventartList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
@@ -354,18 +373,18 @@ export default function TicEventartL(props) {
       return null;
     }
   };
-  
-  
-  
+
+
+
   const colorBodyTemplate = (rowData) => {
     return (
       <>
-        <ColorPickerWrapper value={rowData.color} format={"hex"}/>
+        <ColorPickerWrapper value={rowData.color} format={"hex"} />
         {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
       </>
     );
   };
-  
+
 
   return (
     <div className="card">
@@ -426,7 +445,7 @@ export default function TicEventartL(props) {
           sortable
           filter
           style={{ width: "30%" }}
-        ></Column>        
+        ></Column>
         <Column
           field="cart"
           header={translations[selectedLanguage].Code}
@@ -463,7 +482,7 @@ export default function TicEventartL(props) {
           filter
           style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "endda")}
-        ></Column>        
+        ></Column>
         <Column
           //bodyClassName="text-center"
           header={translations[selectedLanguage].Cena}
@@ -505,6 +524,28 @@ export default function TicEventartL(props) {
           </button>
         </div>
       </Dialog>
+
+      <Dialog
+        header={translations[selectedLanguage].EventartlinkList}
+        visible={ticEventartlinkLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventartlinkLVisible(false);
+        }}
+      >
+        {ticEventartlinkLVisible &&
+          <TicEventrtlinkL
+            parameter={'inputTextValue'}
+            ticEventart={ticEventart}
+            //setTicArtLVisible={setTicArtLVisible} 
+            setTicEventartlinkLVisible={setTicEventartlinkLVisible}
+            dialog={true}
+            lookUp={true}
+            eventArtcena={true}
+            handleRefresh={handleRefresh}
+          />}
+      </Dialog>
+
       <Dialog
         header={translations[selectedLanguage].EventartcanaList}
         visible={ticEventartcenaLVisible}
@@ -525,6 +566,37 @@ export default function TicEventartL(props) {
             eventArtcena={true}
             handleRefresh={handleRefresh}
           />}
+      </Dialog>
+
+      <Dialog
+        header={translations[selectedLanguage].Loclinkgrp}
+        visible={ticArtlinkgrpLVisible}
+        style={{ width: '60%' }}
+        onHide={() => {
+          setTicArtlinkgrpLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {ticArtlinkgrpLVisible && (
+          <TicArtlinkgrpL
+            parameter={"inputTextValue"}
+            cmnLoc={props.cmnLoc}
+            ticEvent={props.ticEvent}
+            // ticEventloc={ticEventloc}
+            // handleDialogClose={handleDialogClose}
+            handleTicArtlinkgrpLDialogClose={handleTicArtlinkgrpLDialogClose}
+            setTicArtlinkgrpLVisible={setTicArtlinkgrpLVisible}
+            dialog={true}
+            cmnLoctpId={props.cmnLoctpId}
+            loctpCode={props.loctpCode}
+            lista={"EL"} // sa koje liste pozivam
+          />
+        )}
+        <div className="p-dialog-header-icons" style={{ display: 'none' }}>
+          <button className="p-dialog-header-close p-link">
+            <span className="p-dialog-header-close-icon pi pi-times"></span>
+          </button>
+        </div>
       </Dialog>
     </div>
   );

@@ -12,14 +12,18 @@ import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction"
 import { CmnParService } from "../../service/model/cmn/CmnParService";
+import CmnPar from "./cmn/cmnPar";
+import { Dialog } from 'primereact/dialog';
+
 
 const TicDocdelivery = (props) => {
-    console.log(props, "*******************TicDocdelivery***********************")
+    // console.log(props, "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const userId = localStorage.getItem('userId')
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticDocdelivery, setTicDocdelivery] = useState(props.ticDocdelivery);
     const [submitted, setSubmitted] = useState(false);
+    const [showMyComponent, setShowMyComponent] = useState(false);
     const [ddCmnSpedicijaItem, setDdCmnSpedicijaItem] = useState(null);
     const [ddCmnSpedicijaItems, setDdCmnSpedicijaItems] = useState(null);
     const [cmnSpedicijaItem, setCmnSpedicijaItem] = useState(null);
@@ -27,8 +31,14 @@ const TicDocdelivery = (props) => {
     const [dropdownItem, setDropdownItem] = useState(null);
     const [dropdownItems, setDropdownItems] = useState(null);
     const [cmnPar, setCmnPar] = useState(null);
+    const [ticDoc, setTicDoc] = useState(null);
     const [dat, setDate] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.dat || DateFunction.currDate())));
     const [datdelivery, setDatdelivery] = useState(new Date(DateFunction.formatJsDate(props.ticDocdelivery.datdelivery || DateFunction.currDate())));
+    const [cmnParVisible, setCmnParVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [openDialog, setOpenDialog] = useState('');
+    const [refresh, setRefresh] = useState(false);
+    const [zaUplatu, setZauplatu] = useState(0);
 
     const statusItems = [
         { name: `${translations[selectedLanguage].ForDelivery}`, code: '0' },
@@ -38,12 +48,32 @@ const TicDocdelivery = (props) => {
     ];
     useEffect(() => {
         async function fetchData() {
+          try {
+              const ticDocService = new TicDocService();
+              const data = await ticDocService.getTicDoc(props.ticDocdelivery?.doc||-1);
+              const dataIznos = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+              setZauplatu(dataIznos.iznos)
+              console.log(dataIznos, "B--BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", props.ticDocdelivery?.doc, props.ticDoc?.id)
+              setTicDoc(data);
+              setRefresh(prev => prev + 1)
+          } catch (error) {
+            console.error(error);
+            // Obrada greške ako je potrebna
+          }
+        }
+        fetchData();
+      }, [props.ticDoc]);
+
+    useEffect(() => {
+        async function fetchData() {
             try {
                 const cmnParService = new CmnParService();
-                if (props.ticDocdelivery.id) {
-                    const data = await cmnParService.getCmnPar(props.ticDoc.par);
+                // console.log(ticDoc, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                if (ticDoc?.usr) {
+                    const data = await cmnParService.getCmnPar(ticDoc?.usr);
                     const [firstname, lastname] = data.textx.split(' ');
                     const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
+                    // console.log(_cmnPar, "0000-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", data)
                     setCmnPar(_cmnPar);
                 }
             } catch (error) {
@@ -52,15 +82,15 @@ const TicDocdelivery = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [ticDoc, refresh]);
 
     useEffect(() => {
         let _ticDocdelivery = { ...ticDocdelivery }
-        _ticDocdelivery.adress = ticDocdelivery?.adress||props.cmnPar?.address
-        _ticDocdelivery.city = ticDocdelivery?.city||props.cmnPar?.place
-        _ticDocdelivery.country = ticDocdelivery?.country||props.cmnPar?.country
-        _ticDocdelivery.amount = ticDocdelivery?.amount||props.ticDoc?.tickettotal
-        _ticDocdelivery.tel = ticDocdelivery?.tel||props.cmnPar?.tel
+        _ticDocdelivery.adress = ticDocdelivery?.adress || props.cmnPar?.address
+        _ticDocdelivery.city = ticDocdelivery?.city || props.cmnPar?.place
+        _ticDocdelivery.country = ticDocdelivery?.country || props.cmnPar?.country
+        _ticDocdelivery.amount = ticDocdelivery?.amount || ticDoc?.tickettotal
+        _ticDocdelivery.tel = ticDocdelivery?.tel || props.cmnPar?.tel
         setTicDocdelivery({ ..._ticDocdelivery })
     }, []);
 
@@ -137,10 +167,21 @@ const TicDocdelivery = (props) => {
 
     const handleSaveClick = async () => {
         try {
+            // let pTmcour = ""
+            // pTmcour = ticDocdelivery.tmcour
             ticDocdelivery.dat = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(dat));
             ticDocdelivery.datdelivery = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(datdelivery));
             const ticDocdeliveryService = new TicDocdeliveryService();
-
+            // console.log(ticDocdelivery, "R--00--RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", pTmcour)
+            if (ticDocdelivery.status=='1' && !ticDocdelivery?.tmcour ) {
+                //ticDocdelivery = {...ticDocdelivery, tmcour: DateFunction.currDatetime()}
+                ticDocdelivery.tmcour = DateFunction.currDatetime();
+            }
+            if (ticDocdelivery.status>'1' && !ticDocdelivery?.tmbck ) {
+                //ticDocdelivery = {...ticDocdelivery, tmcour: DateFunction.currDatetime()}
+                ticDocdelivery.tmbck = DateFunction.currDatetime();
+            }
+            console.log(ticDocdelivery, "R--01--RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
             await ticDocdeliveryService.putTicDocdelivery(ticDocdelivery);
             props.handleDialogClose({ obj: ticDocdelivery, docdeliveryTip: props.docdeliveryTip });
             props.setVisible(false);
@@ -187,7 +228,7 @@ const TicDocdelivery = (props) => {
                 setDdCmnSpedicijaItem(e.value);
                 const foundItem = cmnSpedicijaItems.find((item) => item.id === val);
                 setCmnSpedicijaItem(foundItem || null);
-                ticDocdelivery.text = e.value.name
+                ticDocdelivery.ncourier = e.value.name
                 ticDocdelivery.code = foundItem.code
             } else {
                 setDropdownItem(e.value);
@@ -216,7 +257,19 @@ const TicDocdelivery = (props) => {
     const hideDeleteDialog = () => {
         setDeleteDialogVisible(false);
     };
+    /************************************************************************************ */
+    const handleCmnParLDialogClose = (newObj) => {
+        setCmnParVisible(false)
+    };
+    const handleDialogClose = (newObj) => {
+        const localObj = { newObj };
+    }
+    const handleParClick = async (e) => {
+        setOpenDialog("PAR")
+        setCmnParVisible(true);
 
+    };
+    /************************************************************************************ */
     return (
         <div className="grid">
             <Toast ref={toast} />
@@ -226,16 +279,26 @@ const TicDocdelivery = (props) => {
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Transaction}</label>
                             <InputText id="code"
-                                value={props.ticDocdelivery?.doc || props.ticDoc.id}
+                                value={props.ticDocdelivery?.doc || ticDoc.id}
                                 disabled={true}
                             />
                         </div>
                         <div className="field col-12 md:col-5">
                             <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
                             <InputText id="npar"
-                                value={props.ticDocdelivery?.npar||cmnPar?.textx || props.ticDoc.npar}
+                                value={props.ticDocdelivery?.npar || cmnPar?.textx || ticDoc?.npar}
                                 disabled={true}
                             />
+                        </div>
+                        <div className="field col-12 md:col-2">
+                          <Button
+                            label={translations[selectedLanguage].Detalj}
+                            icon="pi pi-spin pi-cog"
+                            className="p-button-warning"
+                            onClick={handleParClick}
+                            severity="success"
+                            raised
+                          />
                         </div>
                     </div>
                 </div>
@@ -297,7 +360,7 @@ const TicDocdelivery = (props) => {
                             <label htmlFor="amount">{translations[selectedLanguage].Amount} *</label>
                             <InputText
                                 id="amount"
-                                value={ticDocdelivery.amount} onChange={(e) => onInputChange(e, "text", 'amount')}
+                                value={ticDocdelivery.amount||zaUplatu} onChange={(e) => onInputChange(e, "text", 'amount')}
                             />
                         </div>
                         <div className="field col-12 md:col-3">
@@ -320,7 +383,7 @@ const TicDocdelivery = (props) => {
                         </div>
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-3">
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="status">{translations[selectedLanguage].status} *</label>
                             <Dropdown id="status"
                                 value={dropdownItem}
@@ -348,30 +411,38 @@ const TicDocdelivery = (props) => {
                             <label htmlFor="tmrec">{translations[selectedLanguage].tmrec} *</label>
                             <InputText
                                 id="tmrec"
-                                value={ticDocdelivery.tmrec} onChange={(e) => onInputChange(e, "text", 'tmrec')}
+                                value={ticDocdelivery.tmrec ? DateFunction.formatDatetime(ticDocdelivery.tmrec) : ''}
+                                onChange={(e) => onInputChange(e, "text", 'tmrec')}
+                                disabled={true}
                             />
                         </div>
-                        <div className="field col-12 md:col-3">
+                        {/* <div className="field col-12 md:col-3">
                             <label htmlFor="tmship">{translations[selectedLanguage].tmship} *</label>
                             <InputText
                                 id="tmship"
                                 value={ticDocdelivery.tmship} onChange={(e) => onInputChange(e, "text", 'tmship')}
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-3">
                             <label htmlFor="tmcour">{translations[selectedLanguage].tmcour} *</label>
                             <InputText
                                 id="tmcour"
-                                value={ticDocdelivery.tmcour} onChange={(e) => onInputChange(e, "text", 'tmcour')}
+                                // value={ticDocdelivery.tmcour} 
+                                value={ticDocdelivery.tmcour ? DateFunction.formatDatetime(ticDocdelivery.tmcour) : ''}
+                                onChange={(e) => onInputChange(e, "text", 'tmcour')}
+                                disabled={true}
                             />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="tmbck">{translations[selectedLanguage].tmbck} *</label>
                             <InputText
                                 id="tmbck"
-                                value={ticDocdelivery.tmbck} onChange={(e) => onInputChange(e, "text", 'tmbck')}
+                                // value={ticDocdelivery.tmbck} 
+                                value={ticDocdelivery.tmbck ? DateFunction.formatDatetime(ticDocdelivery.tmbck) : ''}
+                                onChange={(e) => onInputChange(e, "text", 'tmbck')}
+                                disabled={true}
                             />
                         </div>
                     </div>
@@ -425,6 +496,47 @@ const TicDocdelivery = (props) => {
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
+            <Dialog
+                header={
+                    <div className="grid" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                        <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                            <Button
+                                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                                onClick={() => {
+                                    setCmnParVisible(false);
+                                }}
+                                severity="secondary" raised
+                            />
+                        </div>
+                        <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                            <span>{translations[selectedLanguage].Par}</span>
+                        </div>
+                    </div>
+                }
+                visible={cmnParVisible}
+                style={{ width: '70%' }}
+                onHide={() => {
+                    setCmnParVisible(false);
+                    setVisible(false);
+                    // setShowMyComponent(false);
+                }}
+            >
+                {cmnParVisible && (
+                    <CmnPar
+                        parameter={"inputTextValue"}
+                        ticDoc={ticDoc}
+                        cmnPar={cmnPar}
+                        handleCmnParLDialogClose={handleCmnParLDialogClose}
+                        handleDialogClose={handleDialogClose}
+                        setCmnParVisible={setCmnParVisible}
+                        setVisible={setVisible}
+                        remote={false}
+                        dialog={true}
+                        lookUp={true}
+                        parTip={"UPDATE"}
+                    />
+                )}
+            </Dialog>
         </div>
     );
 };

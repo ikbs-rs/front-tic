@@ -65,6 +65,8 @@ export default function TicTransactionFL(props) {
     const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
     const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
     const [akcija, setAkcija] = useState(null);
+    const [rowClick, setRowClick] = useState(true);
+    const [selectedProducts, setSelectedProducts] = useState(null);
 
     const [checked1, setChecked1] = useState(false);
     const [checked2, setChecked2] = useState(true);
@@ -328,16 +330,16 @@ export default function TicTransactionFL(props) {
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={handleStorno} severity="danger" text raised disabled={!ticDoc} />
-                </div>    
+                </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning"  raised disabled={!ticDoc}/>
-                </div> 
+                    <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
+                </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Spajanje} icon="pi pi-file-import" onClick={handleStorno} severity="warning"  raised disabled={!ticDoc}/>
-                </div>    
+                    <Button label={translations[selectedLanguage].Spajanje} icon="pi pi-file-import" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
+                </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button  icon="pi pi-plus" onClick={handleStorno} severity="secondary"  raised disabled={!ticDoc}/>
-                </div>                  
+                    <Button icon="pi pi-plus" onClick={handleStorno} severity="secondary" raised disabled={!ticDoc} />
+                </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].TransactionList}</b>
                 <div className="flex-grow-1"></div>
@@ -444,10 +446,15 @@ export default function TicTransactionFL(props) {
         tableRow.forEach((row) => {
             //row.classList.remove('p-datatable-tbody');
         });
+        // const selRow = document.querySelectorAll('.p-selectable-row');
+        // selRow.forEach((row) => {
+        //     row.classList.remove('p-selectable-row');
+        // });
         const selRow = document.querySelectorAll('.p-selectable-row');
         selRow.forEach((row) => {
             row.classList.remove('p-selectable-row');
         });
+
 
         return rowData.trtp == '01'
             ? 'highlight-row-1'
@@ -553,21 +560,84 @@ export default function TicTransactionFL(props) {
     const buttonClassCustom6 = checked6 ? "toggle-button-checked" : "toggle-button-unchecked";
 
     const paidBodyTemplate = (rowData) => {
-        const setParentTdBackground = (element, paid) => {
+        // const setParentTdBackground = (element, paid) => {
+        //     const parentTd = element?.parentNode;
+        //     if (parentTd) {
+        //         console.log(paid, "######################################################################")
+        //         if (paid == false) {
+        //             parentTd.style.backgroundColor = "red";
+        //         } else {
+        //             parentTd.style.backgroundColor = "green";
+        //         }
+        //     }
+        // };
+
+        // return (
+        //     <div ref={(el) => setParentTdBackground(el, rowData.paid)} />
+        // );
+        const setParentTdBackground = (element) => {
             const parentTd = element?.parentNode;
             if (parentTd) {
-                console.log(paid, "######################################################################")
-                if (paid == false) {
-                    parentTd.style.backgroundColor = "red";
-                } else {
-                    parentTd.style.backgroundColor = "green";
-                }
+                // parentTd.style.backgroundColor = "white"; 
+            }
+        };
+        const handleClick = () => {
+            console.log("Ikona je kliknuta!");
+            // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+        };
+        return (
+            <div ref={(el) => setParentTdBackground(el)}>
+                {rowData.paid == 1 ? (
+                    <img
+                        src="./images/paid.png"
+                        alt="Delivery"
+                        width="35"
+                        height="35"
+                        className="delivery-icon"
+                        onClick={handleClick} // Povezivanje funkcije sa klikom
+                    />
+                ) : null}
+            </div>
+        );
+    };
+    const deliveryBodyTemplate = (rowData) => {
+
+        const setParentTdBackground = (element) => {
+            const parentTd = element?.parentNode;
+            if (parentTd) {
+                // Ostavljen prazan za eventualnu buduću upotrebu
             }
         };
 
+        // Funkcija koja će se pokrenuti na klik
+        const handleClick = () => {
+            console.log("Ikona je kliknuta!");
+            // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+        };
+
         return (
-            <div ref={(el) => setParentTdBackground(el, rowData.paid)} />
+            <div ref={(el) => setParentTdBackground(el)}>
+                {rowData.delivery == 1 ? (
+                    <img
+                        src="./images/delivery1.png"
+                        alt="Delivery"
+                        width="30"
+                        height="30"
+                        className="delivery-icon"
+                        onClick={handleClick} // Povezivanje funkcije sa klikom
+                    />
+                ) : null}
+            </div>
         );
+    };
+
+    const formatNumber = (value) => {
+        if (typeof value === "number" || !isNaN(value)) {
+            // Koristi Intl.NumberFormat za precizno formatiranje broja
+            return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+        } else {
+            return "-";  // Ako vrednost nije broj
+        }
     };
 
     return (
@@ -660,11 +730,12 @@ export default function TicTransactionFL(props) {
 
             <DataTable
                 key={componentKey}
-                dataKey="ide"
+                dataKey="id"
                 size={"small"}
                 rowClassName={rowClass}
-                selectionMode="single"
-                selection={ticDoc}
+                selectionMode={rowClick ? null : "checkbox"}
+                selection={selectedProducts}
+                // selectionMode="multiple" 
                 loading={loading}
                 value={ticDocs}
                 header={header}
@@ -672,15 +743,20 @@ export default function TicTransactionFL(props) {
                 removableSort
                 filters={filters}
                 scrollable
-                sortField="date"
-                sortOrder={1}
-                scrollHeight="696px"
-                tableStyle={{ minWidth: "50rem" }}
+                sortField="tm"
+                sortOrder={-1}
+                scrollHeight="730px"
+                // tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
                 paginator
                 rows={125}
                 rowsPerPageOptions={[125, 150, 200]}
-                onSelectionChange={(e) => setTicDoc(e.value)}
+                onSelectionChange={(e) => {
+                    setTicDoc(e.value);            // Update TicDoc state
+                    setSelectedProducts(e.value);  // Update SelectedProducts state
+                }}
+                onRowSelect={onRowSelect}
+                onRowUnselect={onRowUnselect}
             >
                 {/* <Column
                     //bodyClassName="text-center"
@@ -690,33 +766,51 @@ export default function TicTransactionFL(props) {
                     style={{ minWidth: '4rem' }}
                 /> */}
                 <Column
+                    selectionMode="multiple"
+                    headerStyle={{ width: "3rem" }}
+                ></Column>
+                <Column
                     //bodyClassName="text-center"
                     body={actionTemplate}
                     exportable={false}
                     headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
+                    style={{ minWidth: '3rem' }}
                 />
-                <Column
+                {/* <Column
                     field="id"
                     header={translations[selectedLanguage].Id}
                     sortable
                     filter
                     style={{ width: "10%" }}
-                ></Column>
+                ></Column> */}
                 <Column
                     field="broj"
-                    header={translations[selectedLanguage].Transaction}
-                    sortable
+                    header={translations[selectedLanguage].TransactionSkr}
+                    // sortable
                     filter
                     style={{ width: "10%" }}
-                ></Column> 
+                ></Column>
                 <Column
                     field="storno"
-                    header={translations[selectedLanguage].Storno}
+                    header={translations[selectedLanguage].StornoSkr}
+                    sortable
+                    // filter
+                    style={{ width: "5%" }}
+                ></Column>
+                <Column
+                    field="nchannel"
+                    header={translations[selectedLanguage].Kanal}
                     sortable
                     filter
                     style={{ width: "5%" }}
-                ></Column>                               
+                ></Column>
+                <Column
+                    field="username"
+                    header={translations[selectedLanguage].UserSkr}
+                    sortable
+                    filter
+                    style={{ width: "5%" }}
+                ></Column>
                 <Column
                     field="text"
                     header={translations[selectedLanguage].nevent}
@@ -769,22 +863,25 @@ export default function TicTransactionFL(props) {
                     sortable
                     filter
                     style={{ width: "10%" }}
+                    body={(rowData) => formatDatetime(rowData, "tm")}
                 ></Column>
                 <Column
                     field="potrazuje"
                     header={translations[selectedLanguage].Amount}
-                    sortable
+                    // sortable
                     filter
                     style={{ width: "10%" }}
                     bodyStyle={{ textAlign: 'right' }}
+                    body={(rowData) => formatNumber(rowData.potrazuje)}
                 ></Column>
                 <Column
                     field="output"
                     header={translations[selectedLanguage].brojkarti}
-                    sortable
-                    filter
+                    // sortable
+                    // filter
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
+                    body={(rowData) => Math.floor(rowData.output)}
                 ></Column>
                 <Column
                     field="paid"
@@ -802,7 +899,8 @@ export default function TicTransactionFL(props) {
                 ></Column> */}
                 <Column
                     field="delivery"
-                    header={translations[selectedLanguage].Delivery}
+                    header={translations[selectedLanguage].DeliverySkr}
+                    body={deliveryBodyTemplate}
                     sortable
                     filter
                     style={{ width: "5%" }}
@@ -921,7 +1019,7 @@ export default function TicTransactionFL(props) {
                         akcija={akcija}
                     />
                 )}
-            </Dialog>            
+            </Dialog>
             {/* <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} /> */}
         </div>
     );

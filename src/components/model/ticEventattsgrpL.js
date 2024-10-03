@@ -211,7 +211,7 @@ export default function TicEventattsgrpL(props) {
         sortField="code" sortOrder={1}
         header={header}
         scrollable
-        scrollHeight="650px"
+        scrollHeight="730px"
         showGridlines
         removableSort
         filters={filters}

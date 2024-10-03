@@ -21,6 +21,47 @@ export class TicEventartService {
         }
     }
 
+    async postGrpEventart(objId, newObj, addItems) {
+        try {
+            const selectedLanguage = localStorage.getItem('sl') || 'en'
+            if (objId === null) {
+                throw new Error(
+                    "objId must be filled!"
+                );
+            }
+            const url = `${env.TIC_BACK_URL}/tic/eventart/_s/param/?stm=tic_grpeventart_s&objId1=${objId}&par1=${addItems}&sl=${selectedLanguage}`;
+            const tokenLocal = await Token.getTokensLS();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': tokenLocal.token
+            };
+            const jsonObj = JSON.stringify(newObj)
+            console.log(jsonObj, "*555555555555555555555555555555555555555555555555 - postGrpEventatts - 555555555555555555555555555555555555555555555555555555", url)
+            const response = await axios.post(url, { jsonObj }, { headers });
+            return response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async getArtLista(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const url = `${env.TIC_BACK_URL}/tic/x/art/_v/lista/?stm=tic_art_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getTicEventarts() {
         const selectedLanguage = localStorage.getItem('sl') || 'en';
         const url = `${env.TIC_BACK_URL}/tic/x/eventart/?sl=${selectedLanguage}`;
