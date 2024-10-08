@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import { TicEventattsService } from '../../service/model/TicEventattsService';
 import './index.css';
 import { translations } from "../../configs/translations";
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
@@ -460,17 +461,27 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   const handleRezTicDoc = async () => {
     console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
+    console.log(ticEvent?.id, props.channell?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    const ticEventattsService = new TicEventattsService()
+    const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
+
+    const vremeRezervacije = DateFunction.currDatetimePlusHours(eventAtt.text)
     const previousValue = { ...ticDoc }
     let _ticDoc = { ...ticDoc }
+    console.log(vremeRezervacije, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    const endTm = DateFunction.toDatetime(_ticDoc.endtm)+vremeRezervacije
+    _ticDoc.endtm = vremeRezervacije
+    console.log(_ticDoc.endtm, "$33  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+
     _ticDoc.reservation = `1`
     _ticDoc.status = 1
     try {
-      console.log(_ticDoc, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+      console.log(_ticDoc, "handleUpdateTicDoc XXXX0005555555555555555555555555555555555555555555555555555555555", vremeRezervacije)
       const ticDocService = new TicDocService();
       await ticDocService.putTicDoc(_ticDoc);
       setTicDoc(_ticDoc)
       setUidKey(++uidKey)
-      props.handleRezervaciju(true)
+      // props.handleRezervaciju(true)
       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Rezervacija izvrsena', life: 2000 });
     } catch (err) {
       setTicDoc(previousValue)
