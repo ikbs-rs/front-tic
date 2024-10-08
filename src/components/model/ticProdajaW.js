@@ -147,16 +147,16 @@ const TicProdajaW = forwardRef((props, ref) => {
       try {
         ++i
         if (i < 2) {
-        const ticDocService = new TicDocService();
-        let data = await ticDocService.getTicDoc(ticDocId);
-        if (ticDocId != -1) {
-          const cmnParService = new CmnParService()
-          let dataPar = await cmnParService.getCmnPar(data.usr);
-          data.cpar = dataPar.code
-          data.npar = dataPar.text
-          // console.log(data, "5555555555555555555555555555555555555555555555555555555555555555555")
-          setTicDoc(data);
-        }
+          const ticDocService = new TicDocService();
+          let data = await ticDocService.getTicDoc(ticDocId);
+          if (ticDocId != -1) {
+            const cmnParService = new CmnParService()
+            let dataPar = await cmnParService.getCmnPar(data.usr);
+            data.cpar = dataPar.code
+            data.npar = dataPar.text
+            // console.log(data, "5555555555555555555555555555555555555555555555555555555555555555555")
+            setTicDoc(data);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -397,6 +397,97 @@ const TicProdajaW = forwardRef((props, ref) => {
     }
   }
   /********************************************************************************/
+  const handleEndTicDoc = async (e) => {
+    try {
+      // const _ticDoc = newObj
+      console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
+      // const previousValue = ticDoc.status;
+      // let _ticDoc = { ...ticDoc }
+      // _ticDoc.status = 4
+      // setTicDoc(_ticDoc)
+      // await handleUpdateCancelTicDoc(_ticDoc, previousValue)
+      // remountStavke();
+      props.setActiveIndex(0)
+    } catch (err) {
+      // setTicDoc(previousValue)
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
+  }  
+  const handleCancelSales = async (e) => {
+    try {
+      const _ticDoc = {...ticDoc}
+      console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
+      const previousValue = ticDoc.status;
+      _ticDoc.status = 4
+      setTicDoc(_ticDoc)
+      await handleUpdateCancelTicDoc(_ticDoc, previousValue)
+      // remountStavke();
+      props.setActiveIndex(0)
+    } catch (err) {
+      // setTicDoc(previousValue)
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
+  }  
+
+  const handleUpdateCancelTicDoc = async (newObj, previousValue) => {
+    const _ticDoc = newObj
+    try {
+        console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+        const ticDocService = new TicDocService();
+        await ticDocService.setCancelTicDoc(newObj);
+    } catch (err) {
+        _ticDoc.status = previousValue
+        setTicDoc(_ticDoc)
+
+        toast.current.show({
+            severity: "error",
+            summary: "Action ",
+            detail: `${err.response.data.error}`,
+            life: 1000,
+        });
+    }
+}
+
+  const handleRezTicDoc = async () => {
+    console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
+    const previousValue = { ...ticDoc }
+    let _ticDoc = { ...ticDoc }
+    _ticDoc.reservation = `1`
+    _ticDoc.status = 1
+    try {
+      console.log(_ticDoc, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+      const ticDocService = new TicDocService();
+      await ticDocService.putTicDoc(_ticDoc);
+      setTicDoc(_ticDoc)
+      setUidKey(++uidKey)
+      props.handleRezervaciju(true)
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Rezervacija izvrsena', life: 2000 });
+    } catch (err) {
+      setTicDoc(previousValue)
+      // setCheckedRezervacija(previousValue);
+
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `${err.response.data.error}`,
+        life: 1000,
+      });
+    }
+    console.log("00.1 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
+
+  };
+
+  /********************************************************************************/
   const handlePayTicDoc = async () => {
     try {
       console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
@@ -424,7 +515,7 @@ const TicProdajaW = forwardRef((props, ref) => {
               life: 3000,
             });
             return;  // Prekinuti izvršenje funkcije
-          }       
+          }
           const newArray = []
           if (placanjeRef.current.kes > 0) {
             const kesPayment = { ..._ticDocpayment };
@@ -472,6 +563,7 @@ const TicProdajaW = forwardRef((props, ref) => {
       });
     }
   };
+
   return (
     <div key={key}>
       <Toast ref={toast} />
@@ -479,14 +571,24 @@ const TicProdajaW = forwardRef((props, ref) => {
         <div className="grid grid-nogutter">
           <div className="col-5">
             <div className="grid grid-nogutter">
-              <div className="col-6">
-                <Button label={translations[selectedLanguage].Back}
-                  severity="success" raised style={{ width: '100%' }}
-                  onClick={(e) => handleBackClic(e)}
-                  disabled={uidKey === 0}
-                />
-              </div>
-              {(uidKey != 2 || ticDoc.status == 2) && (
+              {(uidKey <= 2 || ticDoc.status == 2) && (
+                <div className="col-6">
+                  <Button label={translations[selectedLanguage].Back}
+                    severity="success" raised style={{ width: '100%' }}
+                    onClick={(e) => handleBackClic(e)}
+                    disabled={uidKey === 0}
+                  />
+                </div>
+              )}
+              {(uidKey == 3 && ticDoc.status != 2 ) && (
+                <div className="col-4">
+                  <Button label={translations[selectedLanguage].Back}
+                    severity="success" raised style={{ width: '100%' }}
+                    onClick={(e) => handleBackClic(e)}
+                  />
+                </div>
+              )}              
+              {((uidKey != 2 && uidKey <= 2) || (ticDoc.status == 2 && uidKey <= 2)) && (
                 <div className="col-6">
                   <Button label={translations[selectedLanguage].Next}
                     severity="success" raised style={{ width: '100%' }}
@@ -497,14 +599,53 @@ const TicProdajaW = forwardRef((props, ref) => {
                 </div>
               )}
               {(uidKey == 2 && ticDoc.status != 2) && (
-                <div className="col-6">
-                  <Button label={translations[selectedLanguage].Payment}
-                    severity="warning" raised style={{ width: '100%' }}
-                    onClick={(e) => handlePayTicDoc(e)}
-                    disabled={uidKey === 3}
-                  />
+                <>
+                  <div className="col-3">
+                    <Button label={translations[selectedLanguage].Payment}
+                      severity="warning" raised style={{ width: '100%' }}
+                      onClick={(e) => handlePayTicDoc(e)}
+                      disabled={uidKey === 3}
+                    />
 
-                </div>
+                  </div>
+                  <div className="col-3">
+                    <Button label={translations[selectedLanguage].Rezervacija}
+                      severity="secondary" raised style={{ width: '100%' }}
+                      onClick={(e) => handleRezTicDoc(e)}
+                      disabled={uidKey === 3}
+                    />
+
+                  </div>
+                </>
+              )}
+              {(uidKey == 3 && ticDoc.status != 2) && (
+                <>
+                  <div className="col-4">
+                    <Button label={translations[selectedLanguage].ZavrsiKupovinu}
+                      severity="warning" raised style={{ width: '100%' }}
+                      onClick={(e) => handleEndTicDoc(e)}
+                    />
+
+                  </div>
+                  <div className="col-4">
+                    <Button label={translations[selectedLanguage].OdustaniOdKupovine}
+                      severity="danger" raised style={{ width: '100%' }}
+                      onClick={(e) => handleCancelSales (e) }
+                    />
+
+                  </div>
+                </>
+              )}
+              {(uidKey == 3 && ticDoc.status == 2) && (
+                <>
+                  <div className="col-6">
+                  <Button label={translations[selectedLanguage].ZavrsiKupovinu}
+                      severity="warning" raised style={{ width: '100%' }}
+                      onClick={(e) => handleEndTicDoc(e)}
+                    />
+
+                  </div>
+                </>
               )}
             </div>
           </div>

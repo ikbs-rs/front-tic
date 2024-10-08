@@ -17,6 +17,7 @@ import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
 import WebMap from './remoteComponentContainer';
 import WebSalMap from './ticDocW';
+
 import { Dropdown } from 'primereact/dropdown';
 import { TicCenatpService } from "../../service/model/TicCenatpService";
 import { TicDocService } from "../../service/model/TicDocService";
@@ -473,6 +474,7 @@ export default function TicEventL(props) {
                 <Column field="endda" header={translations[selectedLanguage].Endda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                 <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column>
                 <Column field="endtm" header={translations[selectedLanguage].EndTM} sortable filter style={{ width: '10%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+
             </DataTable>
             <Dialog
                 // header={translations[selectedLanguage].Doc}
@@ -542,6 +544,9 @@ export default function TicEventL(props) {
                         channell={channell}
                     />
                 )}
+
+
+
                 {/* {webMapVisible && (
                     <WebMap
                         remoteUrl= {`http://ws11.ems.local:3000/#/seatmap/${ticEvent.id}?docid=${docId}&sl=sr_cyr`}

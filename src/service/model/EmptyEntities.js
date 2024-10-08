@@ -369,6 +369,7 @@ const EmptyEntities =
     "fee": 0,
 		"par": null,
 		"descript": "",
+    "cena": "",
     "storno": 0,
 		"nart": "",
     "row": "",
@@ -386,7 +387,14 @@ const EmptyEntities =
 		"print": null,
 		"pm": null,
 		"rez": null,
-		"sysuser": null
+		"sysuser": null,
+    "feeonline" : null,
+    "feeprint": null,
+    "feepm": null,
+    "feerez": null,
+    "feedelivery": null,
+    "carttp": "",
+    "nevent": ""   
   },
   "tic_docslink": {
     "id": null,

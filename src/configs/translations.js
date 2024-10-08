@@ -877,6 +877,7 @@ export const translations = {
         ObrisiPopusteTransakcije: "Обриши све попусте на трансакцији.",
         IzaberiKupca: "Изабери купца.",
         OdustaniOdKupovine: "Одустани од куповине.",
+        ZavrsiKupovinu: "Заврши куповину",
         ProsiriMapu: "Прошири мапу.",
         StampaKarti: "Штампа карт.",
         PlacanjeCekovima: "Плаћање чековима.",
@@ -920,6 +921,15 @@ export const translations = {
         DodajDogadja: "Додај нови догађај",
         ProdajniKanal: "Продајни канал",
         EventartlinkList: "Веза артикала листа",
+        cenatp: "Тип цене",
+        DelRezervation: "Бриши резервације",
+        Rez: "Рез.",
+        Sektor: "Сектор",
+        uprodaji: "У продаји",
+        nabvrednost: "Набавна вредност",
+        prodato: "Продато",
+        iznos: "Износ",
+        slobodno: "Преостало",
     }
   };
   

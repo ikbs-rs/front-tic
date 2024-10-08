@@ -482,18 +482,20 @@ export default function TicProdajaTab(props) {
             // Obrada greške ako je potrebna
         }
     }
-    const createDoc = async (channel) => {
+    const createDoc = async (channel, event) => {
         try {
-            //console.log(channel, "$ createDoc $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            console.log(event?.id, channel?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            const ticEventattsService = new TicEventattsService()
+            const eventAtt = await ticEventattsService.getEventAttsDD(event?.id, channel?.id, '01.13.');
+            console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             const foundPaymenttp = ddPaymenttpItems.find((item) => item.code == paymenttpId)
             setDdPaymenttpItem(foundPaymenttp);
 
             const _ticDoc = { ...emptyTicDoc }
-            const foundTicEventAtt = ticEventattss.find((item) => item.ctp === codeAttInterval || '00')
-            const intervalProdaje = foundTicEventAtt?.value || 60
+            const intervalProdaje = eventAtt?.text || 60
             _ticDoc.id = null
             _ticDoc.tm = DateFunction.currDatetime();
-            _ticDoc.endtm = DateFunction.currDatetimePlusMinutes(60); // TO DO
+            _ticDoc.endtm = DateFunction.currDatetimePlusMinutes(intervalProdaje); // TO DO
             _ticDoc.timecreation = _ticDoc.tm
             _ticDoc.date = DateFunction.currDate();
             _ticDoc.year = DateFunction.currYear()
@@ -867,6 +869,12 @@ export default function TicProdajaTab(props) {
         handleChangeIsporuka(newValue); // Ručno pokrenite onChange funkciju
     };
 
+    const handleRezervaciju = (checkedRez) => {
+        const newValue = checkedRez; // Promenite trenutnu vrednost
+        setCheckedRezervacija(newValue); // Ažurirajte stanje
+        handleChangeRezervacija(newValue); // Ručno pokrenite onChange funkciju
+    };
+
     const toggleStavkeExpansion = () => {
         setExpandStavke(!expandStavke);
     };
@@ -1091,12 +1099,12 @@ export default function TicProdajaTab(props) {
             _ticDoc.cpar = _cmnPar?.code
             _ticDoc.npar = _cmnPar?.text
             await setTicDoc(_ticDoc)
-            //console.log(_channel.id, _ticDoc.channel, "$ createDoc $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_")
+            //console.log(_channel.id, _ticDoc.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_")
             if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
                 OK = true
             }
         } else {
-            //console.log(_channel.id, ticDocOld.channel, "$ createDoc $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
+            //console.log(_channel.id, ticDocOld.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
             ticDocOld = await fachUserDoc()
             if (ticDocOld?.id) {
                 if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
@@ -1113,7 +1121,7 @@ export default function TicProdajaTab(props) {
         }
 
         if (OK || newDoc) {
-            const _ticDoc = await createDoc(_channel)
+            const _ticDoc = await createDoc(_channel, _ticEvent)
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar.code
             _ticDoc.npar = _cmnPar.text
@@ -1125,13 +1133,12 @@ export default function TicProdajaTab(props) {
         setChannell(localChannel)
         timeout = setTimeout(async () => {
             setActiveIndex(Math.min(totalTabs - 1, activeIndex + 1))
-            // //console.log(ticDoc.status, "########################################################################################################", ticDoc.status == '1')
             setCheckedRezervacija(ticDoc.reservation == '1')
             setCheckedIsporuka(ticDoc.delivery == '1')
             setCheckedNaknade(ticDoc.services == '1')
         }, 1000);
     }
-
+/******************************************************************************************************************************************************************************** */
     const handleDialogClose = (newObj) => {
 
     }
@@ -1228,7 +1235,9 @@ export default function TicProdajaTab(props) {
                             expandStavke={expandStavke}
                             toggleIframeExpansion={toggleIframeExpansion}
                             handleDelivery={handleDelivery}
+                            handleRezervaciju={handleRezervaciju}
                             ref={ticProdajaWRef}
+                            setActiveIndex={setActiveIndex}
                         />
                         <div>
                             {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
@@ -1379,6 +1388,7 @@ export default function TicProdajaTab(props) {
                     </button>
                 </div>
             </Dialog>
+            
         </div>
     );
 }

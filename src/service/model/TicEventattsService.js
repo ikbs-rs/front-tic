@@ -22,6 +22,24 @@ export class TicEventattsService {
         }
     }
 
+    async getEventAttsDD(objId, par1, par2) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventattsdd_v&objid=${objId}&par1=${par1}&par2=${par2}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            console.log(objId, par1, par2, "G888888888888888888888888888888888GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", response.data)
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getTicEventatts11L(objId, par1) {
         // console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
         const selectedLanguage = localStorage.getItem('sl') || 'en'

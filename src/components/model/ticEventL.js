@@ -10,6 +10,7 @@ import { Toast } from 'primereact/toast';
 import './index.css';
 import { TicEventService } from '../../service/model/TicEventService';
 import TicEvent from './ticEvent';
+import TicEventCp from './ticEventCp';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from '../../configs/translations';
@@ -42,6 +43,7 @@ export default function TicEventL(props) {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
+    const [cpVisible, setCpVisible] = useState(false);
     const [eventTip, setEventTip] = useState('');
     const [ticEventattsLVisible, setTicEventattsLVisible] = useState(false);
     const [ticEventlinkLVisible, setTicEventlinkLVisible] = useState(false);
@@ -372,6 +374,13 @@ export default function TicEventL(props) {
     };
 
     // <--- Dialog
+    const setTicEventCpDialog = (ticEvent) => {
+        console.log("Dosao u SETOVANJE")
+        setShowMyComponent(true);
+        setCpVisible(true);
+        // setEventTip('CREATE');
+        setTicEvent({ ...ticEvent });
+    };
     const setTicEventDialog = (ticEvent) => {
         setVisible(true);
         // setEventTip('CREATE');
@@ -484,7 +493,7 @@ export default function TicEventL(props) {
                     icon="pi pi-copy"
                     style={{ width: '24px', height: '24px' }}
                     onClick={() => {
-                        setTicEventDialog(rowData);
+                        setTicEventCpDialog(rowData);
                         setEventTip('COPY');
                     }}
                     severity="danger"
@@ -492,7 +501,7 @@ export default function TicEventL(props) {
                 ></Button>
             </div>
         );
-    };    
+    };
     return (
         <div className="card" style={{ height: "855px" }}>
             <Toast ref={toast} />
@@ -576,7 +585,7 @@ export default function TicEventL(props) {
                     exportable={false}
                     headerClassName="w-10rem"
                     style={{ minWidth: '1rem' }}
-                />                
+                />
             </DataTable>
             <Dialog
                 header={translations[selectedLanguage].Event}
@@ -593,6 +602,24 @@ export default function TicEventL(props) {
                         ticEvent={ticEvent}
                         handleDialogClose={handleDialogClose}
                         setVisible={setVisible}
+                        dialog={true}
+                        eventTip={eventTip}
+                    />}
+            </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].Event}
+                visible={cpVisible}
+                style={{ width: '70%' }}
+                onHide={() => {
+                    setCpVisible(false);
+                }}
+            >
+                {cpVisible &&
+                    <TicEventCp
+                        parameter={'inputTextValue'}
+                        ticEvent={ticEvent}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setCpVisible}
                         dialog={true}
                         eventTip={eventTip}
                     />}

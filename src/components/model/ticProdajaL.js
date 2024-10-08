@@ -20,6 +20,7 @@ import WebSalMap from './ticDocW';
 import { Dropdown } from 'primereact/dropdown';
 import { TicCenatpService } from "../../service/model/TicCenatpService";
 import { TicDocService } from "../../service/model/TicDocService";
+import TicProdajaEventVL from './ticProdajaEventVL';
 
 export default function TicProdajaL(props) {
     //console.log(props, '+++++++++++++++++++++++++++++++++++TicProdajaL+++++++++++++++++++++++++++++++++++++++++++++++');
@@ -45,6 +46,8 @@ export default function TicProdajaL(props) {
     const [visible, setVisible] = useState(false);
     const [eventTip, setEventTip] = useState('');
     const [webMapVisible, setWebMapVisible] = useState(false);
+    const [eventPregledVVisible, setEventPregledVVisible] = useState(false);
+    
 
     let [numberChannell, setNumberChannell] = useState(0)
     let [channells, setChannells] = useState([{}])
@@ -343,14 +346,37 @@ export default function TicProdajaL(props) {
         }
     };
 
+    const handleEventPregledVClick = async (rowData) => {
+        try {
+            await getChannell(rowData)
+            //console.log(rowData, "#########################@@@@@@@@@@@@@@@@@@@@@@@@@@@@##################################")
+            setTicEvent(rowData)
+            setEventPregledVDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch Channell data',
+                life: 3000
+            });
+        }
+    };
     const setWebMapDialog = () => {
         setWebMapVisible(true);
     };
-
     const handleWebMapDialogClose = (newObj) => {
         setWebMapVisible(false);
     };
 
+    const setEventPregledVDialog = () => {
+        setEventPregledVVisible(true);
+    };
+    const handleEventPregledVDialogClose = (newObj) => {
+        setEventPregledVVisible(false);
+    };
+
+    
     //  Dialog -------------------------------------------------------------------------------------------------------->
 
     const header = renderHeader();
@@ -359,7 +385,23 @@ export default function TicProdajaL(props) {
     const imageBodyTemplate = (rowData) => {
         return <img src={rowData.imageUrl} alt={rowData.textx} className="w-6rem shadow-2 border-round" />;
     };
-
+    const pregledTemplate = (rowData) => {
+        return (
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-chart-line"
+                    style={{ width: '24px', height: '24px' }}
+                    className="p-button-outlined p-button-danger"
+                    onClick={() => {
+                        handleEventPregledVClick(rowData)
+                    }}
+                    text
+                    raised
+                ></Button>
+            </div>
+        );
+    };
     const actionTemplate = (rowData) => {
         return (
             <div className="flex flex-wrap gap-1">
@@ -385,34 +427,34 @@ export default function TicProdajaL(props) {
             // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
         };
         return (
-                <div className="flex flex-wrap gap-1">
-                    <Button
-                        type="button"
-                        icon="pi pi-plus"
-                        style={{ width: '36px', height: '26px' }}
-                        className="p-button-danger"
-                        onClick={() => {
-                            props.handleEventProdaja(rowData, true)
-                        }}
-                        // text
-                        raised
-                        tooltip={translations[selectedLanguage].NovaTransakcija}
-                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                    ></Button>
+            <div className="flex flex-wrap gap-1">
+                <Button
+                    type="button"
+                    icon="pi pi-plus"
+                    style={{ width: '36px', height: '26px' }}
+                    className="p-button-danger"
+                    onClick={() => {
+                        props.handleEventProdaja(rowData, true)
+                    }}
+                    // text
+                    raised
+                    tooltip={translations[selectedLanguage].NovaTransakcija}
+                    tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                ></Button>
 
-                    <Button
-                        type="button"
-                        icon="pi pi-cart-plus"
-                        style={{ width: '36px', height: '26px' }}
-                        className="p-button-success"
-                        onClick={() => {
-                            props.handleEventProdaja(rowData, false)
-                        }}
-                        raised
-                        tooltip={translations[selectedLanguage].DodajDogadja}
-                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                    ></Button>
-                </div>
+                <Button
+                    type="button"
+                    icon="pi pi-cart-plus"
+                    style={{ width: '36px', height: '26px' }}
+                    className="p-button-success"
+                    onClick={() => {
+                        props.handleEventProdaja(rowData, false)
+                    }}
+                    raised
+                    tooltip={translations[selectedLanguage].DodajDogadja}
+                    tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                ></Button>
+            </div>
         );
     };
     const webTemplate = (rowData) => {
@@ -488,6 +530,13 @@ export default function TicProdajaL(props) {
                     <Column field="endda" header={translations[selectedLanguage].DatEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                     {/* <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column> */}
                     <Column field="endtm" header={translations[selectedLanguage].TmEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                    <Column
+                        //bodyClassName="text-center"
+                        body={pregledTemplate}
+                        exportable={false}
+                        headerClassName="w-10rem"
+                        style={{ minWidth: '4rem' }}
+                    />
                     {/* <Column
                         //bodyClassName="text-center"
                         body={webTemplate}
@@ -573,6 +622,34 @@ export default function TicProdajaL(props) {
                         originUrl="http://192.168.72.96:8353"
                     />
                 )} */}
+                </Dialog>
+                <Dialog
+                    header={
+                        <div className="dialog-header">
+                            <Button
+                                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                                onClick={() => {
+                                    setEventPregledVVisible(false);
+                                }}
+                                severity="secondary" raised
+                            />
+                        </div>
+                    }
+                    visible={eventPregledVVisible}
+                    style={{ width: '50%' }}
+                    onHide={() => {
+                        setVisible(false);
+                    }}
+                >
+                    {eventPregledVVisible &&
+                        <TicProdajaEventVL
+                            parameter={'inputTextValue'}
+                            ticEvent={ticEvent}
+                            handleDialogClose={handleEventPregledVDialogClose}
+                            setVisible={setEventPregledVVisible}
+                            dialog={true}
+                            eventTip={eventTip}
+                        />}
                 </Dialog>
             </div>
         </>

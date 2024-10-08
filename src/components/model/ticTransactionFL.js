@@ -202,13 +202,16 @@ export default function TicTransactionFL(props) {
         setTicDocDialog(emptyTicDoc);
     };
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [delRezDialogVisible, setDelRezDialogVisible] = useState(false);
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
     };
     const hideDeleteDialog = () => {
         setDeleteDialogVisible(false);
     };
-
+    const hideDelRezDialog = () => {
+        setDelRezDialogVisible(false);
+    };
     const onRowSelect = (doc) => {
         toast.current.show({
             severity: "info",
@@ -311,6 +314,24 @@ export default function TicTransactionFL(props) {
     const handleStornoClose = (newObj) => {
         setTicTransactiostornogrpLVisible(false);
     }
+    const showDelRezDialog = () => {
+        setDelRezDialogVisible(true);
+    };
+    const handleDelRezClick = async () => {
+        try {
+            setSubmitted(true);
+            const ticDocService = new TicDocService();
+            // await ticDocService.deleteRez(ticEvent);
+            hideDelRezDialog();
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    };
     /******************************************************************************************************************** */
 
     const setTicEventProdajaLDialog = (destination) => {
@@ -325,20 +346,20 @@ export default function TicTransactionFL(props) {
         return (
             <div className="flex card-container">
 
-                <div className="flex flex-wrap gap-1">
+                {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].selection} icon="pi pi-table" onClick={handleEventProdajaClick} severity="info" text raised />
-                </div>
-                <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={handleStorno} severity="danger" text raised disabled={!ticDoc} />
-                </div>
+                </div> */}
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
-                </div>
+                </div>               
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Spajanje} icon="pi pi-file-import" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
                 </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button icon="pi pi-plus" onClick={handleStorno} severity="secondary" raised disabled={!ticDoc} />
+                    <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={handleStorno} severity="danger" text raised disabled={!ticDoc} />
+                </div>                 
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].DelRezervation}  icon="pi pi-trash" onClick={showDelRezDialog} severity="secondary" raised disabled={!ticDoc} />
                 </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].TransactionList}</b>
@@ -906,14 +927,20 @@ export default function TicTransactionFL(props) {
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
-                {/* <Column
-                    field="canceled"
-                    header={translations[selectedLanguage].Canceled}
-                    sortable
+                <Column
+                    field="reservation"
+                    header={translations[selectedLanguage].Rez}
                     filter
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
-                ></Column> */}
+                ></Column>
+                <Column
+                    field="status"
+                    header={translations[selectedLanguage].Status}
+                    filter
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>                
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog
@@ -1020,7 +1047,13 @@ export default function TicTransactionFL(props) {
                     />
                 )}
             </Dialog>
-            {/* <ConfirmDialog visible={confirmDialogVisible} onHide={() => setConfirmDialogVisible(false)} onConfirm={handleConfirm} /> */}
+            <DeleteDialog
+                visible={delRezDialogVisible}
+                inAction="delete"
+                item={"Istekle rezervacije"}
+                onHide={hideDelRezDialog}
+                onDelete={handleDelRezClick}
+            />
         </div>
     );
 }

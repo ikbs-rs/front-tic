@@ -40,6 +40,24 @@ export class TicDocsService {
     }
   }
 
+  async getEventartcenas(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docseventartcena_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      console.log(response.data, "77777777777777777777777777777getEventartcenas777777777777777777777777777777777777")
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getArtikliPrintLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docsartikliprint_v&objid=${objId}&sl=${selectedLanguage}`;
