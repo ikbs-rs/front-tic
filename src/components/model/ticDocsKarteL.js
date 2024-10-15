@@ -709,7 +709,7 @@ export default function TicTransactionsL(props) {
                 <Column
                     field="cena"
                     header={translations[selectedLanguage].cenatp}
-                    style={{ width: '8%', backgroundColor:  '#b6ecd2' }}
+                    style={{ width: '8%', backgroundColor:  '#e6f0e6' }}
                     editor={(e) => valueEditor(e.rowData, 'cena', e)}
                     body={(rowData) => valueTemplate(rowData, 'cena')}
                     onCellEditComplete={onCellEditComplete}
@@ -726,7 +726,7 @@ export default function TicTransactionsL(props) {
                     <Column
                         field="output"
                         header={translations[selectedLanguage].outputL}
-                        sortable
+                        // sortable
                         style={{ width: "5%" }}
                     ></Column>
                 )}
@@ -734,7 +734,7 @@ export default function TicTransactionsL(props) {
                     <Column
                         field="discount"
                         header={translations[selectedLanguage].discount}
-                        sortable
+                        // sortable
                         style={{ width: "5%" }}
                         editor={inputEditor}
                         // editor={(e) => inputEditor(e.rowData, e.field, e)}
@@ -745,14 +745,14 @@ export default function TicTransactionsL(props) {
                 <Column
                     field="potrazuje"
                     header={translations[selectedLanguage].potrazuje}
-                    sortable
+                    // sortable
                     style={{ width: "8%" }}
                 ></Column>
                 {(props.mapa != 1) && (
                     <Column 
                         field="tickettp"
                         header={translations[selectedLanguage].tickettp}
-                        style={{ width: '8%', backgroundColor:  '#b6ecd2'}}
+                        style={{ width: '8%', backgroundColor:  '#e6f0e6'}}
                         editor={(e) => valueEditor(e.rowData, 'tickettp', e)}
                         body={(rowData) => 
 
@@ -767,7 +767,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].print}
                         field="print"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#b6ecd2' }}
+                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `print`)}
                         onCellEditComplete={onCellEditComplete}
@@ -778,7 +778,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].pm}
                         field="pm"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#b6ecd2' }}
+                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `pm`)}
                         onCellEditComplete={onCellEditComplete}
@@ -789,7 +789,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].delivery}
                         field="delivery"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#b6ecd2' }}
+                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
@@ -800,14 +800,14 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].rez}
                         field="rez"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#b6ecd2' }}
+                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `rez`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
                 <Column
-                    header={translations[selectedLanguage].del}
+                    // header={translations[selectedLanguage].del}
                     field="del"
                     // dataType="numeric"
                     style={{ width: '1%' }}

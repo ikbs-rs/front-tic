@@ -583,7 +583,7 @@ const TicProdajaW = forwardRef((props, ref) => {
           <div className="col-5">
             <div className="grid grid-nogutter">
               {(uidKey <= 2 || ticDoc.status == 2) && (
-                <div className="col-6">
+                <div className="col-3">
                   <Button label={translations[selectedLanguage].Back}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleBackClic(e)}
@@ -592,7 +592,7 @@ const TicProdajaW = forwardRef((props, ref) => {
                 </div>
               )}
               {(uidKey == 3 && ticDoc.status != 2 ) && (
-                <div className="col-4">
+                <div className="col-3">
                   <Button label={translations[selectedLanguage].Back}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleBackClic(e)}
@@ -600,7 +600,7 @@ const TicProdajaW = forwardRef((props, ref) => {
                 </div>
               )}              
               {((uidKey != 2 && uidKey <= 2) || (ticDoc.status == 2 && uidKey <= 2)) && (
-                <div className="col-6">
+                <div className="col-3">
                   <Button label={translations[selectedLanguage].Next}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleNextClic(e)}
@@ -631,14 +631,14 @@ const TicProdajaW = forwardRef((props, ref) => {
               )}
               {(uidKey == 3 && ticDoc.status != 2) && (
                 <>
-                  <div className="col-4">
+                  <div className="col-3">
                     <Button label={translations[selectedLanguage].ZavrsiKupovinu}
                       severity="warning" raised style={{ width: '100%' }}
                       onClick={(e) => handleEndTicDoc(e)}
                     />
 
                   </div>
-                  <div className="col-4">
+                  <div className="col-3">
                     <Button label={translations[selectedLanguage].OdustaniOdKupovine}
                       severity="danger" raised style={{ width: '100%' }}
                       onClick={(e) => handleCancelSales (e) }
@@ -649,7 +649,7 @@ const TicProdajaW = forwardRef((props, ref) => {
               )}
               {(uidKey == 3 && ticDoc.status == 2) && (
                 <>
-                  <div className="col-6">
+                  <div className="col-3">
                   <Button label={translations[selectedLanguage].ZavrsiKupovinu}
                       severity="warning" raised style={{ width: '100%' }}
                       onClick={(e) => handleEndTicDoc(e)}
@@ -665,7 +665,6 @@ const TicProdajaW = forwardRef((props, ref) => {
           {(uidKey == 0 && !props.expandStavke) && (
             <div className={props.expandIframe ? "col-12" : "col-7"}>
               <div className="grid">
-
                 <div className="col-12">
                   <iframe key={iframeKey}
                     id="myIframe"
@@ -683,7 +682,7 @@ const TicProdajaW = forwardRef((props, ref) => {
             </div>
           )}
           {(!props.expandIframe && uidKey == 1) && (
-            <div className="col-5 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 790 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 790 }}>
                   <TicDocsuidProdajaL
@@ -702,7 +701,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
           )}
           {(!props.expandIframe && uidKey == 2) && (
-            <div className="col-5 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 790 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 790 }}>
                   <TicProdajaPlacanje
@@ -723,7 +722,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
           )}
           {(!props.expandIframe && uidKey == 3) && (
-            <div className="col-5 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 790 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 790 }}>
                   <TicDocsprintgrpL
@@ -737,10 +736,9 @@ const TicProdajaW = forwardRef((props, ref) => {
                 </div>
               </div>
             </div>
-
           )}
           {(!props.expandIframe && uidKey >= 1) && (
-            <div className={props.expandStavke ? "col-12" : "col-7"}>
+            <div className={props.expandStavke ? "col-12" : "col-9"}>
               <div className="grid " >
                 <div className="col-12">
                   <TicTranssL

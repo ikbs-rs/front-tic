@@ -30,6 +30,7 @@ import ArtGrp from './components/model/ticArtgrpL';
 import ArtTp from './components/model/ticArttpL';
 import Cena from './components/model/ticCenaL';
 import CenaTp from './components/model/ticCenatpL';
+import PrintLocal from './components/model/ticPrintlocalL';
 import SeattpAtt from './components/model/ticSeattpattL';
 import SeatTp from './components/model/ticSeattpL';
 import Atest from './components/model/1test';
@@ -146,7 +147,8 @@ const App = () => {
                         { label: translations[selectedLanguage].Groups_of_items, icon: 'pi pi-fw pi-clone', to: '/artgrp' },
                         { label: translations[selectedLanguage].Item, icon: 'pi pi-fw pi-clone', to: '/art' },
                         { label: translations[selectedLanguage].Price_types, icon: 'pi pi-fw pi-clone', to: '/cenatp' },
-                        { label: translations[selectedLanguage].Price, icon: 'pi pi-fw pi-exclamation-triangle', to: '/cena' }
+                        { label: translations[selectedLanguage].Price, icon: 'pi pi-fw pi-exclamation-triangle', to: '/cena' },
+                        { label: translations[selectedLanguage].PrinterlocalL, icon: 'pi pi-fw pi-exclamation-triangle', to: '/printlocal' }
                     ]
                 },
                 {
@@ -557,6 +559,7 @@ const App = () => {
                         <Route path="/arttp" element={<ArtTp />} />
                         <Route path="/cena" element={<Cena />} />
                         <Route path="/cenatp" element={<CenaTp />} />
+                        <Route path="/printlocal" element={<PrintLocal />} />
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/transaction" element={<Transaction />} />
                         <Route path="/transactionf" element={<TransactionF />} />

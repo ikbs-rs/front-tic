@@ -930,6 +930,10 @@ export const translations = {
         prodato: "Продато",
         iznos: "Износ",
         slobodno: "Преостало",
+        LinkArtGrp: "Артикли у групи",
+        PrinterlocalL: "Локални штампачи Листа",
+        Name: "Назив",
+        PrinterlocalL: "Локални штампач"
     }
   };
   

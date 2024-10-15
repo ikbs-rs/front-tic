@@ -187,11 +187,11 @@ export default function TicDocsprintgrpL(props) {
             disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
             raised />
         </div>        
-        <div className="flex-grow-1"></div>
+        {/* <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].StampKarti}</b>
-        <div className="flex-grow-1"></div>
+        <div className="flex-grow-1"></div> */}
 
-        <div className="flex flex-wrap gap-1">
+        {/* <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText
@@ -208,17 +208,17 @@ export default function TicDocsprintgrpL(props) {
             onClick={clearFilter}
             text raised
           />
-        </div>
+        </div> */}
       </div>
     );
   };
 
   const header = renderHeader();
   return (
-    <div className="card">
+    <div className="">
       <Toast ref={toast} />
       <div className="col-12">
-        <div className="card">
+        {/* <div className="">
           <div className="p-fluid formgrid grid">
             <div className="field col-12 md:col-3">
               <label htmlFor="id">{translations[selectedLanguage].Id}</label>
@@ -227,7 +227,7 @@ export default function TicDocsprintgrpL(props) {
                 disabled={true}
               />
             </div>
-            <div className="field col-12 md:col-2">
+            <div className="field col-12 md:col-3">
               <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
               <InputText
                 id="broj"
@@ -269,7 +269,7 @@ export default function TicDocsprintgrpL(props) {
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <DataTable
         key={componentKey}
@@ -278,7 +278,7 @@ export default function TicDocsprintgrpL(props) {
         selection={selectedProducts}
         onSelectionChange={(e) => setSelectedProducts(e.value)}
         dataKey="id"
-        tableStyle={{ minWidth: "50rem" }}
+        // tableStyle={{ minWidth: "50rem" }}
         sortField="code" sortOrder={1}
         header={header}
         scrollable
@@ -301,21 +301,21 @@ export default function TicDocsprintgrpL(props) {
         <Column
           field="row"
           header={translations[selectedLanguage].red}
-          style={{ width: "5%" }}
+          style={{ width: "15%" }}
           sortable
         ></Column>
         <Column
           field="seat"
-          style={{ width: "5%" }}
+          style={{ width: "15%" }}
           sortable
         ></Column>
         <Column
           field="nart"
           header={translations[selectedLanguage].nart}
           sortable
-          style={{ width: "25%" }}
+          style={{ width: "35%" }}
         ></Column>
-        <Column
+        {/* <Column
           field="price"
           header={translations[selectedLanguage].price}
           sortable
@@ -338,11 +338,11 @@ export default function TicDocsprintgrpL(props) {
           header={translations[selectedLanguage].potrazuje}
           sortable
           style={{ width: "8%" }}
-        ></Column>
+        ></Column> */}
       </DataTable>
       {selectedRowsData.length > 0 && (
-        <div className="mt-4">
-          <h5>Selected Rows Data:</h5>
+        <div className="">
+          {/* <h5>Selected Rows Data:</h5> */}
           <ul>
             {selectedRowsData.map((row, index) => (
               <li key={index}>{JSON.stringify(row)}</li>

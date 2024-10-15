@@ -104,7 +104,7 @@
 .toggle-button-checked.custom1,
 .toggle-button-unchecked.custom1 {
   background-color: rgb(190, 66, 66) !important;
-  /* font-size: 13px !important; */
+  font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
@@ -120,21 +120,21 @@
 .toggle-button-checked.custom3,
 .toggle-button-unchecked.custom3 {
   background-color: rgb(207, 142, 73) !important; /* Zelena za uključeno stanje */
-  /* font-size: 13px !important; */
+  font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom4,
 .toggle-button-unchecked.custom4 {
   background-color: rgb(225, 236, 33) !important; /* Zelena za uključeno stanje */
-  /* font-size: 13px !important; */
+  font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom5,
 .toggle-button-unchecked.custom5 {
   background-color: rgb(25, 234, 25) !important; /* Zelena za uključeno stanje */
-  /* font-size: 13px !important; */
+  font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
@@ -172,28 +172,28 @@
 .p-component {
   /* font-family: system-ui; */
   font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 body {
   font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .p-link {
-  font-size: 13px;
+  font-size: 12px;
   font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
 }
 
 .p-inputtext {
   font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .p-checkbox .p-checkbox-box {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 .p-button.p-button-icon-only.p-button-rounded {

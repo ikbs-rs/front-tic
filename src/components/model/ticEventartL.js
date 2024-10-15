@@ -288,7 +288,7 @@ export default function TicEventartL(props) {
           <Button label={translations[selectedLanguage].Cena} icon="pi pi-dollar" onClick={handleEventartcenaLClick} severity="warning" raised disabled={!ticEventart} />
         </div>
         <div className="flex flex-wrap gap-1" >
-          <Button label={translations[selectedLanguage].Link} icon="pi pi-paperclip" onClick={handleEventartlinkLClick} severity="warning" raised disabled={!ticEventart} />
+          <Button label={translations[selectedLanguage].LinkArtGrp} icon="pi pi-paperclip" onClick={handleEventartlinkLClick} severity="warning" raised disabled={!ticEventart} />
         </div>
         <div className="flex flex-wrap gap-1" />
         <b>{translations[selectedLanguage].EventartList}</b>
