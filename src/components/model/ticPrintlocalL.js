@@ -13,6 +13,7 @@ import TicPrintlocal from './ticPrintlocal';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
+import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicPrintlocalL(props) {
   let i = 0
@@ -30,6 +31,7 @@ export default function TicPrintlocalL(props) {
   const [cenatpTip, setCenatpTip] = useState('');
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [rowClick, setRowClick] = useState(true);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -155,8 +157,8 @@ export default function TicPrintlocalL(props) {
       <div className="flex card-container">
 
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Print}
-            icon="pi pi-print" onClick={handlePrintClick}
+          <Button label={translations[selectedLanguage].SetPrintLocal}
+            icon="pi pi-wrench" onClick={handlePrintClick}
             severity="warning"
             // text
             raised />
@@ -250,6 +252,56 @@ export default function TicPrintlocalL(props) {
     );
   };
 
+  const toggleBodyTemplate = (rowData, name, e) => {
+
+    const checked = rowData[name] == 1; 
+    const buttonClass = checked ? "toggle-button-checked" : "toggle-button-unchecked";
+
+    return (
+        <div className="flex justify-content-center" style={{ width: "18px", height: "18px", "font-size": "9px", border: 'none' }}>
+            <ToggleButton
+                id={`tgl${rowData.id}`}
+                onLabel=""
+                offLabel=""
+                onIcon="pi pi-check"
+                offIcon="pi pi-times"
+                checked={checked}
+                onChange={(e) => toggleChecked(e, name, rowData)} // Ako treba ažurirati stanje u komponenti
+                // className={`w-9rem ${buttonClass}`}
+                className={`${buttonClass}`}
+            />
+        </div>
+    );
+};  
+
+const toggleChecked = async (e, name, rowData) => {
+  const newCheckedState = e.value;
+  setChecked(newCheckedState);
+  let val = '';
+  let _ticPrintlocals = {}
+  val = newCheckedState ? 1 : 0;
+  _ticPrintlocals = { ...ticPrintlocals };
+  // Update data in parent component or global store
+
+  const updatedTicPrintlocals = [...ticPrintlocals];
+
+  const rowIndex = await updatedTicPrintlocals.findIndex((row) => row.id === rowData.id);
+
+  updatedTicPrintlocals[rowIndex][`${name}`] = val;
+  // setRefesh(++refresh)
+  // props.remoteRefresh(++refresh)  
+
+};
+
+const onCellEditComplete = async (e) => {
+  let { rowData, newValue, field, originalEvent: event } = e;
+  if (newValue !== null) {
+      rowData[field] = newValue;
+      setTicPrintlocals([...ticPrintlocals]);
+  } else {
+      event.preventDefault();
+  }
+};
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -288,6 +340,16 @@ export default function TicPrintlocalL(props) {
           // filter
           style={{ width: "50%" }}
         ></Column>
+        <Column
+          field="default"
+          header={translations[selectedLanguage].Default}
+          // sortable
+          // filter
+          bodyClassName="text-center"
+          body={(e) => toggleBodyTemplate(e, `default`)}
+          onCellEditComplete={onCellEditComplete}
+          style={{ width: "10%" }}
+        ></Column>        
         <Column
           //bodyClassName="text-center"
           body={actionTemplate}

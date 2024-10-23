@@ -149,8 +149,9 @@ export async function fetchObjData(...args) {
         };
         console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
         const response = await axios.get(url, { headers, timeout });
-        const datas = response.data.items || response.data.item;
-        const items = datas.map(({ text, id }) => ({ name: text, code: id }));
+        const datas = response.data.items || response.data.item || [];
+        // const items = datas.map(({ text, id }) => ({ name: text, code: id }));
+        const items = Array.isArray(datas) ? datas.map(({ text, id }) => ({ name: text, code: id })) : [];
         // console.log(items, "*******************************items*************************", datas, args[2])
 
         const data = datas.find((item) => item.id === args[2]);

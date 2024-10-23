@@ -94,22 +94,56 @@ export default function TicEventattsL(props) {
                     // console.log(data, "*********************data**************************#####################", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
 
-                    const promisesDD = data.map(async (row) => {
+                    // const promisesDD = data.map(async (row) => {
+                    //     if (row.inputtp === '3' && row.ddlist) {
+                    //         const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
+                    //         let apsTabela = modul + `_` + tabela;
+                    //         if (code) {
+                    //             apsTabela = apsTabela + `_${code}`
+                    //         }
+                    //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                    //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
+
+                    //     }
+                    //     if (row.inputtp === '6' && row.ddlist) {
+                    //         const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
+                    //         let apsTabela = modul + `_` + tabela;
+                    //         if (code) {
+                    //             apsTabela = apsTabela + `_${code}`
+                    //         }
+                    //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                    //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
+
+                    //         if (modul1) {
+                    //             let apsTabela1 = modul1 + `_` + table1;
+                    //             if (code1) {
+                    //                 apsTabela1 = apsTabela1 + `_${code1}`
+                    //             }
+                    //             const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
+                    //             updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
+                    //         }
+                    //     }
+                    //     return { ...row, isUploadPending: false };
+                    // });
+
+                    const updatedData = []; // Низ за чување ажурираних података
+
+                    for (const row of data) {
                         if (row.inputtp === '3' && row.ddlist) {
                             const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
                             let apsTabela = modul + `_` + tabela;
                             if (code) {
-                                apsTabela = apsTabela + `_${code}`
+                                apsTabela = apsTabela + `_${code}`;
                             }
                             const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
                             updatedDropdownItems[apsTabela] = dataDD.ddItems;
-
                         }
+
                         if (row.inputtp === '6' && row.ddlist) {
                             const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
                             let apsTabela = modul + `_` + tabela;
                             if (code) {
-                                apsTabela = apsTabela + `_${code}`
+                                apsTabela = apsTabela + `_${code}`;
                             }
                             const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
                             updatedDropdownItems[apsTabela] = dataDD.ddItems;
@@ -117,23 +151,31 @@ export default function TicEventattsL(props) {
                             if (modul1) {
                                 let apsTabela1 = modul1 + `_` + table1;
                                 if (code1) {
-                                    apsTabela1 = apsTabela1 + `_${code1}`
+                                    apsTabela1 = apsTabela1 + `_${code1}`;
                                 }
                                 const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
                                 updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
                             }
                         }
-                        return { ...row, isUploadPending: false };
-                    });
 
-                    const updatedData = await Promise.all(promisesDD);
-                    setTicEventattss(updatedData);
-                    setDropdownAllItems(updatedDropdownItems);
+                        // Ажурирање реда и додавање у updatedData
+                        const updatedRow = { ...row, isUploadPending: false };
+                        updatedData.push(updatedRow);
+                    }
+
+                    setTicEventattss(updatedData); // Постављање ажурираних података у state
+                    setDropdownAllItems(updatedDropdownItems); // Постављање ажурираних података за dropdown
+
+
+                    // const updatedData = await Promise.all(promisesDD);
+                    // setTicEventattss(updatedData);
+                    // setDropdownAllItems(updatedDropdownItems);
 
                     initFilters();
                     console.log('Učitavanje je završeno!!!!');
-                    setLoading(false);
+
                 }
+                setLoading(false);
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -728,10 +770,14 @@ export default function TicEventattsL(props) {
                 }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
-                //console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
+                console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
                 setDropdownItems(selectedOptions);
-                const selectedOption = dropdownAllItems[apsTabela].find((option) => option.code === rowData.value);
-                setDropdownItem(selectedOption);
+
+                    // const selectedOption = selectedOptions.find((option) => option.code === rowData.value);
+                    const selectedOption = selectedOptions.length > 0 
+                    ? selectedOptions.find((option) => option.code === rowData.value)
+                    : null;
+                    setDropdownItem(selectedOption);
                 // console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
                 return <Dropdown
                     id={rowData.id}
@@ -1012,16 +1058,16 @@ export default function TicEventattsL(props) {
                     headerClassName="w-10rem"
                     style={{ minWidth: '4rem' }}
                 />
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable  style={{ width: '10%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable  style={{ width: '25%' }}></Column>
-                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable  style={{ width: '25%' }}></Column>
-                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable  style={{ width: '10%' }}></Column>
-                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable  style={{ width: '10%' }}></Column>
+                <Column field="ctp" header={translations[selectedLanguage].Code} sortable style={{ width: '10%' }}></Column>
+                <Column field="ntp" header={translations[selectedLanguage].Text} sortable style={{ width: '25%' }}></Column>
+                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable style={{ width: '25%' }}></Column>
+                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable style={{ width: '10%' }}></Column>
+                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable style={{ width: '10%' }}></Column>
                 <Column
                     field="value"
                     header={translations[selectedLanguage].condition1}
                     sortable
-                    
+
                     style={{ width: '20%' }}
                     editor={(e) => valueEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
                     body={valueTemplate}
@@ -1031,7 +1077,7 @@ export default function TicEventattsL(props) {
                     field="text"
                     header={translations[selectedLanguage].condition2}
                     sortable
-                    
+
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => textEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
@@ -1042,7 +1088,7 @@ export default function TicEventattsL(props) {
                     field="condition"
                     header={translations[selectedLanguage].condition3}
                     sortable
-                    
+
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => conditionEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
@@ -1053,7 +1099,7 @@ export default function TicEventattsL(props) {
                     field="minfee"
                     header={translations[selectedLanguage].minfee}
                     sortable
-                    
+
                     style={{ width: '10%' }}
                     //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
                     editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value

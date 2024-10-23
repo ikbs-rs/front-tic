@@ -46,6 +46,9 @@ export class TicDocService {
   }
 
   async getDocZbirniiznos(objId) {
+    if (!objId || objId==undefined) {
+      return 0;
+    }
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doczbirniiznos_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
