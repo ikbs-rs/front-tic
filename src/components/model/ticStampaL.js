@@ -50,7 +50,6 @@ export default function TicStampaL(props) {
 
         const ticStampaService = new TicStampaService();
         const data = await ticStampaService.getLista(props.ticDoc.id);
-        console.log(data, "00---HHHHHHqqqqqqqqqqqqqqqqqqqqqqqqqqqqqHHHHH----222222222222222222222222")
         setTicStampas(data);
 
         initFilters();

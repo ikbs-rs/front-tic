@@ -90,15 +90,15 @@ const App = () => {
             icon: 'pi pi-fw pi-bars',
             items: [
                 //{ label: translations[selectedLanguage].Sales_channels, icon: 'pi pi-fw pi-calendar', to: '/action' },
-                {
-                    label: translations[selectedLanguage].Settings_seats,
-                    icon: 'pi pi-fw pi-bars',
-                    items: [
-                        { label: translations[selectedLanguage].Seat_type, icon: 'pi pi-fw pi-calendar', to: '/seattp' },
-                       // { label: translations[selectedLanguage].Seats, icon: 'pi pi-fw pi-calendar', to: '/seat'  },
-                        { label: translations[selectedLanguage].Properties_seat, icon: 'pi pi-fw pi-calendar' , to: '/seattpatt'}
-                    ]
-                },
+                // {
+                //     label: translations[selectedLanguage].Settings_seats,
+                //     icon: 'pi pi-fw pi-bars',
+                //     items: [
+                //         { label: translations[selectedLanguage].Seat_type, icon: 'pi pi-fw pi-calendar', to: '/seattp' },
+                //        // { label: translations[selectedLanguage].Seats, icon: 'pi pi-fw pi-calendar', to: '/seat'  },
+                //         { label: translations[selectedLanguage].Properties_seat, icon: 'pi pi-fw pi-calendar' , to: '/seattpatt'}
+                //     ]
+                // },
                 {
                     label: translations[selectedLanguage].Privileges,
                     icon: 'pi pi-fw pi-bars',
@@ -150,15 +150,15 @@ const App = () => {
                         { label: translations[selectedLanguage].Price, icon: 'pi pi-fw pi-exclamation-triangle', to: '/cena' },
                         { label: translations[selectedLanguage].PrinterlocalL, icon: 'pi pi-fw pi-exclamation-triangle', to: '/printlocal' }
                     ]
-                },
-                {
-                    label: translations[selectedLanguage].Documents_administration,
-                    icon: 'pi pi-fw pi-bars',
-                    items: [
-                        { label: translations[selectedLanguage].Species_documents, icon: 'pi pi-fw pi-calendar' , to: '/docvr'},
-                        { label: translations[selectedLanguage].Document_types, icon: 'pi pi-fw pi-calendar' , to: '/doctp'}
-                    ]
                 }
+                // {
+                //     label: translations[selectedLanguage].Documents_administration,
+                //     icon: 'pi pi-fw pi-bars',
+                //     items: [
+                //         { label: translations[selectedLanguage].Species_documents, icon: 'pi pi-fw pi-calendar' , to: '/docvr'},
+                //         { label: translations[selectedLanguage].Document_types, icon: 'pi pi-fw pi-calendar' , to: '/doctp'}
+                //     ]
+                // }
             ]
         },
         {
@@ -170,7 +170,7 @@ const App = () => {
                     icon: 'pi pi-prime',
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
-                        { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
+                        // { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
                         { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-book', to: '/transaction' },
                         { label: translations[selectedLanguage].TransactionF, icon: 'pi pi-fw pi-book', to: '/transactionf' },
                         { label: translations[selectedLanguage].Delivery, icon: 'pi pi-fw pi-truck', to: '/delivery' },

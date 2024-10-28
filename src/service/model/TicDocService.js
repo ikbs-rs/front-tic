@@ -67,6 +67,28 @@ export class TicDocService {
     }
   }
 
+  async getDocZbirniiznosP(objId) {
+    if (!objId || objId==undefined) {
+      return 0;
+    }
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_doczbirniiznos_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      console.log("**********TicDocService*************",url)
+      const response = await axios.get(url, { headers });
+      console.log("**********TicDocService*************",response.data)
+      return response.data.item //||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getDocCountPrint(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_doccountprint_v&objid=${objId}&sl=${selectedLanguage}`;
@@ -182,7 +204,6 @@ export class TicDocService {
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&objid=${objId}&sl=${selectedLanguage}`;
-    //console.log(url, "* 0000000000000000000000000000000000000000 ******************************************************************")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -191,6 +212,24 @@ export class TicDocService {
     try {
       const response = await axios.get(url, { headers });
       return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTicListaByItemIdP(view, item, objId) {
+
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD_BACK_URL}/prodaja/?stm=${view}&item=${item}&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item //||response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
@@ -267,6 +306,24 @@ export class TicDocService {
     }
   }
 
+
+  async getTicDocP(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_doc&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      const rezultat = response.data.item || response.data.items
+      return rezultat[0] ;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   async postTicDoc(newObj) {
     try {
@@ -406,6 +463,23 @@ export class TicDocService {
     }
   }
 
+  async getCmnPaymenttpsP(uName) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD_BACK_URL}/prodaja/?stm=${uName}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item //response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getIdByItem(objName, objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/${objName}/getid/code/${objId}/?sl=${selectedLanguage}`;
@@ -440,6 +514,28 @@ export class TicDocService {
       //console.log(url, "***************getIdByItem*******************")
       const response = await axios.get(url, { headers });
       return response.data.items || response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getParByUserIdP() {
+    //console.log("0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", 0)
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const userId = localStorage.getItem('userId')
+    const url = `${env.PROD2_BACK_URL}/prodaja/?stm=cmn_getparbyuserid_v&objid=${userId}&sl=${selectedLanguage}`;
+    //console.log("0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", url)
+
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      //console.log(url, "***************getIdByItem*******************")
+      const response = await axios.get(url, { headers });
+      return response.data.item //response.data.items;
     } catch (error) {
       console.error(error);
       throw error;

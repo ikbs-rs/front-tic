@@ -19,17 +19,15 @@ function TicDocsNaknadeL(props) {
             setLoading(true);
             try {
                 const ticDocsService = new TicDocsService();
-                let data = await ticDocsService.getNaknadeListaP(props.ticDoc.id);
-                if (data) {
+                const data = await ticDocsService.getNaknadeListaP(props.ticDoc.id);
+                // if (data) {
                     data.sort((a, b) => {
                         if (a.nevent === b.nevent) {
                             return a.nart < b.nart ? -1 : a.nart > b.nart ? 1 : 0;
                         }
                         return a.nevent < b.nevent ? -1 : 1;
                     });
-                } else {
-                    data = []
-                }
+                // }
                 setTicDocsNs(data);
             } catch (error) {
                 console.error('Failed to fetch naknade:', error);

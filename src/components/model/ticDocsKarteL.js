@@ -73,12 +73,13 @@ export default function TicTransactionsL(props) {
 
     const mapa = (props.mapa == 1) ? 6 : 7
     useEffect(() => {
+        // const abortController = new AbortController();
         async function fetchData() {
             try {
                 ++i
                 if (i < 2) {
                     const ticDocsService = new TicDocsService();
-                    const data = await ticDocsService.getArtikliLista(props.ticDoc?.id);
+                    const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
                     const sortedData = data.sort((a, b) => {
                         if (a.nevent !== b.nevent) {
                             return a.nevent.localeCompare(b.nevent);
@@ -92,9 +93,10 @@ export default function TicTransactionsL(props) {
                     });
                     /**************************************************************************** */
                     const updatedCenaItems = [];
-                    console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
+                    // console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
                     const promisesDD = sortedData.map(async (row) => {
-                        const dataDD = await ticDocsService.getEventartcenas(row.id);
+                        // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
+                        const dataDD = await ticDocsService.getEventartcenasP(row.id);
                         updatedCenaItems[row.id] = dataDD;
                         return { ...row, isUploadPending: false };
                     });
@@ -372,13 +374,13 @@ export default function TicTransactionsL(props) {
         let selectedOptions = []
         let selectedOption = {}
         if (name == 'tickettp') {
-            console.log(JSON.stringify(ddTickettpItems), "XXXXXXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData);
+            // console.log(JSON.stringify(ddTickettpItems), "XXXXXXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData);
             selectedOptions = ddTickettpItems;
             selectedOption = selectedOptions.find((option) => option.code === rowData.tickettp);
         } else {
             const dataDD = ddCenaItems[rowData.id];
             const ddCenaItem = dataDD.map(({ text, id }) => ({ name: text, code: id }));
-            console.log(JSON.stringify(ddCenaItem), "XXXXXXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData.id);
+            // console.log(JSON.stringify(ddCenaItem), "XXXXXXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData.id);
             selectedOptions = ddCenaItem;
             selectedOption = selectedOptions.find((option) => option.code === rowData.cena);
         }
@@ -421,7 +423,7 @@ export default function TicTransactionsL(props) {
                 const dataDD = ddCenaItems[rowData.id];
 
                 const ddCenaItem = dataDD.map(({ text, id }) => ({ name: text, code: id }));
-                console.log(JSON.stringify(ddCenaItem), "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData.id);
+                // console.log(JSON.stringify(ddCenaItem), "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData.id);
 
                 if (ddCenaItem) {
                     const dropdownValue = ddCenaItem.find((item) => item.code == rowData.cena);
@@ -469,7 +471,9 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getEventartcena('t.code', 'XTCTP');
+                
+                // const data = await ticDocsService.getEventartcena('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTickettpItems(dataDD);
@@ -487,7 +491,7 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTickettpItems(dataDD);

@@ -349,7 +349,6 @@ export default function TicEventattsL(props) {
             const rowIndex = updatedTicEventattss.findIndex((row) => row.id === rowData.id);
 
             // Ažurirajte samo trenutni red sa novim podacima
-            console.log(rowData, "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
             updatedTicEventattss[rowIndex] = rowData;
 
             // Postavljanje novog niza kao stanje za ticEventattss

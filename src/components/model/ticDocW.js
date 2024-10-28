@@ -141,7 +141,8 @@ export default function TicDocW(props) {
         // if (i < 2) {
         console.log(ticDocId, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ticDocId@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         const ticDocService = new TicDocService();
-        const data = await ticDocService.getTicDoc(ticDocId);
+        const data = await ticDocService.getTicDocP(ticDocId);
+        // const data = await ticDocService.getTicDoc(ticDocId);
         if (ticDocId != -1) {
           setTicDokument(data);
         }

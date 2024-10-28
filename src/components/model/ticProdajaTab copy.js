@@ -265,7 +265,7 @@ export default function TicProdajaTab(props) {
             //console.log("0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             try {
                 const ticDocService = new TicDocService();
-                const data = await ticDocService.getParByUserIdP();
+                const data = await ticDocService.getParByUserId();
                 //console.log(data, "0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
                 setCmnPar(data[0]);
             } catch (error) {
@@ -352,6 +352,7 @@ export default function TicProdajaTab(props) {
 
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 const foundItem = dataDD.find((item) => item.code === ticDoc?.paymenttp || paymenttp?.id) || dataDD[0]
+                // //console.log(dataDD, "## 00 # BMV ################################", foundItem)
                 setDdPaymenttpItems(dataDD);
                 setDdPaymenttpItem(foundItem);
             } catch (error) {
@@ -383,7 +384,7 @@ export default function TicProdajaTab(props) {
             try {
 
                 const ticEventService = new TicEventService();
-                const data = await ticEventService.getTicChpermissLP(userId);
+                const data = await ticEventService.getTicChpermissL(userId);
                 //console.log(data, "--------------------------------------------------- Permiss ")
                 if (data && data.length > 0) {
                     setNumberChannell(data.length);
@@ -402,7 +403,7 @@ export default function TicProdajaTab(props) {
 
                     const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                     const foundItem = dataDD.find((item) => item.code === channell?.id) || dataDD[0]
-
+                    // //console.log(dataDD, "## 00 # BMV ################################", foundItem)
                     setDdChannellItems(dataDD);
                     setDdChannellItem(foundItem);
                 }
@@ -422,7 +423,7 @@ export default function TicProdajaTab(props) {
                     // setLoading(true);
                     const pTp = "-1";
                     const ticEventattsService = new TicEventattsService();
-                    const data = await ticEventattsService.getListaP(ticEvent.id, pTp);
+                    const data = await ticEventattsService.getLista(ticEvent.id, pTp);
                     setTicEventattss(data);
                     // //console.log("## 01 # BMV #############################", data)
                     // setLoading(false);
@@ -443,7 +444,7 @@ export default function TicProdajaTab(props) {
             const ticDocService = new TicDocService();
             const data = await ticDocService.getTicDocP(uId);
             // const data = await ticDocService.getTicDoc(uId);
-            console.log(data, '** AKTIVNA TRANSAKCIJA * KANALI KORISNIKA/EVENT *****************************************************************************')
+            // //console.log(data, '** AKTIVNA TRANSAKCIJA ******************************************************************************')
             if (data) {
                 return data;
             }
@@ -463,7 +464,7 @@ export default function TicProdajaTab(props) {
                 `tic_docactivuser_v`,
                 `usersys`, localStorage.getItem('userId')
             );
-            console.log(data, '** KANALI KORISNIKA/EVENT ******************************************************************************')
+            // //console.log(data, '** KANALI KORISNIKA/EVENT ******************************************************************************')
             if (data) {
                 return data[0];
             }
@@ -476,7 +477,7 @@ export default function TicProdajaTab(props) {
         try {
 
             const cmnParService = new CmnParService();
-            const data = await cmnParService.getCmnParP(uId);
+            const data = await cmnParService.getCmnPar(uId);
             //console.log(data, '** PARTNER 11111111111111111111111111111111111111111111111111111111111111111111')
             if (data) {
                 return data;
@@ -489,7 +490,7 @@ export default function TicProdajaTab(props) {
     }
     const createDoc = async (channel, event) => {
         try {
-            console.log(event?.id, channel?.id, "** KANALI KORISNIKA/EVENT *  createDoc *****************************************************************************")
+            console.log(event?.id, channel?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             const ticEventattsService = new TicEventattsService()
             const eventAtt = await ticEventattsService.getEventAttsDD(event?.id, channel?.id, '01.13.');
             console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -866,7 +867,7 @@ export default function TicProdajaTab(props) {
     const toggleIframeExpansion = () => {
         setExpandIframe(!expandIframe);
     };
-
+    
 
     const handleDelivery = () => {
         const newValue = !checkedIsporuka; // Promenite trenutnu vrednost
@@ -1105,19 +1106,15 @@ export default function TicProdajaTab(props) {
             _ticDoc.npar = _cmnPar?.text
             await setTicDoc(_ticDoc)
             //console.log(_channel.id, _ticDoc.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_")
-            // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
-            if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
+            if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
                 OK = true
-                console.log(11, "** KANALI KORISNIKA/EVENT *")
             }
         } else {
             //console.log(_channel.id, ticDocOld.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
             ticDocOld = await fachUserDoc()
             if (ticDocOld?.id) {
-                // if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
-                if (moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
+                if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
                     OK = true
-                    console.log(22, "** KANALI KORISNIKA/EVENT *")
                 } else {
                     const _cmnPar = await fachPar(ticDocOld.usr)
                     ticDocOld.cpar = _cmnPar.code
@@ -1126,13 +1123,10 @@ export default function TicProdajaTab(props) {
                 }
             } else {
                 OK = true
-                console.log(33, "** KANALI KORISNIKA/EVENT *")
             }
         }
 
-        // if (OK || newDoc) {
-        if (OK) {
-            console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
+        if (OK || newDoc) {
             const _ticDoc = await createDoc(_channel, _ticEvent)
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar.code
@@ -1150,7 +1144,7 @@ export default function TicProdajaTab(props) {
             setCheckedNaknade(ticDoc.services == '1')
         }, 1000);
     }
-    /******************************************************************************************************************************************************************************** */
+/******************************************************************************************************************************************************************************** */
     const handleDialogClose = (newObj) => {
 
     }
@@ -1400,7 +1394,7 @@ export default function TicProdajaTab(props) {
                     </button>
                 </div>
             </Dialog>
-
+            
         </div>
     );
 }

@@ -137,7 +137,8 @@ export default function TicDocdeliveryL(props) {
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
-      const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+      // const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+      const dataDoc = await ticDocService.getTicDocP(props.ticDoc.id);
       setTicDoc(dataDoc)
       const _ticDocpayment = { ...ticDocpayment }
       _ticDocpayment.doc = props.ticDoc.id;
@@ -485,7 +486,7 @@ export default function TicDocdeliveryL(props) {
     async function fetchData() {
       try {
         const cmnParService = new CmnParService();
-        const data = await cmnParService.getCmnPar(props.ticDoc.idpar);
+        const data = await cmnParService.getCmnParP(props.ticDoc.idpar);
         console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
         const [firstname, lastname] = data.textx.split(' ');
         const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
@@ -812,12 +813,9 @@ export default function TicDocdeliveryL(props) {
   const handleDocdeliveryClick = async (e) => {
 
     try {
-      console.log("00 QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ***************rowDocdelivery************rowPar****")
       const rowPar = await fetchPar()
-      console.log("01 QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ***************rowDocdelivery************rowPar****", rowPar)
       setCmnPar(rowPar.item)
       const rowDocdelivery = await fetchDocdelivery()
-      console.log(rowDocdelivery?.id, "H 00 SSSSSSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", rowDocdelivery)
       if (rowDocdelivery?.id) {
         setDocdeliveryTip("UPDATE");
         setTicDocdelivery(rowDocdelivery)
@@ -978,7 +976,6 @@ export default function TicDocdeliveryL(props) {
     try {
       const ticDocService = new TicDocService();
       const data = await ticDocService.getTicListaByItem('docdelivery', 'listabynum', 'tic_docdelivery_v', 'aa.doc', props.ticDoc.id);
-      console.log(data, "SSSSSSSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH*-*-*************getCmnParById*************-*")
       return data;
     } catch (error) {
       console.error(error);
@@ -989,7 +986,6 @@ export default function TicDocdeliveryL(props) {
     try {
       const ticDocService = new TicDocService();
       const data = await ticDocService.getCmnParById(props.ticDoc.usr);
-      console.log(ticDoc.usr, "*0.1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ-*-*************getCmnParById*************-*", data)
       return data;
     } catch (error) {
       console.error(error);

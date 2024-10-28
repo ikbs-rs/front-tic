@@ -55,6 +55,22 @@ export class TicDocpaymentService {
             throw error;
         }
     }
+    async getCmnPaymenttpsP(uName) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD_BACK_URL}/prodaja/?stm=${uName}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+          Authorization: tokenLocal.token
+        };
+    
+        try {
+          const response = await axios.get(url, { headers });
+          return response.data.item //response.data.items;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
 
     async getCmnCcards() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'

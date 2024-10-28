@@ -109,7 +109,7 @@ export default function TicTransactionsL(props) {
                 // ++i
                 // if (i < 2) {
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getNaknadeLista(props.ticDoc?.id);
+                const data = await ticDocsService.getNaknadeListaP(props.ticDoc?.id);
                 // //console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                 setTicDocsNs(data);
                 initFilters();
@@ -128,7 +128,7 @@ export default function TicTransactionsL(props) {
                 ++i
                 if (i < 2) {
                     const cmnParService = new CmnParService();
-                    const data = await cmnParService.getCmnPar(props.ticDoc?.usr);
+                    const data = await cmnParService.getCmnParP(props.ticDoc?.usr);
                     // //console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                     setCmnPar(data);
                     ticDoc.npar = data.tex;
@@ -328,7 +328,7 @@ export default function TicTransactionsL(props) {
     useEffect(() => {
         async function fetchData() {
             const cmnParService = new CmnParService();
-            const data = await cmnParService.getLista(-1);
+            const data = await cmnParService.getListaP(-1);
             setAllPars(data);
             //setParValue(data.find((item) => item.id === props.ticDoc.usr) || null);
         }
@@ -619,7 +619,7 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTickettpItems(dataDD);

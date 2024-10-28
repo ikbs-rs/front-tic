@@ -22,6 +22,24 @@ export class TicEventattsService {
         }
     }
 
+    async getListaP(objId, par1) {
+        // console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD2_BACK_URL}/prodaja/?stm=tic_eventattstp_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getEventAttsDD(objId, par1, par2) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventattsdd_v&objid=${objId}&par1=${par1}&par2=${par2}&sl=${selectedLanguage}`;
@@ -52,6 +70,24 @@ export class TicEventattsService {
         try {
             const response = await axios.get(url, { headers });
             return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async getTicEventatts11LP(objId, par1) {
+        // console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD3_BACK_URL}/prodaja/?stm=tic_eventatts11l_v&objid=${objId}&par1=${par1}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item //||response.data.items;
         } catch (error) {
             console.error(error);
             throw error;

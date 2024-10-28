@@ -89,7 +89,7 @@ export default function TicEventattsL(props) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
                     // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
                     const ticEventattsService = new TicEventattsService();
-                    const data = await ticEventattsService.getLista(props.ticEvent.id, pTp);
+                    const data = await ticEventattsService.getListaP(props.ticEvent.id, pTp);
 
                     // console.log(data, "*********************data**************************#####################", pTp)
                     const updatedDropdownItems = { ...dropdownAllItems };
@@ -173,9 +173,9 @@ export default function TicEventattsL(props) {
 
                     initFilters();
                     console.log('Učitavanje je završeno!!!!');
-
+                    setLoading(false);
                 }
-                setLoading(false);
+                
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -188,13 +188,13 @@ export default function TicEventattsL(props) {
 
     }, [refresh, componentKey]);
 
-    useEffect(() => {
-        if (loading) {
-            console.log('Učitavanje je započeto');
-        } else {
-            console.log('Učitavanje je završeno');
-        }
-    }, [loading]);
+    // useEffect(() => {
+    //     if (loading) {
+    //         console.log('Učitavanje je započeto');
+    //     } else {
+    //         console.log('Učitavanje je završeno');
+    //     }
+    // }, [loading]);
 
     useEffect(() => {
         async function fetchData() {
@@ -1007,11 +1007,11 @@ export default function TicEventattsL(props) {
                         </div>
                     </div>
                 </div>
-                {/* {loading ? (
+                {loading ? (
                     <div className="card">
                         <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
                     </div>
-                ) : (null)} */}
+                ) : (null)}
             </div>
             <DataTable
                 key={componentKey}

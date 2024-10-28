@@ -65,7 +65,7 @@ export default function TicProdajaL(props) {
                 if (i < 2) {
                     const relPath = 'public/tic/event/';
                     const ticEventService = new TicEventService();
-                    const data = await ticEventService.getProdajaLista();
+                    const data = await ticEventService.getProdajaListaP();
 
                     const updatedData = data.map((obj) => {
                         return {
@@ -303,12 +303,12 @@ export default function TicProdajaL(props) {
             //console.log(rowData, "######################################################################################", userId)
             const ticEventService = new TicEventService();
             const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-            //console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+            console.log(data, " KANALI KORISNIKA/EVENT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
             if (data && data.length > 0) {
                 setNumberChannell(data.length);
                 setChannells(data);
                 setChannell(data[0]);
-                await createDoc(data[0])
+                // await createDoc(data[0])
 
             } else {
                 // Prikazuje obaveštenje korisniku
@@ -428,7 +428,7 @@ export default function TicProdajaL(props) {
         };
         return (
             <div className="flex flex-wrap gap-1">
-                <Button
+                {/* <Button
                     type="button"
                     icon="pi pi-plus"
                     style={{ width: '36px', height: '26px' }}
@@ -436,11 +436,10 @@ export default function TicProdajaL(props) {
                     onClick={() => {
                         props.handleEventProdaja(rowData, true)
                     }}
-                    // text
                     raised
                     tooltip={translations[selectedLanguage].NovaTransakcija}
                     tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                ></Button>
+                ></Button> */}
 
                 <Button
                     type="button"

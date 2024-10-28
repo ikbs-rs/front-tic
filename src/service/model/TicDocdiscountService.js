@@ -36,7 +36,23 @@ export class TicDocdiscountService {
             throw error;
         }
     }
-
+    async getDiscounttpListaP(objId, signal) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_docsdiscounttp_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+          Authorization: tokenLocal.token
+        };
+    
+        try {
+          const response = await axios.get(url, { headers, signal, timeout: 5000 });
+          return response.data.item //||response.data.items;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
+    
     async getTicDocdiscounts() {
         const selectedLanguage = localStorage.getItem('sl') || 'en';
         const url = `${env.TIC_BACK_URL}/tic/x/docdiscount/?sl=${selectedLanguage}`;
@@ -151,4 +167,20 @@ export class TicDocdiscountService {
         }
     }
 
+    async getDiscountvalueP(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const url = `${env.PROD3_BACK_URL}/prodaja/?stm=tic_docdiscountvalue_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item //response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 }

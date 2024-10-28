@@ -4,8 +4,9 @@ import Token from "../../utilities/Token";
 import DateFunction from "../../utilities/DateFunction"
 
 export class TicDocsuidService {
+  abortController = null;
+
   async getProdajaLista(objId) {
-  
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docsuid/_v/lista/?stm=tic_docsuidprodaja_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -16,14 +17,29 @@ export class TicDocsuidService {
     try {
       
       const response = await axios.get(url, { headers });
-      console.log(response.data, "1111111111111111111111111111111getProdajaLista111111111111111111111111111111111111111111")
       return response.data.item||response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
+  async getProdajaListaP(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD3_BACK_URL}/prodaja/?stm=tic_docsuidprodaja_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
 
+    try {
+      
+      const response = await axios.get(url, { headers });
+      return response.data.item //||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
   async getLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docsuid/_v/lista/?stm=tic_docsuid_v&objid=${objId}&sl=${selectedLanguage}`;
@@ -274,31 +290,71 @@ export class TicDocsuidService {
 
   }
 
+  // async postTicDocsuidParAll(newObj, docId) {
+  //   try {
+  //     const selectedLanguage = localStorage.getItem('sl') || 'en'
+  //     const userId = localStorage.getItem('userId')
+  //     // console.log(newObj, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+
+  //     const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparall_s&objId1=${docId}&sl=${selectedLanguage}`;
+  //     const tokenLocal = await Token.getTokensLS();
+  //     const headers = {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': tokenLocal.token
+  //     };
+
+  //     const jsonObj = JSON.stringify(newObj)
+  //     // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+  //     const response = await axios.post(url, jsonObj, { headers });
+
+  //     return response.data.items;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+
+  // }  
+
   async postTicDocsuidParAll(newObj, docId) {
     try {
-      const selectedLanguage = localStorage.getItem('sl') || 'en'
-      const userId = localStorage.getItem('userId')
-      // console.log(newObj, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+        // Ako već postoji aktivan AbortController, prekini prethodni zahtev
+        if (this.abortController) {
+            this.abortController.abort();
+        }
 
-      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparall_s&objId1=${docId}&sl=${selectedLanguage}`;
-      const tokenLocal = await Token.getTokensLS();
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': tokenLocal.token
-      };
+        // Kreiraj novi AbortController za trenutni zahtev
+        this.abortController = new AbortController();
+        const signal = this.abortController.signal;
 
-      const jsonObj = JSON.stringify(newObj)
-      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
-      const response = await axios.post(url, jsonObj, { headers });
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const userId = localStorage.getItem('userId');
 
-      return response.data.items;
+        const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsuidparall_s&objId1=${docId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': tokenLocal.token
+        };
+
+        const jsonObj = JSON.stringify(newObj);
+
+        // Dodaj signal u axios post zahtev kako bi mogao biti prekinut
+        const response = await axios.post(url, jsonObj, { headers, signal });
+
+        return response.data.items;
     } catch (error) {
-      console.error(error);
-      throw error;
+        if (error.name === 'AbortError') {
+            console.log('Previous request aborted');
+        } else {
+            console.error('Error during request:', error);
+            throw error; // Ponovo bacanje greške ako nije prekinut zahtev
+        }
+    } finally {
+        // Resetovanje AbortControllera nakon završetka zahteva
+        this.abortController = null;
     }
-
-  }  
-
+}
+  
   async postTicDocsuidParAllNull(newObj, docId) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'

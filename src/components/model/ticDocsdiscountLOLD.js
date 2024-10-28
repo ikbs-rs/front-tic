@@ -72,7 +72,7 @@ const TicDocsdiscountL = (props) => {
         async function fetchData() {
             try {
                 const ticDocsdiscountService = new TicDocsdiscountService();
-                const data = await ticDocsdiscountService.getDiscounttpLista(props.item.docs);
+                const data = await ticDocsdiscountService.getDiscounttpListaP(props.item.docs);
                 setTicDocsdiscountItems(data)
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTicDocsdiscountItems(dataDD);

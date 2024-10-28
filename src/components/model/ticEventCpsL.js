@@ -6,7 +6,6 @@ import { translations } from '../../configs/translations';
 import DateFunction from '../../utilities/DateFunction';
 
 const TicEventCpsL = (props) => {
-    console.log(props, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
     const [ticEvents, setTicEvents] = useState([]);
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     useEffect(() => {

@@ -50,8 +50,9 @@ const TicDocdelivery = (props) => {
         async function fetchData() {
           try {
               const ticDocService = new TicDocService();
-              const data = await ticDocService.getTicDoc(props.ticDocdelivery?.doc||-1);
-              const dataIznos = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+              const data = await ticDocService.getTicDocP(props.ticDocdelivery?.doc||-1);
+            //   const data = await ticDocService.getTicDoc(props.ticDocdelivery?.doc||-1);
+              const dataIznos = await ticDocService.getDocZbirniiznosP(props.ticDoc?.id);
               setZauplatu(dataIznos.iznos)
               console.log(dataIznos, "B--BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", props.ticDocdelivery?.doc, props.ticDoc?.id)
               setTicDoc(data);
@@ -70,7 +71,7 @@ const TicDocdelivery = (props) => {
                 const cmnParService = new CmnParService();
                 // console.log(ticDoc, "EXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                 if (ticDoc?.usr) {
-                    const data = await cmnParService.getCmnPar(ticDoc?.usr);
+                    const data = await cmnParService.getCmnParP(ticDoc?.usr);
                     const [firstname, lastname] = data.textx.split(' ');
                     const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
                     // console.log(_cmnPar, "0000-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", data)

@@ -9,38 +9,57 @@ export class CmnParService {
         const url = `${env.CMN_BACK_URL}/cmn/x/par/_v/lista/?stm=cmn_paraddressall_v&objid=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
-          Authorization: tokenLocal.token
+            Authorization: tokenLocal.token
         };
-    
+
         try {
-        //   const response = await axios.get(url, { headers, timeout: 10000 });
-          const response = await axios.get(url, { headers});
-        //   console.log(url,"?????????????????????????????getLista??????????????????????????????????", response)
-          return response.data.item;
+            //   const response = await axios.get(url, { headers, timeout: 10000 });
+            const response = await axios.get(url, { headers });
+            //   console.log(url,"?????????????????????????????getLista??????????????????????????????????", response)
+            return response.data.item;
         } catch (error) {
-          console.error(error);
-          throw error;
+            console.error(error);
+            throw error;
         }
-      }
+    }
 
     async getLista(objId) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.CMN_BACK_URL}/cmn/x/par/_v/lista/?stm=cmn_par_v&objid=${objId}&sl=${selectedLanguage}`;
         const tokenLocal = await Token.getTokensLS();
         const headers = {
-          Authorization: tokenLocal.token
+            Authorization: tokenLocal.token
         };
-    
+
         try {
-        //   const response = await axios.get(url, { headers, timeout: 10000 });
-          const response = await axios.get(url, { headers });
-        //   console.log(url,"?????????????????????????????getLista??????????????????????????????????", response)
-          return response.data.item;
+            //   const response = await axios.get(url, { headers, timeout: 10000 });
+            const response = await axios.get(url, { headers });
+            //   console.log(url,"?????????????????????????????getLista??????????????????????????????????", response)
+            return response.data.item;
         } catch (error) {
-          console.error(error);
-          throw error;
+            console.error(error);
+            throw error;
         }
-      }
+    }
+
+    async getListaP(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD_BACK_URL}/prodaja/?stm=cmn_par_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            //   const response = await axios.get(url, { headers, timeout: 10000 });
+            const response = await axios.get(url, { headers });
+            //   console.log(url,"?????????????????????????????getLista??????????????????????????????????", response)
+            return response.data.item //||response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 
     async getCmnPars() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -59,6 +78,23 @@ export class CmnParService {
         }
     }
 
+    async getCmnParP(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD1_BACK_URL}/prodaja/?stm=cmn_par&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item //response.data.items;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async getCmnPar(objId) {
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.CMN_BACK_URL}/cmn/x/par/${objId}/?sl=${selectedLanguage}`;
@@ -69,7 +105,7 @@ export class CmnParService {
 
         try {
             const response = await axios.get(url, { headers });
-            return response.data.items||response.data.item;
+            return response.data.items || response.data.item;
         } catch (error) {
             console.error(error);
             throw error;
@@ -94,7 +130,7 @@ export class CmnParService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-console.log("*-*-*-*-*", url, newObj, jsonObj)
+            console.log("*-*-*-*-*", url, newObj, jsonObj)
             const response = await axios.post(url, jsonObj, { headers });
             return response.data.items;
         } catch (error) {
@@ -106,7 +142,7 @@ console.log("*-*-*-*-*", url, newObj, jsonObj)
     async putCmnPar(newObj) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'
-            if (newObj.action === null || newObj.roll === null)  {
+            if (newObj.action === null || newObj.roll === null) {
                 throw new Error(
                     "Items must be filled!"
                 );
@@ -119,7 +155,7 @@ console.log("*-*-*-*-*", url, newObj, jsonObj)
             };
             const jsonObj = JSON.stringify(newObj)
             const response = await axios.put(url, jsonObj, { headers });
-            console.log("@@@@@@@@@@@@@@@@@**************"  , response.data, "****************@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            console.log("@@@@@@@@@@@@@@@@@**************", response.data, "****************@@@@@@@@@@@@@@@@@@@@@@@@@@")
             return response.data;
         } catch (error) {
             console.error(error);

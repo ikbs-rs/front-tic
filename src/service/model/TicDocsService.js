@@ -32,7 +32,7 @@ export class TicDocsService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
+      // console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -40,7 +40,24 @@ export class TicDocsService {
     }
   }
 
-  async getEventartcenas(objId) {
+  async getArtikliListaP(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docsartikli_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      // console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
+      return response.data.item //||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+  async getEventartcenas(objId, signal) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docs/_v/lista/?stm=tic_docseventartcena_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -49,14 +66,48 @@ export class TicDocsService {
     };
 
     try {
-      const response = await axios.get(url, { headers });
-      console.log(response.data, "77777777777777777777777777777getEventartcenas777777777777777777777777777777777777")
+      const response = await axios.get(url, { headers, signal });
+      // console.log(response.data, "77777777777777777777777777777getEventartcenas777777777777777777777777777777777777")
       return response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
+  async getEventartcenasP(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docseventartcena_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+    
+    let attempt = 0;
+    const maxAttempts = 3; // Definišite maksimalni broj pokušaja
+    
+    while (attempt < maxAttempts) {
+      attempt++;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5500); // Prekini nakon 1500 ms
+      
+      try {
+        const response = await axios.get(url, { headers, signal: controller.signal });
+        clearTimeout(timeoutId); // Obriši timeout ako je zahtev uspešan
+        return response.data.item //||response.data.items;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (axios.isCancel(error)) {
+          console.warn("Zahtev je prekinut zbog timeouta, pokušavam ponovo...");
+        } else {
+          console.error(error);
+          throw error; // Ako je neka druga greška, prekini izvršavanje
+        }
+      }
+    }
+    
+    throw new Error("Zahtev nije uspeo nakon maksimalnog broja pokušaja.");
+  }
+  
 
   async getArtikliPrintLista(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -68,7 +119,7 @@ export class TicDocsService {
 
     try {
       const response = await axios.get(url, { headers });
-      console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
+      // console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -91,6 +142,27 @@ export class TicDocsService {
       const response = await axios.get(url, { headers });
       // console.log(response.data, "+++++++++++++++++++++++++++++++++#################+++++++++++++++++++++++++++++++++++++")
       return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getNaknadeListaP(objId) {
+    if (!objId) {
+      return null
+    }
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD2_BACK_URL}/prodaja/?stm=tic_docsnaknade_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      // console.log(response.data, "+++++++++++++++++++++++++++++++++#################+++++++++++++++++++++++++++++++++++++")
+      return response.data.item //||response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
@@ -292,6 +364,23 @@ export class TicDocsService {
     try {
       const response = await axios.get(url, { headers });
       return response.data.items || response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getCmnObjByTpCodeP(objId, id) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD2_BACK_URL}/prodaja/?stm=cmn_objbytpcode_v&par1=${objId}&objid=${id}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item //response.data.items;
     } catch (error) {
       console.error(error);
       throw error;

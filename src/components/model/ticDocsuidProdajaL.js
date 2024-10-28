@@ -22,6 +22,8 @@ import TicDocsdiscountL from "./ticDocsdiscountL";
 import AutoParAddress from "../auto/autoParAddress";
 import DateFunction from "../../utilities/DateFunction";
 import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService"
+import Token from "../../utilities/Token";
+// import Worker from 'worker-loader!../../workers/docuidWorker.js';
 
 
 export default function TicDocsuidProdajaL(props) {
@@ -79,6 +81,9 @@ export default function TicDocsuidProdajaL(props) {
     const colors = ["#f5f5f5", "#f2f2da", "#c2d4f2", "#ecd7f7", "#a0a0a0", "#ffa0a0"];
     const [eventColors, setEventColors] = useState({});
 
+
+
+
     const assignColorsToEvents = (data) => {
         const eventColorMap = {};
         let colorIndex = 0;
@@ -98,10 +103,10 @@ export default function TicDocsuidProdajaL(props) {
     /**************************** COLOR ************************************ */
     useEffect(() => {
         async function fetchData() {
-            console.log("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+            // console.log("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
             try {
                 const ticDocdeliveryService = new TicDocdeliveryService();
-                const data = await ticDocdeliveryService.getListaByDoc(props.ticDoc.id);
+                const data = await ticDocdeliveryService.getListaByDocP(props.ticDoc.id);
 
                 if (data) {
                     setTicDocdelivery(data);
@@ -125,7 +130,7 @@ export default function TicDocsuidProdajaL(props) {
         async function fetchData() {
             try {
                 const ticDocsuidService = new TicDocsuidService();
-                const data = await ticDocsuidService.getProdajaLista(props.ticDoc.id);
+                const data = await ticDocsuidService.getProdajaListaP(props.ticDoc.id);
                 // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 const uniqueDocsArray = Array.from(new Set(data.map(item => item.event)));
                 setUniqueDocs(uniqueDocsArray);
@@ -145,7 +150,7 @@ export default function TicDocsuidProdajaL(props) {
                 console.log(sortedData, "#00#########################################################################")
                 const updatedData = await Promise.all(sortedData.map(async (item) => {
                     const ticEventattsService = new TicEventattsService();
-                    const eventatt = await ticEventattsService.getTicEventatts11L(item.event);
+                    const eventatt = await ticEventattsService.getTicEventatts11LP(item.event);
 
                     // Filtriraj eventatt podatke u tri posebna niza
                     const eventatt1 = eventatt.filter(e => e.code === "11.01.");
@@ -169,19 +174,77 @@ export default function TicDocsuidProdajaL(props) {
                     [item.id]: item.tickettp
                 }), {}));
 
-                await setActiveStates(data.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
-                // console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH",
-                //     updatedData.reduce((acc, item) => ({
-                //         ...acc,
-                //         [item.id]: item.tickettp
-                //     }), {}))
 
-            } catch (error) {
-                console.error(error);
+
+    await setActiveStates(data.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
+    console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH",
+        updatedData.reduce((acc, item) => ({
+            ...acc,
+            [item.id]: item.tickettp
+        }), {}))
+
+    } catch (error) {
+        console.error(error);
+    }
             }
-        }
-        fetchData();
-    }, [props.ticDoc.id, refresh]);
+    fetchData();
+        }, [props.ticDoc.id, refresh]);
+
+
+    /******************************************************************************************** */
+    // useEffect(() => {
+    //     const fetchTokenAndPostMessage = async () => {
+    //         try {
+    //             const tokenLocal = await Token.getTokensLS();
+
+    //             if (tokenLocal && props.ticDoc.id) {
+    //                 const worker = new Worker(new URL('../../workers/docuidWorker.js', import.meta.url));
+
+    //                 worker.onmessage = (e) => {
+    //                     const { action, result } = e.data;
+    //                     if (action === 'setTicDocsuids') {
+    //                         console.log(result, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBB")
+    //                         setTicDocsuids(result);
+    //                         assignColorsToEvents(result);
+    //                         setSelectedValues(result.reduce((acc, item) => ({
+    //                             ...acc,
+    //                             [item.id]: item.tickettp
+    //                         }), {}));
+    //                         setActiveStates(result.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
+    //                     }
+    //                 };
+
+    //                 worker.postMessage({
+    //                     action: 'fetchTicDocsuidData',
+    //                     data: {
+    //                         ticDocId: props.ticDoc.id,
+    //                         par1: props.ticDoc.usr,
+    //                         selectedLanguage: selectedLanguage,
+    //                         token: tokenLocal.token,
+    //                         refreshToken: tokenLocal.refreshToken
+    //                     }
+    //                 });
+
+    //                 worker.onerror = (error) => {
+    //                     console.error('Worker error:', error);
+    //                 };
+
+    //                 return () => worker.terminate();
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching token:', error);
+    //         }
+    //     };
+
+    //     fetchTokenAndPostMessage();
+    // }, [props.ticDoc.id]);
+
+
+
+
+
+    /******************************************************************************************** */
+
 
     // useEffect(() => {
     //     async function fetchAdditionalData() {
@@ -232,10 +295,11 @@ export default function TicDocsuidProdajaL(props) {
 
 
     useEffect(() => {
+        const abortController = new AbortController();
         async function fetchData() {
             try {
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP', abortController.signal);
                 setCmnTickettps(data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -248,7 +312,7 @@ export default function TicDocsuidProdajaL(props) {
         async function fetchData() {
             try {
                 const cmnParService = new CmnParService();
-                const data = await cmnParService.getCmnPar(ticDoc.usr);
+                const data = await cmnParService.getCmnParP(ticDoc.usr);
                 setCmnPar(data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -482,13 +546,47 @@ export default function TicDocsuidProdajaL(props) {
     useEffect(() => {
         async function fetchData() {
             const cmnParService = new CmnParService();
-            const data = await cmnParService.getLista(-1);
+            const data = await cmnParService.getListaP(-1);
             setAllPars(data);
             //setParValue(data.find((item) => item.id === props.ticDoc.usr) || null);
         }
         fetchData();
     }, []);
-    /**************** */
+
+    // useEffect(() => {
+    //     const fetchAllParsMessage = async () => {
+    //         try {
+    //             const tokenLocal = await Token.getTokensLS();
+
+    //             const worker = new Worker(new URL('../../workers/docuidWorker.js', import.meta.url));
+
+    //             worker.onmessage = (e) => {
+    //                 const { action, result } = e.data;
+    //                 if (action === 'setAllPars') {
+    //                     console.log(result, "KK AAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBB")                        
+    //                     setAllPars(result);
+    //                 }
+    //             };
+
+    //             worker.postMessage({
+    //                 action: 'fetchAllParsData',
+    //                 data: { selectedLanguage: selectedLanguage, token: tokenLocal.token, refreshToken: tokenLocal.refreshToken }
+    //             });
+
+    //             worker.onerror = (error) => {
+    //                 console.error('Worker error:', error);
+    //             };
+
+
+    //             return () => worker.terminate();
+    //         } catch (error) {
+    //             console.error('Error fetching token:', error);
+    //         }
+    //     };
+
+    //     fetchAllParsMessage();
+    // }, []);
+
     useEffect(() => {
         if (debouncedSearch && selectedPar === null) {
             // Filtrirajte podatke na osnovu trenutnog unosa
@@ -530,7 +628,7 @@ export default function TicDocsuidProdajaL(props) {
                 severity: 'success', summary: 'Success',
                 detail: 'Ispravno selektovan kupac transakcije',
                 life: 3000
-            });            
+            });
         } catch (error) {
             console.error(error);
             toast.current.show({

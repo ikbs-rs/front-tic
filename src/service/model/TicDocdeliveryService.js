@@ -8,15 +8,30 @@ export class TicDocdeliveryService {
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/docdelivery/_v/listabynum/?stm=tic_docdelivery_v&item=aa.doc&id=${objId}&sl=${selectedLanguage}`;
-    const tokenLocal = await Token.getTokensLS();
+    const tokenLocal = {...Token.getTokensLS()};
     const headers = {
       Authorization: tokenLocal.token
     };
     try {
-      console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",url)
       const response = await axios.get(url, { headers });
-      console.log("Q 06 QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",response.data)
       return response.data.item||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getListaByDocP(objId) {
+
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docdelivery_v&item=aa.doc&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = {...Token.getTokensLS()};
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item //||response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
@@ -107,7 +122,7 @@ export class TicDocdeliveryService {
       const jsonObj = JSON.stringify(newObj)
       console.log(url, "**************"  , jsonObj, "****************", newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      console.log(response.data, "01WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",newObj) 
+      // console.log(response.data, "01WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",newObj) 
       return response.data.items;
 
     } catch (error) {
@@ -121,7 +136,7 @@ export class TicDocdeliveryService {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       const userId = localStorage.getItem('userId')
-      console.log(newObj, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+      // console.log(newObj, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
 
       const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docdeliverydoc_s&sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
@@ -131,7 +146,7 @@ export class TicDocdeliveryService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;
@@ -152,9 +167,9 @@ export class TicDocdeliveryService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log(url, "**************"  , jsonObj, "****************")
+      // console.log(url, "**************"  , jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
-      console.log(response.data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW**", newObj) 
+      // console.log(response.data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW**", newObj) 
       return response.data.items;
     } catch (error) {
       console.error(error);

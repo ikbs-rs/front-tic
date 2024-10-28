@@ -126,7 +126,7 @@ const TicEventatt = (props) => {
                     let data
                     if (linktpItem.code == '1') {
                         const ticEventattService = new CmnPaymenttpService();
-                        data = await ticEventattService.getCmnPaymenttps();
+                        data = await ticEventattService.getCmnPaymenttpsP('cmn_paymenttp_p');
                     } else if (linktpItem.code == '2') {
                         const ticEventattService = new TicEventattService();
                         data = await ticEventattService.getCmnObjs('XPK');

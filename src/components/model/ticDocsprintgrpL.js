@@ -75,7 +75,9 @@ export default function TicDocsprintgrpL(props) {
     async function fetchData() {
       try {
         const ticDocService = new TicDocService();
-        const data = await ticDocService.getTicDoc(props.ticDoc?.id);
+        const data = await ticDocService.getTicDocP(props.ticDoc?.id);
+        console.log(data, "QQQQ-5555555555555555555555555555555555555555555555555555555555555555555")
+        // const data = await ticDocService.getTicDoc(props.ticDoc?.id);
         setTicDoc(data);
       } catch (error) {
         console.error(error);

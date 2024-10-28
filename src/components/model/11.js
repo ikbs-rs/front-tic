@@ -46,7 +46,7 @@ export default function TicTransactionsL(props) {
                 ++i
                 if (i < 2) {
                     const ticDocsService = new TicDocsService();
-                    const data = await ticDocsService.getArtikliLista(props.ticDoc?.id);
+                    const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
                     // //console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                     setTicDocss(data);
                     initFilters();
@@ -163,7 +163,7 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setTickettps(dataDD);

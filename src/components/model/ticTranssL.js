@@ -29,14 +29,7 @@ export default function TicTransactionsL(props) {
     console.log(props.ticDoc)
     const objectString = String(props.ticDoc);
 
-    if (objectString == '[object Object]') {
-        console.log('Pravi podaci u ticDoc:', JSON.stringify(props.ticDoc, null, 2));
-        // Vaš kod za slučaj kada objekat ima podatke
-    } else {
-        console.log('ticDoc se prikazuje kao [object Object]');
-        // Vaš kod za slučaj kada je `[object Object]`
-    }
-    console.log("99999999999999999999999999999999999999999999999999999999999")
+    // console.log("99999999999999999999999999999999999999999999999999999999999")
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -111,7 +104,8 @@ export default function TicTransactionsL(props) {
             try {
                 if (i <= 2) {
                     const ticDocService = new TicDocService();
-                    const data = await ticDocService.getTicDoc(props.ticDoc?.id);
+                    const data = await ticDocService.getTicDocP(props.ticDoc?.id);
+                    // const data = await ticDocService.getTicDoc(props.ticDoc?.id);
                     if (!pBroj) {
                         setPBroj(props.ticDoc?.broj)
                     }
@@ -136,7 +130,7 @@ export default function TicTransactionsL(props) {
                 ++i
                 if (i < 2) {
                     const cmnParService = new CmnParService();
-                    const data = await cmnParService.getCmnPar(props.ticDoc?.usr);
+                    const data = await cmnParService.getCmnParP(props.ticDoc?.usr);
                     // //console.log(data, "---------------------------------AAAAAAAA--------------------------------------")
                     setCmnPar(data);
                     const _ticDoc = ticDoc
@@ -156,8 +150,8 @@ export default function TicTransactionsL(props) {
         async function fetchData() {
             try {
                 const ticDocpaymentService = new TicDocpaymentService();
-                const data = await ticDocpaymentService.getCmnPaymenttps();
-
+                const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
+console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 const excludedIds = ['1', '2', '5', '6', '7', '1761685492354912256'];
                 const filteredData = data.filter(item => !excludedIds.includes(item.id));
 
@@ -187,10 +181,10 @@ export default function TicTransactionsL(props) {
 
     useEffect(() => {
         async function fetchData() {
-            console.log("##################################################################ticDocdiscountService>>#", props.ticDoc)
+            // console.log("##################################################################ticDocdiscountService>>#", props.ticDoc)
             try {
                 const ticDocdiscountService = new TicDocdiscountService();
-                const data = await ticDocdiscountService.getDiscountvalue(props.ticDoc.id);
+                const data = await ticDocdiscountService.getDiscountvalueP(props.ticDoc.id);
 
             } catch (error) {
                 console.error(error);
@@ -558,7 +552,7 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                const data = await ticDocsService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTickettpItems(dataDD);

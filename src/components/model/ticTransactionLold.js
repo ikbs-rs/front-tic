@@ -73,7 +73,8 @@ export default function TicDocL(props) {
   async function fetchDoc(rowData) {
     try {
       const ticDocService = new TicDocService();
-      const data = await ticDocService.getTicDoc(rowData.id);
+      const data = await ticDocService.getTicDocP(rowData.id);
+      // const data = await ticDocService.getTicDoc(rowData.id);
       //console.log(uId, "*-*-*************fetchDoc*************-*", data)
       Object.assign(data, rowData);
       return data;

@@ -15,7 +15,6 @@ import DateFunction from "../../../utilities/DateFunction";
 import env from '../../../configs/env';
 
 const CmnPar = (props) => {
-    console.log(props, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ*-*-*-*-*-*-*-*****CmnPar-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);

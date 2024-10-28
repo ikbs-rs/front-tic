@@ -58,7 +58,7 @@ export default function CmnLoclinkgrpL(props) {
         ++i
         if (i < 2) {
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getArtikliLista(props.ticDoc?.id);
+          const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
           const sortedData = data.sort((a, b) => {
             if (a.nevent !== b.nevent) {
               return a.nevent.localeCompare(b.nevent);

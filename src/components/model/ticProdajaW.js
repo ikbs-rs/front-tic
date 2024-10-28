@@ -48,6 +48,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const [ticEvent, setTicEvent] = useState(props.ticEvent);
   const [ticEventProdajaLVisible, setTicEventProdajaLVisible] = useState(false);
   const [showMyComponent, setShowMyComponent] = useState(true);
+  const [urlIframe, setUrlIframe] = useState(null);
   let [refresh, setRefresh] = useState(0);
   let [uidKey, setUidKey] = useState(0);
   const placanjeRef = useRef();
@@ -69,25 +70,25 @@ const TicProdajaW = forwardRef((props, ref) => {
   useEffect(() => {
     const iframe = iframeRef.current;
 
-    const handleIframeLoad = () => {
-      if (iframe && iframe.contentWindow) {
-        const iframeDocument = iframe.contentWindow.document;
+    // const handleIframeLoad = () => {
+    //   if (iframe && iframe.contentWindow) {
+    //     const iframeDocument = iframe.contentWindow.document;
 
-        const targetDiv = iframeDocument.querySelector('.leaflet-pane .leaflet-overlay-pane');
-        if (targetDiv) {
-          targetDiv.style.display = 'none'; // Ako želite da div bude skriven
-          targetDiv.addEventListener('click', handleDivClick);
-        }
-      }
-    };
+    //     const targetDiv = iframeDocument.querySelector('.leaflet-pane .leaflet-overlay-pane');
+    //     if (targetDiv) {
+    //       targetDiv.style.display = 'none'; // Ako želite da div bude skriven
+    //       targetDiv.addEventListener('click', handleDivClick);
+    //     }
+    //   }
+    // };
 
     const handleDivClick = () => {
       //console.log('Div inside iframe clicked');
     };
 
-    if (iframe) {
-      iframe.addEventListener('load', handleIframeLoad);
-    }
+    // if (iframe) {
+    //   iframe.addEventListener('load', handleIframeLoad);
+    // }
 
     const originalConsoleLog = console.log;
     // console.log = function (message) {
@@ -103,7 +104,17 @@ const TicProdajaW = forwardRef((props, ref) => {
       console.log = originalConsoleLog;
     };
   }, []);
+  /************************************************************************************ */
 
+  useEffect(() => {
+    async function fetchData() {
+      console.log(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`,
+        "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      )
+      setUrlIframe(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
+    }
+    fetchData();
+  }, [ticEvent?.id, props.ticDoc?.id, props.channell?.id]);
   /************************************************************************************ */
 
   useEffect(() => {
@@ -129,7 +140,7 @@ const TicProdajaW = forwardRef((props, ref) => {
     async function fetchData() {
       try {
         const ticDocService = new TicDocService();
-        const data = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+        const data = await ticDocService.getDocZbirniiznosP(props.ticDoc?.id);
 
         setZbirniiznos(data.iznos)
         const _ticDocpayment = { ...ticDocpayment }
@@ -149,10 +160,12 @@ const TicProdajaW = forwardRef((props, ref) => {
         ++i
         if (i < 2) {
           const ticDocService = new TicDocService();
-          let data = await ticDocService.getTicDoc(ticDocId);
-          if (ticDocId != -1) {
+          // let data = await ticDocService.getTicDoc(ticDocId);
+          let data = await ticDocService.getTicDocP(ticDocId);
+          // console.log(data, "5555555555555555555555555555555555555555555555555555555555555555555")
+          if (data?.usr) {
             const cmnParService = new CmnParService()
-            let dataPar = await cmnParService.getCmnPar(data.usr);
+            let dataPar = await cmnParService.getCmnParP(data.usr);
             data.cpar = dataPar.code
             data.npar = dataPar.text
             // console.log(data, "5555555555555555555555555555555555555555555555555555555555555555555")
@@ -283,7 +296,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   const handleIframeLoad = async () => {
 
-    await removeUserMenu()
+    // await removeUserMenu()
     // await removeCartSection()
     //TO DO - MARE da obrise delove
     const iframe = iframeRef.current;
@@ -293,15 +306,12 @@ const TicProdajaW = forwardRef((props, ref) => {
         const originalIframeConsoleLog = iframeConsole.log;
         iframeConsole.log = function (message) {
           originalIframeConsoleLog.apply(iframeConsole, arguments);
-          // Vaš kod za presretanje poruke iz iframe-a ovde totalQuantity===========================
           if (message && typeof message === 'string' && ((message.includes('******GLOBAL CART********') || (message.includes('====OSVEZI STAVKE BLAGAJNE====')) || (message.includes('totalQuantity======================'))))) {
             setTicTransactionsKey((prev) => prev + 1);
             setTicTransactionsKey2((prev) => prev + 1);
             setTicTransactionsKey1((prev) => prev + 1);
             setTicTransactionsKey11((prev) => prev + 1);
-            //console.log("######################## Radim rezervaciju za dokument ####################################");
           }
-          // //console.log('Presretnuta poruka iz iframe:', message);
         };
       }
     }
@@ -346,13 +356,6 @@ const TicProdajaW = forwardRef((props, ref) => {
     setTicTransactionsKey11((prev) => prev + 1);
   };
   const handleAllRefresh = () => {
-    // setRefresh(prev => prev + 1)
-    setTicTransactionsKey((prev) => prev + 1);
-    setTicTransactionsKey2((prev) => prev + 1);
-    setTicTransactionsKey1((prev) => prev + 1);
-    setTicTransactionsKey11((prev) => prev + 1);
-  };
-  const handleZaUplatu = () => {
     // setRefresh(prev => prev + 1)
     setTicTransactionsKey((prev) => prev + 1);
     setTicTransactionsKey2((prev) => prev + 1);
@@ -505,7 +508,8 @@ const TicProdajaW = forwardRef((props, ref) => {
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
-      const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+      // const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+      const dataDoc = await ticDocService.getTicDocP(props.ticDoc.id);
       setTicDoc(dataDoc)
       const _ticDocpayment = { ...ticDocpayment }
       _ticDocpayment.doc = props.ticDoc.id;
@@ -669,13 +673,14 @@ const TicProdajaW = forwardRef((props, ref) => {
                   <iframe key={iframeKey}
                     id="myIframe"
                     ref={iframeRef}
-                    src={`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                    src={urlIframe}
+                    // src={`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`}
+                    setUrlIframe
                     onLoad={handleIframeLoad}
                     title="Sal iframe"
                     width="100%"
                     height="730px"
                     frameBorder="0"
-                  // scrolling="no"
                   ></iframe>
                 </div>
               </div>

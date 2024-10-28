@@ -38,11 +38,12 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         async function fetchData() {
             try {
                 const ticDocService = new TicDocService();
-                const _ticDoc = await ticDocService.getTicDoc(props.ticDoc.id);
+                const _ticDoc = await ticDocService.getTicDocP(props.ticDoc.id);
+                // const _ticDoc = await ticDocService.getTicDoc(props.ticDoc.id);
 
                 setTicDoc(_ticDoc);
                 const ticDocpaymentService = new TicDocpaymentService();
-                const data = await ticDocpaymentService.getCmnPaymenttps();
+                const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
                 setCategories(data);
 
                 const foundCategory = data.find(category => category.id === _ticDoc.paymenttp);
@@ -58,7 +59,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                     setSelectedCategory(foundCategory);
                 }
 
-                const iznos = await ticDocService.getDocZbirniiznos(props.ticDoc.id);
+                const iznos = await ticDocService.getDocZbirniiznosP(props.ticDoc.id);
                 const stavkePlacanja = await ticDocService.getDocPaymentS(props.ticDoc.id);
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
                     return ukupno + parseFloat(stavka.amount || 0);

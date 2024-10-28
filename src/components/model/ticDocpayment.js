@@ -38,7 +38,7 @@ console.log("---AllSecurePaymentJSForm useEffect v1 ---")
         async function fetchData() {
             try {
                 const ticDocpaymentService = new TicDocpaymentService();
-                const data = await ticDocpaymentService.getCmnPaymenttps();
+                const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
 
                 setCmnPaymenttpItems(data)
                 const pPaymentTp = props.ticDocpayment.paymenttp||props.paymentTip
@@ -98,7 +98,7 @@ console.log("---AllSecurePaymentJSForm useEffect v1 ---")
         async function fetchData() {
             try {
                 const ticDocService = new TicDocService();
-                const data = await ticDocService.getDocZbirniiznos(props.ticDoc?.id);
+                const data = await ticDocService.getDocZbirniiznosP(props.ticDoc?.id);
                 console.log(data, "444444444444444444444444444444444444444444444444444444444444444444444444444")
                 setZbirniiznos(data.iznos)
                 ticDocpayment.amount =data.iznos

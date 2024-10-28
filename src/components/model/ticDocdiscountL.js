@@ -120,7 +120,7 @@ export default function TicDocdiscountL(props) {
             try {
 
                 const ticDocdiscountService = new TicDocdiscountService();
-                const data = await ticDocdiscountService.getCmnObjByTpCode('t.code', 'XTCTP');
+                const data = await ticDocdiscountService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                 setDdTickettpItems(dataDD);

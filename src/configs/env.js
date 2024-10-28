@@ -9,6 +9,10 @@ const env = {
     CMN_BACK_URL: 'https://188.93.122.138/bcmn',
     TIC_BACK_URL: 'https://188.93.122.138/btic',
     IMG_BACK_URL: 'https://188.93.122.138/bimg',
+    PROD_BACK_URL: 'https://188.93.122.138/prod',
+    PROD1_BACK_URL: 'https://188.93.122.138/prod1',
+    PROD2_BACK_URL: 'https://188.93.122.138/prod2',
+    PROD3_BACK_URL: 'https://188.93.122.138/prod3',
   };
   
   export default env;
