@@ -435,6 +435,7 @@ const TicEvent = (props) => {
 
     const handleSelect = (e) => {
         // Postavite izabrani element i automatski popunite polje za unos sa vrednošću "code"
+        console.log(e.value, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
         setSelectedPar(e.value.code);
         setParValue(e.value.code);
     };
@@ -749,7 +750,7 @@ const TicEvent = (props) => {
                         setSelectedPar(null);
                         setParValue(e.target.value.textx || e.target.value.textx);
                     }
-                    console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", e.target.value)
+                    console.log(e.target, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", e.target.value)
                     ticEvent.par = e.target.value.id
                     ticEvent.npar = e.target.value.textx
                     ticEvent.cpar = e.target.value.code

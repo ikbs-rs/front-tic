@@ -135,6 +135,7 @@ export class TicDocpaymentService {
             newObj.usr = userId
             newObj.tm = DateFunction.currDatetime()
             const url = `${env.TIC_BACK_URL}/tic/docpayment/?sl=${selectedLanguage}`;
+            
             const tokenLocal = await Token.getTokensLS();
             const headers = {
                 'Content-Type': 'application/json',
@@ -142,6 +143,7 @@ export class TicDocpaymentService {
             };
             
             const jsonObj = JSON.stringify(newObj)
+            console.log(jsonObj, "00000LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
             const response = await axios.post(url, jsonObj, { headers });
             return response.data.items;
         } catch (error) {

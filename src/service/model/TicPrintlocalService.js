@@ -4,23 +4,23 @@ import Token from "../../utilities/Token";
 
 export class TicPrintlocalService {
 
-  async fetchPrinters() {
+  async fetchPrinters(endpoint) {
     try {
-      const response = await fetch('https://localhost:8650/printers');
+      const response = await fetch(`https://localhost:8650/${endpoint}`);
 
       // Check if the response is ok (status in the range 200-299)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const printers = await response.json();
+      console.log( "Fetched and mapped printers:", printers);
       const updatedPrinters = printers.map(printer => ({
         ...printer,             // Copy all other properties
         printname: printer.name // Add a new printname property with the value of name
       }));
-  
+
       // Now you can save the updated printers in state or context
-      console.log("Fetched and mapped printers:", updatedPrinters);
+      // console.log(`https://localhost:8650/${endpoint}`, "Fetched and mapped printers:", updatedPrinters);
       return updatedPrinters;
 
     } catch (error) {
@@ -29,8 +29,33 @@ export class TicPrintlocalService {
   }
 
 
-  async addLocalPrinterHandler(newObj) {
+  async fetchPrintersL(endpoint) {
     try {
+      const response = await fetch(`https://localhost:8650/${endpoint}`);
+
+      // Check if the response is ok (status in the range 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const printers = await response.json();
+      console.log( "LLLLL Fetched and mapped printers:", printers);
+      const updatedPrinters = printers.map(printer => ({
+        ...printer,             // Copy all other properties
+        printname: printer.name // Add a new printname property with the value of name
+      }));
+
+      // Now you can save the updated printers in state or context
+      // console.log(`https://localhost:8650/${endpoint}`, "Fetched and mapped printers:", updatedPrinters);
+      return printers;
+
+    } catch (error) {
+      console.error("Error fetching printers:", error);
+    }
+  }
+
+  async addLocalPrinterHandler(newObj, tip) {
+    try {
+      console.log(newObj, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const selectedLanguage = localStorage.getItem('sl') || 'en';
       const url = `https://localhost:8650/addlocalprinter`;
       const tokenLocal = await Token.getTokensLS();
@@ -182,5 +207,23 @@ export class TicPrintlocalService {
     }
 
   }
+
+  async getListaLL(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/obj/_v/lista/?stm=cmn_objll_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }
 

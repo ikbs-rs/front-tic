@@ -28,7 +28,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
-  const [ticDoc, setTicDoc] = useState(props.ticDoc);
+  const [ticDoc, setTicDoc] = useState(props.ticDoc?.id?props.ticDoc:ticDoc);
   const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
   const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
   const [submitted, setSubmitted] = useState(false);
@@ -108,9 +108,9 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   useEffect(() => {
     async function fetchData() {
-      console.log(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`,
-        "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      )
+      // console.log(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`,
+      //   "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      // )
       setUrlIframe(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
     }
     fetchData();
@@ -344,8 +344,9 @@ const TicProdajaW = forwardRef((props, ref) => {
   };
 
   const handleAction = (rowData) => {
-    console.log(rowData, "******************************EEEEEEEEEEEEEEEE**************************************")
+    console.log(rowData, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
     setTicDoc(rowData)
+    props.handleActionTab(rowData)
     setRefresh(++refresh)
   }
   const handleRefresh = () => {
@@ -379,7 +380,7 @@ const TicProdajaW = forwardRef((props, ref) => {
     const _ticDocpayment = { ...ticDocpayment }
     _ticDocpayment.paymenttp = value
     setTicDocpayment({ ..._ticDocpayment })
-    console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
+    // console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
     setTicTransactionsKey1((prev) => prev + 1);
     setTicTransactionsKey11((prev) => prev + 1);
   }
@@ -387,7 +388,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const handleUpdatePaymentTicDoc = async (newObj, previousValue) => {
     try {
       const _ticDoc = newObj
-      console.log(newObj, "handleUpdatePaymentTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+      // console.log(newObj, "handleUpdatePaymentTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
       //   const ticDocService = new TicDocService();
       //await ticDocService.putTicDoc(newObj);
     } catch (err) {
@@ -404,7 +405,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const handleEndTicDoc = async (e) => {
     try {
       // const _ticDoc = newObj
-      console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
+      // console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
       // const previousValue = ticDoc.status;
       // let _ticDoc = { ...ticDoc }
       // _ticDoc.status = 4
@@ -425,7 +426,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const handleCancelSales = async (e) => {
     try {
       const _ticDoc = {...ticDoc}
-      console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
+      // console.log(e, "handleEndTicDoc 0005555555555555555555555555555555555555555555555555555555555")
       const previousValue = ticDoc.status;
       _ticDoc.status = 4
       setTicDoc(_ticDoc)
@@ -446,7 +447,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   const handleUpdateCancelTicDoc = async (newObj, previousValue) => {
     const _ticDoc = newObj
     try {
-        console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+        // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
         const ticDocService = new TicDocService();
         await ticDocService.setCancelTicDoc(newObj);
     } catch (err) {
@@ -464,22 +465,22 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   const handleRezTicDoc = async () => {
     console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
-    console.log(ticEvent?.id, props.channell?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    // console.log(ticEvent?.id, props.channell?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const ticEventattsService = new TicEventattsService()
     const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
 
-    const vremeRezervacije = DateFunction.currDatetimePlusHours(eventAtt.text)
+    const vremeRezervacije = DateFunction.currDatetimePlusHours(eventAtt?.text)
     const previousValue = { ...ticDoc }
     let _ticDoc = { ...ticDoc }
-    console.log(vremeRezervacije, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    // console.log(vremeRezervacije, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const endTm = DateFunction.toDatetime(_ticDoc.endtm)+vremeRezervacije
     _ticDoc.endtm = vremeRezervacije
-    console.log(_ticDoc.endtm, "$33  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    // console.log(_ticDoc.endtm, "$33  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 
     _ticDoc.reservation = `1`
     _ticDoc.status = 1
     try {
-      console.log(_ticDoc, "handleUpdateTicDoc XXXX0005555555555555555555555555555555555555555555555555555555555", vremeRezervacije)
+      // console.log(_ticDoc, "handleUpdateTicDoc XXXX0005555555555555555555555555555555555555555555555555555555555", vremeRezervacije)
       const ticDocService = new TicDocService();
       await ticDocService.putTicDoc(_ticDoc);
       setTicDoc(_ticDoc)
@@ -509,8 +510,10 @@ const TicProdajaW = forwardRef((props, ref) => {
       setSubmitted(true);
       const ticDocService = new TicDocService();
       // const dataDoc = await ticDocService.getTicDoc(props.ticDoc.id);
-      const dataDoc = await ticDocService.getTicDocP(props.ticDoc.id);
-      setTicDoc(dataDoc)
+      const dataDoc = await ticDocService.getTicDocP(props.ticDoc?.id?props.ticDoc.id:ticDoc?.id);
+      if (dataDoc?.id) {
+        setTicDoc(dataDoc)
+      }
       const _ticDocpayment = { ...ticDocpayment }
       _ticDocpayment.doc = props.ticDoc.id;
       _ticDocpayment.paymenttp = dataDoc.paymenttp;
@@ -584,6 +587,9 @@ const TicProdajaW = forwardRef((props, ref) => {
       <Toast ref={toast} />
       <div className="card " style={{ height: "805px" }}>
         <div className="grid grid-nogutter">
+{/*****************************************************
+PRVI RED
+*****************************************************/}           
           <div className="col-5">
             <div className="grid grid-nogutter">
               {(uidKey <= 2 || ticDoc.status == 2) && (
@@ -666,6 +672,13 @@ const TicProdajaW = forwardRef((props, ref) => {
           </div>
           <div className="col-7">
           </div>
+{/*****************************************************
+KRAJ PRVOG REDA
+*****************************************************/}      
+
+{/*****************************************************
+DRUGI RED
+*****************************************************/}
           {(uidKey == 0 && !props.expandStavke) && (
             <div className={props.expandIframe ? "col-12" : "col-7"}>
               <div className="grid">
@@ -782,7 +795,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
       </div>
 
-      <Dialog
+      {/* <Dialog
         header={translations[selectedLanguage].EventList}
         visible={ticEventProdajaLVisible}
         style={{ width: '90%', height: '1400px' }}
@@ -801,7 +814,7 @@ const TicProdajaW = forwardRef((props, ref) => {
             dialog={true}
             lookUp={true}
           />}
-      </Dialog>
+      </Dialog> */}
     </div >
   );
 })

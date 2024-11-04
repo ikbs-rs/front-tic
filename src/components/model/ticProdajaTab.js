@@ -641,7 +641,7 @@ export default function TicProdajaTab(props) {
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         />
                     </div>
-                    <div className="flex flex-wrap gap-1" >
+                    {/* <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].KupacNext}
                             icon="pi pi-user-edit"
@@ -653,7 +653,7 @@ export default function TicProdajaTab(props) {
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         />
 
-                    </div>
+                    </div> */}
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
                             icon="pi pi-euro"
@@ -1099,7 +1099,11 @@ export default function TicProdajaTab(props) {
         const _channel = channell || localChannel
         let OK = false
         if (ticDoc?.id) {
-            const _ticDoc = await fachDoc(ticDoc.id)
+            let _ticDoc = await fachDoc(ticDoc.id)
+            if (!ticDoc?.id) {
+                _ticDoc = { ...ticDoc }
+            }
+            console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar?.code
             _ticDoc.npar = _cmnPar?.text
@@ -1203,6 +1207,10 @@ export default function TicProdajaTab(props) {
     }
     const handleFirstColumnClick = () => {
     }
+    const handleActionTab = (rowData) => {
+        console.log(rowData, "TAB-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        setTicDoc(rowData)
+    }
     return (
         <div>
             <Toast ref={toast} />
@@ -1250,6 +1258,7 @@ export default function TicProdajaTab(props) {
                             handleRezervaciju={handleRezervaciju}
                             ref={ticProdajaWRef}
                             setActiveIndex={setActiveIndex}
+                            handleActionTab={handleActionTab}
                         />
                         <div>
                             {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}

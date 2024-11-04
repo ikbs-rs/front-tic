@@ -45,7 +45,7 @@ export default function TicTransactionsL(props) {
     const [ticDocsNs, setTicDocsNs] = useState([]);
     const [ticDocsN, setTicDocsN] = useState(emptyTicDocs);
 
-    const [ticDoc, setTicDoc] = useState(null);
+    const [ticDoc, setTicDoc] = useState(props.ticDoc);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [ticDocItems, setTicDocItems] = useState(null);
 
@@ -91,7 +91,9 @@ export default function TicTransactionsL(props) {
 
 
     const remoteRefresh = () => {
-        setRefresh(++refresh)
+        // const _ticDoc = ticDoc || props.ticDoc
+        // setTicDoc({..._ticDoc})
+        setRefresh(prev => prev + 1)
     }
 
     let i = 0
@@ -327,7 +329,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /********************************************************************************/
     const handleUpdateNapDoc = async (newObj) => {
         try {
-            // console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+            console.log(newObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
             const ticDocService = new TicDocService();
             await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
         } catch (err) {
@@ -500,7 +502,9 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         delete updatedTicDocss[rowIndex].vreme;
 
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
-        setRefresh(++refresh)
+        // const _ticDoc = ticDoc || props.ticDoc
+        // setTicDoc({..._ticDoc})
+        setRefresh(prev => prev + 1)
 
     };
 
@@ -616,7 +620,9 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         delete updatedTicDocss[rowIndex].vreme;
 
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
-        setRefresh(++refresh)
+        // const _ticDoc = ticDoc || props.ticDoc
+        // setTicDoc({..._ticDoc})
+        setRefresh(prev => prev + 1)
     };
     const onInputChange = async (e, type, name) => {
         let val = ''
@@ -647,10 +653,12 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     };
 
 
-    const handleNapomenaClick = async () => {
+    const handleNapomenaClick = async (e) => {
+console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", e)
 
         let _ticDoc = { ...ticDoc || props.ticDoc }
         setTicDoc(_ticDoc)
+        props.handleAction(_ticDoc)
         await handleUpdateNapDoc(_ticDoc)
         // remountStavke();
     };
@@ -679,7 +687,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             <DocZaglavlje
 
             />
-            {(props.mapa != 1 && 0 == 1) && (
+            {/* {(props.mapa != 1 && 0 == 1) && (
                 <div className="flex-grow-1">
                     <TicDocDiscountL
                         key={refreshKey}
@@ -697,7 +705,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         karteIznos={karteIznos}
                     />
                 </div>
-            )}
+            )} */}
             <Divider />
             <div className="flex-grow-1">
                 <TicDocsKarteL

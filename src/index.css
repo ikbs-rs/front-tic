@@ -211,23 +211,53 @@ body {
 .card {
   padding: 1rem;
 }
-.layout-wrapper.layout-topbar-blue .layout-topbar {
+/* .layout-wrapper.layout-topbar-blue .layout-topbar {
   background-color: #0F8C5090;
+} */
+
+.layout-wrapper.layout-topbar-blue .layout-topbar {
+  background-color: #101111dc;
 }
 
 .p-datatable .p-datatable-loading-icon {
   font-size: 7rem;
 }
 /*******************************************************************/
+.custom-border-round {
+  border-radius: 20px !important; /* Podesite vrednost po potrebi */
+}
+
 body {
   color: #252529;
   background-color: #fdfdfd77;
   background-image: url('./Z.jpg');
-  background-size: cover; /* Slika će pokrivati celu pozadinu */
-  background-position: center; /* Centriranje slike */
-  background-repeat: no-repeat; /* Da se slika ne ponavlja */
-  opacity: 0.95; 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  opacity: 0.97; 
 }
+
+/* body {
+  color: #252529;
+  background-color: #fdfdfd77;
+  position: relative; 
+}
+
+body::before {
+  content: "";
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./Z.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4; 
+  z-index: -1; 
+  pointer-events: none; 
+} */
 
 
 .surface-card {

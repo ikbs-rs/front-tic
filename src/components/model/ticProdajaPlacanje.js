@@ -7,10 +7,11 @@ import { InputText } from 'primereact/inputtext';
 import { InputSwitch } from "primereact/inputswitch";
 
 const TicProdajaPlacanje = forwardRef((props, ref) => {
+    console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
     const [categories, setCategories] = useState([]); // Inicijalizacija kao prazan niz
     const [selectedCategory, setSelectedCategory] = useState(null);
     const selectedLanguage = localStorage.getItem('sl') || 'en';
-    const [ticDoc, setTicDoc] = useState(null);
+    const [ticDoc, setTicDoc] = useState(props.ticDoc?.id?props.ticDoc:ticDoc);
     const [zaUplatu, setZaUplatu] = useState(0);
     const [preostalo, setPreostalo] = useState(0);
     const [kes, setKes] = useState(0);
@@ -38,7 +39,8 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         async function fetchData() {
             try {
                 const ticDocService = new TicDocService();
-                const _ticDoc = await ticDocService.getTicDocP(props.ticDoc.id);
+                const pId = props.ticDoc?.id?props.ticDoc.id:ticDoc?.id
+                const _ticDoc = await ticDocService.getTicDocP(pId);
                 // const _ticDoc = await ticDocService.getTicDoc(props.ticDoc.id);
 
                 setTicDoc(_ticDoc);
@@ -58,9 +60,9 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 if (foundCategory) {
                     setSelectedCategory(foundCategory);
                 }
-
-                const iznos = await ticDocService.getDocZbirniiznosP(props.ticDoc.id);
-                const stavkePlacanja = await ticDocService.getDocPaymentS(props.ticDoc.id);
+                console.log(pId, _ticDoc, "3333333333333LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", data)
+                const iznos = await ticDocService.getDocZbirniiznosP(pId);
+                const stavkePlacanja = await ticDocService.getDocPaymentS(pId);
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
                     return ukupno + parseFloat(stavka.amount || 0);
                 }, 0);
@@ -106,6 +108,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         let _ticDoc = { ...ticDoc }
         value ? _ticDoc.printfiskal = `1` : _ticDoc.printfiskal = `0`
         setTicDoc(_ticDoc)
+        props.handleAction(_ticDoc)
         // console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
         await handleUpdateTicDoc(_ticDoc, previousValue)
 
@@ -230,7 +233,10 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 <div className="grid grid-nogutter">
                     <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                         <label htmlFor="printfiskal" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Printfiskal}</label>
-                        <InputSwitch id="printfiskal" checked={checkedPrintfiskal} onChange={(e) => handleChangePrintfiskal(e.value)}
+                        <InputSwitch id="printfiskal" 
+                            value={ticDoc.printfiskal}
+                            checked={checkedPrintfiskal} 
+                            onChange={(e) => handleChangePrintfiskal(e.value)}
                             tooltip={translations[selectedLanguage].Printfiskal}
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         />

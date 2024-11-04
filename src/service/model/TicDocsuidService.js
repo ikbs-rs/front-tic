@@ -337,7 +337,7 @@ export class TicDocsuidService {
         };
 
         const jsonObj = JSON.stringify(newObj);
-
+        console.log(jsonObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         // Dodaj signal u axios post zahtev kako bi mogao biti prekinut
         const response = await axios.post(url, jsonObj, { headers, signal });
 

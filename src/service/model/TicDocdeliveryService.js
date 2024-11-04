@@ -24,13 +24,14 @@ export class TicDocdeliveryService {
   async getListaByDocP(objId) {
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docdelivery_v&item=aa.doc&objid=${objId}&sl=${selectedLanguage}`;
+    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docdelivery_v&par1=aa.doc&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = {...Token.getTokensLS()};
     const headers = {
       Authorization: tokenLocal.token
     };
     try {
       const response = await axios.get(url, { headers });
+      console.log(response.data, "99999999999999999999999999999999999999999999999999999999999999999999", url)
       return response.data.item //||response.data.items;
     } catch (error) {
       console.error(error);

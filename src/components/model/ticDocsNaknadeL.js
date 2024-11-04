@@ -8,6 +8,7 @@ import { TicDocsService } from '../../service/model/TicDocsService';
 import { translations } from "../../configs/translations";
 
 function TicDocsNaknadeL(props) {
+    console.log("AA EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", props.ticDoc.id)
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [ticDocsNs, setTicDocsNs] = useState([]);
     const [selectedNaknade, setSelectedNaknade] = useState(null);
@@ -16,10 +17,11 @@ function TicDocsNaknadeL(props) {
 
     useEffect(() => {
         async function fetchNaknade() {
-            setLoading(true);
+            // setLoading(true);
             try {
                 const ticDocsService = new TicDocsService();
                 let data = await ticDocsService.getNaknadeListaP(props.ticDoc.id);
+                console.log(data, "00 EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", props.ticDoc.id)
                 if (data) {
                     data.sort((a, b) => {
                         if (a.nevent === b.nevent) {
@@ -27,15 +29,18 @@ function TicDocsNaknadeL(props) {
                         }
                         return a.nevent < b.nevent ? -1 : 1;
                     });
+                    setTicDocsNs(data);
                 } else {
                     data = []
                 }
-                setTicDocsNs(data);
+
+                
+                console.log(data, "01 EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
             } catch (error) {
                 console.error('Failed to fetch naknade:', error);
                 // toast.current.show({ severity: 'error', summary: 'Error fetching data', detail: 'Failed to load Naknade.', life: 3000 });
             } finally {
-                setLoading(false);
+                // setLoading(false);
             }
         }
         fetchNaknade();

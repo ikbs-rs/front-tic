@@ -1,48 +1,68 @@
 import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
-import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
 import './index.css';
 import { TicPrintlocalService } from "../../service/model/TicPrintlocalService";
-import TicPrintlocal from './ticPrintlocal';
-import { EmptyEntities } from '../../service/model/EmptyEntities';
-import { Dialog } from 'primereact/dialog';
 import { translations } from "../../configs/translations";
 import { ToggleButton } from 'primereact/togglebutton';
+import { Dropdown } from 'primereact/dropdown';
+import { ConstructionOutlined } from "@mui/icons-material";
 
 export default function TicPrintlocalL(props) {
   let i = 0
-  const objName = null
   const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const emptyTicPrintlocal = EmptyEntities[objName]
-  const [showMyComponent, setShowMyComponent] = useState(true);
   const [ticPrintlocals, setTicPrintlocals] = useState([]);
+  const [ticPrintlocalsL, setTicPrintlocalsL] = useState([]);
   const [ticPrintlocal, setTicPrintlocal] = useState(null);
+  const [ticPrintlocalL, setTicPrintlocalL] = useState(null);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
-  const [visible, setVisible] = useState(false);
-  const [cenatpTip, setCenatpTip] = useState('');
-  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProductsL, setSelectedProductsL] = useState([]);
   const [rowClick, setRowClick] = useState(true);
+  const [rowLClick, setRowLClick] = useState(true);
   const [checked, setChecked] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+
+  const [ddCmnObj, setDdCmnObj] = useState(null);
+  const [ddCmnObjs, setDdCmnObjs] = useState(null);
+  const [cmnObj, setCmnObj] = useState({});
+  const [cmnObjs, setCmnObjs] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        ++i
-        if (i < 2) {
-          const ticPrintlocalService = new TicPrintlocalService();
-          const data = await ticPrintlocalService.fetchPrinters();
-          setTicPrintlocals(data);
-          initFilters();
-        }
+        const ticPrintlocalService = new TicPrintlocalService();
+        const data = await ticPrintlocalService.getListaLL("LPRINT");
+        setCmnObjs(data);
+        const dataDD = data.map(({ textx, code }) => ({ name: textx, code: code }));
+        setDdCmnObjs(dataDD);
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, []);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const ticPrintlocalService = new TicPrintlocalService();
+        const data = await ticPrintlocalService.fetchPrinters("printers");
+        const updatedData = data.map((item) => ({
+          ...item,
+          default: 0,
+          tip: "ALL"
+        }));
+        setTicPrintlocals(updatedData);
+        initFilters();
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -51,63 +71,32 @@ export default function TicPrintlocalL(props) {
     fetchData();
   }, []);
 
-  const handleDialogClose = (newObj) => {
-    const localObj = { newObj };
+  useEffect(() => {
+    async function fetchData() {
+      try {
 
-    let _ticPrintlocals = [...ticPrintlocals];
-    let _ticPrintlocal = { ...localObj.newObj.obj };
-
-    //setSubmitted(true);
-    if (localObj.newObj.cenatpTip === "CREATE") {
-      _ticPrintlocals.push(_ticPrintlocal);
-    } else if (localObj.newObj.cenatpTip === "UPDATE") {
-      const index = findIndexById(localObj.newObj.obj.id);
-      _ticPrintlocals[index] = _ticPrintlocal;
-    } else if ((localObj.newObj.cenatpTip === "DELETE")) {
-      _ticPrintlocals = ticPrintlocals.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrintlocal Delete', life: 3000 });
-    } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicPrintlocal ?', life: 3000 });
-    }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.cenatpTip}`, life: 3000 });
-    setTicPrintlocals(_ticPrintlocals);
-    setTicPrintlocal(emptyTicPrintlocal);
-  };
-
-  const findIndexById = (id) => {
-    let index = -1;
-
-    for (let i = 0; i < ticPrintlocals.length; i++) {
-      if (ticPrintlocals[i].id === id) {
-        index = i;
-        break;
+        const ticPrintlocalService = new TicPrintlocalService();
+        const data = await ticPrintlocalService.fetchPrintersL("localprinters");
+        const updatedData = data.map((item) => ({
+          ...item,
+          id: `${item.printname}:${item.tip}` 
+        }));
+        let filteredData = []
+        if (ddCmnObj && ddCmnObj !== undefined) {
+          filteredData = data.find((item) => item.tip === ddCmnObj.code)
+        } else {
+          filteredData = data
+        }
+        setTicPrintlocalsL(updatedData);
+        initFilters();
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
       }
     }
+    fetchData();
+  }, [refresh]);
 
-    return index;
-  };
-
-  const openNew = () => {
-    setTicPrintlocalDialog(emptyTicPrintlocal);
-  };
-
-  const onRowSelect = (event) => {
-    toast.current.show({
-      severity: "info",
-      summary: "Action Selected",
-      detail: `Id: ${event.data.printname} `,
-      life: 3000,
-    });
-  };
-
-  const onRowUnselect = (event) => {
-    toast.current.show({
-      severity: "warn",
-      summary: "Action Unselected",
-      detail: `Id: ${event.data.printname} `,
-      life: 3000,
-    });
-  };
   // <heder za filter
   const initFilters = () => {
     setFilters({
@@ -141,243 +130,330 @@ export default function TicPrintlocalL(props) {
 
   const handlePrintClick = async () => {
     handlePrintSt(0);
-    // setPrintCopy(false)
+  };
+  const handlePrintLClick = async () => {
+    handlePrintSt(1);
   };
 
   const handlePrintSt = async (tp) => {
-    console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
-    // setSubmitted(true);
     const ticPrintlocalService = new TicPrintlocalService();
-    await ticPrintlocalService.addLocalPrinterHandler(selectedProducts);
-
+    if (tp == 0) {
+      await ticPrintlocalService.addLocalPrinterHandler(selectedProducts);
+    } else {
+      const updatedSelectedProductsL = selectedProductsL.map(product => ({
+        ...product,
+        tip: ddCmnObj?.code||'ALL'
+      }));      
+      await ticPrintlocalService.addLocalPrinterHandler(updatedSelectedProductsL);
+    }
+    setRefresh(prev => prev + 1)
   };
 
+  const onObjChange = (e) => {
+    let _cmnObjs = [...cmnObjs];
+    let val = (e.target && e.target.value && e.target.value.code) || '';
+    setDdCmnObj(e.value);
+    const foundItem = cmnObjs.find((item) => item.id === val);
+    setCmnObj(foundItem || null);
+    // _cmnObjs.tp = val;
+    // setCmnObjs(_cmnObjs);
+    setRefresh(prev => prev + 1);
+  }
   const renderHeader = () => {
     return (
-      <div className="flex card-container">
+      <div className="grid card-container">
+        <div className="col-7">
+          <div className="flex card-container">
 
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].SetPrintLocal}
-            icon="pi pi-wrench" onClick={handlePrintClick}
-            severity="warning"
-            // text
-            raised />
+            <div className="flex flex-wrap gap-1">
+              <Button label={translations[selectedLanguage].SetPrintLocal}
+                icon="pi pi-wrench" onClick={handlePrintClick}
+                severity="warning"
+                raised />
+            </div>
+            <div className="flex-grow-1"></div>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Print}
-            icon="pi pi-print" onClick={handlePrintClick}
-            severity="success"
-            // text
-            raised />
-        </div>
-        <div className="flex-grow-1" />
-        <b>{translations[selectedLanguage].PrinterlocalL}</b>
-        <div className="flex-grow-1"></div>
-        <div className="flex flex-wrap gap-1">
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              value={globalFilterValue}
-              onChange={onGlobalFilterChange}
-              placeholder={translations[selectedLanguage].KeywordSearch}
-            />
-          </span>
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label={translations[selectedLanguage].Clear}
-            outlined
-            onClick={clearFilter}
-            text raised
-          />
+        <div className="col-3 flex align-items-center justify-content-center">
+          <b>{translations[selectedLanguage].PrinterlocalL}</b>
         </div>
       </div>
     );
   };
-
-  const validBodyTemplate = (rowData) => {
-    const valid = rowData.valid == 1 ? true : false
+  const renderHeaderL = () => {
     return (
-      <i
-        className={classNames("pi", {
-          "text-green-500 pi-check-circle": valid,
-          "text-red-500 pi-times-circle": !valid
-        })}
-      ></i>
-    );
-  };
+      <div className="grid card-container">
+        <div className="col-6">
+          <div className="flex card-container">
 
-  const validFilterTemplate = (options) => {
-    return (
-      <div className="flex align-items-center gap-2">
-        <label htmlFor="verified-filter" className="font-bold">
-          {translations[selectedLanguage].Valid}
-        </label>
-        <TriStateCheckbox
-          inputId="verified-filter"
-          value={options.value}
-          onChange={(e) => options.filterCallback(e.value)}
-        />
+            <div className="flex flex-wrap gap-1">
+              <Button label={translations[selectedLanguage].SetPrintLocalL}
+                icon="pi pi-wrench" onClick={handlePrintLClick}
+                severity="warning"
+                raised />
+            </div>
+
+            <div className="flex-grow-1"></div>
+            <div className="flex-grow-1 ">
+              <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
+            </div>
+            <div className="flex-grow-1">
+              <Dropdown id="onjtp"
+                value={ddCmnObj}
+                options={ddCmnObjs}
+                onChange={(e) => onObjChange(e)}
+                showClear
+                optionLabel="name"
+                placeholder="Select One"
+              />
+            </div>
+            <div className="flex-grow-1"></div>
+          </div>
+        </div>
+        <div className="col-2 flex align-items-center justify-content-center">
+          <b>{translations[selectedLanguage].LokalnePostavke}</b>
+        </div>
+        <div className="col-3">
+          <div className="flex card-container">
+
+            <div className="flex flex-wrap gap-1">
+              <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  value={globalFilterValue}
+                  onChange={onGlobalFilterChange}
+                  placeholder={translations[selectedLanguage].KeywordSearch}
+                />
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                type="button"
+                icon="pi pi-filter-slash"
+                label={translations[selectedLanguage].Clear}
+                outlined
+                onClick={clearFilter}
+                text
+                raised
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
-
-  // <--- Dialog
-  const setTicPrintlocalDialog = (ticPrintlocal) => {
-    setVisible(true)
-    setCenatpTip("CREATE")
-    setTicPrintlocal({ ...ticPrintlocal });
-  }
-  //  Dialog --->
 
   const header = renderHeader();
-  // heder za filter/>
+  const headerL = renderHeaderL();
 
-  const actionTemplate = (rowData) => {
+  const toggleBodyTemplate = (rowData, name, e) => {
+    // console.log(rowData, e, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    const checked = rowData[name] === 1;
+    const buttonClass = checked ? "toggle-button-checked" : "toggle-button-unchecked";
     return (
-      <div className="flex flex-wrap gap-1">
-
-        <Button
-          type="button"
-          icon="pi pi-pencil"
-          style={{ width: '24px', height: '24px' }}
-          onClick={() => {
-            setTicPrintlocalDialog(rowData)
-            setCenatpTip("UPDATE")
-          }}
-          text
-          raised ></Button>
-
+      <div className="flex justify-content-center" style={{ width: "18px", height: "18px", fontSize: "9px", border: 'none' }}>
+        <ToggleButton
+          id={`tgl${rowData.id}`}
+          onLabel=""
+          offLabel=""
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+          checked={checked}
+          onChange={(e) => toggleChecked(e, name, rowData)}
+          className={`${buttonClass}`}
+          value={checked}
+        />
       </div>
     );
   };
 
-  const toggleBodyTemplate = (rowData, name, e) => {
-
-    const checked = rowData[name] == 1; 
+  const toggleBodyTemplateL = (rowData, name, e) => {
+    // console.log(rowData, e, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    const checked = rowData[name] === 1;
     const buttonClass = checked ? "toggle-button-checked" : "toggle-button-unchecked";
-
     return (
-        <div className="flex justify-content-center" style={{ width: "18px", height: "18px", "font-size": "9px", border: 'none' }}>
-            <ToggleButton
-                id={`tgl${rowData.id}`}
-                onLabel=""
-                offLabel=""
-                onIcon="pi pi-check"
-                offIcon="pi pi-times"
-                checked={checked}
-                onChange={(e) => toggleChecked(e, name, rowData)} // Ako treba ažurirati stanje u komponenti
-                // className={`w-9rem ${buttonClass}`}
-                className={`${buttonClass}`}
-            />
-        </div>
+      <div className="flex justify-content-center" style={{ width: "18px", height: "18px", fontSize: "9px", border: 'none' }}>
+        <ToggleButton
+          id={`tgl${rowData.id}`}
+          onLabel=""
+          offLabel=""
+          onIcon="pi pi-check"
+          offIcon="pi pi-times"
+          checked={checked}
+          onChange={(e) => toggleCheckedL(e, name, rowData)}
+          className={`${buttonClass}`}
+          value={checked}
+        />
+      </div>
     );
-};  
+  };
 
-const toggleChecked = async (e, name, rowData) => {
-  const newCheckedState = e.value;
-  setChecked(newCheckedState);
-  let val = '';
-  let _ticPrintlocals = {}
-  val = newCheckedState ? 1 : 0;
-  _ticPrintlocals = { ...ticPrintlocals };
-  // Update data in parent component or global store
+  const toggleChecked = (e, name, rowData) => {
+    const newCheckedState = e.value;
+    const val = newCheckedState ? 1 : 0;
 
-  const updatedTicPrintlocals = [...ticPrintlocals];
+    console.log("Kliknuto na red sa id:", rowData.name); // Dodato za debagovanje
 
-  const rowIndex = await updatedTicPrintlocals.findIndex((row) => row.id === rowData.id);
+    // Ažurirajte samo izabrani red koristeći map
+    const updatedTicPrintlocals = ticPrintlocals.map((row) => {
+      if (row.name === rowData.name) {
+        // Ažurirajte polje za izabrani red
+        return { ...row, [name]: val };
+      }
+      return row; // Ostali redovi ostaju nepromenjeni
+    });
+    setTicPrintlocals(updatedTicPrintlocals);
 
-  updatedTicPrintlocals[rowIndex][`${name}`] = val;
-  // setRefesh(++refresh)
-  // props.remoteRefresh(++refresh)  
+    if (selectedProducts.length > 0) {
+      const updatedSelectedProducts = selectedProducts.map((row) => {
+        if (row.name === rowData.name) {
+          // Ažurirajte polje za izabrani red
+          return { ...row, [name]: val };
+        }
+        return row; // Ostali redovi ostaju nepromenjeni
+      });
+      setSelectedProducts(updatedSelectedProducts);
+    }
+    console.log("Ažurirano stanje za red:", updatedTicPrintlocals); // Debagovanje stanja
+  };
 
-};
+  const toggleCheckedL = (e, name, rowData) => {
+    const newCheckedState = e.value;
+    const val = newCheckedState ? 1 : 0;
 
-const onCellEditComplete = async (e) => {
-  let { rowData, newValue, field, originalEvent: event } = e;
-  if (newValue !== null) {
+    console.log("Kliknuto na red sa id:", rowData.id); // Dodato za debagovanje
+
+    // Ažurirajte samo izabrani red koristeći map
+    const updatedTicPrintlocals = ticPrintlocalsL.map((row) => {
+      if (row.id === rowData.id) {
+        // Ažurirajte polje za izabrani red
+        return { ...row, [name]: val };
+      }
+      return row; // Ostali redovi ostaju nepromenjeni
+    });
+    setTicPrintlocalsL(updatedTicPrintlocals);
+
+    if (selectedProductsL.length > 0) {
+      const updatedSelectedProducts = selectedProductsL.map((row) => {
+        if (row.id === rowData.id) {
+          // Ažurirajte polje za izabrani red
+          return { ...row, [name]: val };
+        }
+        return row; // Ostali redovi ostaju nepromenjeni
+      });
+      setSelectedProductsL(updatedSelectedProducts);
+    }
+    console.log("Ažurirano stanje za red:", updatedTicPrintlocals); // Debagovanje stanja
+  };
+
+  const onCellEditComplete = async (e) => {
+    let { rowData, newValue, field, originalEvent: event } = e;
+    if (newValue !== null) {
       rowData[field] = newValue;
       setTicPrintlocals([...ticPrintlocals]);
-  } else {
+    } else {
       event.preventDefault();
-  }
-};
+    }
+  };
   return (
     <div className="card">
-      <Toast ref={toast} />
-      <DataTable
-        dataKey="name"
-        selectionMode={rowClick ? null : "checkbox"}
-        selection={selectedProducts}
-        onSelectionChange={(e) => setSelectedProducts(e.value)}
-        loading={loading}
-        value={ticPrintlocals}
-        header={header}
-        showGridlines
-        removableSort
-        filters={filters}
-        scrollable
-        sortField="code"
-        sortOrder={1}
-        scrollHeight="730px"
-        virtualScrollerOptions={{ itemSize: 46 }}
-        tableStyle={{ minWidth: "50rem" }}
-        metaKeySelection={false}
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        onRowSelect={onRowSelect}
-        onRowUnselect={onRowUnselect}
-      >
-        <Column
-          selectionMode="multiple"
-          headerStyle={{ width: "3rem" }}
-        ></Column>
-        <Column
-          field="printname"
-          header={translations[selectedLanguage].Name}
-          // sortable
-          // filter
-          style={{ width: "50%" }}
-        ></Column>
-        <Column
-          field="default"
-          header={translations[selectedLanguage].Default}
-          // sortable
-          // filter
-          bodyClassName="text-center"
-          body={(e) => toggleBodyTemplate(e, `default`)}
-          onCellEditComplete={onCellEditComplete}
-          style={{ width: "10%" }}
-        ></Column>        
-        <Column
-          //bodyClassName="text-center"
-          body={actionTemplate}
-          exportable={false}
-          headerClassName="w-10rem"
-          style={{ minWidth: '4rem' }}
-        />
-      </DataTable>
-      <Dialog
-        header={translations[selectedLanguage].Printerlocal}
-        visible={visible}
-        style={{ width: '50%' }}
-        onHide={() => {
-          setVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <TicPrintlocal
-            parameter={"inputTextValue"}
-            ticPrintlocal={ticPrintlocal}
-            handleDialogClose={handleDialogClose}
-            setVisible={setVisible}
-            dialog={true}
-            cenatpTip={cenatpTip}
-          />
-        )}
-      </Dialog>
+      <div className="col-12">
+        <div className="p-fluid formgrid grid">
+          <div className="field col-12 md:col-4">
+            <Toast ref={toast} />
+            <DataTable
+              dataKey="name"
+              selectionMode={rowClick ? null : "checkbox"}
+              selection={selectedProducts}
+              onSelectionChange={(e) => setSelectedProducts(e.value)}
+              loading={loading}
+              value={ticPrintlocals}
+              header={header}
+              showGridlines
+              removableSort
+              filters={filters}
+              scrollable
+              sortField="code"
+              sortOrder={1}
+              scrollHeight="730px"
+              metaKeySelection={false}
+              paginator
+              rows={10}
+              rowsPerPageOptions={[5, 10, 25, 50]}
+            >
+              <Column
+                selectionMode="multiple"
+                headerStyle={{ width: "3rem" }}
+              ></Column>
+              <Column
+                field="printname"
+                header={translations[selectedLanguage].Name}
+                style={{ width: "60%" }}
+              ></Column>
+              <Column
+                field="tip"
+                header={translations[selectedLanguage].Tip}
+                style={{ width: "20%" }}
+              ></Column>
+              <Column
+                field="default"
+                header={translations[selectedLanguage].Default}
+                bodyClassName="text-center"
+                body={(e) => toggleBodyTemplate(e, `default`, 'P')}
+                onCellEditComplete={onCellEditComplete}
+                style={{ width: "10%" }}
+              ></Column>
+            </DataTable>
+          </div>
+
+          <div className="field col-12 md:col-8">
+            <Toast ref={toast} />
+            <DataTable
+              dataKey="id"
+              selectionMode={rowLClick ? null : "checkbox"}
+              selection={selectedProductsL}
+              onSelectionChange={(e) => setSelectedProductsL(e.value)}
+              loading={loading}
+              value={ticPrintlocalsL}
+              header={headerL}
+              showGridlines
+              removableSort
+              filters={filters}
+              scrollable
+              sortField="tip"
+              sortOrder={1}
+              scrollHeight="730px"
+              metaKeySelection={false}
+              paginator
+              rows={10}
+              rowsPerPageOptions={[5, 10, 25, 50]}
+            >
+              <Column
+                selectionMode="multiple"
+                headerStyle={{ width: "3rem" }}
+              ></Column>
+              <Column
+                field="printname"
+                header={translations[selectedLanguage].Name}
+                style={{ width: "60%" }}
+              ></Column>
+              <Column
+                field="tip"
+                header={translations[selectedLanguage].Tip}
+                style={{ width: "20%" }}
+              ></Column>
+              <Column
+                field="default"
+                header={translations[selectedLanguage].Default}
+                bodyClassName="text-center"
+                body={(e) => toggleBodyTemplateL(e, `default`, 'LP')}
+                onCellEditComplete={onCellEditComplete}
+                style={{ width: "10%" }}
+              ></Column>
+            </DataTable>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

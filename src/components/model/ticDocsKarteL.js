@@ -21,7 +21,8 @@ import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
-    // console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111")
+    // console.log(props.ticDoc, "ADELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDE")
+
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -63,6 +64,7 @@ export default function TicTransactionsL(props) {
     const [channellItem, setChannellItem] = useState({});
 
     const [checked, setChecked] = useState(false);
+    const [delRefresh, setDelRefresh] = useState(0);
     const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
     const [akcija, setAkcija] = useState('RAZ');
 
@@ -71,42 +73,46 @@ export default function TicTransactionsL(props) {
         props.setTicDocsLVisible(false);
     };
 
-    const mapa = (props.mapa == 1) ? 6 : 7
+    const mapa = (props.mapa == 1) ? 5 : 7
     useEffect(() => {
         // const abortController = new AbortController();
         async function fetchData() {
             try {
-                ++i
-                if (i < 2) {
-                    const ticDocsService = new TicDocsService();
-                    const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
-                    const sortedData = data.sort((a, b) => {
-                        if (a.nevent !== b.nevent) {
-                            return a.nevent.localeCompare(b.nevent);
-                        } else if (a.nart !== b.nart) {
-                            return a.nart.localeCompare(b.nart);
-                        } else if (a.row !== b.row) {
-                            return a.row.localeCompare(b.row);
-                        } else {
-                            return a.seat.localeCompare(b.seat);
-                        }
-                    });
-                    /**************************************************************************** */
-                    const updatedCenaItems = [];
-                    // console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
-                    const promisesDD = sortedData.map(async (row) => {
-                        // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
-                        const dataDD = await ticDocsService.getEventartcenasP(row.id);
-                        updatedCenaItems[row.id] = dataDD;
-                        return { ...row, isUploadPending: false };
-                    });
+                console.log(props.ticDoc?.id, "QQ-props.ticDoc-QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+                if (props.ticDoc?.id) {
 
-                    const updatedData = await Promise.all(promisesDD);
-                    /**************************************************************************** */
-                    console.log(updatedData, "L01LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
-                    setTicDocss(updatedData);
-                    setDdCenaItems(updatedCenaItems);
-                    // initFilters();
+                    ++i
+                    if (i < 2) {
+                        const ticDocsService = new TicDocsService();
+                        const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
+                        const sortedData = data.sort((a, b) => {
+                            if (a.nevent !== b.nevent) {
+                                return a.nevent.localeCompare(b.nevent);
+                            } else if (a.nart !== b.nart) {
+                                return a.nart.localeCompare(b.nart);
+                            } else if (a.row !== b.row) {
+                                return a.row.localeCompare(b.row);
+                            } else {
+                                return a.seat.localeCompare(b.seat);
+                            }
+                        });
+                        /**************************************************************************** */
+                        const updatedCenaItems = [];
+                        // console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
+                        const promisesDD = sortedData.map(async (row) => {
+                            // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
+                            const dataDD = await ticDocsService.getEventartcenasP(row.id);
+                            updatedCenaItems[row.id] = dataDD;
+                            return { ...row, isUploadPending: false };
+                        });
+
+                        const updatedData = await Promise.all(promisesDD);
+                        /**************************************************************************** */
+                        console.log(updatedData, "L01LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
+                        setTicDocss(updatedData);
+                        setDdCenaItems(updatedCenaItems);
+                        // initFilters();
+                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -114,7 +120,47 @@ export default function TicTransactionsL(props) {
             }
         }
         fetchData();
-    }, [props.refresh]);
+    }, [props.refresh, delRefresh]);
+
+    /*********************************************************************************** */
+    /*********************************************************************************** */
+    useEffect(() => {
+        async function fetchData() {
+            try {
+
+                const ticDocsService = new TicDocsService();
+
+                // const data = await ticDocsService.getEventartcena('t.code', 'XTCTP');
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
+                setCmnTickettps(data);
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                setDdTickettpItems(dataDD);
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+
+                const ticDocsService = new TicDocsService();
+                const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
+                setCmnTickettps(data);
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                setDdTickettpItems(dataDD);
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, []);
 
 
     const handleDialogClose = (newObj) => {
@@ -319,7 +365,7 @@ export default function TicTransactionsL(props) {
         let val = '';
         let tip = '';
         let dataDDs = []
-        let dataDD = {}        
+        let dataDD = {}
 
         if (name == 'tickettp') {
             rowData.tickettp = e.value?.code;
@@ -335,7 +381,7 @@ export default function TicTransactionsL(props) {
             await setDdCenaItem(e.value);
             dataDDs = ddCenaItems[rowData.id];
             dataDD = dataDDs.find((row) => row.id === rowData.cena);
-            console.log(dataDD, "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataDDs);            
+            console.log(dataDD, "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataDDs);
         }
 
         const updatedTicDocss = [...ticDocss];
@@ -353,7 +399,7 @@ export default function TicTransactionsL(props) {
             }
         } else {
             updatedTicDocss[rowIndex][`price`] = dataDD.value
-            updatedTicDocss[rowIndex][`potrazuje`] = updatedTicDocss[rowIndex][`output`]*dataDD.value
+            updatedTicDocss[rowIndex][`potrazuje`] = updatedTicDocss[rowIndex][`output`] * dataDD.value
         }
         console.log(updatedTicDocss[rowIndex], "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
@@ -471,7 +517,7 @@ export default function TicTransactionsL(props) {
             try {
 
                 const ticDocsService = new TicDocsService();
-                
+
                 // const data = await ticDocsService.getEventartcena('t.code', 'XTCTP');
                 const data = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
                 setCmnTickettps(data);
@@ -519,10 +565,11 @@ export default function TicTransactionsL(props) {
 
     const deleteDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            console.log(rowData, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL")
             rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.deleteTicDocs(rowData);
+            setDelRefresh(prev => prev + 1)
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
         } catch (err) {
             console.error('Error updating data:', err);
@@ -531,7 +578,6 @@ export default function TicTransactionsL(props) {
     };
     /*********************************************************************************** */
     const delBodyTemplate = (rowData, name, e) => {
-
 
         return (
             < >
@@ -578,15 +624,17 @@ export default function TicTransactionsL(props) {
         const updatedTicDocss = [...ticDocss];
 
         const rowIndex = await updatedTicDocss.findIndex((row) => row.id === rowData.id);
-
+        console.log(rowData.id, "DELDELDELDELDELDELDELDELDELDELDELDELDELDEL", rowIndex, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL", name)
         updatedTicDocss[rowIndex][`${name}`] = val;
         delete updatedTicDocss[rowIndex].vreme;
         if (name == 'del') {
             await deleteDataInDatabase(updatedTicDocss[rowIndex]);
+            setDelRefresh(prev => prev + 1)
         } else {
             await updateDataInDatabase(updatedTicDocss[rowIndex]);
         }
         setRefesh(++refresh)
+        setDelRefresh(prev => prev + 1)
         props.remoteRefresh(++refresh)
     };
 
@@ -713,7 +761,7 @@ export default function TicTransactionsL(props) {
                 <Column
                     field="cena"
                     header={translations[selectedLanguage].cenatp}
-                    style={{ width: '8%', backgroundColor:  '#e6f0e6' }}
+                    style={{ width: '8%', backgroundColor: '#e6f0e6' }}
                     editor={(e) => valueEditor(e.rowData, 'cena', e)}
                     body={(rowData) => valueTemplate(rowData, 'cena')}
                     onCellEditComplete={onCellEditComplete}
@@ -753,12 +801,12 @@ export default function TicTransactionsL(props) {
                     style={{ width: "8%" }}
                 ></Column>
                 {(props.mapa != 1) && (
-                    <Column 
+                    <Column
                         field="tickettp"
                         header={translations[selectedLanguage].tickettp}
-                        style={{ width: '8%', backgroundColor:  '#e6f0e6'}}
+                        style={{ width: '8%', backgroundColor: '#e6f0e6' }}
                         editor={(e) => valueEditor(e.rowData, 'tickettp', e)}
-                        body={(rowData) => 
+                        body={(rowData) =>
 
                             valueTemplate(rowData, 'tickettp')
                         }
@@ -771,7 +819,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].print}
                         field="print"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
+                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `print`)}
                         onCellEditComplete={onCellEditComplete}
@@ -782,7 +830,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].pm}
                         field="pm"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
+                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `pm`)}
                         onCellEditComplete={onCellEditComplete}
@@ -793,7 +841,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].delivery}
                         field="delivery"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
+                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
@@ -804,21 +852,23 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].rez}
                         field="rez"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor:  '#e6f0e6' }}
+                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `rez`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
-                <Column
-                    // header={translations[selectedLanguage].del}
-                    field="del"
-                    // dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => delBodyTemplate(e, `del`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
+                {(props.mapa != 1) && (
+                    <Column
+                        // header={translations[selectedLanguage].del}
+                        field="del"
+                        // dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => delBodyTemplate(e, `del`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
             </DataTable>
 
             <Dialog

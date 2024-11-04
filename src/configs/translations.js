@@ -933,9 +933,11 @@ export const translations = {
         LinkArtGrp: "Артикли у групи",
         PrinterlocalL: "Локални штампачи Листа",
         Name: "Назив",
-        PrinterlocalL: "Локални штампач",
+        PrinterlocalL: "Локални штампачи",
         SetPrintLocal: "Постави доступне штампаче",
         Default: "Подразумевани",
+        SetPrintLocalL: "Постави поставке штампе",
+        LokalnePostavke: "Локалне поставке",
     }
   };
   

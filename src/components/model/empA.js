@@ -119,7 +119,7 @@ export default function EmpA(props) {
             <div className="col-12 sm:col-6 lg:col-12 xl:col-2 p-1 clickable-item" onClick={() => f1(product.id)}>
                 <div className="p-4 border-1 surface-border surface-card border-round">
                     <div className="flex flex-column align-items-center gap-1 py-0">
-                        <img className="w-9 shadow-2 border-round" src={`${rootDir}/images/${product.image}`} alt={product.name} />
+                        <img className="w-9 shadow-2 custom-border-round" src={`${rootDir}/images/${product.image}`} alt={product.name}  />
                         <div className="text-2xl font-bold" style={{ color: "#8b8b90" }}>{translations[selectedLanguage]?.[product.name] || product.name}</div>
                     </div>
                 </div>
