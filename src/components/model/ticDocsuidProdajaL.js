@@ -36,7 +36,7 @@ export default function TicDocsuidProdajaL(props) {
     const emptyTicDocsdiscount = EmptyEntities[objTicDocsdiscount];
     const emptyTicDocdelivery = EmptyEntities[objTicDocdelivery];
     emptyTicDocdelivery.doc = props.ticDoc.id;
-    emptyTicDocdelivery.status = '0';
+    emptyTicDocdelivery.status = '1';
     emptyTicDocdelivery.usr = userId;
     emptyTicDocdelivery.dat = DateFunction.currDate();
     emptyTicDocdelivery.tmrec = DateFunction.currDatetime();

@@ -96,14 +96,14 @@
 }
 
 .toggle-button-unchecked {
-  background-color: rgb(234, 111, 111) !important; 
+  background-color: rgb(151, 190, 136) !important; 
   font-size: 8px !important;
   border-color: none !important;
 }
 
 .toggle-button-checked.custom1,
 .toggle-button-unchecked.custom1 {
-  background-color: rgb(190, 66, 66) !important;
+  background-color: rgb(162, 129, 184) !important;
   font-size: 12px !important;
   border-color: none !important;
   color:black;
@@ -111,7 +111,7 @@
 
 .toggle-button-checked.custom2,
 .toggle-button-unchecked.custom2 {
-  background-color: rgb(200, 221, 244) !important; 
+  background-color: rgb(130, 132, 134) !important; 
   
   border-color: none !important;
   color:black;
@@ -119,33 +119,53 @@
 
 .toggle-button-checked.custom3,
 .toggle-button-unchecked.custom3 {
-  background-color: rgb(207, 142, 73) !important; /* Zelena za uključeno stanje */
+  background-color: rgb(241, 239, 144) !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom4,
 .toggle-button-unchecked.custom4 {
-  background-color: rgb(225, 236, 33) !important; /* Zelena za uključeno stanje */
+  background-color: rgb(216, 123, 154) !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom5,
 .toggle-button-unchecked.custom5 {
-  background-color: rgb(25, 234, 25) !important; /* Zelena za uključeno stanje */
+  background-color: rgb(160, 99, 20) !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom6,
 .toggle-button-unchecked.custom6 {
-  background-color: rgb(102, 147, 102) !important; /* Zelena za uključeno stanje */
+  background-color: rgb(93, 206, 181) !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
 }
-
+.toggle-button-checked.custom7,
+.toggle-button-unchecked.custom7 {
+  background-color: rgb(252, 252, 252) !important; /* Zelena za uključeno stanje */
+  
+  border-color: none !important;
+  color:black;
+}
+.toggle-button-checked.custom8,
+.toggle-button-unchecked.custom8 {
+  background-color: rgb(216, 63, 71) !important; /* Zelena za uključeno stanje */
+  
+  border-color: none !important;
+  color:black;
+}
+.toggle-button-checked.custom9,
+.toggle-button-unchecked.custom9 {
+  background-color: rgb(1, 20, 129) !important; /* Zelena za uključeno stanje */
+  
+  border-color: none !important;
+  color:black;
+}
 .p-togglebutton.p-button .p-button-icon-left,
 .p-togglebutton.p-button .p-button-icon-right {
   font-size: 14px  !important;

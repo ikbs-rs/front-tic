@@ -30,6 +30,7 @@ import DeleteDialog from '../dialog/DeleteDialog';
 import TicEventProdajaL from './ticProdajaTab';
 import { ToggleButton } from 'primereact/togglebutton';
 import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
+import { InputNumber } from 'primereact/inputnumber';
 
 export default function TicTransactionFL(props) {
     const [searchParams] = useSearchParams();
@@ -69,11 +70,14 @@ export default function TicTransactionFL(props) {
     const [selectedProducts, setSelectedProducts] = useState(null);
 
     const [checked1, setChecked1] = useState(false);
-    const [checked2, setChecked2] = useState(true);
+    const [checked2, setChecked2] = useState(false);
     const [checked3, setChecked3] = useState(false);
     const [checked4, setChecked4] = useState(false);
     const [checked5, setChecked5] = useState(false);
     const [checked6, setChecked6] = useState(false);
+    const [checked7, setChecked7] = useState(false);
+    const [checked8, setChecked8] = useState(false);
+    const [checked9, setChecked9] = useState(false);
 
     let i = 0;
 
@@ -84,21 +88,28 @@ export default function TicTransactionFL(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                ++i
-                if (i < 2 || refresh > 0) {
-                    const ticDocService = new TicDocService();
-                    const data = await ticDocService.getTransactionFLista(checked1, checked2, checked3, checked4, checked5, checked6);
-                    console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
-                    setTicDocs(data);
-                    initFilters();
-                }
+                setTicDocs([]);
+                setComponentKey(prevKey => prevKey + 1); // Promena ključa za ponovno montiranje tabele
+                await new Promise(resolve => setTimeout(resolve, 100));
+                setLoading(true);
+                // Dohvatite nove podatke
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getTransactionFLista(
+                    checked1, checked2, checked3, checked4, checked5,
+                    checked6, checked7, checked8, checked9
+                );
+    
+                console.log("Fetched data:", data); // Log za proveru podataka
+                setTicDocs(data); // Postavite nove podatke
+                initFilters();
+                    setLoading(false);
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
         }
         fetchData();
-    }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6]);
+    }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6, checked7, checked8, checked9]);
 
 
 
@@ -255,19 +266,56 @@ export default function TicTransactionFL(props) {
     const initFilters = () => {
         setFilters({
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-            code: {
+            broj: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
             },
-            textx: {
+            nchannel: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
             },
-            storno: { value: null, matchMode: FilterMatchMode.EQUALS },
+            username: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },
+            statustransakcije: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },
+            potrazuje: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+            },
+            output: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+            },
+            npar: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },
+            text: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },
+            venue: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },
+            startda: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+            },               
+            statustransakcije: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+            },
         });
         setGlobalFilterValue("");
     };
-
+    const outputFilterTemplate = (options) => {
+        return <InputNumber value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} />;
+    };
     const clearFilter = () => {
         initFilters();
     };
@@ -352,15 +400,15 @@ export default function TicTransactionFL(props) {
                 </div> */}
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Razdvajanje} icon="pi pi-file-export" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
-                </div>               
+                </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Spajanje} icon="pi pi-file-import" onClick={handleStorno} severity="warning" raised disabled={!ticDoc} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Storno} icon="pi pi-trash" onClick={handleStorno} severity="danger" text raised disabled={!ticDoc} />
-                </div>                 
+                </div>
                 <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].DelRezervation}  icon="pi pi-trash" onClick={showDelRezDialog} severity="secondary" raised disabled={!ticDoc} />
+                    <Button label={translations[selectedLanguage].DelRezervation} icon="pi pi-trash" onClick={showDelRezDialog} severity="secondary" raised disabled={!ticDoc} />
                 </div>
                 <div className="flex-grow-1" />
                 <b>{translations[selectedLanguage].TransactionList}</b>
@@ -478,71 +526,84 @@ export default function TicTransactionFL(props) {
         });
 
 
-        return rowData.trtp == '01'
-            ? 'highlight-row-1'
-            : rowData.trtp == '02'
-                ? 'highlight-row-2'
-                : rowData.trtp == '03'
-                    ? 'highlight-row-3'
-                    : rowData.trtp == '04'
-                        ? 'highlight-row-4'
-                        : rowData.trtp == '05'
-                            ? 'highlight-row-5'
-                            : rowData.trtp == '06'
-                                ? 'highlight-row-6'
-                                : rowData.trtp == '07'
-                                    ? 'highlight-row-7'
-                                    : rowData.trtp == '08'
-                                        ? 'highlight-row-8'
-                                        : rowData.trtp == '09'
-                                            ? 'highlight-row-9'
-                                            : rowData.trtp == '10'
-                                                ? 'highlight-row-10'
-                                                : rowData.trtp == '11'
-                                                    ? 'highlight-row-11'
-                                                    : rowData.trtp == '12'
-                                                        ? 'highlight-row-12'
-                                                        : rowData.trtp == '13'
-                                                            ? 'highlight-row-13'
-                                                            : rowData.trtp == '14'
-                                                                ? 'highlight-row-14'
-                                                                : rowData.trtp == '15'
-                                                                    ? 'highlight-row-15'
-                                                                    : rowData.trtp == '16'
-                                                                        ? 'highlight-row-16'
-                                                                        : rowData.trtp == '17'
-                                                                            ? 'highlight-row-17'
-                                                                            : rowData.trtp == '18'
-                                                                                ? 'highlight-row-18'
-                                                                                : rowData.trtp == '19'
-                                                                                    ? 'highlight-row-19'
-                                                                                    : rowData.trtp == '20'
-                                                                                        ? 'highlight-row-20'
-                                                                                        : rowData.trtp == '21'
-                                                                                            ? 'highlight-row-21'
-                                                                                            : rowData.trtp == '22'
-                                                                                                ? 'highlight-row-22'
-                                                                                                : rowData.trtp == '23'
-                                                                                                    ? 'highlight-row-23'
-                                                                                                    : rowData.trtp == '24'
-                                                                                                        ? 'highlight-row-24'
-                                                                                                        : rowData.trtp == '25'
-                                                                                                            ? 'highlight-row-25'
-                                                                                                            : rowData.trtp == '26'
-                                                                                                                ? 'highlight-row-26'
-                                                                                                                : rowData.trtp == '27'
-                                                                                                                    ? 'highlight-row-27'
-                                                                                                                    : rowData.trtp == '28'
-                                                                                                                        ? 'highlight-row-28'
-                                                                                                                        : rowData.trtp == '29'
-                                                                                                                            ? 'highlight-row-29'
-                                                                                                                            : rowData.canceled < '0'
-                                                                                                                                ? 'highlight-row-36 '
-                                                                                                                                : rowData.paid
-                                                                                                                                    ? 'highlight-row-31'
-                                                                                                                                    : rowData.istekla == true
-                                                                                                                                        ? 'highlight-row-30'
-                                                                                                                                        : '';
+        // return 
+        //     rowData.trtp == '01'
+        //     ? 'highlight-row-1'
+        //     : rowData.trtp == '02'
+        //         ? 'highlight-row-2'
+        //         : rowData.trtp == '03'
+        //             ? 'highlight-row-3'
+        //             : rowData.trtp == '04'
+        //                 ? 'highlight-row-4'
+        //                 : rowData.trtp == '05'
+        //                     ? 'highlight-row-5'
+        //                     : rowData.trtp == '06'
+        //                         ? 'highlight-row-6'
+        //                         : rowData.trtp == '07'
+        //                             ? 'highlight-row-7'
+        //                             : rowData.trtp == '08'
+        //                                 ? 'highlight-row-8'
+        //                                 : rowData.trtp == '09'
+        //                                     ? 'highlight-row-9'
+        //                                     : rowData.trtp == '10'
+        //                                         ? 'highlight-row-10'
+        //                                         : rowData.trtp == '11'
+        //                                             ? 'highlight-row-11'
+        //                                             : rowData.trtp == '12'
+        //                                                 ? 'highlight-row-12'
+        //                                                 : rowData.trtp == '13'
+        //                                                     ? 'highlight-row-13'
+        //                                                     : rowData.trtp == '14'
+        //                                                         ? 'highlight-row-14'
+        //                                                         : rowData.trtp == '15'
+        //                                                             ? 'highlight-row-15'
+        //                                                             : rowData.trtp == '16'
+        //                                                                 ? 'highlight-row-16'
+        //                                                                 : rowData.trtp == '17'
+        //                                                                     ? 'highlight-row-17'
+        //                                                                     : rowData.trtp == '18'
+        //                                                                         ? 'highlight-row-18'
+        //                                                                         : rowData.trtp == '19'
+        //                                                                             ? 'highlight-row-19'
+        //                                                                             : rowData.trtp == '20'
+        //                                                                                 ? 'highlight-row-20'
+        //                                                                                 : rowData.trtp == '21'
+        //                                                                                     ? 'highlight-row-21'
+        //                                                                                     : rowData.trtp == '22'
+        //                                                                                         ? 'highlight-row-22'
+        //                                                                                         : rowData.trtp == '23'
+        //                                                                                             ? 'highlight-row-23'
+        //                                                                                             : rowData.trtp == '24'
+        //                                                                                                 ? 'highlight-row-24'
+        //                                                                                                 : rowData.trtp == '25'
+        //                                                                                                     ? 'highlight-row-25'
+        //                                                                                                     : rowData.trtp == '26'
+        //                                                                                                         ? 'highlight-row-26'
+        //                                                                                                         : rowData.trtp == '27'
+        //                                                                                                             ? 'highlight-row-27'
+        //                                                                                                             : rowData.trtp == '28'
+        //                                                                                                                 ? 'highlight-row-28'
+        //                                                                                                                 : rowData.trtp == '29'
+        //                                                                                                                     ? 'highlight-row-29'
+                return rowData.statustransakcije == '5'
+                    ? 'highlight-row-2'
+                    : rowData.statustransakcije == '6'
+                        ? 'highlight-row-3' 
+                        : rowData.statustransakcije == '9'
+                            ? 'highlight-row-4'
+                            : rowData.statustransakcije == '21'
+                                ? 'highlight-row-5'
+                                : rowData.statustransakcije == '20'
+                                    ? 'highlight-row-6' 
+                                    : rowData.statustransakcije == '11'
+                                        ? 'highlight-row-7'
+                                        : rowData.statustransakcije == '12'
+                                            ? 'highlight-row-8'
+                                            : rowData.statusdelivery == '4'
+                                                ? 'highlight-row-9' 
+                                                : rowData.statustransakcije == '0'
+                                                    ? 'highlight-row-1'
+                                                    : '';
     };
 
     const neventTemplate = (rowData) => {
@@ -580,6 +641,9 @@ export default function TicTransactionFL(props) {
     const buttonClassCustom4 = checked4 ? "toggle-button-checked" : "toggle-button-unchecked";
     const buttonClassCustom5 = checked5 ? "toggle-button-checked" : "toggle-button-unchecked";
     const buttonClassCustom6 = checked6 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom7 = checked7 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom8 = checked8 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom9 = checked9 ? "toggle-button-checked" : "toggle-button-unchecked";
 
     const paidBodyTemplate = (rowData) => {
         // const setParentTdBackground = (element, paid) => {
@@ -667,21 +731,30 @@ export default function TicTransactionFL(props) {
             <Toast ref={toast} />
             <div className="p-fluid formgrid grid">
                 <div className="field col-12 md:col-1">
-
                     <ToggleButton
                         id={`tgAll}`}
                         onLabel="All"
                         offLabel="All"
                         onIcon="pi pi-check"
                         offIcon="pi pi-times"
+                        checked={checked1}
+                        onChange={(e) => setChecked1(e.value)}
+                        className={`${buttonClassCustom1} custom1 w-9rem`}
+                    />
+                </div>
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglForDelivery`}
+                        onLabel="ForDelivery"
+                        offLabel="ForDelivery"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
                         checked={checked2}
                         onChange={(e) => setChecked2(e.value)}
                         className={`${buttonClassCustom2} custom2 w-9rem`}
                     />
-
                 </div>
                 <div className="field col-12 md:col-1">
-
                     <ToggleButton
                         id={`tglInDelivery}`}
                         onLabel="InDelivery"
@@ -692,49 +765,66 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked3(e.value)}
                         className={`${buttonClassCustom3} custom3 w-9rem`}
                     />
-
-                </div>
+                </div>                
                 <div className="field col-12 md:col-1">
-
                     <ToggleButton
-                        id={`tglForDelivery`}
-                        onLabel="ForDelivery"
-                        offLabel="ForDelivery"
-                        onIcon="pi pi-check"
-                        offIcon="pi pi-times"
-                        checked={checked1}
-                        onChange={(e) => setChecked1(e.value)}
-                        className={`${buttonClassCustom1} custom1 w-9rem`}
-                    />
-
-                </div>
-                <div className="field col-12 md:col-1">
-
-                    <ToggleButton
-                        id={`tglPaid`}
-                        onLabel="Paid"
-                        offLabel="Paid"
-                        onIcon="pi pi-check"
-                        offIcon="pi pi-times"
-                        checked={checked5}
-                        onChange={(e) => setChecked5(e.value)}
-                        className={`${buttonClassCustom5} custom5 w-9rem`}
-                    />
-
-                </div>
-                <div className="field col-12 md:col-1">
-
-                    <ToggleButton
-                        id={`tglExpired`}
-                        onLabel="Expired"
-                        offLabel="Expired"
+                        id={`tglDelivered`}
+                        onLabel="Delivered"
+                        offLabel="Delivered"
                         onIcon="pi pi-check"
                         offIcon="pi pi-times"
                         checked={checked4}
                         onChange={(e) => setChecked4(e.value)}
                         className={`${buttonClassCustom4} custom4 w-9rem`}
                     />
-
+                </div>  
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglReturned`}
+                        onLabel="Returned"
+                        offLabel="Returned"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked5}
+                        onChange={(e) => setChecked5(e.value)}
+                        className={`${buttonClassCustom5} custom5 w-9rem`}
+                    />
+                </div>                              
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglPaid`}
+                        onLabel="Paid"
+                        offLabel="Paid"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked6}
+                        onChange={(e) => setChecked6(e.value)}
+                        className={`${buttonClassCustom6} custom6 w-9rem`}
+                    />
+                </div>
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglReserved}`}
+                        onLabel="Reserved"
+                        offLabel="Reserved"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked7}
+                        onChange={(e) => setChecked7(e.value)}
+                        className={`${buttonClassCustom7} custom7 w-9rem`}
+                    />
+                </div>                
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglExpired`}
+                        onLabel="Expired"
+                        offLabel="Expired"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked8}
+                        onChange={(e) => setChecked8(e.value)}
+                        className={`${buttonClassCustom8} custom8 w-9rem`}
+                    />
                 </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
@@ -743,9 +833,9 @@ export default function TicTransactionFL(props) {
                         offLabel="Canceled"
                         onIcon="pi pi-check"
                         offIcon="pi pi-times"
-                        checked={checked6}
-                        onChange={(e) => setChecked6(e.value)}
-                        className={`${buttonClassCustom6} custom6 w-9rem`}
+                        checked={checked9}
+                        onChange={(e) => setChecked9(e.value)}
+                        className={`${buttonClassCustom9} custom9 w-9rem`}
                     />
                 </div>
             </div>
@@ -769,7 +859,7 @@ export default function TicTransactionFL(props) {
                 sortOrder={-1}
                 scrollHeight="730px"
                 // tableStyle={{ minWidth: "50rem" }}
-                metaKeySelection={false}
+                // metaKeySelection={false}
                 paginator
                 rows={125}
                 rowsPerPageOptions={[125, 150, 200]}
@@ -777,8 +867,8 @@ export default function TicTransactionFL(props) {
                     setTicDoc(e.value);            // Update TicDoc state
                     setSelectedProducts(e.value);  // Update SelectedProducts state
                 }}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
+            // onRowSelect={onRowSelect}
+            // onRowUnselect={onRowUnselect}
             >
                 {/* <Column
                     //bodyClassName="text-center"
@@ -810,6 +900,7 @@ export default function TicTransactionFL(props) {
                     header={translations[selectedLanguage].TransactionSkr}
                     // sortable
                     filter
+                    // dataType="numeric"
                     style={{ width: "10%" }}
                 ></Column>
                 <Column
@@ -850,10 +941,12 @@ export default function TicTransactionFL(props) {
                 ></Column>
                 <Column
                     field="startda"
+                    filterField="startda"
                     header={translations[selectedLanguage].begda}
                     body={(rowData) => formatDateColumn(rowData, "startda")}
+                    // dataType="date"
                     sortable
-                    filter
+                    // filter
                     style={{ width: "20%" }}
                 ></Column>
                 <Column
@@ -861,7 +954,7 @@ export default function TicTransactionFL(props) {
                     header={translations[selectedLanguage].begtm}
                     body={(rowData) => formatTimeColumn(rowData, "starttm")}
                     sortable
-                    filter
+                    // filter
                     style={{ width: "20%" }}
                 ></Column>
                 <Column
@@ -875,7 +968,7 @@ export default function TicTransactionFL(props) {
                     field="tmreserv"
                     header={translations[selectedLanguage].tmreserv}
                     sortable
-                    filter
+                    // filter
                     style={{ width: "10%" }}
                     body={(rowData) => formatDatetime(rowData, "tmreserv")}
                 ></Column>
@@ -883,7 +976,7 @@ export default function TicTransactionFL(props) {
                     field="tm"
                     header={translations[selectedLanguage].tm}
                     sortable
-                    filter
+                    // filter
                     style={{ width: "10%" }}
                     body={(rowData) => formatDatetime(rowData, "tm")}
                 ></Column>
@@ -892,6 +985,7 @@ export default function TicTransactionFL(props) {
                     header={translations[selectedLanguage].Amount}
                     // sortable
                     filter
+                    dataType="numeric"
                     style={{ width: "10%" }}
                     bodyStyle={{ textAlign: 'right' }}
                     body={(rowData) => formatNumber(rowData.potrazuje)}
@@ -900,10 +994,19 @@ export default function TicTransactionFL(props) {
                     field="output"
                     header={translations[selectedLanguage].brojkarti}
                     // sortable
-                    // filter
+                    filter
+                    dataType="numeric"
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
-                    body={(rowData) => Math.floor(rowData.output)}
+                    body={(rowData) => {
+                        // Konverzija iz `text` (string) u `number`
+                        const value = rowData.output;
+                        Math.floor(value)
+                        const numericValue = isNaN(Number(value)) ? '-' : Number(value); // Provera i konverzija
+                
+                        return <span>{numericValue}</span>; // Prikaz konvertovane vrednosti
+                    }}
+                    // body={(rowData) => Math.floor(rowData.output)}
                 ></Column>
                 <Column
                     field="paid"
@@ -924,24 +1027,26 @@ export default function TicTransactionFL(props) {
                     header={translations[selectedLanguage].DeliverySkr}
                     body={deliveryBodyTemplate}
                     sortable
-                    filter
+                    // filter
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
                 <Column
                     field="reservation"
                     header={translations[selectedLanguage].Rez}
-                    filter
+                    // filter
+                    dataType="numeric"
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
                 <Column
-                    field="status"
+                    field="statustransakcije"
                     header={translations[selectedLanguage].Status}
                     filter
+                    dataType="numeric"
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
-                ></Column>                
+                ></Column>
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog

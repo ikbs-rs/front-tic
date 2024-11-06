@@ -88,17 +88,17 @@ export default function TicDocsprintgrpL(props) {
   }, [props.ticDoc]);
 
   const handlePrintClick = async () => {
-    handlePrintSt(0);
+    handlePrintSt(1);
     setPrintCopy(false)
   };
 
   const handlePrintCopyClick = async () => {
-    handlePrintCopySt(1);
+    handlePrintCopySt(2);
     setPrintCopy(true)
   };
 
   const handlePrint2Click = async () => {
-    handlePrintCopySt(2);
+    handlePrintCopySt(3);
     setPrintCopy(true)
   };
 
@@ -129,7 +129,7 @@ export default function TicDocsprintgrpL(props) {
   const handlePrintSt = async (tp) => {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
-    emptyTicStampa.tp = tp
+    emptyTicStampa.valid = tp
     emptyTicStampa.time = DateFunction.currDatetime()
     emptyTicStampa.ticket = JSON.stringify(selectedProducts);
     const ticDocService = new TicDocService();
@@ -140,11 +140,16 @@ export default function TicDocsprintgrpL(props) {
   const handlePrintCopySt = async (tp) => {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
-    emptyTicStampa.tp = tp
+    let _tp = "DUPLIKAT"
+    if (tp==2){
+      _tp="KOPIJA"
+    }
+
+    emptyTicStampa.valid = tp
     emptyTicStampa.time = DateFunction.currDatetime()
     emptyTicStampa.ticket = JSON.stringify(selectedProducts);
     const ticDocService = new TicDocService();
-    await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, 'KOPIJA');
+    await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, _tp);
 
   };
   const clearFilter = () => {

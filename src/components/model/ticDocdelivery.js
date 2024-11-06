@@ -41,10 +41,10 @@ const TicDocdelivery = (props) => {
     const [zaUplatu, setZauplatu] = useState(0);
 
     const statusItems = [
-        { name: `${translations[selectedLanguage].ForDelivery}`, code: '0' },
-        { name: `${translations[selectedLanguage].InDelivery}`, code: '1' },
-        { name: `${translations[selectedLanguage].Paid}`, code: '2' },
-        { name: `${translations[selectedLanguage].Canceled}`, code: '3' }
+        { name: `${translations[selectedLanguage].ForDelivery}`, code: '1' },
+        { name: `${translations[selectedLanguage].InDelivery}`, code: '2' },
+        { name: `${translations[selectedLanguage].Paid}`, code: '3' },
+        { name: `${translations[selectedLanguage].Canceled}`, code: '4' }
     ];
     useEffect(() => {
         async function fetchData() {

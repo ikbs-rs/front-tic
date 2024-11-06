@@ -569,7 +569,7 @@ const TicProdajaW = forwardRef((props, ref) => {
         const _ticDoc = { ...ticDoc }
         _ticDoc.status = 2
         setTicDoc(_ticDoc)
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 2000 });
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 1500 });
         setUidKey(++uidKey)
       }
     } catch (err) {

@@ -165,9 +165,9 @@ export class TicDocService {
     }
   }
 
-  async getTransactionFLista(par1, par2, par3, par4, par5, par6) {
+  async getTransactionFLista(par1, par2, par3, par4, par5, par6, par7, par8, par9) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transactionf_v&par1=${par1}&par2=${par2}&par3=${par3}&par4=${par4}&par5=${par5}&par6=${par6}&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transactionf_v&par1=${par1}&par2=${par2}&par3=${par3}&par4=${par4}&par5=${par5}&par6=${par6}&par7=${par7}&par8=${par8}&par9=${par9}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
