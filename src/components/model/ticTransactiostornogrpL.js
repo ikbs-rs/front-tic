@@ -17,7 +17,7 @@ import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
 export default function CmnLoclinkgrpL(props) {
-  console.log("***** props *************####### props ################### props ######", props)
+  console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props)
   const emptyCmnloclink = "cmn_loclink"
 
   //const [products, setProducts] = useState([]);
@@ -55,10 +55,9 @@ export default function CmnLoclinkgrpL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        ++i
-        if (i < 2) {
+console.log(props.ticDoc[0]?.id, "HHHHHHHHHHHHHHHHHHHHH++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
+          const data = await ticDocsService.getArtikliListaP(props.ticDoc[0]?.id);
           const sortedData = data.sort((a, b) => {
             if (a.nevent !== b.nevent) {
               return a.nevent.localeCompare(b.nevent);
@@ -73,7 +72,7 @@ export default function CmnLoclinkgrpL(props) {
 
           setTicDocss(sortedData);
           initFilters();
-        }
+
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -125,7 +124,7 @@ export default function CmnLoclinkgrpL(props) {
     console.log(selectedProducts, "@DOC@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     const ticDocService = new TicDocService();
-    await ticDocService.postDocStorno( ticDocss, props.ticDoc, 'DOC');
+    await ticDocService.postDocStorno( ticDocss, props.ticDoc[0], 'DOC');
 
     props.handleStornoClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
@@ -137,7 +136,7 @@ export default function CmnLoclinkgrpL(props) {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     const ticDocService = new TicDocService();
-    await ticDocService.postDocStorno( selectedProducts, props.ticDoc, 'ST');
+    await ticDocService.postDocStorno( selectedProducts, props.ticDoc[0], 'ST');
 
     props.handleStornoClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
@@ -236,47 +235,47 @@ export default function CmnLoclinkgrpL(props) {
             <div className="field col-12 md:col-3">
               <label htmlFor="id">{translations[selectedLanguage].Id}</label>
               <InputText id="id"
-                value={props.ticDoc.id}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-2">
-              <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
-              <InputText
-                id="broj"
-                value={props.ticDoc.broj}
+                value={props.ticDoc[0].id}
                 disabled={true}
               />
             </div>
             <div className="field col-12 md:col-3">
+              <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
+              <InputText
+                id="broj"
+                value={props.ticDoc[0].broj}
+                disabled={true}
+              />
+            </div>
+            <div className="field col-12 md:col-5">
               <label htmlFor="kanal">{translations[selectedLanguage].Kanal}</label>
               <InputText
                 id="kanal"
-                value={props.ticDoc.kanal}
+                value={props.ticDoc[0].kanal}
                 disabled={true}
               />
             </div>
-            <div className="field col-12 md:col-2">
+            {/* <div className="field col-12 md:col-2">
               <label htmlFor="date">{translations[selectedLanguage].Datum}</label>
               <InputText
                 id="date"
-                value={props.ticDoc.date}
+                value={props.ticDoc[0].date}
                 disabled={true}
               />
-            </div>
-            <div className="field col-12 md:col-4">
-              <label htmlFor="cpar">{translations[selectedLanguage].cpar}</label>
+            </div> */}
+            <div className="field col-12 md:col-6">
+              <label htmlFor="text">{translations[selectedLanguage].Event}</label>
               <InputText
-                id="cpar"
-                value={props.ticDoc.cpar}
+                id="text"
+                value={props.ticDoc[0].text}
                 disabled={true}
               />
             </div>
-            <div className="field col-12 md:col-4">
+            <div className="field col-12 md:col-6">
               <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
               <InputText
                 id="npar"
-                value={props.ticDoc.npar}
+                value={props.ticDoc[0].npar}
                 disabled={true}
               />
             </div>

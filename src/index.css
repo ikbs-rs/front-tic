@@ -166,6 +166,13 @@
   border-color: none !important;
   color:black;
 }
+.toggle-button-checked.custom10,
+.toggle-button-unchecked.custom10 {
+  background-color: rgb(186, 201, 53) !important; /* Zelena za uključeno stanje */
+  
+  border-color: none !important;
+  color:black;
+}
 .p-togglebutton.p-button .p-button-icon-left,
 .p-togglebutton.p-button .p-button-icon-right {
   font-size: 14px  !important;

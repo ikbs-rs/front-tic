@@ -60,7 +60,7 @@ export default function TicDocsprintgrpL(props) {
           });
 
           setTicDocss(sortedData);
-          setSelectedProducts(sortedData); 
+          setSelectedProducts(sortedData);
           initFilters();
         }
       } catch (error) {
@@ -132,8 +132,12 @@ export default function TicDocsprintgrpL(props) {
     emptyTicStampa.valid = tp
     emptyTicStampa.time = DateFunction.currDatetime()
     emptyTicStampa.ticket = JSON.stringify(selectedProducts);
+
+
     const ticDocService = new TicDocService();
-    await ticDocService.getPrintgrpLista(selectedProducts, emptyTicStampa, 'ORIGINAL');
+    if (await ticDocService.getPrinFiskal(ticDoc)) {
+      await ticDocService.getPrintgrpLista(selectedProducts, emptyTicStampa, 'ORIGINAL');
+    }
 
   };
 
@@ -141,16 +145,17 @@ export default function TicDocsprintgrpL(props) {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     let _tp = "DUPLIKAT"
-    if (tp==2){
-      _tp="KOPIJA"
+    if (tp == 2) {
+      _tp = "KOPIJA"
     }
 
     emptyTicStampa.valid = tp
     emptyTicStampa.time = DateFunction.currDatetime()
     emptyTicStampa.ticket = JSON.stringify(selectedProducts);
     const ticDocService = new TicDocService();
-    await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, _tp);
-
+    if (await ticDocService.getPrinFiskal(ticDoc)) {
+      await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, _tp);
+    }
   };
   const clearFilter = () => {
     initFilters();
@@ -175,7 +180,7 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrintClick}
             severity="warning"
             // text
-            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
             raised />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -183,7 +188,7 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrintCopyClick}
             severity="success"
             // text
-            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
             raised />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -191,9 +196,9 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrint2Click}
             severity="success"
             // text
-            disabled={ticDoc?.status!=2 ? ticDoc?.delivery!=1 ?true:false:false}
+            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
             raised />
-        </div>        
+        </div>
         {/* <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].StampKarti}</b>
         <div className="flex-grow-1"></div> */}

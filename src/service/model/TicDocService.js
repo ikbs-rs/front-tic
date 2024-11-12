@@ -165,9 +165,9 @@ export class TicDocService {
     }
   }
 
-  async getTransactionFLista(par1, par2, par3, par4, par5, par6, par7, par8, par9) {
+  async getTransactionFLista(par1, par2, par3, par4, par5, par6, par7, par8, par9, par10) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transactionf_v&par1=${par1}&par2=${par2}&par3=${par3}&par4=${par4}&par5=${par5}&par6=${par6}&par7=${par7}&par8=${par8}&par9=${par9}&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/doc/_v/lista/?stm=tic_transactionf_v&par1=${par1}&par2=${par2}&par3=${par3}&par4=${par4}&par5=${par5}&par6=${par6}&par7=${par7}&par8=${par8}&par10=${par10}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -684,7 +684,7 @@ export class TicDocService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      console.log(newObj, "5555555555555555555551111******************************", url)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;
@@ -694,7 +694,35 @@ export class TicDocService {
     }
 
   }
+  async getPrinFiskal(ticDoc) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD1_BACK_URL}/prodaja/fiskaldata?stm=tic_fiskaldata_v&objid=${ticDoc.id}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
 
+    try {
+      const response = await axios.get(url, { headers });
+      // poziv servera za stampu fiskala -- response.data.item
+      
+      const invoiceRequest = response.data.item;
+      const print = false;
+      const email = 'zivkovic.marko@hotmail.com';
+      
+      const payload = {
+        print,
+        email,
+        invoiceRequest
+    };
+    console.log(payload, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+    // const invoiceResponse = await axios.post(`${process.env.REACT_APP_REST_BACK_URL}/fiskalni-racun-esir`, payload);
+      return true; //response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
   async getPrintgrpLista(newObj, ticStampa, tpStampa) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const userObj = localStorage.getItem('user')

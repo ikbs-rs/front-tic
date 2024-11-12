@@ -30,6 +30,8 @@ import DeleteDialog from '../dialog/DeleteDialog';
 import TicEventProdajaL from './ticProdajaTab';
 import { ToggleButton } from 'primereact/togglebutton';
 import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 
 export default function TicTransactionL(props) {
     const [searchParams] = useSearchParams();
@@ -40,6 +42,7 @@ export default function TicTransactionL(props) {
     const emptyTicDoc = EmptyEntities[objName]
 
     const [showMyComponent, setShowMyComponent] = useState(true);
+    const [ticDocss, setTicDocss] = useState([]);
     const [ticDocs, setTicDocs] = useState([]);
     const [ticDoc, setTicDoc] = useState(null);
 
@@ -74,6 +77,8 @@ export default function TicTransactionL(props) {
     const [checked4, setChecked4] = useState(false);
     const [checked5, setChecked5] = useState(false);
     const [checked6, setChecked6] = useState(false);
+
+    const mapa = 12;
 
     let i = 0;
 
@@ -321,7 +326,33 @@ export default function TicTransactionL(props) {
     const handleTicEventProdajaLDialogClose = (newObj) => {
         setTicEventProdajaLVisible(false);
     };
-
+    const potrazujeTotal = () => {
+        return ticDocs
+            .filter((stavka) => {
+                // Proverite da li stavka prolazi kroz sve aktivne filtere
+                return filters.global ? stavka.someField.includes(filters.global.value) : true; // Primer za global filter, zamenite prema potrebi
+            })
+            .reduce((total, stavka) => total + (Number(stavka.potrazuje) || 0), 0);
+    };
+    
+    const brojTotal = () => {
+        return ticDocs
+            .filter((stavka) => {
+                // Filtrirajte stavke za prikaz samo onih koji odgovaraju filterima
+                return filters.global ? stavka.someField.includes(filters.global.value) : true;
+            })
+            .reduce((total, stavka) => total + (Number(stavka.output) || 0), 0);
+    };
+        
+    const footerArtikalGroup = (
+        <ColumnGroup>
+            <Row>
+                <Column footer={translations[selectedLanguage].Total} colSpan={mapa} footerStyle={{ textAlign: 'right' }} />
+                <Column footer={potrazujeTotal()} />
+                <Column footer={brojTotal()} />
+            </Row>
+        </ColumnGroup>
+    );
     const renderHeader = () => {
         return (
             <div className="flex card-container">
@@ -669,6 +700,8 @@ export default function TicTransactionL(props) {
                 // selectionMode="single"
                 selectionMode={rowClick ? null : "checkbox"}
                 selection={selectedProducts}
+                footerColumnGroup={footerArtikalGroup}
+                // footer="Static Footer Text" 
                 loading={loading}
                 value={ticDocs}
                 header={header}

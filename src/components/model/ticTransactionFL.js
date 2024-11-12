@@ -78,6 +78,7 @@ export default function TicTransactionFL(props) {
     const [checked7, setChecked7] = useState(false);
     const [checked8, setChecked8] = useState(false);
     const [checked9, setChecked9] = useState(false);
+    const [checked10, setChecked10] = useState(false);
 
     let i = 0;
 
@@ -96,20 +97,20 @@ export default function TicTransactionFL(props) {
                 const ticDocService = new TicDocService();
                 const data = await ticDocService.getTransactionFLista(
                     checked1, checked2, checked3, checked4, checked5,
-                    checked6, checked7, checked8, checked9
+                    checked6, checked7, checked8, checked9, checked10
                 );
-    
+
                 console.log("Fetched data:", data); // Log za proveru podataka
                 setTicDocs(data); // Postavite nove podatke
                 initFilters();
-                    setLoading(false);
+                setLoading(false);
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
             }
         }
         fetchData();
-    }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6, checked7, checked8, checked9]);
+    }, [refresh, checked1, checked2, checked3, checked4, checked5, checked6, checked7, checked8, checked9, checked10]);
 
 
 
@@ -305,8 +306,16 @@ export default function TicTransactionFL(props) {
             startda: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-            },               
+            },
             statustransakcije: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+            },
+            statusfiskal: {
+                operator: FilterOperator.AND,
+                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+            },
+            storno: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
             },
@@ -362,6 +371,7 @@ export default function TicTransactionFL(props) {
     };
     const handleStornoClose = (newObj) => {
         setTicTransactiostornogrpLVisible(false);
+        setRefresh(prev => prev + 1)
     }
     const showDelRezDialog = () => {
         setDelRezDialogVisible(true);
@@ -585,25 +595,27 @@ export default function TicTransactionFL(props) {
         //                                                                                                                 ? 'highlight-row-28'
         //                                                                                                                 : rowData.trtp == '29'
         //                                                                                                                     ? 'highlight-row-29'
-                return rowData.statustransakcije == '5'
-                    ? 'highlight-row-2'
-                    : rowData.statustransakcije == '6'
-                        ? 'highlight-row-3' 
-                        : rowData.statustransakcije == '9'
-                            ? 'highlight-row-4'
-                            : rowData.statustransakcije == '21'
-                                ? 'highlight-row-5'
-                                : rowData.statustransakcije == '20'
-                                    ? 'highlight-row-6' 
-                                    : rowData.statustransakcije == '11'
-                                        ? 'highlight-row-7'
-                                        : rowData.statustransakcije == '12'
-                                            ? 'highlight-row-8'
-                                            : rowData.statusdelivery == '4'
-                                                ? 'highlight-row-9' 
-                                                : rowData.statustransakcije == '0'
-                                                    ? 'highlight-row-1'
-                                                    : '';
+        return rowData.storno == '1'
+            ? 'highlight-row-10'
+            :rowData.statustransakcije == '5'
+            ? 'highlight-row-2'
+            : rowData.statustransakcije == '6'
+                ? 'highlight-row-3'
+                : rowData.statustransakcije == '9'
+                    ? 'highlight-row-4'
+                    : rowData.statustransakcije == '21'
+                        ? 'highlight-row-5'
+                        : rowData.statustransakcije == '20'
+                            ? 'highlight-row-6'
+                            : rowData.statustransakcije == '11'
+                                ? 'highlight-row-7'
+                                : rowData.statustransakcije == '12'
+                                    ? 'highlight-row-8'
+                                    : rowData.statusdelivery == '4'
+                                        ? 'highlight-row-9'
+                                        : rowData.statustransakcije == '0'
+                                            ? 'highlight-row-1'
+                                            : '';
     };
 
     const neventTemplate = (rowData) => {
@@ -644,6 +656,7 @@ export default function TicTransactionFL(props) {
     const buttonClassCustom7 = checked7 ? "toggle-button-checked" : "toggle-button-unchecked";
     const buttonClassCustom8 = checked8 ? "toggle-button-checked" : "toggle-button-unchecked";
     const buttonClassCustom9 = checked9 ? "toggle-button-checked" : "toggle-button-unchecked";
+    const buttonClassCustom10 = checked10 ? "toggle-button-checked" : "toggle-button-unchecked";
 
     const paidBodyTemplate = (rowData) => {
         // const setParentTdBackground = (element, paid) => {
@@ -765,7 +778,7 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked3(e.value)}
                         className={`${buttonClassCustom3} custom3 w-9rem`}
                     />
-                </div>                
+                </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
                         id={`tglDelivered`}
@@ -777,7 +790,7 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked4(e.value)}
                         className={`${buttonClassCustom4} custom4 w-9rem`}
                     />
-                </div>  
+                </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
                         id={`tglReturned`}
@@ -789,7 +802,7 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked5(e.value)}
                         className={`${buttonClassCustom5} custom5 w-9rem`}
                     />
-                </div>                              
+                </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
                         id={`tglPaid`}
@@ -813,7 +826,7 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked7(e.value)}
                         className={`${buttonClassCustom7} custom7 w-9rem`}
                     />
-                </div>                
+                </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
                         id={`tglExpired`}
@@ -828,7 +841,7 @@ export default function TicTransactionFL(props) {
                 </div>
                 <div className="field col-12 md:col-1">
                     <ToggleButton
-                        id={`tglCanceled}`}
+                        id={`tglCanceled`}
                         onLabel="Canceled"
                         offLabel="Canceled"
                         onIcon="pi pi-check"
@@ -838,6 +851,18 @@ export default function TicTransactionFL(props) {
                         className={`${buttonClassCustom9} custom9 w-9rem`}
                     />
                 </div>
+                <div className="field col-12 md:col-1">
+                    <ToggleButton
+                        id={`tglStorno`}
+                        onLabel="Storno"
+                        offLabel="Storno"
+                        onIcon="pi pi-check"
+                        offIcon="pi pi-times"
+                        checked={checked10}
+                        onChange={(e) => setChecked10(e.value)}
+                        className={`${buttonClassCustom10} custom10 w-10rem`}
+                    />
+                </div>                
             </div>
 
             <DataTable
@@ -1003,10 +1028,10 @@ export default function TicTransactionFL(props) {
                         const value = rowData.output;
                         Math.floor(value)
                         const numericValue = isNaN(Number(value)) ? '-' : Number(value); // Provera i konverzija
-                
+
                         return <span>{numericValue}</span>; // Prikaz konvertovane vrednosti
                     }}
-                    // body={(rowData) => Math.floor(rowData.output)}
+                // body={(rowData) => Math.floor(rowData.output)}
                 ></Column>
                 <Column
                     field="paid"
@@ -1040,8 +1065,16 @@ export default function TicTransactionFL(props) {
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
                 <Column
-                    field="statustransakcije"
-                    header={translations[selectedLanguage].Status}
+                    field="storno"
+                    header={translations[selectedLanguage].Storno}
+                    filter
+                    dataType="numeric"
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>
+                <Column
+                    field="statusfiskal"
+                    header={translations[selectedLanguage].StatusFiskal}
                     filter
                     dataType="numeric"
                     style={{ width: "5%" }}

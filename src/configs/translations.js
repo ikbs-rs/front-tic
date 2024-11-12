@@ -938,6 +938,7 @@ export const translations = {
         Default: "Подразумевани",
         SetPrintLocalL: "Постави поставке штампе",
         LokalnePostavke: "Локалне поставке",
+        StatusFiskal: "ПрнтФис",
     }
   };
   

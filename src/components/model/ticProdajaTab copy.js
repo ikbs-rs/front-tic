@@ -311,7 +311,6 @@ export default function TicProdajaTab(props) {
         fetchData()
     }, []);
 
-    /** KANALI KORISNIKA/EVENT ********************************************************************************** */
     async function fetchPaymenttp() {
         try {
             const ticDocService = new TicDocService();
@@ -363,13 +362,10 @@ export default function TicProdajaTab(props) {
         fetchData();
     }, []);
 
-    /** KANALI KORISNIKA/EVENT ********************************************************************************** */
     const fachChannell = async (uId) => {
         try {
             const ticEventService = new TicEventService();
-            // //console.log(uId, '** KANALI KORISNIKA/EVENT **************************** 00 **************************************************', userId)
             const data = await ticEventService.getTicEventchpermissL(uId, userId);
-            // //console.log(data, '** KANALI KORISNIKA/EVENT ******************************************************************************', ticEvent?.id)
             if (data && data.length > 0) {
                 return data[0];
             }
@@ -464,7 +460,6 @@ export default function TicProdajaTab(props) {
                 `tic_docactivuser_v`,
                 `usersys`, localStorage.getItem('userId')
             );
-            // //console.log(data, '** KANALI KORISNIKA/EVENT ******************************************************************************')
             if (data) {
                 return data[0];
             }
