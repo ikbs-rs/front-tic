@@ -118,7 +118,7 @@ export default function TicEventWL(props) {
             setTicEventobjLVisible={props.setTicEventobjLVisible}
           />
         </TabPanel>
-        <TabPanel header={translations[selectedLanguage].Sectors}>
+        <TabPanel header={translations[selectedLanguage].Location}>
           <TicEventlocL key={"LL"}
             loctpCode={LOCATION_CODE}
             ticEvent={props.ticEvent}

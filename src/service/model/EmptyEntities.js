@@ -394,7 +394,34 @@ const EmptyEntities =
     "feerez": null,
     "feedelivery": null,
     "carttp": "",
-    "nevent": ""   
+    "nevent": "",
+    "onlineid": null,
+    "onlinecode": null,
+    "onlinetext": "",
+    "onlinetgp" : null,
+    "onlinetax": null,
+    "onlinefee": null,
+    "printid": null,
+    "printcode": "",
+    "printtext": "",
+    "printtgp": null,
+    "printtax": null,
+    "printfee": null,
+    "pmid": null,
+    "pmcode": "",
+    "pmtext": "",
+    "pmtgp": null,
+    "pmtax": null,
+    "pmfee": null,
+    "rezid": null,
+    "rezcode": "",
+    "reztext": "",
+    "reztgp": null,
+    "reztax": null,
+    "rezfee": null,
+    "family": null,
+    "paket": null,
+    "docstorno": null   
   },
   "tic_docslink": {
     "id": null,
@@ -436,7 +463,8 @@ const EmptyEntities =
     "phon": "",
     "email": "",
     "par": null,
-    "birthday": ""
+    "birthday": "",
+    "kupac": null
   },
   "tic_docvr": {
     "id": null,
@@ -871,6 +899,16 @@ const EmptyEntities =
     "valid": "1",
     "color": "",
     "icon": ""
+  },  
+  "cmn_locvenue": {
+    "id": null,
+    "site": null,
+    "venue": null,
+    "loc": null,
+    "val": "",
+    "begda": "",
+    "endda": "",
+    "pic": ""
   },
   "cmn_locatt": {
     "id": null,
@@ -993,7 +1031,14 @@ const EmptyEntities =
     "opis": "",
     "napomena": "",
     "postavka": "0"
-  }
+  },
+  "tic_venuetp": {
+    "id": null,
+    "site": null,
+    "code": "",
+    "text": "",
+    "valid": "1"
+  },
 }
 
 export  {

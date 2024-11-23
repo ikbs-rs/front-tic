@@ -25,8 +25,11 @@ const CmnPar = (props) => {
     const [ddCountryItems, setDdCountryItems] = useState(null);
     const [cmnParItem, setCmnParItem] = useState(null);
     const [cmnParItems, setCmnParItems] = useState(null);
+    const [cmnCounryItem, setCmnCounryItem] = useState(null);
+    const [cmnCounryItems, setCmnCounryItems] = useState(null);
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar?.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate('99991231' || DateFunction.currDate())))
+    const [birthday, setBirthday] = useState(props.cmnPar?.birthday ? new Date(DateFunction.formatJsDate(props.cmnPar.birthday)) : null);
 
     const calendarRef = useRef(null);
 
@@ -66,7 +69,7 @@ const CmnPar = (props) => {
                 const cmnTerrService = new CmnTerrService();
                 const data = await cmnTerrService.getTpLista('2');
 
-                setCmnParItems(data)
+                setCmnCounryItems(data)
                 //console.log("******************", cmnParItem)
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
@@ -74,7 +77,7 @@ const CmnPar = (props) => {
                 setDdCountryItem(dataDD.find((item) => item.code === props.cmnPar.countryid) || null);
                 if (props.cmnPar.tp) {
                     const foundItem = data.find((item) => item.id === props.cmnPar.countryid);
-                    setCmnParItem(foundItem || null);
+                    setCmnCounryItem(foundItem || null);
                     cmnPar.ctp = foundItem.code
                     cmnPar.ntp = foundItem.textx
                 }
@@ -108,13 +111,16 @@ const CmnPar = (props) => {
             setSubmitted(true);
             cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            cmnPar.birthday = birthday?DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)):null;
             const cmnParService = new CmnParService();
             const data = await cmnParService.postCmnPar(cmnPar);
             cmnPar.id = data
             if (cmnPar.code === null || cmnPar.code === "") {
                 cmnPar.code = cmnPar.id;
             }
-            props.handleDialogClose({ obj: cmnPar, parTip: props.parTip });
+            const newObj = { obj: cmnPar, parTip: props.parTip }
+            // console.log({ obj: cmnPar, parTip: props.parTip }, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            props.handleDialogClose({newObj});
             props.setVisible(false);
         } catch (err) {
             toast.current.show({
@@ -131,9 +137,11 @@ const CmnPar = (props) => {
             setSubmitted(true);
             cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            cmnPar.birthday = birthday?DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)):null;
             const cmnParService = new CmnParService();
 
             await cmnParService.putCmnPar(cmnPar);
+            console.log({ obj: cmnPar, parTip: props.parTip }, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
             props.handleDialogClose({ obj: cmnPar, parTip: props.parTip });
             props.setVisible(false);
         } catch (err) {
@@ -180,7 +188,7 @@ const CmnPar = (props) => {
                 cmnPar.ctp = foundItem?.code
             } else {
                 setDdCountryItem(e.value);
-                const foundItem = cmnParItems.find((item) => item.id === val);
+                const foundItem = cmnCounryItems.find((item) => item.id === val);
                 // setCmnParItem(foundItem || null);
                 // cmnPar.ntp = e.value.name
                 // cmnPar.ctp = foundItem.code
@@ -195,6 +203,9 @@ const CmnPar = (props) => {
                     break;
                 case "endda":
                     setEndda(e.value)
+                    break;
+                case "birthday":
+                    setBirthday(e.value)
                     break;
                 default:
                     console.error("Pogresan naziv polja")
@@ -356,6 +367,15 @@ const CmnPar = (props) => {
                             <Calendar
                                 value={endda}
                                 onChange={(e) => onInputChange(e, "Calendar", 'endda')}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
+                        </div>
+                        <div className="field col-12 md:col-4">
+                            <label htmlFor="birthday">{translations[selectedLanguage].Birthday} *</label>
+                            <Calendar
+                                value={birthday}
+                                onChange={(e) => onInputChange(e, "Calendar", 'birthday')}
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />

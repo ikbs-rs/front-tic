@@ -86,12 +86,12 @@ const TicDocsdiscountL = (props) => {
                 // Obrada greške ako je potrebna
             }
         }
-        console.log("## 1 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH #############################################")
+        // console.log("## 1 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH #############################################")
         fetchData();
     }, [props.item]);
     const updateDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            // console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
             rowData.vreme = null;
             const ticDocsdiscountService = new TicDocsdiscountService();
             await ticDocsdiscountService.putTicDocsdiscount(rowData);

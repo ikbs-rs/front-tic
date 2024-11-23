@@ -315,7 +315,7 @@ export default function TicTransactionFL(props) {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
             },
-            storno: {
+            docstorno: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
             },
@@ -460,14 +460,29 @@ export default function TicTransactionFL(props) {
     };
 
     const stornoBodyTemplate = (rowData) => {
-        const storno = rowData.storno == 1 ? true : false
+        const setParentTdBackground = (element) => {
+            const parentTd = element?.parentNode;
+            if (parentTd) {
+                // parentTd.style.backgroundColor = "white"; 
+            }
+        };
+        const handleClick = () => {
+            console.log("Ikona je kliknuta!");
+            // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+        };
         return (
-            <i
-                className={classNames("pi", {
-                    "text-green-500 pi-check-circle": storno,
-                    "text-red-500 pi-times-circle": !storno
-                })}
-            ></i>
+            <div ref={(el) => setParentTdBackground(el)}>
+                {rowData.docstorno == 1 ? (
+                    <img
+                        src="./images/redflg.png"
+                        alt="Storno"
+                        width="30"
+                        height="30"
+                        className="delivery-icon"
+                        onClick={handleClick} // Povezivanje funkcije sa klikom
+                    />
+                ) : null}
+            </div>
         );
     };
 
@@ -1065,10 +1080,11 @@ export default function TicTransactionFL(props) {
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
                 <Column
-                    field="storno"
+                    field="docstorno"
                     header={translations[selectedLanguage].Storno}
                     filter
                     dataType="numeric"
+                    body={stornoBodyTemplate}
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>

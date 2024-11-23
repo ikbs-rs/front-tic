@@ -491,8 +491,8 @@ export default function TicProdajaL(props) {
                     removableSort
                     filters={filters}
                     scrollable
-                    sortField="code"
-                    sortOrder={1}
+                    sortField="endda"
+                    sortOrder={-1}
                     scrollHeight="665px"
                     // virtualScrollerOptions={{ itemSize: 46 }}
                     tableStyle={{ minWidth: '50rem' }}

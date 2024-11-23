@@ -31,7 +31,7 @@ export class TicDocdeliveryService {
     };
     try {
       const response = await axios.get(url, { headers });
-      console.log(response.data, "99999999999999999999999999999999999999999999999999999999999999999999", url)
+      // console.log(response.data, "99999999999999999999999999999999999999999999999999999999999999999999", url)
       return response.data.item //||response.data.items;
     } catch (error) {
       console.error(error);

@@ -197,9 +197,9 @@ export class TicDocsuidService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log(url, "*#################", jsonObj, "H-00-00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(url, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU", jsonObj, "H-00-00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.put(url, jsonObj, { headers });
-      console.log("**************"  , response, "****************")
+      // console.log("**************"  , response, "****************")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -243,7 +243,7 @@ export class TicDocsuidService {
     
   async postTicDocsuidPosetilac(newObj, docsId) {
     try {
-      console.log(newObj, '8888-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH', docsId)
+      // console.log(newObj, '8888-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH', docsId)
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       const userId = localStorage.getItem('userId')
 
@@ -255,7 +255,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;

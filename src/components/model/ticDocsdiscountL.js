@@ -18,7 +18,7 @@ export default function TicDocsdiscountL(props) {
     const emptyTicDocsdiscount = EmptyEntities[objName];
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+    // console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocsdiscounts, setTicDocsdiscounts] = useState([]);
     const [_ticDocsdiscounts, set_ticDocsdiscounts] = useState([]);
@@ -218,7 +218,7 @@ return (
                                         <label htmlFor={`discount-${item.id}`}>{translations[selectedLanguage].Discount}</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-2" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <div className="field col-12 md:col-3" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`procenat-${item.id}`}
@@ -230,7 +230,7 @@ return (
                                         <label htmlFor={`procenat-${item.id}`}>{translations[selectedLanguage].Procenat}</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-2" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <div className="field col-12 md:col-3" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <span className="p-float-label">
                                         <InputText
                                             id={`discountvalue-${item.id}`}
@@ -242,7 +242,19 @@ return (
                                         <label htmlFor={`discountvalue-${item.id}`}>{translations[selectedLanguage].Iznos}</label>
                                     </span>
                                 </div>
-                                <div className="field col-12 md:col-2" style={{ paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
+                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                    <span className="p-float-label">
+                                        <InputText
+                                            id={`eksternibroj-${item.id}`}
+                                            className="p-inputtext-sm"
+                                            value={item.eksternibroj}
+                                            onChange={(e) => onInputChangeL(e, 'eksternibroj', item.docsid, item)}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <label htmlFor={`eksternibroj-${item.id}`}>{translations[selectedLanguage].Uslov}</label>
+                                    </span>
+                                </div>
+                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
                                     <Button
                                         icon="pi pi-percentage"
                                         className="p-button"
@@ -278,18 +290,7 @@ return (
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                                     ></Button>
                                 </div>
-                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 0 }}>
-                                    <span className="p-float-label">
-                                        <InputText
-                                            id={`eksternibroj-${item.id}`}
-                                            className="p-inputtext-sm"
-                                            value={item.eksternibroj}
-                                            onChange={(e) => onInputChangeL(e, 'eksternibroj', item.docsid, item)}
-                                            style={{ width: '100%' }}
-                                        />
-                                        <label htmlFor={`eksternibroj-${item.id}`}>{translations[selectedLanguage].Uslov}</label>
-                                    </span>
-                                </div>
+
                             </div>
                         </div>
                         <hr />

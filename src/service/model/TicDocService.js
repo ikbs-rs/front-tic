@@ -3,6 +3,7 @@ import env from "../../configs/env"
 import Token from "../../utilities/Token";
 import { PDFDocument } from 'pdf-lib';
 import { TicStampaService } from "../../service/model/TicStampaService";
+import { TicEventattsService } from "../../service/model/TicEventattsService";
 import DateFunction from '../../utilities/DateFunction';
 
 export class TicDocService {
@@ -312,6 +313,25 @@ export class TicDocService {
   async getTicDocP(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_doc&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      const response = await axios.get(url, { headers });
+      const rezultat = response.data.item || response.data.items
+      console.log(response.data, "getTicDocPLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+      return rezultat[0];
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTicDocEventKupacBrojKartiP(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_doceventkupacbrojkartil_v&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -776,7 +796,7 @@ export class TicDocService {
       }
 
       const htmlContent = await contentResponse.text();
-      console.log(htmlContent, "88888HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(htmlContent, "88888HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       // Send a POST request with the printer name and content
       const printerName = "Microsoft Print to PDF"; // Ovo zamenite pravim imenom štampača
       const postResponse = await fetch('https://localhost:8650/print', {
@@ -985,7 +1005,45 @@ export class TicDocService {
     }
   }
 
+  async proveraBrojaKarti(docId) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      const userId = localStorage.getItem('userId')
 
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_doceventsl_v&objId=${docId}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      console.log(docId, "01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+      const response = await axios.post(url, {}, { headers });
+
+      const data =  response.data.item||response.data.item;
+      if (Array.isArray(data)) {
+        const ticEventattsService = new TicEventattsService();
+        for (const item of data) {
+          console.log(item.event, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+          const objId = item.event; 
+  
+          const brojKartiLista = await ticEventattsService.getCodeValueListaP(objId, '01.06.');
+          const brojKarti = brojKartiLista[0]
+          const kupciBrojKarti = await this.getTicDocEventKupacBrojKartiP(objId);
+          for (const row of kupciBrojKarti) {
+            console.log(row, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+            
+          }
+        }
+      } else {
+        console.error("Data nije niz:", data);
+      }      
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
 
 }
 

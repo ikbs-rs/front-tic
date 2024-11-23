@@ -18,9 +18,8 @@ console.log(props, "111111111111111111111111111111111111111111111111111111111111
                 _filteredItems = [...items];
             } else {
                 _filteredItems = items.filter((item) => {
-                    return item.adresa
-                        .toLowerCase()
-                        .startsWith(event.query.toLowerCase());
+                    const adresa = item?.adresa || ""; 
+                    return adresa.toLowerCase().startsWith(event.query.toLowerCase());
                 });
             }
 
@@ -56,6 +55,7 @@ console.log(props, "111111111111111111111111111111111111111111111111111111111111
                 completeMethod={search}
                 dropdown 
                 onChange={(e) => handleItemSelect(e.value)}  // Poziv funkcije iz nadređene komponente
+                disabled={props.ticDoc.statuspayment == 1}
             />
         </div>
     );

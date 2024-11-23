@@ -227,7 +227,7 @@ const TicEvent = (props) => {
             try {
                 const ticEventService = new TicEventService();
                 const data = await ticEventService.getCmnObjXcsIdLista(ticEvent.mesto);
-                console.log(data, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                // console.log(data, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdLocItems(dataDD);
                 setDdLocItem(dataDD.find((item) => item.code === props.ticEvent.loc) || null);
@@ -487,7 +487,7 @@ const TicEvent = (props) => {
             setTicEvent(ticEvent)
             const ticEventService = new TicEventService();
             const data = await ticEventService.postTicEvent(_ticEvent);
-            console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
+            // console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
             _ticEvent.id = data
             props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
             props.setVisible(false);
@@ -513,7 +513,7 @@ const TicEvent = (props) => {
            
             const ticEventService = new TicEventService();
             const data = await ticEventService.postTicEvent(_ticEvent);
-            console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
+            // console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
             _ticEvent.id = data
             setTicEvent(_ticEvent)
             props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });

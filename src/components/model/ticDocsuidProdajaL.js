@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
@@ -20,13 +20,14 @@ import AutoParAddress from "../auto/autoParAddress";
 import DateFunction from "../../utilities/DateFunction";
 import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService"
 import Token from "../../utilities/Token";
-import AutoParProdaja from '../auto/autoParProdaja'; // Putanja zavisi od strukture vašeg projekta
+import AutoParProdaja from '../auto/autoParProdaja';
+import { classNames } from 'primereact/utils';
 
 // import Worker from 'worker-loader!../../workers/docuidWorker.js';
 
 
-export default function TicDocsuidProdajaL(props) {
-    console.log(props, "^^-TicDocsuidProdajaL-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+const TicDocsuidProdajaL = forwardRef((props, ref) => {
+    // console.log(props, "^^-TicDocsuidProdajaL-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
     const objName = "tic_docsuid";
     const objCmnPar = "cmn_par";
     const objTicDocdelivery = "tic_docdelivery";
@@ -66,12 +67,90 @@ export default function TicDocsuidProdajaL(props) {
     const [showDiscount, setShowDiscount] = useState(false);
     const [discountRefresh, setDiscountRefresh] = useState(0);
     let [autoParaddressKey1, setAutoParaddressKey1] = useState(0);
+    const [checkedKupac, setCheckedKupac] = useState(false);
 
     const colors = ["#f5f5f5", "#f2f2da", "#c2d4f2", "#ecd7f7", "#a0a0a0", "#ffa0a0"];
     const [eventColors, setEventColors] = useState({});
+    const [submitted, setSubmitted] = useState(false);
+    const [requiredFields, setRequiredFields] = useState([]);
+
+    let brojReda = 0
+
+    useImperativeHandle(ref, () => ({
+        setDocsuidSubmitted: () => handelSubbmitted(),
+    }));
+
+    const handelSubbmitted = () => {
+        console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
+
+        // Prođi kroz svaki ID i njegove atribute iz requiredFields
+        for (const field of requiredFields) {
+            const item = ticDocsuids.find(doc => doc.id === field.id); // Nađi odgovarajući dokument u ticDocsuids
+            if (!item) {
+                console.error(`ID ${field.id} ne postoji u ticDocsuids.`);
+                continue; // Preskoči ako ID nije pronađen
+            }
+
+            // Provera za svaki atribut
+            for (const attribute of field.attributes) {
+                if (!item[attribute] || item[attribute].trim() === "") {
+                    console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Validacija greška",
+                        detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
+                        life: 3000,
+                    });
+                    
+                    return false; // Zaustavi dalje izvršenje koda
+                }
+            }
+        }
+
+        console.log("Sva polja su popunjena.");
+        setSubmitted(true);
+        return true
+    };
 
 
-
+    useEffect(() => {
+        const fieldsToUpdate = ticDocsuids.map(item => {
+            const attributes = [];
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) {
+                attributes.push("first");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "last") : item.eventatt2.some(att => att.nvalue === "last"))) {
+                attributes.push("last");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "uid") : item.eventatt2.some(att => att.nvalue === "uid"))) {
+                attributes.push("uid");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "birthday") : item.eventatt2.some(att => att.nvalue === "birthday"))) {
+                attributes.push("birthday");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "adress") : item.eventatt2.some(att => att.nvalue === "adress"))) {
+                attributes.push("adress");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "city") : item.eventatt2.some(att => att.nvalue === "city"))) {
+                attributes.push("city");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "zip") : item.eventatt2.some(att => att.nvalue === "zip"))) {
+                attributes.push("zip");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "country") : item.eventatt2.some(att => att.nvalue === "country"))) {
+                attributes.push("country");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "phon") : item.eventatt2.some(att => att.nvalue === "phon"))) {
+                attributes.push("phon");
+            }
+            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) {
+                attributes.push("email");
+            }
+            return { id: item.id, attributes };
+        });
+        console.log(fieldsToUpdate, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+        setRequiredFields(fieldsToUpdate);
+    }, [ticDocsuids]);
 
     const assignColorsToEvents = (data) => {
         const eventColorMap = {};
@@ -136,7 +215,7 @@ export default function TicDocsuidProdajaL(props) {
                 //     ...item,
                 //     show: 'no'
                 // }));
-                console.log(sortedData, "#00#########################################################################")
+                // console.log(sortedData, "#00#########################################################################")
                 const updatedData = await Promise.all(sortedData.map(async (item) => {
                     const ticEventattsService = new TicEventattsService();
                     const eventatt = await ticEventattsService.getTicEventatts11LP(item.event);
@@ -154,7 +233,7 @@ export default function TicDocsuidProdajaL(props) {
                         eventatt3: eventatt3   // dodaj podniz eventatt3
                     };
                 }));
-                console.log(updatedData, "#01#########################################################################")
+                // console.log(updatedData, "#01#########################################################################")
                 setTicDocsuids(updatedData)
                 set_ticDocsuids(updatedData)
                 await assignColorsToEvents(updatedData);
@@ -166,11 +245,11 @@ export default function TicDocsuidProdajaL(props) {
 
 
                 await setActiveStates(data.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
-                console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH",
-                    updatedData.reduce((acc, item) => ({
-                        ...acc,
-                        [item.id]: item.tickettp
-                    }), {}))
+                // console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                updatedData.reduce((acc, item) => ({
+                    ...acc,
+                    [item.id]: item.tickettp
+                }), {})
 
             } catch (error) {
                 console.error(error);
@@ -332,10 +411,16 @@ export default function TicDocsuidProdajaL(props) {
 
     const handleAllParr = async (e, item) => {
         e.preventDefault(); // Prevent default action if necessary
-console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        const _cmnPar = { ...cmnPar }
+        if (_cmnPar.tp == 2) {
+            const parts = _cmnPar.textx.split(' '); // Podeli string na delove prema razmaku
+            _cmnPar.first = parts.slice(0, 1)[0]; // Prvi deo ide u `first`
+            _cmnPar.last = parts.slice(1).join(' '); // Svi ostali delovi spojeni u `last`
+        }
+        // console.log(_cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         // setHighlightedId(item.id);
         const ticDocsuidService = new TicDocsuidService();
-        await ticDocsuidService.postTicDocsuidParAll(cmnPar, ticDoc.id);
+        await ticDocsuidService.postTicDocsuidParAll(_cmnPar, ticDoc.id);
         setRefresh(prev => prev + 1)
         // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
     };
@@ -387,16 +472,20 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
     };
 
     const handlePosetilacClick = async (item, e) => {
-        console.log(item, "H-item-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        if(!handelSubbmitted()) {
+            return
+        };
+        // console.log(item, "H-item-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         e.preventDefault(); // Prevent default action if necessary
         const ticDocsuidService = new TicDocsuidService();
         await ticDocsuidService.postTicDocsuidPosetilac(item, item.docs);
+        setRefresh(prev => prev + 1)
         setHighlightedId(item.id);
         // console.log(e, "******* Clicked item details:", item);
 
     };
 
-    const handleParClick = async (item, e) => {
+    const handleParClick = async (item, cmnPar, e) => {
         e.preventDefault(); // Prevent default action if necessary
         const ticDocsuidService = new TicDocsuidService();
         await ticDocsuidService.postTicDocsuidPar(cmnPar, item.docs);
@@ -508,6 +597,25 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
         // setFormData(newFormData);
     };
     /***************************************************************************************** */
+    const handleChangeKupac = async (item, e) => {
+        try {
+            const updatedKupacValue = item.kupac === 1 ? 0 : 1;
+            const updatedItem = { ...item, kupac: updatedKupacValue };
+            // console.log(updatedItem, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUkupacUUUUUUUUUUUUUUUUUUUUUUUUU")
+            // Ažuriranje na serveru
+            const ticDocsuidService = new TicDocsuidService();
+            await ticDocsuidService.putTicDocsuid(updatedItem);
+
+            // Ažuriranje lokalnog stanja
+            setTicDocsuids((prevState) =>
+                prevState.map((docItem) =>
+                    docItem.id === item.id ? { ...docItem, kupac: updatedKupacValue } : docItem
+                )
+            );
+        } catch (error) {
+            console.error("Error updating Kupac value:", error);
+        }
+    };
     const DocZaglavlje = () => {
         return (
             <div className="card">
@@ -526,11 +634,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                 raised
                                 tooltip={translations[selectedLanguage].PopuniPodatkeKupcaSveStavke}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                disabled={ticDoc.statuspayment == 1}
                             />
                             <Button icon="pi pi-users" onClick={(e) => handleAllNullParr(e, "ALL")} style={{ width: '35px' }}
                                 raised severity="danger"
                                 tooltip={translations[selectedLanguage].ObrisiPodatkePosetilacaTransakcije}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                disabled={ticDoc.statuspayment == 1}
                             />
                             <Button
                                 icon="pi pi-percentage"
@@ -540,6 +650,7 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                 onClick={(e) => handleDiscountDelete(props.ticDoc, e)}
                                 tooltip={translations[selectedLanguage].ObrisiPopusteTransakcije}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                disabled={ticDoc.statuspayment == 1}
                             />
                         </div>
                     </div>
@@ -594,6 +705,7 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                     onChange={(e) => setNote(e.target.value)}
                                     rows={3} cols={90}
                                     style={{ paddingTop: 20, width: "100%" }}
+                                    disabled={ticDoc.statuspayment == 1}
                                 />
                             </div>
                             <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
@@ -605,6 +717,7 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                     onClick={(e) => handleDeliveryClick("item", e)}
                                     tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
                                     tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                    disabled={ticDoc.statuspayment == 1}
                                 ></Button>
                             </div>
                         </div>
@@ -613,6 +726,8 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                 <Toast ref={toast} />
                 <DocZaglavlje />
                 {ticDocsuids.map((item) => {
+                    brojReda = ++brojReda
+                    // console.log(item, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU", brojReda)
                     const backgroundColor = eventColors[item.event] || "#ffffff";
                     return (
                         <>
@@ -642,7 +757,7 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                         ))}
                                     </div>
 
-                                </div> */}
+                                    </div> */}
                                     {/* <div className="field col-12 md:col-8" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                     <div className="flex flex-wrap gap-3">
                                         <InputSwitch
@@ -652,22 +767,24 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                         />
                                         <label htmlFor={`delivery-${item.id}`} style={{ marginRight: '1em' }}>{translations[selectedLanguage].delivery}</label>
                                     </div>
-                                </div> */}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "first")) ? (
+                                    </div> */}
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`first-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.first}
                                                     onChange={(e) => onInputChangeL(e, 'first', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    required
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.first })}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`first-${item.id}`}>{translations[selectedLanguage].First}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "last")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "last") : item.eventatt2.some(att => att.nvalue === "last"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -676,12 +793,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.last}
                                                     onChange={(e) => onInputChangeL(e, 'last', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`last-${item.id}`}>{translations[selectedLanguage].Last}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "uid")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "uid") : item.eventatt2.some(att => att.nvalue === "uid"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -690,13 +808,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.uid}
                                                     onChange={(e) => onInputChangeL(e, 'uid', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`uid-${item.id}`}>{translations[selectedLanguage].Uid}</label>
                                             </span>
-
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "birthday")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "birthday") : item.eventatt2.some(att => att.nvalue === "birthday"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -705,13 +823,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.birthday}
                                                     onChange={(e) => onInputChangeL(e, 'birthday', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`birthday-${item.id}`}>{translations[selectedLanguage].birthday}</label>
                                             </span>
-
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "adress")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "adress") : item.eventatt2.some(att => att.nvalue === "adress"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -720,12 +838,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.adress}
                                                     onChange={(e) => onInputChangeL(e, 'adress', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`adress-${item.id}`}>{translations[selectedLanguage].Adress}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "city")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "city") : item.eventatt2.some(att => att.nvalue === "city"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -734,12 +853,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.city}
                                                     onChange={(e) => onInputChangeL(e, 'city', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`city-${item.id}`}>{translations[selectedLanguage].city}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "zip")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "zip") : item.eventatt2.some(att => att.nvalue === "zip"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -748,12 +868,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.zip}
                                                     onChange={(e) => onInputChangeL(e, 'zip', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`zip-${item.id}`}>{translations[selectedLanguage].zip}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "country")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "country") : item.eventatt2.some(att => att.nvalue === "country"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -762,12 +883,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.country}
                                                     onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`country-${item.id}`}>{translations[selectedLanguage].country}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "phon")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "phon") : item.eventatt2.some(att => att.nvalue === "phon"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -776,12 +898,13 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.phon}
                                                     onChange={(e) => onInputChangeL(e, 'phon', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`phon-${item.id}`}>{translations[selectedLanguage].phon}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventatt2 && item.eventatt2.some(att => att.nvalue === "email")) ? (
+                                    {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -790,86 +913,109 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                                                     value={item.email}
                                                     onChange={(e) => onInputChangeL(e, 'email', item.docsid, item)}
                                                     style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
                                                 />
                                                 <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].email}</label>
                                             </span>
                                         </div>
                                     ) : null}
-                                    {/* <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 5 }}>
-
-                                </div> */}
-                                    <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
-                                        <Button
-                                            icon="pi pi-user-plus"
-                                            className="p-button"
-                                            style={{ width: '35px' }}
-                                            size="small"
-                                            raised severity="warning"
-                                            onClick={(e) => handlePosetilacClick(item, e)}
-                                            tooltip={translations[selectedLanguage].SnimiPodatkePosetioca}
-                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        ></Button>
-                                        <Button
-                                            icon="pi pi-user-plus"
-                                            className="p-button"
-                                            style={{ width: '35px' }}
-                                            size="small"
-                                            raised
-                                            onClick={(e) => handleParClick(item, e)}
-                                            tooltip={translations[selectedLanguage].SnimiPodatkeKupca}
-                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        ></Button>
-                                        <Button
-                                            icon="pi pi-user"
-                                            className="p-button"
-                                            style={{ width: '35px' }}
-                                            size="small"
-                                            raised severity="danger"
-                                            onClick={(e) => handleParClickNull(item, e)}
-                                            tooltip={translations[selectedLanguage].ObrisiPodatkePosetiocaStavke}
-                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        ></Button>
-                                        <Button
-                                            icon="pi pi-percentage"
-                                            className="p-button"
-                                            style={{ width: '35px' }}
-                                            size="small"
-                                            text
-                                            raised severity="info"
-                                            onClick={(e) => handleDiscountCreate(item, e)}
-                                            tooltip={translations[selectedLanguage].DodajPopustNaStavku}
-                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        ></Button>
-                                        <Button
-                                            icon="pi pi-percentage"
-                                            className="p-button"
-                                            style={{ width: '35px' }}
-                                            size="small"
-                                            text
-                                            raised severity="danger"
-                                            onClick={(e) => handleDiscountEventDelete(item, e)}
-                                            tooltip={translations[selectedLanguage].ObrisiPopustStavkiDogadjaja}
-                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        ></Button>
-                                    </div>
-                                    <div className="field col-12 md:col-12"
-                                    // style={{ paddingTop: 0, paddingBottom: 0 }}
-                                    >
-                                        <TicDocsdiscountL
-                                            showDiscount={item.show}
-                                            item={item}
-                                            discountRefresh={discountRefresh}
-                                            ticDoc={props.ticDoc}
-                                            setRefresh={props.setRefresh}
-                                            // handleDelivery={props.handleDelivery}
-                                            handleAllRefresh={props.handleAllRefresh}
-                                        />
-
-                                    </div>
-
                                 </div>
                             </div>
-                            <hr />
+                            <div
+                                className="grid"
+                                style={{
+                                    paddingTop: 0, width: "100%", backgroundColor: backgroundColor, display: 'flex', justifyContent: 'flex-end',
+                                }}>
+                                <div
+                                    className="field col-12 md:col-4"
+                                    style={{
+                                        paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end',
+                                    }}
+                                >
+                                    <label htmlFor="kupac" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Kupac}</label>
+                                    <InputSwitch id="kupac"
+                                        value={item.kupac}
+                                        checked={item.kupac == 1 ? true : false}
+                                        onChange={(e) => handleChangeKupac(item, e)}
+                                        tooltip={translations[selectedLanguage].Kupac}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    />
+                                </div>
+                                <div className="field col-12 md:col-8"
+                                    style={{ paddingTop: 0, paddingBottom: 5, display: 'flex', justifyContent: 'flex-end' }}>
+                                    <Button
+                                        icon="pi pi-user-plus"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        size="small"
+                                        raised severity="warning"
+                                        onClick={(e) => handlePosetilacClick(item, e)}
+                                        tooltip={translations[selectedLanguage].SnimiPodatkePosetioca}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                    <Button
+                                        icon="pi pi-user-plus"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        size="small"
+                                        raised
+                                        onClick={(e) => handleParClick(item, cmnPar, e)}
+                                        tooltip={translations[selectedLanguage].SnimiPodatkeKupca}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                    <Button
+                                        icon="pi pi-user"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        size="small"
+                                        raised severity="danger"
+                                        onClick={(e) => handleParClickNull(item, e)}
+                                        tooltip={translations[selectedLanguage].ObrisiPodatkePosetiocaStavke}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                    <Button
+                                        icon="pi pi-percentage"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        size="small"
+                                        text
+                                        raised severity="info"
+                                        onClick={(e) => handleDiscountCreate(item, e)}
+                                        tooltip={translations[selectedLanguage].DodajPopustNaStavku}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                    <Button
+                                        icon="pi pi-percentage"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        size="small"
+                                        text
+                                        raised severity="danger"
+                                        onClick={(e) => handleDiscountEventDelete(item, e)}
+                                        tooltip={translations[selectedLanguage].ObrisiPopustStavkiDogadjaja}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                </div>
+                            </div>
+
+                            <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                <TicDocsdiscountL
+                                    showDiscount={item.show}
+                                    item={item}
+                                    discountRefresh={discountRefresh}
+                                    ticDoc={props.ticDoc}
+                                    setRefresh={props.setRefresh}
+                                    // handleDelivery={props.handleDelivery}
+                                    handleAllRefresh={props.handleAllRefresh}
+                                />
+                            </div>
+                            {/* <hr /> */}
                         </>
                     )
                 }
@@ -878,4 +1024,6 @@ console.log(cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
             </div>
         </>
     );
-}
+})
+
+export default TicDocsuidProdajaL;

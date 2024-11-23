@@ -136,6 +136,11 @@ console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
         let _ticDoc = {... ticDoc}
         const _cmnPar = {... newObj}
         _cmnPar.text = _cmnPar.textx;
+        if (_cmnPar.ctp === 'XFL') {
+            const parts = _cmnPar.text.split(' '); 
+            _cmnPar.first = parts.slice(0, 1)[0]; 
+            _cmnPar.last = parts.slice(1).join(' '); 
+        }
         console.log(_cmnPar, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
         setParValue(_cmnPar.code);
         _ticDoc.usr = _cmnPar.id;
@@ -193,12 +198,14 @@ console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
                     onChange={(e) => onInputChange(e, "auto", 'par')}
                     itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
                     placeholder="Pretraži"
+                    disabled={ticDoc.statuspayment == 1}
                 />
-                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" />
+                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button"  disabled={ticDoc.statuspayment == 1}/>
                 <InputText
                     id="npar"
                     value={ticDoc.npar}
                     required
+                    disabled={ticDoc.statuspayment == 1}
                 />
             </div>
             {/* </div> */}

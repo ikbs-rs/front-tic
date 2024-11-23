@@ -214,7 +214,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                                                 value={category}
                                                 onChange={(e) => handlePayClic(e.value)}
                                                 checked={selectedCategory === category}
-                                                disabled={ticDoc.status == 2}
+                                                disabled={ticDoc.statuspayment == 1}
                                             />
                                             <label htmlFor={category.key} className="ml-2">{category.text}</label>
                                         </div>
@@ -238,6 +238,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                             checked={checkedPrintfiskal} 
                             onChange={(e) => handleChangePrintfiskal(e.value)}
                             tooltip={translations[selectedLanguage].Printfiskal}
+                            disabled={ticDoc.statuspayment == 1}
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         />
                     </div>

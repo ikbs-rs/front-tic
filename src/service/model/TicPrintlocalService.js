@@ -55,7 +55,7 @@ export class TicPrintlocalService {
 
   async addLocalPrinterHandler(newObj, tip) {
     try {
-      console.log(newObj, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(newObj, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const selectedLanguage = localStorage.getItem('sl') || 'en';
       const url = `https://localhost:8650/addlocalprinter`;
       const tokenLocal = await Token.getTokensLS();

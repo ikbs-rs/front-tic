@@ -133,7 +133,7 @@ export default function TicDocdeliveryL(props) {
   /********************************************************************************/
   const handlePayTicDoc = async () => {
     try {
-      console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+      // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
@@ -150,7 +150,7 @@ export default function TicDocdeliveryL(props) {
 
       if (placanjeRef.current) {
         if (placanjeRef.current.izborMesovito) {
-          console.log("00.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+          // console.log("00.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
           if (placanjeRef.current.preostalo > 0) {
             toast.current.show({
               severity: "error",
@@ -182,7 +182,7 @@ export default function TicDocdeliveryL(props) {
           const data = await ticDocpaymentService.postTicDocpayments(newArray);
         } else {
           _ticDocpayment.amount = placanjeRef.current.zaUplatu
-          console.log("01 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", _ticDocpayment)
+          // console.log("01 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", _ticDocpayment)
           const data = await ticDocpaymentService.postTicDocpayment(_ticDocpayment);
         }
 
@@ -219,12 +219,12 @@ export default function TicDocdeliveryL(props) {
     setRefresh(++refresh)
     // setRefreshKey(++refreshKey);
     // setRefreshKeyN(++refreshKey);  
-    console.log(refreshKey, "000033333333333333333333333333333333333333333333355555555555555555555")
+    // console.log(refreshKey, "000033333333333333333333333333333333333333333333355555555555555555555")
   }
   const handleRefresh = () => {
     setRefreshKey(++refreshKey);
     setRefreshKeyN(++refreshKey);
-    console.log(refreshKey, "33333333333333333333333333333333333333333333355555555555555555555")
+    // console.log(refreshKey, "33333333333333333333333333333333333333333333355555555555555555555")
   };
   const handleAllRefresh = () => {
     // setRefresh(prev => prev + 1)
@@ -442,7 +442,7 @@ export default function TicDocdeliveryL(props) {
         dataO.push({ code: `Ticket total price`, value: karteIznos });
         dataO.push({ code: `Fee total price`, value: naknadeIznos });
         dataO.push({ code: `Order total price`, value: zaUplatu });
-        console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
+        // console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
         setTicTransactionInfos(dataO);
 
         initFilters();
@@ -461,17 +461,17 @@ export default function TicDocdeliveryL(props) {
       try {
         const ticDocService = new TicDocService();
         const data = await ticDocService.getDocCountPrint(props.ticDoc.id);
-        console.log(data, "**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", Number(data.broj), Number(data.broj) > 0)
+        // console.log(data, "**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", Number(data.broj), Number(data.broj) > 0)
         setCountPrint(data.broj);
         if (Number(data.broj) > 0) {
-          console.log(data, "*01*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+          // console.log(data, "*01*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
           setLastPrinter(data.username)
         }
         // initFilters();
         const dataPay = await ticDocService.getDocCountPay(props.ticDoc.id);
         setCountPay(dataPay.broj);
         if (Number(dataPay.broj) > 0) {
-          console.log(dataPay, "*02*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+          // console.log(dataPay, "*02*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
           setLastPay(dataPay.username)
         }
       } catch (error) {
@@ -487,7 +487,7 @@ export default function TicDocdeliveryL(props) {
       try {
         const cmnParService = new CmnParService();
         const data = await cmnParService.getCmnParP(props.ticDoc.idpar);
-        console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
+        // console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
         const [firstname, lastname] = data.textx.split(' ');
         const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
         setCmnPar(_cmnPar);
@@ -506,10 +506,10 @@ export default function TicDocdeliveryL(props) {
       try {
 
         const ticDocdeliveryService = new TicDocdeliveryService();
-        console.log("*0*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log("*0*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         const dataD = await ticDocdeliveryService.getTicListaByItem("docdelivery", "listabynum", "tic_docdelivery_v", "doc", ticDoc.id);
 
-        console.log(dataD, "*1*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(dataD, "*1*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         if (dataD) {
           setCountDelivery(1)
           setDeliveryStatus(dataD.status)
@@ -533,15 +533,15 @@ export default function TicDocdeliveryL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log("**************************************setAdmUserPayment***********************************************")
+        // console.log("**************************************setAdmUserPayment***********************************************")
         const ticDocpaymentService = new TicDocpaymentService();
         const dataD = await ticDocpaymentService.getTicListaByItem("docpayment", "listabynum", "tic_docpayment_v", "doc", ticDoc.id);
-        console.log("**************************************setAdmUserPayment***********************************************")
+        // console.log("**************************************setAdmUserPayment***********************************************")
         if (dataD[0]) {
           await setTicDocpayment(dataD[0])
           const admUserService = new AdmUserService();
           const data = await admUserService.getAdmUser(dataD[0].usr);
-          console.log(data, "*00*************************************setAdmUserPayment***********************************************", dataD[0])
+          // console.log(data, "*00*************************************setAdmUserPayment***********************************************", dataD[0])
           await setAdmUserPayment(data);
         }
       } catch (error) {
@@ -604,20 +604,20 @@ export default function TicDocdeliveryL(props) {
       },
       {
         event:
-          ((deliveryStatus < 0) ?
+          ((deliveryStatus < 1) ?
             <Button
               label={translations[selectedLanguage].Delivery}
               style={{ backgroundColor: 'white', color: 'black' }}
             /> :
-            (deliveryStatus == 0) ?
+            (deliveryStatus == 1) ?
               <Button
                 label={translations[selectedLanguage].ForDelivery}
                 style={{ backgroundColor: 'rgb(207, 142, 73)', color: 'white' }}
-              /> : (deliveryStatus == 1) ?
+              /> : (deliveryStatus == 2) ?
                 <Button
                   label={translations[selectedLanguage].InDelivery}
                   style={{ backgroundColor: 'rgb(190, 66, 66)', color: 'white' }}
-                /> : (deliveryStatus == 2) ?
+                /> : (deliveryStatus == 3) ?
                   <Button
                     label={translations[selectedLanguage].HandedOut}
                     style={{ backgroundColor: 'green', color: 'white' }}
@@ -1177,12 +1177,12 @@ export default function TicDocdeliveryL(props) {
   }
   const neventTemplate = (rowData) => {
     // Proveri da li postoji niz proizvoda
-    console.log(rowData, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", JSON.parse(rowData.nevent))
+    // console.log(rowData, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", JSON.parse(rowData.nevent))
 
     const nizObjekata = JSON.parse(rowData.nevent)
 
     if (nizObjekata && nizObjekata.length > 0) {
-      console.log(nizObjekata.length, "nizObjekata.length*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
+      // console.log(nizObjekata.length, "nizObjekata.length*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*", JSON.parse(rowData.nevent))
       return (
         <div>
           <table className="p-datatable" style={{ minWidth: "20rem" }}>
@@ -1283,7 +1283,7 @@ export default function TicDocdeliveryL(props) {
   };
   const handleUpdateNapDoc = async (newObj) => {
     try {
-      console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
+      // console.log(newObj, "handleUpdateTicDoc ** 00 ***************************************************####################")
       const ticDocService = new TicDocService();
       await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
     } catch (err) {

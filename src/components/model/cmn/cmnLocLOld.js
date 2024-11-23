@@ -19,16 +19,11 @@ import DateFunction from "../../../utilities/DateFunction";
 import CmnLocartL from "./cmnLocartL"
 import CmnTerrlocL from "./cmnTerrlocL"
 import CmnLoclinkL from "./cmnLoclinkL"
-import ColorPickerWrapper from './ColorPickerWrapper';
-// import CmnLocattsL from "./cmnLocattsL"
-
 
 
 export default function CmnLocL(props) {
-  console.log(props, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!props!!!!!!!!!!!!!!!!!!!!!!!!!!!!", useParams())
   const { loctpId: propsLocTpId } = props;
   const { loctpId: routeLocTpId } = useParams();
-  console.log(propsLocTpId, routeLocTpId, "@@@@@@@@@@@@")
   const loctpCode = propsLocTpId || routeLocTpId;
   const LOCATION_CODE = "-1"
   const objName = "cmn_loc"
@@ -46,7 +41,6 @@ export default function CmnLocL(props) {
   const [locTip, setLocTip] = useState('');
   const [cmnLocartLVisible, setCmnLocartLVisible] = useState(false);
   const [cmnLoclinkLVisible, setCmnLoclinkLVisible] = useState(false);
-  // const [cmnLocattsLVisible, setCmnLocattsLVisible] = useState(false);
 
   const [cmnTerrlocLVisible, setCmnTerrlocLVisible] = useState(false);
 
@@ -57,12 +51,11 @@ export default function CmnLocL(props) {
 
   const handleConfirmClick = () => {
     if (cmnLoc) {
-      console.log("###############--handleConfirmClick--###################")
-        props.onTaskComplete(cmnLoc);
+      props.onTaskComplete(cmnLoc);
     } else {
-        toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
+      toast.current.show({ severity: 'warn', summary: 'Warning', detail: 'No row selected', life: 3000 });
     }
-};
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -71,7 +64,6 @@ export default function CmnLocL(props) {
         if (i < 2) {
           const cmnLocService = new CmnLocService();
           const data = await cmnLocService.getListaLL(loctpCode);
-
           setCmnLocs(data);
 
           initFilters();
@@ -87,10 +79,10 @@ export default function CmnLocL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-          const cmnLoctpService = new CmnLoctpService();
-          const data = await cmnLoctpService.getIdByItem (loctpCode);
-          console.log(data, "**********CmnLoctpService************")
-          setCmnLoctpId(data.id);
+        const cmnLoctpService = new CmnLoctpService();
+        const data = await cmnLoctpService.getIdByItem(loctpCode);
+        console.log(data, "**********CmnLoctpService************")
+        setCmnLoctpId(data.id);
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -106,7 +98,7 @@ export default function CmnLocL(props) {
     let _cmnLoc = { ...localObj.newObj.obj };
     //setSubmitted(true);
     if (localObj.newObj.locTip === "CREATE") {
-      _cmnLocs.unshift(_cmnLoc);
+      _cmnLocs.push(_cmnLoc);
     } else if (localObj.newObj.locTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
       _cmnLocs[index] = _cmnLoc;
@@ -134,13 +126,9 @@ export default function CmnLocL(props) {
     return index;
   };
 
-  const handleCmnLocattsLDialogClose = (newObj) => {
-    const localObj = { newObj };
-  };
-
   const handleCmnLocartLDialogClose = (newObj) => {
     const localObj = { newObj };
-  }; 
+  };
 
   const handleCmnTerrlocLDialogClose = (newObj) => {
     const localObj = { newObj };
@@ -153,10 +141,6 @@ export default function CmnLocL(props) {
   const openNew = () => {
     setCmnLocDialog(emptyCmnLoc);
   };
-
-  // const openLocAtt = () => {
-  //   setCmnLocattsLDialog();
-  // };
 
   const openLocart = () => {
     setCmnLocartDialog();
@@ -200,10 +184,6 @@ export default function CmnLocL(props) {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      ngrp: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
       code: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
@@ -231,61 +211,49 @@ export default function CmnLocL(props) {
     setGlobalFilterValue(value1);
   };
 
-
-  // const setCmnLocattsLDialog = () => {
-  //   setShowMyComponent(true);
-  //   setCmnLocattsLVisible(true);
-
-  // }
-
   const setCmnLocartDialog = () => {
     setShowMyComponent(true);
     setCmnLocartLVisible(true);
 
-  }  
+  }
 
   const setCmnTerrlocDialog = () => {
     setShowMyComponent(true);
     setCmnTerrlocLVisible(true);
 
-  } 
+  }
 
   const setCmnLoclinkLDialog = () => {
     setShowMyComponent(true);
     setCmnLoclinkLVisible(true);
 
-  } 
-  
+  }
+
   const renderHeader = () => {
     return (
       <div className="flex card-container">
         <div className="flex flex-wrap gap-1" />
-        {props.lookUp && (
-                    <>
-                        <div className="flex flex-wrap gap-1" />
-                        <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
-                        <div className="flex flex-wrap gap-1" />
-                        <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised disabled={!cmnLoc} />
-                    </>
-        )}
-        {/* {(props.dialog) ? (<Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />): null} */}
+        {(props.dialog) ? (
+          <>
+            <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
+            <div className="flex flex-wrap gap-1" />
+            <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised disabled={!cmnLoc} />
+          </>
+        ) : null}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        {/* <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Attributes} icon="pi pi-table" onClick={openLocAtt} text raised disabled={!cmnLoc} />
-        </div>         */}
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openLocLink} text raised disabled={!cmnLoc} />
-        </div>        
+        </div>
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].art} icon="pi pi-shield" onClick={openLocart} text raised disabled={!cmnLoc} />
-        </div>     
+        </div>
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Terr} icon="pi pi-building" onClick={openTerrloc} text raised disabled={!cmnLoc} />
-        </div>            
+        </div>
         <div className="flex-grow-1"></div>
-        <b>{`${translations[selectedLanguage][props.loctpId]||'Локације '} ${translations[selectedLanguage].Lista}`}</b>
+        <b>{translations[selectedLanguage].LocationList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -310,7 +278,7 @@ export default function CmnLocL(props) {
   };
 
   const validBodyTemplate = (rowData) => {
-    const valid = rowData.valid == 1?true:false
+    const valid = rowData.valid == 1 ? true : false
     return (
       <i
         className={classNames("pi", {
@@ -325,7 +293,7 @@ export default function CmnLocL(props) {
     return (
       <div className="flex align-items-center gap-2">
         <label htmlFor="verified-filter" className="font-bold">
-        {translations[selectedLanguage].Valid}
+          {translations[selectedLanguage].Valid}
         </label>
         <TriStateCheckbox
           inputId="verified-filter"
@@ -371,20 +339,12 @@ export default function CmnLocL(props) {
       </div>
     );
   };
-  const colorBodyTemplate = (rowData) => {
-    return (
-        <>
-            <ColorPickerWrapper value={rowData.color} format={"hex"} />
-            {/* <ColorPicker format="hex" id="color" value={rowData.color} readOnly={true} /> */}
-        </>
-    );
-}; 
+
   return (
     <div className="card">
       <Toast ref={toast} />
       <DataTable
         dataKey="id"
-        size={"small"}
         selectionMode="single"
         selection={cmnLoc}
         loading={loading}
@@ -394,13 +354,13 @@ export default function CmnLocL(props) {
         removableSort
         filters={filters}
         scrollable
-        scrollHeight="630px"
+        scrollHeight="550px"
         virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
         rows={50}
-        rowsPerPageOptions={[50, 75, 100, 200]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         onSelectionChange={(e) => setCmnLoc(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
@@ -413,13 +373,6 @@ export default function CmnLocL(props) {
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="text"
-          header={translations[selectedLanguage].Text}
-          sortable
-          filter
-          style={{ width: "30%" }}
-        ></Column>        
-        <Column
           field="code"
           header={translations[selectedLanguage].Code}
           sortable
@@ -427,25 +380,26 @@ export default function CmnLocL(props) {
           style={{ width: "15%" }}
         ></Column>
         <Column
-          field="ngrp"
-          header={translations[selectedLanguage].Group}
+          field="text"
+          header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "35%" }}
-        ></Column>        
+          style={{ width: "30%" }}
+        ></Column>
+        <Column
+          field="ctp"
+          header={translations[selectedLanguage].Code}
+          sortable
+          filter
+          style={{ width: "15%" }}
+        ></Column>
         <Column
           field="ntp"
-          header={translations[selectedLanguage].Type}
+          header={translations[selectedLanguage].Text}
           sortable
           filter
           style={{ width: "35%" }}
         ></Column>
-        <Column
-          field="color"
-          header={translations[selectedLanguage].Color}
-          body={colorBodyTemplate}
-          style={{ width: "20%" }}
-        ></Column>        
         <Column
           field="valid"
           filterField="valid"
@@ -460,7 +414,7 @@ export default function CmnLocL(props) {
         ></Column>
       </DataTable>
       <Dialog
-        header={`${translations[selectedLanguage][props.loctpId]||'Локација '}`}
+        header={translations[selectedLanguage].Location}
         visible={visible}
         style={{ width: '95%' }}
         onHide={() => {
@@ -470,7 +424,7 @@ export default function CmnLocL(props) {
       >
         {showMyComponent && (
           <CmnLoc
-            parameter={props}
+            parameter={"inputTextValue"}
             cmnLoctpId={cmnLoctpId}
             loctpCode={loctpCode}
             cmnLoc={cmnLoc}
@@ -506,7 +460,7 @@ export default function CmnLocL(props) {
             lookUp={false}
           />
         )}
-      </Dialog>      
+      </Dialog>
       <Dialog
         header={translations[selectedLanguage].LoclinkList}
         visible={cmnLoclinkLVisible}
@@ -524,11 +478,11 @@ export default function CmnLocL(props) {
             setCmnLoclinkLVisible={setCmnLoclinkLVisible}
             dialog={true}
             loctpCode={LOCATION_CODE}
-            cmnLoctpId={null} 
+            cmnLoctpId={null}
             lookUp={false}
           />
         )}
-      </Dialog>    
+      </Dialog>
       <Dialog
         header={translations[selectedLanguage].LocterrList}
         visible={cmnTerrlocLVisible}
@@ -548,27 +502,7 @@ export default function CmnLocL(props) {
             lookUp={false}
           />
         )}
-      </Dialog>   
-      {/* <Dialog
-        header={translations[selectedLanguage].LocattsLista}
-        visible={cmnLocattsLVisible}
-        style={{ width: '70%' }}
-        onHide={() => {
-          setCmnLocattsLVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {showMyComponent && (
-          <CmnLocattsL
-            parameter={"inputTextValue"}
-            cmnLoc={cmnLoc}
-            handleCmnLocattsLDialogClose={handleCmnLocattsLDialogClose}
-            setCmnLocattsLVisible={setCmnLocattsLVisible}
-            dialog={true}
-            lookUp={false}
-          />
-        )}
-      </Dialog>               */}
+      </Dialog>
     </div>
   );
 }

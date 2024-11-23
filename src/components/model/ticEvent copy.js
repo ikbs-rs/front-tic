@@ -461,7 +461,7 @@ const TicEvent = (props) => {
             setTicEvent(ticEvent)
             const ticEventService = new TicEventService();
             const data = await ticEventService.postTicEvent(_ticEvent);
-            console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
+            // console.log(data, "999999999999999999999999999999999999999999999999999999999999999999999999999999")
             _ticEvent.id = data
             props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
             props.setVisible(false);

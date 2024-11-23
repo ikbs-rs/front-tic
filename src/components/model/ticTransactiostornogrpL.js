@@ -17,7 +17,7 @@ import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
 export default function CmnLoclinkgrpL(props) {
-  console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props)
+  // console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props)
   const emptyCmnloclink = "cmn_loclink"
 
   //const [products, setProducts] = useState([]);
@@ -57,7 +57,7 @@ export default function CmnLoclinkgrpL(props) {
       try {
 console.log(props.ticDoc[0]?.id, "HHHHHHHHHHHHHHHHHHHHH++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getArtikliListaP(props.ticDoc[0]?.id);
+          const data = await ticDocsService.getArtikliStornoListaP(props.ticDoc[0]?.id);
           const sortedData = data.sort((a, b) => {
             if (a.nevent !== b.nevent) {
               return a.nevent.localeCompare(b.nevent);

@@ -7,43 +7,33 @@ import { Button } from "primereact/button";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { Toast } from "primereact/toast";
-import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
-import TicDocpayment from './ticDocpayment';
-import { EmptyEntities } from '../../service/model/EmptyEntities';
+import { CmnLocvenueService } from "../../../service/model/cmn/CmnLocvenueService";
+import CmnLocvenue from './cmnLocvenue';
+import { EmptyEntities } from '../../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
-import { translations } from "../../configs/translations";
-import DateFunction from "../../utilities/DateFunction";
+import { translations } from "../../../configs/translations";
+import DateFunction from "../../../utilities/DateFunction";
 
 
-export default function TicDocpaymentL(props) {
-  // console.log(props, "H props HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-  const objName = "tic_docpayment"
-  const selectedLanguage = localStorage.getItem('sl') || 'en'
-  const emptyTicDocpayment = EmptyEntities[objName]
-  emptyTicDocpayment.doc = props.ticDoc.id
+export default function CmnLocvenueL(props) {
+console.log(props, 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
+  const objName = "cmn_locvenue"
+  const selectedLanguage = localStorage.getItem('sl')||'en'
+  const emptyCmnLocvenue = EmptyEntities[objName]
+  emptyCmnLocvenue.loc = props.cmnLoc?.id
   const [showMyComponent, setShowMyComponent] = useState(true);
-  const [ticDocpayments, setTicDocpayments] = useState([]);
-  const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
+  const [cmnLocvenues, setCmnLocvenues] = useState([]);
+  const [cmnLocvenue, setCmnLocvenue] = useState(emptyCmnLocvenue);
   const [filters, setFilters] = useState('');
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
-  const [docpaymentTip, setDocpaymentTip] = useState('');
-  const [paymentTip, setPaymentTip] = useState('-1')
-  const [activeIndex, setActiveIndex] = useState('-1')
-
+  const [locvenueTip, setLocvenueTip] = useState('');
   let i = 0
   const handleCancelClick = () => {
-    props.handleTicPaymentLDialogClose(ticDocpayment)
-    props.setTicPaymentLVisible(false);
-    
-  };
-
-  const handleConfirmClick = () => {
-    props.setActiveIndex(0);
-    props.setTicPaymentLVisible(false);
+    props.setCmnLocvenueLVisible(false);
   };
 
   useEffect(() => {
@@ -51,9 +41,10 @@ export default function TicDocpaymentL(props) {
       try {
         ++i
         if (i < 2) {
-          const ticDocpaymentService = new TicDocpaymentService();
-          const data = await ticDocpaymentService.getLista(props.ticDoc.id);
-          setTicDocpayments(data);
+          const cmnLocvenueService = new CmnLocvenueService();
+          const data = await cmnLocvenueService.getLista(props.cmnLoc.id);
+          console.log("Link podaci", data)
+          setCmnLocvenues(data);
 
           initFilters();
         }
@@ -68,30 +59,30 @@ export default function TicDocpaymentL(props) {
   const handleDialogClose = (newObj) => {
     const localObj = { newObj };
 
-    let _ticDocpayments = [...ticDocpayments];
-    let _ticDocpayment = { ...localObj.newObj.obj };
+    let _cmnLocvenues = [...cmnLocvenues];
+    let _cmnLocvenue = { ...localObj.newObj.obj };
     //setSubmitted(true);
-    if (localObj.newObj.docpaymentTip === "CREATE") {
-      _ticDocpayments.push(_ticDocpayment);
-    } else if (localObj.newObj.docpaymentTip === "UPDATE") {
+    if (localObj.newObj.locvenueTip === "CREATE") {
+      _cmnLocvenues.push(_cmnLocvenue);
+    } else if (localObj.newObj.locvenueTip === "UPDATE") {
       const index = findIndexById(localObj.newObj.obj.id);
-      _ticDocpayments[index] = _ticDocpayment;
-    } else if ((localObj.newObj.docpaymentTip === "DELETE")) {
-      _ticDocpayments = ticDocpayments.filter((val) => val.id !== localObj.newObj.obj.id);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocpayment Delete', life: 3000 });
+      _cmnLocvenues[index] = _cmnLocvenue;
+    } else if ((localObj.newObj.locvenueTip === "DELETE")) {
+      _cmnLocvenues = cmnLocvenues.filter((val) => val.id !== localObj.newObj.obj.id);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnLocvenue Delete', life: 3000 });
     } else {
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'TicDocpayment ?', life: 3000 });
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'CmnLocvenue ?', life: 3000 });
     }
-    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docpaymentTip}`, life: 3000 });
-    setTicDocpayments(_ticDocpayments);
-    setTicDocpayment(emptyTicDocpayment);
+    toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.locvenueTip}`, life: 3000 });
+    setCmnLocvenues(_cmnLocvenues);
+    setCmnLocvenue(emptyCmnLocvenue);
   };
 
   const findIndexById = (id) => {
     let index = -1;
 
-    for (let i = 0; i < ticDocpayments.length; i++) {
-      if (ticDocpayments[i].id === id) {
+    for (let i = 0; i < cmnLocvenues.length; i++) {
+      if (cmnLocvenues[i].id === id) {
         index = i;
         break;
       }
@@ -101,26 +92,11 @@ export default function TicDocpaymentL(props) {
   };
 
   const openNew = () => {
-    setTicDocpaymentDialog(emptyTicDocpayment);
-  };
-
-  const openCach = () => {
-    setPaymentTip('1')
-    setTicDocpaymentDialog(emptyTicDocpayment);
-  };
-
-  const openCard = () => {
-    setPaymentTip('2')
-    setTicDocpaymentDialog(emptyTicDocpayment);
-  };
-
-  const openCek = () => {
-    setPaymentTip('7')
-    setTicDocpaymentDialog(emptyTicDocpayment);
+    setCmnLocvenueDialog(emptyCmnLocvenue);
   };
 
   const onRowSelect = (event) => {
-    //ticDocpayment.begda = event.data.begda
+    //cmnLocvenue.begda = event.data.begda
     toast.current.show({
       severity: "info",
       summary: "Action Selected",
@@ -141,22 +117,22 @@ export default function TicDocpaymentL(props) {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      ocode: {
+      ctp: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      code: {
+      ntp: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
       },
-      text: {
+      endda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
       },
       begda: {
         operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      }
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],       
+      }      
     });
     setGlobalFilterValue("");
   };
@@ -181,22 +157,11 @@ export default function TicDocpaymentL(props) {
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
-        <div className="flex flex-wrap gap-1" />
-        <Button label={translations[selectedLanguage].Confirm} icon="pi pi-times" onClick={handleConfirmClick} text raised />
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
         </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Kes} icon="pi pi-euro" severity="info" onClick={openCach} />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Kartica} icon="pi pi-credit-card" severity="help" onClick={openCard} />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Cekovi} icon="pi pi-clone" severity="secondary" onClick={openCek} />
-        </div>
         <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].DocpaymentList}</b>
+        <b>{translations[selectedLanguage].LocvenueList}</b>
         <div className="flex-grow-1"></div>
         <div className="flex flex-wrap gap-1">
           <span className="p-input-icon-left">
@@ -225,17 +190,17 @@ export default function TicDocpaymentL(props) {
   };
 
   // <--- Dialog
-  const setTicDocpaymentDialog = (ticDocpayment) => {
+  const setCmnLocvenueDialog = (cmnLocvenue) => {
     setVisible(true)
-    setDocpaymentTip("CREATE")
-    setTicDocpayment({ ...ticDocpayment });
+    setLocvenueTip("CREATE")
+    setCmnLocvenue({ ...cmnLocvenue });
   }
   //  Dialog --->
 
   const header = renderHeader();
   // heder za filter/>
 
-  const docpaymentTemplate = (rowData) => {
+  const locvenueTemplate = (rowData) => {
     return (
       <div className="flex flex-wrap gap-1">
 
@@ -244,8 +209,8 @@ export default function TicDocpaymentL(props) {
           icon="pi pi-pencil"
           style={{ width: '24px', height: '24px' }}
           onClick={() => {
-            setTicDocpaymentDialog(rowData)
-            setDocpaymentTip("UPDATE")
+            setCmnLocvenueDialog(rowData)
+            setLocvenueTip("UPDATE")
           }}
           text
           raised ></Button>
@@ -253,11 +218,7 @@ export default function TicDocpaymentL(props) {
       </div>
     );
   };
-  const formatDatetime = (rowData, field) => {
-    if (rowData[field]) {
-        return DateFunction.formatDatetime(rowData[field]);
-    }
-};
+
   return (
     <div className="card">
       <Toast ref={toast} />
@@ -265,29 +226,30 @@ export default function TicDocpaymentL(props) {
         <div className="card">
           <div className="p-fluid formgrid grid">
             <div className="field col-12 md:col-6">
-              <label htmlFor="code">{translations[selectedLanguage].Transaction}</label>
+              <label htmlFor="code">{translations[selectedLanguage].Code}</label>
               <InputText id="code"
-                value={props.ticDoc.id}
+                value={props.cmnLoc.code}
                 disabled={true}
               />
             </div>
-            {/* <div className="field col-12 md:col-6">
+            <div className="field col-12 md:col-6">
               <label htmlFor="text">{translations[selectedLanguage].Text}</label>
               <InputText
                 id="text"
-                value={props.ticDoc.textx}
+                value={props.cmnLoc.textx}
                 disabled={true}
               />
-            </div>            */}
+            </div>           
           </div>
         </div>
       </div>
       <DataTable
         dataKey="id"
         selectionMode="single"
-        selection={ticDocpayment}
+        selection={cmnLocvenue}
+        size={"small"}
         loading={loading}
-        value={ticDocpayments}
+        value={cmnLocvenues}
         header={header}
         showGridlines
         removableSort
@@ -300,67 +262,66 @@ export default function TicDocpaymentL(props) {
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        onSelectionChange={(e) => setTicDocpayment(e.value)}
+        onSelectionChange={(e) => setCmnLocvenue(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}
       >
         <Column
           //bodyClassName="text-center"
-          body={docpaymentTemplate}
+          body={locvenueTemplate}
           exportable={false}
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
         <Column
-          field="username"
-          header={translations[selectedLanguage].User}
-          sortable
-          filter
-          style={{ width: "15%" }}
-        ></Column>
-        <Column
-          field="tm"
-          header={translations[selectedLanguage].tm}
-          sortable
-          filter
-          style={{ width: "15%" }}
-          body={(rowData) => formatDatetime(rowData, "tm")}
-        ></Column>
-        <Column
-          field="npaymenttp"
-          header={translations[selectedLanguage].Text}
-          sortable
-          filter
-          style={{ width: "30%" }}
-        ></Column>
-        <Column
-          field="amount"
-          header={translations[selectedLanguage].Amount}
+          field="cvenue"
+          header={translations[selectedLanguage].Code}
           sortable
           filter
           style={{ width: "20%" }}
         ></Column>
+        <Column
+          field="nvenue"
+          header={translations[selectedLanguage].Text}
+          sortable
+          filter
+          style={{ width: "60%" }}
+        ></Column>       
+        <Column
+          field="begda"
+          header={translations[selectedLanguage].Begda}
+          sortable
+          filter
+          style={{ width: "10%" }}
+          body={(rowData) => formatDateColumn(rowData, "begda")}
+        ></Column>  
+        <Column
+          field="endda"
+          header={translations[selectedLanguage].Endda}
+          sortable
+          filter
+          style={{ width: "10%" }}
+          body={(rowData) => formatDateColumn(rowData, "endda")}
+        ></Column>         
       </DataTable>
       <Dialog
-        header={translations[selectedLanguage].Payment}
+        header={translations[selectedLanguage].Link}
         visible={visible}
-        style={{ width: '60%' }}
+        style={{ width: '90%' }}
         onHide={() => {
           setVisible(false);
           setShowMyComponent(false);
         }}
       >
         {showMyComponent && (
-          <TicDocpayment
+          <CmnLocvenue
             parameter={"inputTextValue"}
-            ticDocpayment={ticDocpayment}
-            ticDoc={props.ticDoc}
+            cmnLocvenue={cmnLocvenue}
+            cmnLoc={props.cmnLoc}
             handleDialogClose={handleDialogClose}
             setVisible={setVisible}
             dialog={true}
-            docpaymentTip={docpaymentTip}
-            paymentTip={paymentTip}
-            setActiveIndex={setActiveIndex}
+            locvenueTip={locvenueTip}
           />
         )}
         <div className="p-dialog-header-icons" style={{ display: 'none' }}>

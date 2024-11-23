@@ -74,45 +74,46 @@ export default function TicTransactionsL(props) {
     };
 
     const mapa = (props.mapa == 1) ? 5 : 7
+    const isSelectable = (data) => data.docstorno != 1;
+    const isRowSelectable = (event) =>
+        event.data ? isSelectable(event.data) : true;
+    const rowClassName = (data) => (isSelectable(data) ? "" : "p-disabled");
+
     useEffect(() => {
         // const abortController = new AbortController();
         async function fetchData() {
             try {
-                console.log(props.ticDoc?.id, "QQ-props.ticDoc-QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+
                 if (props.ticDoc?.id) {
+                    const ticDocsService = new TicDocsService();
+                    const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
+                    const sortedData = data.sort((a, b) => {
+                        if (a.nevent !== b.nevent) {
+                            return a.nevent.localeCompare(b.nevent);
+                        } else if (a.nart !== b.nart) {
+                            return a.nart.localeCompare(b.nart);
+                        } else if (a.row !== b.row) {
+                            return a.row.localeCompare(b.row);
+                        } else {
+                            return a.seat.localeCompare(b.seat);
+                        }
+                    });
+                    /**************************************************************************** */
+                    const updatedCenaItems = [];
+                    // console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
+                    const promisesDD = sortedData.map(async (row) => {
+                        // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
+                        const dataDD = await ticDocsService.getEventartcenasP(row.id);
+                        updatedCenaItems[row.id] = dataDD;
+                        return { ...row, isUploadPending: false };
+                    });
 
-                    ++i
-                    if (i < 2) {
-                        const ticDocsService = new TicDocsService();
-                        const data = await ticDocsService.getArtikliListaP(props.ticDoc?.id);
-                        const sortedData = data.sort((a, b) => {
-                            if (a.nevent !== b.nevent) {
-                                return a.nevent.localeCompare(b.nevent);
-                            } else if (a.nart !== b.nart) {
-                                return a.nart.localeCompare(b.nart);
-                            } else if (a.row !== b.row) {
-                                return a.row.localeCompare(b.row);
-                            } else {
-                                return a.seat.localeCompare(b.seat);
-                            }
-                        });
-                        /**************************************************************************** */
-                        const updatedCenaItems = [];
-                        // console.log(sortedData, data, "L00LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
-                        const promisesDD = sortedData.map(async (row) => {
-                            // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
-                            const dataDD = await ticDocsService.getEventartcenasP(row.id);
-                            updatedCenaItems[row.id] = dataDD;
-                            return { ...row, isUploadPending: false };
-                        });
-
-                        const updatedData = await Promise.all(promisesDD);
-                        /**************************************************************************** */
-                        console.log(updatedData, "L01LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", updatedCenaItems)
-                        setTicDocss(updatedData);
-                        setDdCenaItems(updatedCenaItems);
-                        // initFilters();
-                    }
+                    const updatedData = await Promise.all(promisesDD);
+                    /**************************************************************************** */
+                    console.log(updatedData, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", data)
+                    setTicDocss(updatedData);
+                    setDdCenaItems(updatedCenaItems);
+                    // initFilters();
                 }
             } catch (error) {
                 console.error(error);
@@ -588,7 +589,33 @@ export default function TicTransactionsL(props) {
         );
 
     };
-
+    const stornoBodyTemplate = (rowData) => {
+        console.log(rowData, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+        const setParentTdBackground = (element) => {
+            const parentTd = element?.parentNode;
+            if (parentTd) {
+                // parentTd.style.backgroundColor = "white"; 
+            }
+        };
+        const handleClick = () => {
+            console.log("Ikona je kliknuta!");
+            // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+        };
+        return (
+            <div ref={(el) => setParentTdBackground(el)}>
+                {rowData?.docstorno == 1 ? (
+                    <img
+                        src="./images/redflg.png"
+                        alt="Storno"
+                        width="30"
+                        height="30"
+                        className="delivery-icon"
+                        onClick={handleClick} // Povezivanje funkcije sa klikom
+                    />
+                ) : null}
+            </div>
+        );
+    };
     /*********************************************************************************** */
     const toggleBodyTemplate = (rowData, name, e) => {
 
@@ -727,6 +754,8 @@ export default function TicTransactionsL(props) {
                 onSelectionChange={(e) => setTicDocs(e.value)}
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
+                isDataSelectable={isRowSelectable}
+                rowClassName={rowClassName} 
             >
                 <Column
                     field="nevent"
@@ -867,6 +896,17 @@ export default function TicTransactionsL(props) {
                         bodyClassName="text-center"
                         body={(e) => delBodyTemplate(e, `del`)}
                         onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
+
+                {(props.mapa != 1) && (
+                    <Column
+                        header={translations[selectedLanguage].Storno}
+                        field="docstorno"
+                        // dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={stornoBodyTemplate}
                     ></Column>
                 )}
             </DataTable>

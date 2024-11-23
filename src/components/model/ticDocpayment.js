@@ -12,8 +12,8 @@ import { Dropdown } from 'primereact/dropdown';
 import AllSecurePaymentJSForm from '../custom/AllSecurePaymentJSForm';
 
 const TicDocpayment = (props) => {
-console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH**************TicDocpayment***********************")
-console.log("---AllSecurePaymentJSForm useEffect v1 ---")
+// console.log(props, "* 00 **HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH**************TicDocpayment***********************")
+// console.log("---AllSecurePaymentJSForm useEffect v1 ---")
     
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -42,7 +42,7 @@ console.log("---AllSecurePaymentJSForm useEffect v1 ---")
 
                 setCmnPaymenttpItems(data)
                 const pPaymentTp = props.ticDocpayment.paymenttp||props.paymentTip
-                console.log(pPaymentTp, props.ticDocpayment.paymenttp, props.paymentTip, "H**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                // console.log(pPaymentTp, props.ticDocpayment.paymenttp, props.paymentTip, "H**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnPaymenttpItems(dataDD);
@@ -50,7 +50,7 @@ console.log("---AllSecurePaymentJSForm useEffect v1 ---")
                 ticDocpayment.paymenttp = props.ticDocpayment.paymenttp||props.paymentTip
                 if (props.ticDocpayment.paymenttp||props.paymentTip) {
                     const foundItem = data.find((item) => item.id === pPaymentTp);
-                    console.log("******************777777777777777777777777777777777777777", foundItem)
+                    // console.log("******************777777777777777777777777777777777777777", foundItem)
                     setCmnPaymenttpItem(foundItem || null);
                     ticDocpayment.paymenttp = props.ticDocpayment.paymenttp||props.paymentTip
                     ticDocpayment.begda = foundItem.begda
