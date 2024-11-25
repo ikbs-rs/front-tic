@@ -80,6 +80,39 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         setDocsuidSubmitted: () => handelSubbmitted(),
     }));
 
+    const handelUnitSubbmitted = (itemUnit) => {
+        //     console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
+
+        // Prođi kroz svaki ID i njegove atribute iz requiredFields
+        for (const field of requiredFields) {
+            console.log(field, "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", itemUnit)
+            const item = ticDocsuids.find(doc => doc.id === field.id); // Nađi odgovarajući dokument u ticDocsuids
+            if (!item||itemUnit.id!=field.id) {
+                console.error(`ID ${field.id} ne postoji u ticDocsuids.`);
+                continue; // Preskoči ako ID nije pronađen
+            }
+
+            // Provera za svaki atribut
+            for (const attribute of field.attributes) {
+                if (!item[attribute] || item[attribute].trim() === "") {
+                    setSubmitted(true)
+                    console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Validacija greška",
+                        detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
+                        life: 3000,
+                    });
+
+                    return false; // Zaustavi dalje izvršenje koda
+                }
+            }
+        }
+        console.log("Sva polja su popunjena.");
+        setSubmitted(true);
+        return true
+    }
+
     const handelSubbmitted = () => {
         console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
@@ -94,6 +127,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             // Provera za svaki atribut
             for (const attribute of field.attributes) {
                 if (!item[attribute] || item[attribute].trim() === "") {
+                    setSubmitted(true)
                     console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
                     toast.current.show({
                         severity: "error",
@@ -101,7 +135,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                         detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
                         life: 3000,
                     });
-                    
+
                     return false; // Zaustavi dalje izvršenje koda
                 }
             }
@@ -361,7 +395,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     //     }
     // }, [uniqueDocs]);
 
-
+    //--------------------------------------------------------------------------------------------------------------------------------/
     useEffect(() => {
         const abortController = new AbortController();
         async function fetchData() {
@@ -472,7 +506,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     };
 
     const handlePosetilacClick = async (item, e) => {
-        if(!handelSubbmitted()) {
+        if (!handelUnitSubbmitted(item)) {
             return
         };
         // console.log(item, "H-item-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
@@ -666,13 +700,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
     return (
         <>
-            <div className="card  scrollable-content" >
+            <div className="card  scrollable-content" > 
                 <Accordion >
                     <AccordionTab header={translations[selectedLanguage].delivery}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
-                                {/* <label htmlFor="address">{translations[selectedLanguage].address}</label> */}
+                                <label htmlFor="address">{translations[selectedLanguage].address}</label>
                                 <AutoParAddress
                                     key={autoParaddressKey1}
                                     onItemSelect={handleItemSelect}
@@ -680,54 +714,37 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                     ticDocdelivery={ticDocdelivery}
                                     address={valueTA || ticDocdelivery.address || '333333333'}
                                 />
-                                {/* <InputTextarea
-                                    value={valueTA}
-                                    id="address"
-                                    onChange={(e) => setValueTA(e.target.value)}
-                                    rows={3} cols={90}
-                                    style={{ paddingTop: 20, width: "100%" }}
-                                /> */}
-                            </div>
-                            {/* <div className="field col-12 md:col-1" style={{ paddingLeft: 0, paddingTop: 25 }}>
-                                <Button
-                                    icon="pi pi-user-plus"
-                                    className="p-button"
-                                    style={{ width: '35px' }}
-                                    raised severity="warning"
-                                    onClick={(e) => handleClick(ticDoc, e)}
-                                ></Button>
-                            </div> */}
-                            <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
-                                <label htmlFor="note">{translations[selectedLanguage].note}</label>
-                                <InputTextarea
-                                    value={note}
-                                    id="note"
-                                    onChange={(e) => setNote(e.target.value)}
-                                    rows={3} cols={90}
-                                    style={{ paddingTop: 20, width: "100%" }}
-                                    disabled={ticDoc.statuspayment == 1}
-                                />
-                            </div>
-                            <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
-                                <Button
-                                    icon="pi pi-truck"
-                                    className="p-button"
-                                    style={{ width: '35px' }}
-                                    raised severity="warning"
-                                    onClick={(e) => handleDeliveryClick("item", e)}
-                                    tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
-                                    tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                    disabled={ticDoc.statuspayment == 1}
-                                ></Button>
+                                <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
+                                    <label htmlFor="note">{translations[selectedLanguage].note}</label>
+                                    <InputTextarea
+                                        value={note}
+                                        id="note"
+                                        onChange={(e) => setNote(e.target.value)}
+                                        rows={3} cols={90}
+                                        style={{ paddingTop: 20, width: "100%" }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    />
+                                </div>
+                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
+                                    <Button
+                                        icon="pi pi-truck"
+                                        className="p-button"
+                                        style={{ width: '35px' }}
+                                        raised severity="warning"
+                                        onClick={(e) => handleDeliveryClick("item", e)}
+                                        tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={ticDoc.statuspayment == 1}
+                                    ></Button>
+                                </div>
                             </div>
                         </div>
                     </AccordionTab>
                 </Accordion>
                 <Toast ref={toast} />
-                <DocZaglavlje />
-                {ticDocsuids.map((item) => {
+                <DocZaglavlje /> 
+                    {ticDocsuids.map((item) => { 
                     brojReda = ++brojReda
-                    // console.log(item, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU", brojReda)
                     const backgroundColor = eventColors[item.event] || "#ffffff";
                     return (
                         <>
@@ -740,34 +757,6 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         </b>
                                         <span style={{ color: '#800020' }}>{` - cena: ${item?.price} ${item?.ccurr}`}</span>
                                     </div>
-                                    {/* <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 0 }}>
-                                    <div className="flex flex-wrap gap-3">
-                                        {cmnTickettps.map((option) => (
-                                            <div key={option.id} className="p-field-radiobutton">
-                                                <RadioButton
-                                                    inputId={`radio-${item.id}-${option.id}`}
-                                                    name={`cmnTickettp-${item.id}`} // Ovo osigurava da svaki red ima svoju grupu radiobuttona
-                                                    value={option.id}
-                                                    onChange={(e) => handleChange(e, item.id, item)}
-                                                    checked={selectedValues[item.id] === option.id}
-                                                />
-
-                                                <label htmlFor={`radio-${item.id}-${option.id}`}>{option.text}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    </div> */}
-                                    {/* <div className="field col-12 md:col-8" style={{ paddingTop: 0, paddingBottom: 0 }}>
-                                    <div className="flex flex-wrap gap-3">
-                                        <InputSwitch
-                                            id={`delivery-${item.id}`}
-                                            checked={activeStates[item.id]}
-                                            onChange={(e) => handleSwitchChange(e, item.id, item)}
-                                        />
-                                        <label htmlFor={`delivery-${item.id}`} style={{ marginRight: '1em' }}>{translations[selectedLanguage].delivery}</label>
-                                    </div>
-                                    </div> */}
                                     {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
@@ -777,9 +766,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     onChange={(e) => onInputChangeL(e, 'first', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     required
-                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.first })}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.first })}
                                                 />
+                                                {submitted && !item.first && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`first-${item.id}`}>{translations[selectedLanguage].First}</label>
                                             </span>
                                         </div>
@@ -789,12 +779,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`last-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.last}
                                                     onChange={(e) => onInputChangeL(e, 'last', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.last })}
                                                 />
+                                                {submitted && !item.last && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`last-${item.id}`}>{translations[selectedLanguage].Last}</label>
                                             </span>
                                         </div>
@@ -804,12 +795,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`uid-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.uid}
                                                     onChange={(e) => onInputChangeL(e, 'uid', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.uid })}
                                                 />
+                                                {submitted && !item.uid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`uid-${item.id}`}>{translations[selectedLanguage].Uid}</label>
                                             </span>
                                         </div>
@@ -819,12 +811,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`birthday-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.birthday}
                                                     onChange={(e) => onInputChangeL(e, 'birthday', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.birthday })}
                                                 />
+                                                {submitted && !item.birthday && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`birthday-${item.id}`}>{translations[selectedLanguage].birthday}</label>
                                             </span>
                                         </div>
@@ -834,12 +827,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`adress-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.adress}
                                                     onChange={(e) => onInputChangeL(e, 'adress', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.adress })}
                                                 />
+                                                {submitted && !item.adress && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`adress-${item.id}`}>{translations[selectedLanguage].Adress}</label>
                                             </span>
                                         </div>
@@ -849,12 +843,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`city-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.city}
                                                     onChange={(e) => onInputChangeL(e, 'city', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.city })}
                                                 />
+                                                {submitted && !item.city && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`city-${item.id}`}>{translations[selectedLanguage].city}</label>
                                             </span>
                                         </div>
@@ -864,12 +859,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`zip-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.zip}
                                                     onChange={(e) => onInputChangeL(e, 'zip', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.zip })}
                                                 />
+                                                {submitted && !item.zip && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`zip-${item.id}`}>{translations[selectedLanguage].zip}</label>
                                             </span>
                                         </div>
@@ -879,12 +875,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`country-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.country}
                                                     onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.country })}
                                                 />
+                                                {submitted && !item.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`country-${item.id}`}>{translations[selectedLanguage].country}</label>
                                             </span>
                                         </div>
@@ -894,12 +891,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`phon-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.phon}
                                                     onChange={(e) => onInputChangeL(e, 'phon', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.phon })}
                                                 />
+                                                {submitted && !item.phon && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`phon-${item.id}`}>{translations[selectedLanguage].phon}</label>
                                             </span>
                                         </div>
@@ -909,12 +907,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             <span className="p-float-label">
                                                 <InputText
                                                     id={`email-${item.id}`}
-                                                    className="p-inputtext-sm"
                                                     value={item.email}
                                                     onChange={(e) => onInputChangeL(e, 'email', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.email })}
                                                 />
+                                                {submitted && !item.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].email}</label>
                                             </span>
                                         </div>
@@ -1015,13 +1014,11 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                     handleAllRefresh={props.handleAllRefresh}
                                 />
                             </div>
-                            {/* <hr /> */}
                         </>
                     )
                 }
                 )}
-
-            </div>
+            </div>                 
         </>
     );
 })

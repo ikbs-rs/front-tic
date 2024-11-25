@@ -32,16 +32,17 @@ const TicEventartlink = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const url = `${env.TIC_BACK_URL}/tic/x/art/?sl=${selectedLanguage}`;
+                // const url = `${env.TIC_BACK_URL}/tic/x/art/?sl=${selectedLanguage}`;
+                const url = `${env.TIC_BACK_URL}/tic/eventart/_v/lista/?stm=tic_eventartulaz_v&objid=${props.ticEventart.event}&sl=${selectedLanguage}`;
                 const tokenLocal = await Token.getTokensLS();
                 const headers = {
                     Authorization: tokenLocal.token
                 };
 
                 const response = await axios.get(url, { headers });
-                const data = response.data.items;
+                const data = response.data.item||response.data.items;
                 setTicEventartlinkItems(data)
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDD = data.map(({ text, art }) => ({ name: text, code: art }));
                 setDdTicEventartlinkItems(dataDD);
                 setDdTicEventartlinkItem(dataDD.find((item) => item.code === props.ticEventartlink.art) || null);
 
@@ -148,10 +149,12 @@ const TicEventartlink = (props) => {
             switch (name) {
                 case "art":
                     setDdTicEventartlinkItem(e.value);
-                    foundItem = ticEventartlinkItems.find((item) => item.id === val);
+                    foundItem = ticEventartlinkItems.find((item) => item.art === val);
                     setTicEventartlinkItem(foundItem || null);
-                    ticEventartlink.nart = e.value.name
-                    ticEventartlink.cart = foundItem.code
+                    if (foundItem) {
+                        ticEventartlink.nart = e.value.name
+                        ticEventartlink.cart = foundItem.code
+                    }
                     break;
                 default:
                     console.error("Pogresan naziv polja")

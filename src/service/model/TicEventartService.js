@@ -21,6 +21,23 @@ export class TicEventartService {
         }
     }
 
+    async getUlazLista(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en';
+        const url = `${env.TIC_BACK_URL}/tic/eventart/_v/lista/?stm=tic_eventartulaz_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     async postGrpEventart(objId, newObj, addItems) {
         try {
             const selectedLanguage = localStorage.getItem('sl') || 'en'

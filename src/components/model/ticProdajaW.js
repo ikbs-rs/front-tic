@@ -375,6 +375,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleNextClic = (e, key) => {
+    console.log("JJJJJjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", key)
     if (handleDocuidSubbmit() || key < 1) {
       
       setUidKey(++uidKey)

@@ -461,8 +461,8 @@ export default function TicEventartL(props) {
           style={{ width: "20%" }}
         ></Column>
         <Column
-          field="descript"
-          header={translations[selectedLanguage].Description}
+          field="kolicinaulaz"
+          header={translations[selectedLanguage].kolicinaulaz}
           sortable
           filter
           style={{}}

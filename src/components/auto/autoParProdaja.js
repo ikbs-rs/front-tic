@@ -10,7 +10,7 @@ import CmnParL from '../model/cmn/cmnParL';
 import { TicDocService } from "../../service/model/TicDocService";
 
 const AutoParProdaja = (props) => {
-console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
+// console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const _ticDoc = {...props.ticDoc}
     _ticDoc.cpar = props.cmnPar.code

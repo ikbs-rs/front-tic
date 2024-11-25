@@ -520,11 +520,12 @@ const EmptyEntities =
   "descript": "",
   "begda": "",
   "endda":  "",
-  "discount": 0,  
+  "discount": "0",  
   "nart": "string",
   "color": "",
   "icon": "",
-  "maxkol": null
+  "maxkol": null,
+  "kolicinaulaz": "0"
   },
 	"tic_eventartcena": {
 		"id": null,

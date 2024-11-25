@@ -411,16 +411,21 @@ const TicEventart = (props) => {
                         </div> */}
                     </div>
                     <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
                             <InputText id="discount" value={ticEventart.discount} onChange={(e) => onInputChange(e, 'text', 'discount')}
                             />
                         </div>
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="maxkol">{translations[selectedLanguage].maxkol} *</label>
                             <InputText id="maxkol" value={ticEventart.maxkol} onChange={(e) => onInputChange(e, 'text', 'maxkol')}
                             />
                         </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="kolicinaulaz">{translations[selectedLanguage].kolicinaulaz} *</label>
+                            <InputText id="kolicinaulaz" value={ticEventart.kolicinaulaz} onChange={(e) => onInputChange(e, 'text', 'kolicinaulaz')}
+                            />
+                        </div>                        
                      
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Description}</label>
