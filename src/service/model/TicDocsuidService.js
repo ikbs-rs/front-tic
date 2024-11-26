@@ -279,7 +279,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;
@@ -337,11 +337,11 @@ export class TicDocsuidService {
         };
 
         const jsonObj = JSON.stringify(newObj);
-        console.log(jsonObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        // console.log(jsonObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         // Dodaj signal u axios post zahtev kako bi mogao biti prekinut
         const response = await axios.post(url, jsonObj, { headers, signal });
 
-        return response.data.items;
+        return response.data.items||response.data.item;
     } catch (error) {
         if (error.name === 'AbortError') {
             console.log('Previous request aborted');
@@ -368,7 +368,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;
@@ -392,7 +392,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;

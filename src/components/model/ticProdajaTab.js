@@ -110,20 +110,20 @@ export default function TicProdajaTab(props) {
     const [paying, setPaying] = useState(0);
     useEffect(() => {
    
-            console.log(ticDoc, "##################################################################################################################");
+            // console.log(ticDoc, "##################################################################################################################");
             // Logika za rukovanje plaćanjem
 
     }, [paying]);
     
     /********************************************************************************/
     const handleTabZaglavlje = (_ticDoc) => {
-        console.log(_ticDoc, "##########################################################################################handleTabZaglavlje########")
+        // console.log(_ticDoc, "##########################################################################################handleTabZaglavlje########")
         setTicDoc(_ticDoc)
         setPaying(prev => prev + 1);
     }
     const handlePayTicDoc = async () => {
         try {
-            console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+            // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
             const userId = localStorage.getItem('userId')
             setSubmitted(true);
             const ticDocService = new TicDocService();
@@ -186,7 +186,7 @@ export default function TicProdajaTab(props) {
                 _ticDoc.status = 2
                 _ticDoc.statuspayment = 1
                 setTicDoc(_ticDoc)
-                console.log(_ticDoc, "###############################################################################################")
+                // console.log(_ticDoc, "###############################################################################################")
                 setPaying(prev => prev + 1);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 2000 });
                 // setUidKey(++uidKey)
@@ -499,10 +499,10 @@ export default function TicProdajaTab(props) {
     }
     const createDoc = async (channel, event) => {
         try {
-            console.log(event?.id, channel?.id, "** KANALI KORISNIKA/EVENT *  createDoc *****************************************************************************")
+            // console.log(event?.id, channel?.id, "** KANALI KORISNIKA/EVENT *  createDoc *****************************************************************************")
             const ticEventattsService = new TicEventattsService()
             const eventAtt = await ticEventattsService.getEventAttsDD(event?.id, channel?.id, '01.13.');
-            console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            // console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             const foundPaymenttp = ddPaymenttpItems.find((item) => item.code == paymenttpId)
             setDdPaymenttpItem(foundPaymenttp);
 
@@ -1003,7 +1003,7 @@ export default function TicProdajaTab(props) {
         _ticDoc.status = 1
         // _ticDoc.services? _ticDoc.services = 1 : _ticDoc.services = 0
         setTicDoc(_ticDoc)
-        console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
+        // console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
         await handleUpdateRezTicDoc(_ticDoc, previousValue)
         remountStavke();
     };
@@ -1014,12 +1014,12 @@ export default function TicProdajaTab(props) {
         setCheckedIsporuka(value);
 
         let _ticDoc = { ...ticDoc }
-        console.log(_ticDoc.reservation, "111333333333333333333333333333333333333333333333333333333111", _ticDoc.services)
+        // console.log(_ticDoc.reservation, "111333333333333333333333333333333333333333333333333333333111", _ticDoc.services)
         value ? _ticDoc.delivery = `1` : _ticDoc.delivery = `0`
         // _ticDoc.services ? _ticDoc.services = 1 : _ticDoc.services = 0
         // _ticDoc.reservation ? _ticDoc.reservation = 1 : _ticDoc.reservation = 0
         setTicDoc(_ticDoc)
-        console.log(previousValue, "333333333333333333333333333333333333333333333333333333111", value)
+        // console.log(previousValue, "333333333333333333333333333333333333333333333333333333111", value)
         await handleUpdateIspTicDoc(_ticDoc, previousValue)
         remountStavke();
     };
@@ -1027,7 +1027,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateIspTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 1115555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 1115555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1044,7 +1044,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateRezTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1064,7 +1064,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateCancelTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.setCancelTicDoc(newObj);
         } catch (err) {
@@ -1082,7 +1082,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateNakTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1123,7 +1123,7 @@ export default function TicProdajaTab(props) {
             if (!ticDoc?.id) {
                 _ticDoc = { ...ticDoc }
             }
-            console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+            // console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar?.code
             _ticDoc.npar = _cmnPar?.text
@@ -1132,7 +1132,7 @@ export default function TicProdajaTab(props) {
             // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
             if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                 OK = true
-                console.log(11, "** KANALI KORISNIKA/EVENT *")
+                // console.log(11, "** KANALI KORISNIKA/EVENT *")
             }
         } else {
             //console.log(_channel.id, ticDocOld.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
@@ -1141,7 +1141,7 @@ export default function TicProdajaTab(props) {
                 // if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
                 if (moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                     OK = true
-                    console.log(22, "** KANALI KORISNIKA/EVENT *")
+                    // console.log(22, "** KANALI KORISNIKA/EVENT *")
                 } else {
                     const _cmnPar = await fachPar(ticDocOld.usr)
                     ticDocOld.cpar = _cmnPar.code
@@ -1150,13 +1150,13 @@ export default function TicProdajaTab(props) {
                 }
             } else {
                 OK = true
-                console.log(33, "** KANALI KORISNIKA/EVENT *")
+                // console.log(33, "** KANALI KORISNIKA/EVENT *")
             }
         }
 
         // if (OK || newDoc) {
         if (OK) {
-            console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
+            // console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
             const _ticDoc = await createDoc(_channel, _ticEvent)
             const _cmnPar = await fachPar(_ticDoc.usr)
             _ticDoc.cpar = _cmnPar.code
@@ -1175,7 +1175,7 @@ export default function TicProdajaTab(props) {
         }, 1000);
     }
     const handleSetActiveIndex = (index) => {
-            console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+            // console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
         setActiveIndex(index)
     }
     /******************************************************************************************************************************************************************************** */
@@ -1225,14 +1225,14 @@ export default function TicProdajaTab(props) {
         const _ticDocpayment = { ...ticDocpayment }
         _ticDocpayment.paymenttp = value
         setTicDocpayment({ ..._ticDocpayment })
-        console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
+        // console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
     }
     const handleRefresh = () => {
     }
     const handleFirstColumnClick = () => {
     }
     const handleActionTab = (rowData) => {
-        console.log(rowData, "TAB-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        // console.log(rowData, "TAB-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         setTicDoc(rowData)
     }
     return (

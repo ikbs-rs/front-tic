@@ -80,12 +80,77 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         setDocsuidSubmitted: () => handelSubbmitted(),
     }));
 
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const ticDocsuidService = new TicDocsuidService();
+                const data = await ticDocsuidService.getProdajaListaP(props.ticDoc.id);
+                // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                const uniqueDocsArray = Array.from(new Set(data.map(item => item.event)));
+                setUniqueDocs(uniqueDocsArray);
+                const sortedData = data.sort((a, b) => {
+                    if (a.nevent < b.nevent) return -1;
+                    if (a.nevent > b.nevent) return 1;
+                    if (a.nartikal < b.nartikal) return -1;
+                    if (a.nartikal > b.nartikal) return 1;
+                    if (a.row < b.row) return -1;
+                    if (a.row > b.row) return 1;
+                    return a.seat - b.seat;
+                });
+                // const updatedData = sortedData.map(item => ({
+                //     ...item,
+                //     show: 'no'
+                // }));
+                // console.log(sortedData, "#00#########################################################################")
+                const updatedData = await Promise.all(sortedData.map(async (item) => {
+                    const ticEventattsService = new TicEventattsService();
+                    const eventatt = await ticEventattsService.getTicEventatts11LP(item.event);
+
+                    // Filtriraj eventatt podatke u tri posebna niza
+                    const eventatt1 = eventatt.filter(e => e.code === "11.01.");
+                    const eventatt2 = eventatt.filter(e => e.code === "11.02.");
+                    const eventatt3 = eventatt.filter(e => e.code === "11.03.");
+
+                    return {
+                        ...item,
+                        show: 'no',
+                        eventatt1: eventatt1,  // dodaj podniz eventatt1
+                        eventatt2: eventatt2,  // dodaj podniz eventatt2
+                        eventatt3: eventatt3   // dodaj podniz eventatt3
+                    };
+                }));
+                // console.log(updatedData, "#01HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                setTicDocsuids(updatedData)
+                set_ticDocsuids(updatedData)
+                await assignColorsToEvents(updatedData);
+                await setSelectedValues(updatedData.reduce((acc, item) => ({
+                    ...acc,
+                    [item.id]: item.tickettp
+                }), {}));
+
+
+
+                await setActiveStates(data.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
+                // console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                updatedData.reduce((acc, item) => ({
+                    ...acc,
+                    [item.id]: item.tickettp
+                }), {})
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchData();
+    }, [props.ticDoc.id, refresh]);
+
     const handelUnitSubbmitted = (itemUnit) => {
         //     console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
         // Prođi kroz svaki ID i njegove atribute iz requiredFields
         for (const field of requiredFields) {
-            console.log(field, "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", itemUnit)
+            // console.log(field, "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", itemUnit)
             const item = ticDocsuids.find(doc => doc.id === field.id); // Nađi odgovarajući dokument u ticDocsuids
             if (!item||itemUnit.id!=field.id) {
                 console.error(`ID ${field.id} ne postoji u ticDocsuids.`);
@@ -108,13 +173,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                 }
             }
         }
-        console.log("Sva polja su popunjena.");
+        // console.log("Sva polja su popunjena.");
         setSubmitted(true);
         return true
     }
 
     const handelSubbmitted = () => {
-        console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
+        // console.log(requiredFields, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
         // Prođi kroz svaki ID i njegove atribute iz requiredFields
         for (const field of requiredFields) {
@@ -132,7 +197,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     toast.current.show({
                         severity: "error",
                         summary: "Validacija greška",
-                        detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
+                        detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno!`,
                         life: 3000,
                     });
 
@@ -141,7 +206,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
         }
 
-        console.log("Sva polja su popunjena.");
+        // console.log("Sva polja su popunjena.");
         setSubmitted(true);
         return true
     };
@@ -149,42 +214,43 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
     useEffect(() => {
         const fieldsToUpdate = ticDocsuids.map(item => {
+            // console.log(item, "000HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item.kupac)
             const attributes = [];
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) {
                 attributes.push("first");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "last") : item.eventatt2.some(att => att.nvalue === "last"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "last") : item.eventatt2.some(att => att.nvalue === "last"))) {
                 attributes.push("last");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "uid") : item.eventatt2.some(att => att.nvalue === "uid"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "uid") : item.eventatt2.some(att => att.nvalue === "uid"))) {
                 attributes.push("uid");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "birthday") : item.eventatt2.some(att => att.nvalue === "birthday"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "birthday") : item.eventatt2.some(att => att.nvalue === "birthday"))) {
                 attributes.push("birthday");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "adress") : item.eventatt2.some(att => att.nvalue === "adress"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "adress") : item.eventatt2.some(att => att.nvalue === "adress"))) {
                 attributes.push("adress");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "city") : item.eventatt2.some(att => att.nvalue === "city"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "city") : item.eventatt2.some(att => att.nvalue === "city"))) {
                 attributes.push("city");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "zip") : item.eventatt2.some(att => att.nvalue === "zip"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "zip") : item.eventatt2.some(att => att.nvalue === "zip"))) {
                 attributes.push("zip");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "country") : item.eventatt2.some(att => att.nvalue === "country"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "country") : item.eventatt2.some(att => att.nvalue === "country"))) {
                 attributes.push("country");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "phon") : item.eventatt2.some(att => att.nvalue === "phon"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "phon") : item.eventatt2.some(att => att.nvalue === "phon"))) {
                 attributes.push("phon");
             }
-            if (item.eventatt2 && (item.kupac === 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) {
+            if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) {
                 attributes.push("email");
             }
             return { id: item.id, attributes };
         });
-        console.log(fieldsToUpdate, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+        // console.log(fieldsToUpdate, "03HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         setRequiredFields(fieldsToUpdate);
-    }, [ticDocsuids]);
+    }, [ticDocsuids, refresh]);
 
     const assignColorsToEvents = (data) => {
         const eventColorMap = {};
@@ -226,72 +292,6 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         }
         fetchData();
     }, [props.ticDoc, refresh]);
-
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const ticDocsuidService = new TicDocsuidService();
-                const data = await ticDocsuidService.getProdajaListaP(props.ticDoc.id);
-                // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-                const uniqueDocsArray = Array.from(new Set(data.map(item => item.event)));
-                setUniqueDocs(uniqueDocsArray);
-                const sortedData = data.sort((a, b) => {
-                    if (a.nevent < b.nevent) return -1;
-                    if (a.nevent > b.nevent) return 1;
-                    if (a.nartikal < b.nartikal) return -1;
-                    if (a.nartikal > b.nartikal) return 1;
-                    if (a.row < b.row) return -1;
-                    if (a.row > b.row) return 1;
-                    return a.seat - b.seat;
-                });
-                // const updatedData = sortedData.map(item => ({
-                //     ...item,
-                //     show: 'no'
-                // }));
-                // console.log(sortedData, "#00#########################################################################")
-                const updatedData = await Promise.all(sortedData.map(async (item) => {
-                    const ticEventattsService = new TicEventattsService();
-                    const eventatt = await ticEventattsService.getTicEventatts11LP(item.event);
-
-                    // Filtriraj eventatt podatke u tri posebna niza
-                    const eventatt1 = eventatt.filter(e => e.code === "11.01.");
-                    const eventatt2 = eventatt.filter(e => e.code === "11.02.");
-                    const eventatt3 = eventatt.filter(e => e.code === "11.03.");
-
-                    return {
-                        ...item,
-                        show: 'no',
-                        eventatt1: eventatt1,  // dodaj podniz eventatt1
-                        eventatt2: eventatt2,  // dodaj podniz eventatt2
-                        eventatt3: eventatt3   // dodaj podniz eventatt3
-                    };
-                }));
-                // console.log(updatedData, "#01#########################################################################")
-                setTicDocsuids(updatedData)
-                set_ticDocsuids(updatedData)
-                await assignColorsToEvents(updatedData);
-                await setSelectedValues(updatedData.reduce((acc, item) => ({
-                    ...acc,
-                    [item.id]: item.tickettp
-                }), {}));
-
-
-
-                await setActiveStates(data.reduce((acc, item) => ({ ...acc, [item.id]: item.delivery == '1' }), {}));
-                // console.log(updatedData, "H 0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-                updatedData.reduce((acc, item) => ({
-                    ...acc,
-                    [item.id]: item.tickettp
-                }), {})
-
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        fetchData();
-    }, [props.ticDoc.id, refresh]);
-
 
     /******************************************************************************************** */
     // useEffect(() => {
@@ -454,7 +454,8 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         // console.log(_cmnPar, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         // setHighlightedId(item.id);
         const ticDocsuidService = new TicDocsuidService();
-        await ticDocsuidService.postTicDocsuidParAll(_cmnPar, ticDoc.id);
+        const updatedItem = await ticDocsuidService.postTicDocsuidParAll(_cmnPar, ticDoc.id);
+        // console.log(updatedItem, "02HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         setRefresh(prev => prev + 1)
         // Možete ovde implementirati dalje logike kao što je otvaranje modalnog prozora, ažuriranje stanja itd.
     };
@@ -506,6 +507,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     };
 
     const handlePosetilacClick = async (item, e) => {
+        // console.log(item, "H-UNIT-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         if (!handelUnitSubbmitted(item)) {
             return
         };

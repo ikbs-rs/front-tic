@@ -83,7 +83,7 @@ export default function TicEventattsL(props) {
 
             try {
                 setLoading(true);
-                console.log('Učitavanje je započeto!!!!!');
+                // console.log('Učitavanje je započeto!!!!!');
                 ++i;
                 if (i < 2) {
                     const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
@@ -202,10 +202,11 @@ export default function TicEventattsL(props) {
                 const ticEventatttpService = new TicEventatttpService();
                 const data = await ticEventatttpService.getTicEventatttps();
 
-                setTicEventatttps(data)
-                //console.log("******************", ticEventatttpItem)
+                const sortedData = data.sort((a, b) => a.textx.localeCompare(b.textx));
 
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setTicEventatttps(sortedData);
+    
+                const dataDD = sortedData.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicEventatttpItems(dataDD);
                 //setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
             } catch (error) {
@@ -275,7 +276,7 @@ export default function TicEventattsL(props) {
 
     const handleTicEventattsgrpLDialogClose = (newObj) => {
         const localObj = { newObj };
-        console.log(props.ticEvent, "@@@@@@@@***********handleTicEventattsgrpLDialogClose********************@@@@@@@@@@@@@")
+        // console.log(props.ticEvent, "@@@@@@@@***********handleTicEventattsgrpLDialogClose********************@@@@@@@@@@@@@")
         setRefresh(++refresh);
     };
 
@@ -299,7 +300,7 @@ export default function TicEventattsL(props) {
         setRefresh(++refresh);
     };
     const toggleChecked = async (e, name, rowData) => {
-        console.log(name, "***type!!!********input!!!***", e, "*")
+        // console.log(name, "***type!!!********input!!!***", e, "*")
         const newCheckedState = e.value;
         // Update local state
         setChecked(newCheckedState);
@@ -323,7 +324,7 @@ export default function TicEventattsL(props) {
         _ticEventatts[`${name}`] = val;
         setTicEventatts(_ticEventatts);
         // setTicEventattss([...ticEventattss]);
-        console.log(_ticEventatts, "=============================================================")
+        // console.log(_ticEventatts, "=============================================================")
         await updateDataInDatabase(_ticEventatts);
     };
 
@@ -388,7 +389,7 @@ export default function TicEventattsL(props) {
         _ticEventatts = { ...ticEventatts };
         _ticEventatts[`${name}`] = val;
         setTicEventatts(_ticEventatts);
-        console.log(updatedTicEventattss[rowIndex], "*****Text**********************updatedTicEventattss***************************", _ticEventatts)
+        // console.log(updatedTicEventattss[rowIndex], "*****Text**********************updatedTicEventattss***************************", _ticEventatts)
         await updateDataInDatabase(_ticEventatts);
     };
 
@@ -460,7 +461,7 @@ export default function TicEventattsL(props) {
 
         // Ažurirajte samo trenutni red sa novim podacima
         updatedTicEventattss[rowIndex] = rowData;
-        console.log(dropdownItem, "***Value********dropdownItem***", dropdownItemText, "*************updatedTicEventattss***************************", e.value)
+        // console.log(dropdownItem, "***Value********dropdownItem***", dropdownItemText, "*************updatedTicEventattss***************************", e.value)
         // Postavljanje novog niza kao stanje za ticEventattss
         await setTicEventattss(updatedTicEventattss);
 
@@ -472,7 +473,7 @@ export default function TicEventattsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            // console.log(rowData, "***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
             const ticEventattsService = new TicEventattsService();
             await ticEventattsService.putTicEventatts(rowData);
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
@@ -683,7 +684,7 @@ export default function TicEventattsL(props) {
 
     // funkcije
     const textEditor = (rowData, field, e) => {
-        console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
+        // console.log(rowData, '**T_00**********************textEditor*************rowData.inputtp***************', e);
         switch (rowData.inputtp) {
             case '6':
                 const [modul0, tabela0, code0, modul, tabela, code] = rowData.ddlist.split(',');
@@ -770,7 +771,7 @@ export default function TicEventattsL(props) {
                 }
 
                 const selectedOptions = dropdownAllItems[apsTabela] || [];
-                console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
+                // console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
                 setDropdownItems(selectedOptions);
 
                     // const selectedOption = selectedOptions.find((option) => option.code === rowData.value);

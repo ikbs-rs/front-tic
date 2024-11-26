@@ -57,7 +57,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   useEffect(() => {
 
-    console.log(ticDoc, "##XXXX################################################################################################################");
+    // console.log(ticDoc, "##XXXX################################################################################################################");
     // Logika za rukovanje plaćanjem
 
   }, [paying]);
@@ -309,7 +309,7 @@ const TicProdajaW = forwardRef((props, ref) => {
       if (iframeConsole) {
         const originalIframeConsoleLog = iframeConsole.log;
         iframeConsole.log = function (message) {
-          originalIframeConsoleLog.apply(iframeConsole, arguments);
+          // originalIframeConsoleLog.apply(iframeConsole, arguments);
           if (message && typeof message === 'string' && ((message.includes('******GLOBAL CART********') || (message.includes('====OSVEZI STAVKE BLAGAJNE====')) || (message.includes('totalQuantity======================'))))) {
             setTicTransactionsKey((prev) => prev + 1);
             setTicTransactionsKey2((prev) => prev + 1);
@@ -375,7 +375,6 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleNextClic = (e, key) => {
-    console.log("JJJJJjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", key)
     if (handleDocuidSubbmit() || key < 1) {
       
       setUidKey(++uidKey)
@@ -468,7 +467,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleRezTicDoc = async () => {
-    console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
+    // console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
     // console.log(ticEvent?.id, props.channell?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const ticEventattsService = new TicEventattsService()
     const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
@@ -502,14 +501,14 @@ const TicProdajaW = forwardRef((props, ref) => {
         life: 1000,
       });
     }
-    console.log("00.1 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
+    // console.log("00.1 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
 
   };
 
   /********************************************************************************/
   const handlePayTicDoc = async () => {
     try {
-      console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+      // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
@@ -528,7 +527,7 @@ const TicProdajaW = forwardRef((props, ref) => {
 
       if (placanjeRef.current) {
         if (placanjeRef.current.izborMesovito) {
-          console.log("00.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+          // console.log("00.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
           if (placanjeRef.current.preostalo > 0) {
             toast.current.show({
               severity: "error",
@@ -560,7 +559,7 @@ const TicProdajaW = forwardRef((props, ref) => {
           const data = await ticDocpaymentService.postTicDocpayments(newArray);
         } else {
           _ticDocpayment.amount = placanjeRef.current.zaUplatu
-          console.log("01 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", _ticDocpayment)
+          // console.log("01 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", _ticDocpayment)
           const data = await ticDocpaymentService.postTicDocpayment(_ticDocpayment);
         }
 
@@ -726,9 +725,9 @@ DRUGI RED
 
 
           {(!props.expandIframe && uidKey == 1) && (
-            <div className="col-3 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 790 }}>
+                <div className="col-12 fixed-height" style={{ height: 760 }}>
                   <TicDocsuidProdajaL
                     key={ticTransactionsKey}
                     ref={docsuidRef}
@@ -746,9 +745,9 @@ DRUGI RED
 
           )}
           {(!props.expandIframe && uidKey == 2) && (
-            <div className="col-3 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 790 }}>
+                <div className="col-12 fixed-height" style={{ height: 760 }}>
                   <TicProdajaPlacanje
                     key={ticTransactionsKey2}
                     ticDoc={ticDoc}
@@ -767,9 +766,9 @@ DRUGI RED
 
           )}
           {(!props.expandIframe && uidKey == 3) && (
-            <div className="col-3 fixed-height" style={{ height: 790 }}>
+            <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 790 }}>
+                <div className="col-12 fixed-height" style={{ height: 760 }}>
                   <TicDocsprintgrpL
                     parameter={"inputTextValue"}
                     ticDoc={props.ticDoc}

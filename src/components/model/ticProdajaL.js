@@ -303,7 +303,7 @@ export default function TicProdajaL(props) {
             //console.log(rowData, "######################################################################################", userId)
             const ticEventService = new TicEventService();
             const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
-            console.log(data, " KANALI KORISNIKA/EVENT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
+            // console.log(data, " KANALI KORISNIKA/EVENT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
             if (data && data.length > 0) {
                 setNumberChannell(data.length);
                 setChannells(data);
@@ -423,7 +423,7 @@ export default function TicProdajaL(props) {
     };
     const newTemplate = (rowData) => {
         const handleNewClick = () => {
-            console.log("Ikona je kliknuta!");
+            // console.log("Ikona je kliknuta!");
             // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
         };
         return (

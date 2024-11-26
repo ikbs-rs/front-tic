@@ -26,7 +26,7 @@ import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import { TicDocdiscountService } from "../../service/model/TicDocdiscountService";
 
 export default function TicTransactionsL(props) {
-    console.log(props.ticDoc)
+    // console.log(props.ticDoc)
     const objectString = String(props.ticDoc);
 
     // console.log("99999999999999999999999999999999999999999999999999999999999")
@@ -153,7 +153,7 @@ export default function TicTransactionsL(props) {
             try {
                 const ticDocpaymentService = new TicDocpaymentService();
                 const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
-console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+// console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 const excludedIds = ['1', '2', '5', '6', '7', '1761685492354912256'];
                 const filteredData = data.filter(item => !excludedIds.includes(item.id));
 
@@ -329,7 +329,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /********************************************************************************/
     const handleUpdateNapDoc = async (newObj) => {
         try {
-            console.log(newObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            // console.log(newObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
             const ticDocService = new TicDocService();
             await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
         } catch (err) {
@@ -391,9 +391,6 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         <div className="field col-12 md:col-4">
 
                             {/* <label htmlFor="iznos">{translations[selectedLanguage].KarteI}</label> */}
-                            <p>
-
-                            </p>
                         </div>
 
                         {/*
@@ -461,7 +458,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const footerArtikalGroup = (
         <ColumnGroup>
             <Row>
-                <Column footer={translations[selectedLanguage].Total} colSpan={7} footerStyle={{ textAlign: 'right' }} />
+                <Column footer={translations[selectedLanguage].Total} colSpan={8} footerStyle={{ textAlign: 'right' }} />
                 <Column footer={potrazujeTotal} />
             </Row>
         </ColumnGroup>
@@ -654,7 +651,7 @@ console.log(data, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
     const handleNapomenaClick = async (e) => {
-console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", e)
+// console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", e)
 
         let _ticDoc = { ...ticDoc || props.ticDoc }
         setTicDoc(_ticDoc)
@@ -682,7 +679,7 @@ console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 
     /*********************************************************************************** */
     return (
-        <div className="fixed-height-tabpanel" style={{ height: "790px" }}>
+        <div className="fixed-height-tabpanel" style={{ height: "770px" }}>
             <Toast ref={toast} />
             <DocZaglavlje
 
@@ -706,7 +703,7 @@ console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                     />
                 </div>
             )} */}
-            <Divider />
+            {/* <Divider /> */}
             <div className="flex-grow-1">
                 <TicDocsKarteL
                     key={refreshKeyK}
@@ -752,7 +749,7 @@ console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
                             <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
                             <InputTextarea
                                 id="opis"
-                                rows={5}
+                                rows={3}
                                 autoResize
                                 style={{ width: '100%' }}
                                 // cols={100}

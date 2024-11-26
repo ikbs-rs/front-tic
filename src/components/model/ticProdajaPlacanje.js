@@ -7,7 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputSwitch } from "primereact/inputswitch";
 
 const TicProdajaPlacanje = forwardRef((props, ref) => {
-    console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+    // console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
     const [categories, setCategories] = useState([]); // Inicijalizacija kao prazan niz
     const [selectedCategory, setSelectedCategory] = useState(null);
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -60,7 +60,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 if (foundCategory) {
                     setSelectedCategory(foundCategory);
                 }
-                console.log(pId, _ticDoc, "3333333333333LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", data)
+                // console.log(pId, _ticDoc, "3333333333333LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", data)
                 const iznos = await ticDocService.getDocZbirniiznosP(pId);
                 const stavkePlacanja = await ticDocService.getDocPaymentS(pId);
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
@@ -94,7 +94,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     const handleUpdateTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj;
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue);
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue);
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -116,7 +116,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
 
     const handlePayClic = async (value) => {
         setIzborMesovito(false)
-        console.log(value, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        // console.log(value, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         if (value.code == 'X') {
             let uplaceno = kes + kartica + cek
             setIzborMesovito(true)

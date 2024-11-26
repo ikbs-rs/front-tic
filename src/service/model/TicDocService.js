@@ -17,9 +17,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************", url)
+      //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
-      console.log("**********TicDocService*************", response.data)
+      //console.log("**********TicDocService*************", response.data)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -36,9 +36,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************", url)
+      //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
-      console.log("**********TicDocService*************", response.data)
+      //console.log("**********TicDocService*************", response.data)
       const rezultat = response.data.item || response.data.items;
       return rezultat;
     } catch (error) {
@@ -59,9 +59,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************", url)
+      //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
-      console.log("**********TicDocService*************", response.data)
+      //console.log("**********TicDocService*************", response.data)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -81,9 +81,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************", url)
+      //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
-      console.log("33333LLLLL", response.data)
+      //console.log("33333LLLLL", response.data)
       const rezultat = response.data.item || response.data.items
       return rezultat[0];
     } catch (error) {
@@ -101,9 +101,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********TicDocService*************", url)
+      //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
-      console.log("**********TicDocService*************", response.data)
+      //console.log("**********TicDocService*************", response.data)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -120,9 +120,9 @@ export class TicDocService {
     };
 
     try {
-      console.log("**********getDocCountPay*************", url)
+      //console.log("**********getDocCountPay*************", url)
       const response = await axios.get(url, { headers });
-      console.log("**********getDocCountPay*************", response.data)
+      //console.log("**********getDocCountPay*************", response.data)
       return response.data.item;
     } catch (error) {
       console.error(error);
@@ -139,7 +139,7 @@ export class TicDocService {
     };
 
     try {
-      ////console.log("**********TicDocService*************",url)
+      //////console.log("**********TicDocService*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -157,7 +157,7 @@ export class TicDocService {
     };
 
     try {
-      //console.log("**********getTransactionLista*************",url)
+      ////console.log("**********getTransactionLista*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -175,7 +175,7 @@ export class TicDocService {
     };
 
     try {
-      //console.log("**********getTransactionLista*************",url)
+      ////console.log("**********getTransactionLista*************",url)
       const response = await axios.get(url, { headers });
       return response.data.item;
     } catch (error) {
@@ -188,7 +188,7 @@ export class TicDocService {
 
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-    console.log(url, "HHHHH 01111111000000000000000000000000000000000000000 ******************************************************************")
+    //console.log(url, "HHHHH 01111111000000000000000000000000000000000000000 ******************************************************************")
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token
@@ -321,7 +321,7 @@ export class TicDocService {
     try {
       const response = await axios.get(url, { headers });
       const rezultat = response.data.item || response.data.items
-      console.log(response.data, "getTicDocPLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+      //console.log(response.data, "getTicDocPLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
       return rezultat[0];
     } catch (error) {
       console.error(error);
@@ -340,7 +340,7 @@ export class TicDocService {
     try {
       const response = await axios.get(url, { headers });
       const rezultat = response.data.item || response.data.items
-      console.log(response.data, "getTicDocPLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+      //console.log(response.data, "getTicDocPLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
       return rezultat[0];
     } catch (error) {
       console.error(error);
@@ -350,7 +350,7 @@ export class TicDocService {
 
   async postTicDoc(newObj) {
     try {
-      //console.log(newObj, "@ 00 @@@@ postTicDoc @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      ////console.log(newObj, "@ 00 @@@@ postTicDoc @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (!newObj?.provera && (newObj?.date.broj() === '')) {
         throw new Error(
@@ -365,7 +365,7 @@ export class TicDocService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      //console.log("###################***response.data.items***********"  , response.data.items, "****************#######################")
+      ////console.log("###################***response.data.items***********"  , response.data.items, "****************#######################")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -389,7 +389,7 @@ export class TicDocService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
-      console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD*555555555555555555550000#################", jsonObj, "****************")
+      //console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD*555555555555555555550000#################", jsonObj, "****************")
       const response = await axios.put(url, jsonObj, { headers });
       // console.log("5555555555555555555551111**************"  , response, "****************")
       return response.data.items;
@@ -989,9 +989,9 @@ export class TicDocService {
     }
 
     try {
-      console.log("**********TicDocService*************", url);
+      //console.log("**********TicDocService*************", url);
       const response = await axios.get(url, { headers });
-      console.log("Response data: ", response.data);
+      //console.log("Response data: ", response.data);
 
       const pdfUrl = response.data.item;
 
@@ -1017,21 +1017,21 @@ export class TicDocService {
         'Authorization': tokenLocal.token
       };
 
-      console.log(docId, "01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+      //console.log(docId, "01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
       const response = await axios.post(url, {}, { headers });
 
       const data =  response.data.item||response.data.item;
       if (Array.isArray(data)) {
         const ticEventattsService = new TicEventattsService();
         for (const item of data) {
-          console.log(item.event, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+          //console.log(item.event, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
           const objId = item.event; 
   
           const brojKartiLista = await ticEventattsService.getCodeValueListaP(objId, '01.06.');
           const brojKarti = brojKartiLista[0]
           const kupciBrojKarti = await this.getTicDocEventKupacBrojKartiP(objId);
           for (const row of kupciBrojKarti) {
-            console.log(row, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
+            //console.log(row, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
             
           }
         }

@@ -110,7 +110,7 @@ export default function TicTransactionsL(props) {
 
                     const updatedData = await Promise.all(promisesDD);
                     /**************************************************************************** */
-                    console.log(updatedData, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", data)
+                    // console.log(updatedData, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", data)
                     setTicDocss(updatedData);
                     setDdCenaItems(updatedCenaItems);
                     // initFilters();
@@ -242,7 +242,7 @@ export default function TicTransactionsL(props) {
 
     const handleUpdateIspTicDoc = async (newObj) => {
         try {
-            console.log(newObj, "handleUpdateTicDoc 4444444444444444444444444444444444444444444444444")
+            // console.log(newObj, "handleUpdateTicDoc 4444444444444444444444444444444444444444444444444")
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -378,11 +378,11 @@ export default function TicTransactionsL(props) {
         } else {
             rowData.cena = e.value?.code;
             val = (e.target && e.target.value && e.target.value?.code) || '';
-            console.log(val, "00-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", rowData)
+            // console.log(val, "00-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", rowData)
             await setDdCenaItem(e.value);
             dataDDs = ddCenaItems[rowData.id];
             dataDD = dataDDs.find((row) => row.id === rowData.cena);
-            console.log(dataDD, "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataDDs);
+            // console.log(dataDD, "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataDDs);
         }
 
         const updatedTicDocss = [...ticDocss];
@@ -402,7 +402,7 @@ export default function TicTransactionsL(props) {
             updatedTicDocss[rowIndex][`price`] = dataDD.value
             updatedTicDocss[rowIndex][`potrazuje`] = updatedTicDocss[rowIndex][`output`] * dataDD.value
         }
-        console.log(updatedTicDocss[rowIndex], "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+        // console.log(updatedTicDocss[rowIndex], "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
         setRefesh(++refresh)
         props.remoteRefresh()
@@ -474,7 +474,7 @@ export default function TicTransactionsL(props) {
 
                 if (ddCenaItem) {
                     const dropdownValue = ddCenaItem.find((item) => item.code == rowData.cena);
-                    console.log(JSON.stringify(dropdownValue), "Dropdown value found:", rowData.id);
+                    // console.log(JSON.stringify(dropdownValue), "Dropdown value found:", rowData.id);
 
                     if (dropdownValue) {
                         return <span>{dropdownValue.name}</span>;
@@ -553,7 +553,7 @@ export default function TicTransactionsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
+            // console.log(rowData, "00***********updateDataInDatabase************!!!!!!!!!!!!!!!!!!!!!", rowData.value)
             rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(rowData);
@@ -566,7 +566,7 @@ export default function TicTransactionsL(props) {
 
     const deleteDataInDatabase = async (rowData) => {
         try {
-            console.log(rowData, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL")
+            // console.log(rowData, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL")
             rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.deleteTicDocs(rowData);
@@ -590,7 +590,7 @@ export default function TicTransactionsL(props) {
 
     };
     const stornoBodyTemplate = (rowData) => {
-        console.log(rowData, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+        // console.log(rowData, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
         const setParentTdBackground = (element) => {
             const parentTd = element?.parentNode;
             if (parentTd) {
@@ -598,7 +598,7 @@ export default function TicTransactionsL(props) {
             }
         };
         const handleClick = () => {
-            console.log("Ikona je kliknuta!");
+            // console.log("Ikona je kliknuta!");
             // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
         };
         return (
@@ -651,7 +651,7 @@ export default function TicTransactionsL(props) {
         const updatedTicDocss = [...ticDocss];
 
         const rowIndex = await updatedTicDocss.findIndex((row) => row.id === rowData.id);
-        console.log(rowData.id, "DELDELDELDELDELDELDELDELDELDELDELDELDELDEL", rowIndex, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL", name)
+        // console.log(rowData.id, "DELDELDELDELDELDELDELDELDELDELDELDELDELDEL", rowIndex, "DELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDEL", name)
         updatedTicDocss[rowIndex][`${name}`] = val;
         delete updatedTicDocss[rowIndex].vreme;
         if (name == 'del') {
@@ -747,8 +747,8 @@ export default function TicTransactionsL(props) {
                 showGridlines
                 removableSort
                 scrollable
-                scrollHeight="350px"
-                tableStyle={{ minWidth: "50rem" }}
+                scrollHeight="380px"
+                // tableStyle={{ minWidth: "50rem" }}
                 metaKeySelection={false}
                 rows={10}
                 onSelectionChange={(e) => setTicDocs(e.value)}

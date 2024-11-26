@@ -135,7 +135,7 @@ export async function fetchObjData(...args) {
                            // console.log("******************* CODE PAR ***************************", url);
                         }
                     } else if (`${args[0]}_${args[1]}` == 'tic_event') {
-                        url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdd_v&objid=${obj.id}&par1=${args[2]}&sl=${selectedLanguage}`;
+                        url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdds_v&objid=${obj.id}&par1=${args[2]}&sl=${selectedLanguage}`;
                         console.log("******************* CODE TIC EVENT ***************************", url);
                     }
 
@@ -147,7 +147,7 @@ export async function fetchObjData(...args) {
         const headers = {
             Authorization: tokenLocal.token
         };
-        console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
+        // console.log(url, "**!!**************!!!!********************URL*******************!!!!!*****************")
         const response = await axios.get(url, { headers, timeout });
         const datas = response.data.items || response.data.item || [];
         // const items = datas.map(({ text, id }) => ({ name: text, code: id }));
