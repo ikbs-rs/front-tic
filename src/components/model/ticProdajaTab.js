@@ -108,12 +108,26 @@ export default function TicProdajaTab(props) {
     const [zbirzbirniiznos, setZbirniiznos] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [paying, setPaying] = useState(0);
-    useEffect(() => {
-   
-            // console.log(ticDoc, "##################################################################################################################");
-            // Logika za rukovanje plaćanjem
+    const [reservationStatus, setReservationStatus] = useState(0);
 
-    }, [paying]);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                if (ticDoc.reservation == 1) {
+                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
+                    const now = moment(); 
+                
+                    if (endDate.isAfter(now)) { 
+                        setReservationStatus(1);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticDoc]);
     
     /********************************************************************************/
     const handleTabZaglavlje = (_ticDoc) => {
@@ -573,29 +587,30 @@ export default function TicProdajaTab(props) {
         return (
             <>
 
-                <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+                {/* <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="rezervacija" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Rezervacija}</label>
                     <InputSwitch id="rezervacija" checked={checkedRezervacija} onChange={(e) => handleChangeRezervacija(e.value)}
                         tooltip={translations[selectedLanguage].RezervisiKarteKupca}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                        disabled={ticDoc.statuspayment == 1}
+                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
                 </div>
+                */}
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="isporuka" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Isporuka}</label>
                     <InputSwitch id="isporuka" checked={checkedIsporuka} onChange={(e) => handleChangeIsporuka(e.value)}
                         ref={deliveryRef}
                         tooltip={translations[selectedLanguage].OmoguciIsporukuKupcu}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                        disabled={ticDoc.statuspayment == 1}
+                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
-                </div>
+                </div> 
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
                     <InputSwitch id="naknade" checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)}
                         tooltip={translations[selectedLanguage].OmoguciNaknada}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                        disabled={ticDoc.statuspayment == 1}
+                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
                 </div>
                 {/* <>
@@ -652,7 +667,7 @@ export default function TicProdajaTab(props) {
                             onClick={remountComponent} raised
                             tooltip={translations[selectedLanguage].SelektujSedsteSamape}
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                            disabled={ticDoc.statuspayment == 1}
+                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                         />
                     </div>
                     {/* <div className="flex flex-wrap gap-1" >
@@ -677,7 +692,7 @@ export default function TicProdajaTab(props) {
                             style={{ width: '40px' }}
                             tooltip={translations[selectedLanguage].OstalaPlacanja}
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                            disabled={ticDoc.statuspayment == 1}
+                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                         />
                     </div>
                     {/* <div className="flex flex-wrap gap-1" raised>
@@ -728,7 +743,7 @@ export default function TicProdajaTab(props) {
                         severity="warning" raised style={{ width: '40px' }}
                         tooltip={translations[selectedLanguage].ProsiriMapu}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                        disabled={ticDoc.statuspayment == 1}
+                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
                     {/* <Button icon={expandStavke ? "pi pi-angle-double-right" : "pi pi-angle-double-left"} onClick={toggleStavkeExpansion}
                         severity="warning" raised style={{ width: '40px' }}
@@ -741,7 +756,7 @@ export default function TicProdajaTab(props) {
                             onClick={handleCancelSales} severity="danger" raised
                             tooltip={translations[selectedLanguage].OdustaniOdKupovine}
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                            disabled={ticDoc.statuspayment == 1}
+                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                         />
                     </div>
                     <div>

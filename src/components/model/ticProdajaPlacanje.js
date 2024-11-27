@@ -5,13 +5,14 @@ import { translations } from "../../configs/translations";
 import { TicDocService } from "../../service/model/TicDocService";
 import { InputText } from 'primereact/inputtext';
 import { InputSwitch } from "primereact/inputswitch";
+import moment from "moment";
 
 const TicProdajaPlacanje = forwardRef((props, ref) => {
     // console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
     const [categories, setCategories] = useState([]); // Inicijalizacija kao prazan niz
     const [selectedCategory, setSelectedCategory] = useState(null);
     const selectedLanguage = localStorage.getItem('sl') || 'en';
-    const [ticDoc, setTicDoc] = useState(props.ticDoc?.id?props.ticDoc:ticDoc);
+    const [ticDoc, setTicDoc] = useState(props.ticDoc?.id ? props.ticDoc : ticDoc);
     const [zaUplatu, setZaUplatu] = useState(0);
     const [preostalo, setPreostalo] = useState(0);
     const [kes, setKes] = useState(0);
@@ -22,6 +23,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     const [karticaTp, setKarticaTp] = useState(0);
     const [izborMesovito, setIzborMesovito] = useState(false);
     const [checkedPrintfiskal, setCheckedPrintfiskal] = useState(ticDoc?.printfiskal == "1" || false);
+    const [reservationStatus, setReservationStatus] = useState(0);
 
     useImperativeHandle(ref, () => ({
         kes,
@@ -39,7 +41,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         async function fetchData() {
             try {
                 const ticDocService = new TicDocService();
-                const pId = props.ticDoc?.id?props.ticDoc.id:ticDoc?.id
+                const pId = props.ticDoc?.id ? props.ticDoc.id : ticDoc?.id
                 const _ticDoc = await ticDocService.getTicDocP(pId);
                 // const _ticDoc = await ticDocService.getTicDoc(props.ticDoc.id);
 
@@ -91,6 +93,25 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         fetchData();
     }, [props.ticDoc]);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                if (ticDoc.reservation == 1) {
+                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
+                    const now = moment(); 
+                
+                    if (endDate.isAfter(now)) { 
+                        setReservationStatus(1);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticDoc]);
+
     const handleUpdateTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj;
         try {
@@ -136,6 +157,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         await handleUpdateTicDoc(_ticDoc, previousValue);
         setSelectedCategory(value);
         await props.handlePlacanjetip(_ticDoc.paymenttp);
+        setTicDoc(_ticDoc)
     };
 
     const onInputChange = (e, type, name) => {
@@ -166,7 +188,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                                     <label htmlFor="kes">{translations[selectedLanguage].Kes}</label>
                                     <InputText id="kes" autoFocus
                                         value={kes} onChange={(e) => onInputChange(e, "text", 'kes')}
-                                        disabled={ticDoc.status == 2}
+                                        disabled={ticDoc.statuspayment == 1}
                                     />
                                 </div>
                                 <div className="field col-12 md:col-7">
@@ -174,7 +196,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                                     <InputText
                                         id="kartica"
                                         value={kartica} onChange={(e) => onInputChange(e, "text", 'kartica')}
-                                        disabled={ticDoc.status == 2}
+                                        disabled={ticDoc.statuspayment == 1}
                                     />
                                 </div>
                                 <div className="field col-12 md:col-7">
@@ -182,7 +204,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                                     <InputText
                                         id="cek"
                                         value={cek} onChange={(e) => onInputChange(e, "text", 'cek')}
-                                        disabled={ticDoc.status == 2}
+                                        disabled={ticDoc.statuspayment == 1}
                                     />
                                 </div>
                             </div>
@@ -233,9 +255,9 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 <div className="grid grid-nogutter">
                     <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                         <label htmlFor="printfiskal" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Printfiskal}</label>
-                        <InputSwitch id="printfiskal" 
+                        <InputSwitch id="printfiskal"
                             value={ticDoc.printfiskal}
-                            checked={checkedPrintfiskal} 
+                            checked={checkedPrintfiskal}
                             onChange={(e) => handleChangePrintfiskal(e.value)}
                             tooltip={translations[selectedLanguage].Printfiskal}
                             disabled={ticDoc.statuspayment == 1}

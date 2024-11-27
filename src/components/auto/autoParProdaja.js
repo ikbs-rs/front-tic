@@ -198,14 +198,14 @@ const AutoParProdaja = (props) => {
                     onChange={(e) => onInputChange(e, "auto", 'par')}
                     itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
                     placeholder="Pretraži"
-                    disabled={ticDoc.statuspayment == 1}
+                    disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
                 />
-                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button"  disabled={ticDoc.statuspayment == 1}/>
+                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button"  disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}/>
                 <InputText
                     id="npar"
                     value={ticDoc.npar}
                     required
-                    disabled={ticDoc.statuspayment == 1}
+                    disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
                 />
             </div>
             {/* </div> */}

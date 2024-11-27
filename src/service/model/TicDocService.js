@@ -222,7 +222,7 @@ export class TicDocService {
   }
 
   async getTicListaByItemIdP(view, item, objId) {
-
+// console.log(view, item, objId, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.PROD_BACK_URL}/prodaja/?stm=${view}&item=${item}&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -470,6 +470,7 @@ export class TicDocService {
   }
 
   async getCmnPaymenttps() {
+    console.log( "0000-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/paymenttp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -1044,6 +1045,30 @@ export class TicDocService {
     }
 
   }
+
+
+  async setReservation(newDoc) {
+    try {
+      console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", newDoc, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_setreservation_s&objId1=${newDoc.id}&par1=${newDoc.endtm}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      const response = await axios.post(url, {}, { headers });
+
+      return response.data.items||response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
 
 }
 

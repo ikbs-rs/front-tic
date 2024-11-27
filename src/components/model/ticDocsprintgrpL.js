@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import moment from "moment";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { TicDocsService } from "../../service/model/TicDocsService";
@@ -13,7 +14,7 @@ import DateFunction from "../../utilities/DateFunction"
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 
 export default function TicDocsprintgrpL(props) {
-  console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
+  // console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
 
   const objName = "tic_stampa"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -36,6 +37,7 @@ export default function TicDocsprintgrpL(props) {
 
   let [refresh, setRefresh] = useState(null);
   const [componentKey, setComponentKey] = useState(0);
+  const [reservationStatus, setReservationStatus] = useState(0);
 
   const [refCode, setRefCode] = useState(props.loctpCode || -1);
 
@@ -79,6 +81,7 @@ export default function TicDocsprintgrpL(props) {
         console.log(data, "QQQQ-5555555555555555555555555555555555555555555555555555555555555555555")
         // const data = await ticDocService.getTicDoc(props.ticDoc?.id);
         setTicDoc(data);
+
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -86,6 +89,25 @@ export default function TicDocsprintgrpL(props) {
     }
     fetchData();
   }, [props.ticDoc]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (ticDoc.reservation == 1) {
+          const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss');
+          const now = moment();
+
+          if (endDate.isAfter(now)) {
+            setReservationStatus(1);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [ticDoc]);
 
   const handlePrintClick = async () => {
     handlePrintSt(1);
@@ -180,7 +202,8 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrintClick}
             severity="warning"
             // text
-            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
+            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
+
             raised />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -188,7 +211,7 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrintCopyClick}
             severity="success"
             // text
-            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
+            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
             raised />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -196,7 +219,7 @@ export default function TicDocsprintgrpL(props) {
             icon="pi pi-print" onClick={handlePrint2Click}
             severity="success"
             // text
-            disabled={ticDoc?.status != 2 ? ticDoc?.delivery != 1 ? true : false : false}
+            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
             raised />
         </div>
         {/* <div className="flex-grow-1"></div>

@@ -18,6 +18,7 @@ import TicProdajaPlacanje from "./ticProdajaPlacanje";
 import { Toast } from 'primereact/toast';
 import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
+import moment from "moment";
 
 const TicProdajaW = forwardRef((props, ref) => {
   // console.log(props, "######2222222222222222222222222222222222222222222222222222222222222222")
@@ -54,13 +55,26 @@ const TicProdajaW = forwardRef((props, ref) => {
   const placanjeRef = useRef();
   const docsuidRef = useRef();
   const [paying, setPaying] = useState(0);
+  const [reservationStatus, setReservationStatus] = useState(0);
 
   useEffect(() => {
-
-    // console.log(ticDoc, "##XXXX################################################################################################################");
-    // Logika za rukovanje plaćanjem
-
-  }, [paying]);
+    async function fetchData() {
+        try {
+            if (ticDoc.reservation == 1) {
+                const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
+                const now = moment(); 
+            
+                if (endDate.isAfter(now)) { 
+                    setReservationStatus(1);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            // Obrada greške ako je potrebna
+        }
+    }
+    fetchData();
+}, [ticDoc]);
 
 
   /************************************************************************************ */
@@ -467,28 +481,26 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleRezTicDoc = async () => {
-    // console.log("00.0 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
-    // console.log(ticEvent?.id, props.channell?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    console.log("00.0 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const ticEventattsService = new TicEventattsService()
     const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
 
     const vremeRezervacije = DateFunction.currDatetimePlusHours(eventAtt?.text)
     const previousValue = { ...ticDoc }
     let _ticDoc = { ...ticDoc }
-    // console.log(vremeRezervacije, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    const endTm = DateFunction.toDatetime(_ticDoc.endtm) + vremeRezervacije
+    // const endTm = DateFunction.toDatetime(_ticDoc.endtm) + vremeRezervacije
     _ticDoc.endtm = vremeRezervacije
-    // console.log(_ticDoc.endtm, "$33  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    console.log("00.1 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", _ticDoc.endtm)
 
-    _ticDoc.reservation = `1`
+    _ticDoc.reservation = 1
     _ticDoc.status = 1
     try {
-      // console.log(_ticDoc, "handleUpdateTicDoc XXXX0005555555555555555555555555555555555555555555555555555555555", vremeRezervacije)
       const ticDocService = new TicDocService();
-      await ticDocService.putTicDoc(_ticDoc);
+      await ticDocService.setReservation(_ticDoc);
       setTicDoc(_ticDoc)
-      setUidKey(++uidKey)
+      setUidKey(prev => prev + 1)
       // props.handleRezervaciju(true)
+      props.handleTabZaglavlje(_ticDoc)
       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Rezervacija izvrsena', life: 2000 });
     } catch (err) {
       setTicDoc(previousValue)
@@ -603,7 +615,7 @@ PRVI RED
                   <Button label={translations[selectedLanguage].Back}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleBackClic(e)}
-                    disabled={uidKey === 0 || (ticDoc.statuspayment == 1 && uidKey === 1)}
+                    disabled={uidKey === 0 || ((ticDoc.statuspayment == 1||reservationStatus==1) && uidKey === 1)}
                   />
                 </div>
               )}
@@ -620,13 +632,12 @@ PRVI RED
                   <Button label={translations[selectedLanguage].Next}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleNextClic(e, uidKey)}
-                    disabled={uidKey === 3||uidKey === 2&&ticDoc.statuspayment == 1}
+                    disabled={uidKey === 3||uidKey === 2&&(ticDoc.statuspayment == 1||reservationStatus==1) }
                   />
 
                 </div>
               )}
               {(uidKey == 2 && ticDoc.status != 2) && (
-                <>
                   <div className="col-3">
                     <Button label={translations[selectedLanguage].Payment}
                       severity="warning" raised style={{ width: '100%' }}
@@ -635,6 +646,8 @@ PRVI RED
                     />
 
                   </div>
+                )}
+                {(uidKey == 2 && ticDoc.status != 2 && reservationStatus!=1) && (                  
                   <div className="col-3">
                     <Button label={translations[selectedLanguage].Rezervacija}
                       severity="secondary" raised style={{ width: '100%' }}
@@ -643,9 +656,8 @@ PRVI RED
                     />
 
                   </div>
-                </>
               )}
-              {(uidKey == 3 && ticDoc.status != 2) && (
+              {((uidKey == 3 && ticDoc.status != 2) || reservationStatus==1) && (
                 <>
                   <div className="col-3">
                     <Button label={translations[selectedLanguage].ZavrsiKupovinu}
