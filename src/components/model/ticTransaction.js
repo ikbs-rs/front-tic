@@ -1509,6 +1509,7 @@ export default function TicDocdeliveryL(props) {
           handleNetoIznos={handleNetoIznos}
           handlePopustIznos={handlePopustIznos}
           handleBrojIznos={handleBrojIznos}
+          handleFirstColumnClick={handleFirstColumnClick}
           zaUplatu={zaUplatu}
         />
       </div>

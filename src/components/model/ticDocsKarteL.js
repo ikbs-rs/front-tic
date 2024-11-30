@@ -75,9 +75,22 @@ export default function TicTransactionsL(props) {
 
     const mapa = (props.mapa == 1) ? 5 : 7
     const isSelectable = (data) => data.docstorno != 1;
+    
     const isRowSelectable = (event) =>
         event.data ? isSelectable(event.data) : true;
-    const rowClassName = (data) => (isSelectable(data) ? "" : "p-disabled");
+
+    const isDisabled = (data) => {
+        let ok = false
+        if (data.docstorno == 1) {
+            ok = true
+        }
+        if (props.ticDoc?.statustransakcije == 12 || props.ticDoc?.statustransakcije == 20 || props.ticDoc?.status == 2) {
+            ok = true
+        }
+        return ok
+    }
+
+    const rowClassName = (data) => (isDisabled(data) ? "p-disabled" : "" );
 
     useEffect(() => {
         // const abortController = new AbortController();

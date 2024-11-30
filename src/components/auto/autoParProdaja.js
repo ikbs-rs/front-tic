@@ -13,8 +13,8 @@ const AutoParProdaja = (props) => {
 // console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const _ticDoc = {...props.ticDoc}
-    _ticDoc.cpar = props.cmnPar.code
-    _ticDoc.npar = props.cmnPar.textx
+    _ticDoc.cpar = props.cmnPar?.code
+    _ticDoc.npar = props.cmnPar?.textx
     const [ticDoc, setTicDoc] = useState(_ticDoc);
     const [filteredPars, setFilteredPars] = useState([]);
     const [showMyComponent, setShowMyComponent] = useState(true);

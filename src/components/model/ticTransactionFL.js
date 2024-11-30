@@ -1096,6 +1096,14 @@ export default function TicTransactionFL(props) {
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
                 ></Column>
+                <Column
+                    field="statustransakcije"
+                    header={translations[selectedLanguage].Status}
+                    filter
+                    dataType="numeric"
+                    style={{ width: "5%" }}
+                    bodyStyle={{ textAlign: 'center' }}
+                ></Column>                
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog

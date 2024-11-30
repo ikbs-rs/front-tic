@@ -13,6 +13,7 @@ const env = {
     PROD1_BACK_URL: 'https://188.93.122.138/prod1',
     PROD2_BACK_URL: 'https://188.93.122.138/prod2',
     PROD3_BACK_URL: 'https://188.93.122.138/prod3',
+    FISC_BACK_URL: 'https://188.93.122.138/bsal/',
   };
   
   export default env;

@@ -520,7 +520,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   /********************************************************************************/
   const handlePayTicDoc = async () => {
     try {
-      // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+      console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
@@ -589,6 +589,7 @@ const TicProdajaW = forwardRef((props, ref) => {
         props.handleTabZaglavlje(_ticDoc)
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 1500 });
         setUidKey(++uidKey)
+        handleAllRefresh(prev => prev + 1)
       }
     } catch (err) {
       toast.current.show({

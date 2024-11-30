@@ -158,6 +158,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         setSelectedCategory(value);
         await props.handlePlacanjetip(_ticDoc.paymenttp);
         setTicDoc(_ticDoc)
+        props.handleAllRefresh(prev => prev + 1)
     };
 
     const onInputChange = (e, type, name) => {

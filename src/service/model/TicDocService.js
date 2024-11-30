@@ -5,6 +5,7 @@ import { PDFDocument } from 'pdf-lib';
 import { TicStampaService } from "../../service/model/TicStampaService";
 import { TicEventattsService } from "../../service/model/TicEventattsService";
 import DateFunction from '../../utilities/DateFunction';
+import { PDFHtmlDownloader } from '../../components/model/00a'
 
 export class TicDocService {
 
@@ -513,7 +514,7 @@ export class TicDocService {
     };
 
     try {
-      //console.log(url, "***************getIdByItem*******************")
+      console.log(url, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHgetIdByItemHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.get(url, { headers });
       return response.data.items || response.data.item;
     } catch (error) {
@@ -722,22 +723,33 @@ export class TicDocService {
     const headers = {
       Authorization: tokenLocal.token
     };
-
+console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
     try {
       const response = await axios.get(url, { headers });
       // poziv servera za stampu fiskala -- response.data.item
       
       const invoiceRequest = response.data.item;
       const print = false;
-      const email = 'zivkovic.marko@hotmail.com';
+      const email = 'bobanmvasiljevic@gmail.com';
       
       const payload = {
         print,
         email,
         invoiceRequest
     };
-    console.log(payload, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-    // const invoiceResponse = await axios.post(`${process.env.REACT_APP_REST_BACK_URL}/fiskalni-racun-esir`, payload);
+    const fisUrl = `${env.FISC_BACK_URL}fiskalni-racun-esir`
+    console.log(payload, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", fisUrl)
+    // const invoiceResponse = await axios.post(`${process.env.FISC_BACK_URL}/fiskalni-racun-esir`, payload);
+    const invoiceResponse = await axios({
+      method: 'post',
+      url: fisUrl,
+      data: payload,
+      headers: {
+        Authorization: tokenLocal.token,
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(invoiceResponse, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
       return true; //response.data.item;
     } catch (error) {
       console.error(error);
@@ -778,7 +790,7 @@ export class TicDocService {
 
     const baseUrl = `${env.DOMEN}/sal/print-tickets`;
     const urlWithToken = `${baseUrl}?token=${tokenLocal.token}`;
-    // console.log(urlWithToken, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    console.log(urlWithToken, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     try {
       const response = await fetch(urlWithToken);
 
@@ -876,6 +888,7 @@ export class TicDocService {
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none'; // Skrivamo iframe
     iframe.src = urlWithToken;
+    console.log(urlWithToken, "########################################################################################################")
     fetchAndPrintPdf2(urlWithToken)
 
     const ticStampaService = new TicStampaService();

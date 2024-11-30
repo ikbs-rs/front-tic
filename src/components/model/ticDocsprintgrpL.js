@@ -12,6 +12,7 @@ import { Toast } from 'primereact/toast';
 import { TicDocService } from "../../service/model/TicDocService";
 import DateFunction from "../../utilities/DateFunction"
 import { EmptyEntities } from '../../service/model/EmptyEntities';
+import PDFHtmlDownloader  from './00a'
 
 export default function TicDocsprintgrpL(props) {
   // console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
@@ -244,6 +245,7 @@ export default function TicDocsprintgrpL(props) {
             text raised
           />
         </div> */}
+        <PDFHtmlDownloader ticket={[17328143866878232076]} />
       </div>
     );
   };

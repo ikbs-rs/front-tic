@@ -118,6 +118,8 @@ export default function TicProdajaTab(props) {
                     const now = moment(); 
                 
                     if (endDate.isAfter(now)) { 
+                        setReservationStatus(0);
+                    } else {
                         setReservationStatus(1);
                     }
                 }
@@ -528,7 +530,7 @@ export default function TicProdajaTab(props) {
             _ticDoc.timecreation = _ticDoc.tm
             _ticDoc.date = DateFunction.currDate();
             _ticDoc.year = DateFunction.currYear()
-            _ticDoc.usr = cmnPar.id;
+            _ticDoc.usr = 1 //cmnPar.id;
             _ticDoc.docvr = 22;
             _ticDoc.usersys = localStorage.getItem('userId')
             _ticDoc.curr = 1;
@@ -602,7 +604,8 @@ export default function TicProdajaTab(props) {
                         ref={deliveryRef}
                         tooltip={translations[selectedLanguage].OmoguciIsporukuKupcu}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                        disabled={true}
+                        // disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
                 </div> 
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>

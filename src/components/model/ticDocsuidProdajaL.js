@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import moment from "moment";
+import axios from 'axios';
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
+import { Dropdown } from 'primereact/dropdown';
 import { TicEventattsService } from "../../service/model/TicEventattsService";
 import { TicDocsuidService } from "../../service/model/TicDocsuidService";
 import { TicDocsdiscountService } from "../../service/model/TicDocsdiscountService";
@@ -23,6 +25,7 @@ import { TicDocdeliveryService } from "../../service/model/TicDocdeliveryService
 import Token from "../../utilities/Token";
 import AutoParProdaja from '../auto/autoParProdaja';
 import { classNames } from 'primereact/utils';
+import env from "../../configs/env"
 
 // import Worker from 'worker-loader!../../workers/docuidWorker.js';
 
@@ -37,6 +40,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const objTicDocsdiscount = "tic_docsdiscount";
     const emptyTicDocsdiscount = EmptyEntities[objTicDocsdiscount];
     const emptyTicDocdelivery = EmptyEntities[objTicDocdelivery];
+    // emptyTicDocdelivery.id = props.ticDoc.id;
     emptyTicDocdelivery.doc = props.ticDoc.id;
     emptyTicDocdelivery.status = '1';
     emptyTicDocdelivery.usr = userId;
@@ -47,7 +51,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const emptyTicEvent = EmptyEntities[objName];
     const emptyCmnPar = EmptyEntities[objCmnPar];
     const [cmnPar, setCmnPar] = useState(emptyCmnPar);
-    const [ticDocdelivery, setTicDocdelivery] = useState(emptyCmnPar)
+    const [ticDocdelivery, setTicDocdelivery] = useState(emptyTicDocdelivery)
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocsuids, setTicDocsuids] = useState([]);
     const [_ticDocsuids, set_ticDocsuids] = useState([]);
@@ -76,6 +80,11 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const [requiredFields, setRequiredFields] = useState([]);
     const [reservationStatus, setReservationStatus] = useState(0);
 
+    const [ddTicDocdeliveryterrItem, setDdTicDocdeliveryterrItem] = useState(null);
+    const [ddTicDocdeliveryterrItems, setDdTicDocdeliveryterrItems] = useState(null);
+    const [ticDocdeliveryterrItem, setTicDocdeliveryterrItem] = useState(null);
+    const [ticDocdeliveryterrItems, setTicDocdeliveryterrItems] = useState(null);
+
     let brojReda = 0
 
     useImperativeHandle(ref, () => ({
@@ -86,10 +95,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         async function fetchData() {
             try {
                 if (ticDoc.reservation == 1) {
-                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
-                    const now = moment(); 
-                
-                    if (endDate.isAfter(now)) { 
+                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss');
+                    const now = moment();
+
+                    if (endDate.isAfter(now)) {
                         setReservationStatus(1);
                     }
                 }
@@ -165,6 +174,37 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         fetchData();
     }, [props.ticDoc.id, refresh]);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const url = `${env.CMN_BACK_URL}/cmn/x/terr/?sl=${selectedLanguage}`;
+                const tokenLocal = await Token.getTokensLS();
+                const headers = {
+                    Authorization: tokenLocal.token
+                };
+
+                const response = await axios.get(url, { headers });
+                const data = response.data.items || response.data.item;
+                console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+                setTicDocdeliveryterrItems(data)
+                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                setDdTicDocdeliveryterrItems(dataDD);
+                setDdTicDocdeliveryterrItem(dataDD.find((item) => item.code === ticDocdelivery.country) || null);
+                if (ticDocdelivery.country) {
+                    const foundItem = data.find((item) => item.id === ticDocdelivery.country);
+                    setTicDocdeliveryterrItem(foundItem || null);
+                    // ticDocdelivery.cterr = foundItem.code
+                    // ticDocdelivery.vterr = foundItem.textx
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [props.ticDoc, refresh, ticDocdelivery]);
+
     const handelUnitSubbmitted = (itemUnit) => {
         //     console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
@@ -172,7 +212,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         for (const field of requiredFields) {
             // console.log(field, "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", itemUnit)
             const item = ticDocsuids.find(doc => doc.id === field.id); // Nađi odgovarajući dokument u ticDocsuids
-            if (!item||itemUnit.id!=field.id) {
+            if (!item || itemUnit.id != field.id) {
                 console.error(`ID ${field.id} ne postoji u ticDocsuids.`);
                 continue; // Preskoči ako ID nije pronađen
             }
@@ -291,15 +331,17 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     /**************************** COLOR ************************************ */
     useEffect(() => {
         async function fetchData() {
-            // console.log("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+            
             try {
                 const ticDocdeliveryService = new TicDocdeliveryService();
                 const data = await ticDocdeliveryService.getListaByDocP(props.ticDoc.id);
                 const _delivery = data[0]
                 if (_delivery) {
+                    console.log(_delivery, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
                     setTicDocdelivery(_delivery);
                     setValueTA(_delivery.address || '');  // Ensure it's non-null
                     setNote(_delivery.note || '');
+                    setDdTicDocdeliveryterrItem(ddTicDocdeliveryterrItems.find((item) => item.code === _delivery.country) || null);
                     setAutoParaddressKey1(prev => prev + 1)
                     // } else {
                     //     setValueTA('');
@@ -493,18 +535,24 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const handleDeliveryClick = async (item, e) => {
         try {
             e.preventDefault(); // Prevent default action if necessary
+            const _ticDocdelivery = {... ticDocdelivery}
             if (valueTA) {
                 emptyTicDocdelivery.adress = valueTA
+                _ticDocdelivery.adress = valueTA
             }
             emptyTicDocdelivery.note = note
-            const ticDocdeliveryService = new TicDocdeliveryService();
-            if (ticDocdelivery?.doc == props.ticDoc.id) {
-                emptyTicDocdelivery.id = ticDocdelivery.id
-                await ticDocdeliveryService.putTicDocdelivery(emptyTicDocdelivery);
-            } else {
-                await ticDocdeliveryService.postTicDocdelivery(emptyTicDocdelivery);
-            }
+            _ticDocdelivery.note = note
+            console.log(_ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", ticDocdelivery)
 
+            const ticDocdeliveryService = new TicDocdeliveryService();
+            if (_ticDocdelivery?.id && _ticDocdelivery?.id != null) {
+                emptyTicDocdelivery.id = ticDocdelivery.id
+                await ticDocdeliveryService.putTicDocdelivery(_ticDocdelivery);
+            } else {
+                _ticDocdelivery.id = props.ticDoc.id
+                await ticDocdeliveryService.postTicDocdelivery(_ticDocdelivery);
+            }
+            setTicDocdelivery(_ticDocdelivery)
             // console.log(e, "******* Clicked item details:", item);
 
             toast.current.show({
@@ -652,6 +700,33 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         // _ticDocsuids[index][field] = value;
         // setFormData(newFormData);
     };
+
+    const onInputChange = (e, type, name, a) => {
+        let val = ''
+        let foundItem = ''
+
+        if (type === "options") {
+            val = (e.target && e.target.value && e.target.value.code) || '';
+            switch (name) {
+                case "country":
+                    setDdTicDocdeliveryterrItem(e.value);
+                    foundItem = ticDocdeliveryterrItems.find((item) => item.id === val);
+                    setTicDocdeliveryterrItem(foundItem || null);
+                    ticDocdelivery.nterr = e.value.name
+                    ticDocdelivery.cterr = foundItem.code
+                    break;
+                default:
+                    console.error("Pogresan naziv polja")
+            }
+        } else {
+            val = (e.target && e.target.value) || '';
+        }
+        let _ticDocdelivery = { ...ticDocdelivery };
+        _ticDocdelivery[`${name}`] = val;
+        console.log(ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+        setTicDocdelivery(_ticDocdelivery);
+    };
+
     /***************************************************************************************** */
     const handleChangeKupac = async (item, e) => {
         try {
@@ -723,13 +798,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
     return (
         <>
-            <div className="card  scrollable-content" > 
+            <div className="card  scrollable-content" >
                 <Accordion >
                     <AccordionTab header={translations[selectedLanguage].delivery}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
-                                <label htmlFor="address">{translations[selectedLanguage].address}</label>
+                                {/* <label htmlFor="address">{translations[selectedLanguage].address}</label> */}
                                 <AutoParAddress
                                     key={autoParaddressKey1}
                                     onItemSelect={handleItemSelect}
@@ -748,25 +823,46 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                                     />
                                 </div>
-                                <div className="field col-12 md:col-4" style={{ paddingTop: 0, paddingBottom: 5 }}>
-                                    <Button
-                                        icon="pi pi-truck"
-                                        className="p-button"
-                                        style={{ width: '35px' }}
-                                        raised severity="warning"
-                                        onClick={(e) => handleDeliveryClick("item", e)}
-                                        tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
-                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
-                                    ></Button>
-                                </div>
+                            {/* </div>
+                            <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}> */}
+<div className="field col-12 md:col-12" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <div style={{ flex: 1 }}>
+        <label htmlFor="country">{translations[selectedLanguage].Terr} *</label>
+        <Dropdown
+            id="country"
+            value={ddTicDocdeliveryterrItem}
+            options={ddTicDocdeliveryterrItems}
+            onChange={(e) => onInputChange(e, "options", 'country')}
+            required
+            optionLabel="name"
+            placeholder="Select One"
+            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.country })}
+        />
+        {submitted && !ticDocdelivery.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+    </div>
+    <div>
+        <Button
+            icon="pi pi-truck"
+            className="p-button"
+            style={{ width: '35px' }}
+            raised
+            severity="warning"
+            onClick={(e) => handleDeliveryClick("item", e)}
+            tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
+            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+        ></Button>
+    </div>
+</div>
+
                             </div>
                         </div>
                     </AccordionTab>
                 </Accordion>
                 <Toast ref={toast} />
-                <DocZaglavlje /> 
-                    {ticDocsuids.map((item) => { 
+                <DocZaglavlje />
+                {ticDocsuids.map((item) => {
                     brojReda = ++brojReda
                     const backgroundColor = eventColors[item.event] || "#ffffff";
                     return (
@@ -1041,7 +1137,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     )
                 }
                 )}
-            </div>                 
+            </div>
         </>
     );
 })
