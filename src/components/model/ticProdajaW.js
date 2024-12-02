@@ -15,6 +15,7 @@ import TicDocsuidProdajaL from "./ticDocsuidProdajaL";
 import { Button } from 'primereact/button';
 import TicDocsprintgrpL from './ticDocsprintgrpL'
 import TicProdajaPlacanje from "./ticProdajaPlacanje";
+import TicDocsuidPar from "./ticDocsuidPar";
 import { Toast } from 'primereact/toast';
 import DateFunction from '../../utilities/DateFunction';
 import env from '../../configs/env';
@@ -23,12 +24,15 @@ import moment from "moment";
 const TicProdajaW = forwardRef((props, ref) => {
   // console.log(props, "######2222222222222222222222222222222222222222222222222222222222222222")
   const objName = "tic_docpayment"
+  const parName = "cmn_par"
   const emptyTicDocpayment = EmptyEntities[objName]
+  const emptyCmnPar = EmptyEntities[parName]
   emptyTicDocpayment.doc = props.ticDoc.id
   emptyTicDocpayment.status = 1
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
+  const [cmnPar, setCmnPar] = useState(props.cmnPar ? (props.cmnPar?.id != 1 ? props.cmnPar : emptyCmnPar) : emptyCmnPar);
   const [ticDoc, setTicDoc] = useState(props.ticDoc?.id ? props.ticDoc : ticDoc);
   const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
   const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
@@ -59,22 +63,22 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   useEffect(() => {
     async function fetchData() {
-        try {
-            if (ticDoc.reservation == 1) {
-                const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
-                const now = moment(); 
-            
-                if (endDate.isAfter(now)) { 
-                    setReservationStatus(1);
-                }
-            }
-        } catch (error) {
-            console.error(error);
-            // Obrada greške ako je potrebna
+      try {
+        if (ticDoc.reservation == 1) {
+          const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss');
+          const now = moment();
+
+          if (endDate.isAfter(now)) {
+            setReservationStatus(1);
+          }
         }
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
     }
     fetchData();
-}, [ticDoc]);
+  }, [ticDoc]);
 
 
   /************************************************************************************ */
@@ -379,7 +383,8 @@ const TicProdajaW = forwardRef((props, ref) => {
     setTicTransactionsKey1((prev) => prev + 1);
     setTicTransactionsKey11((prev) => prev + 1);
   };
-
+  const setAutoParaddressKey1 = (newObj) => {
+  }
   const handDocsprintgrpClose = (newObj) => {
 
   }
@@ -389,9 +394,22 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleNextClic = (e, key) => {
-    if (handleDocuidSubbmit() || key < 1) {
-      
-      setUidKey(++uidKey)
+    console.log(cmnPar, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
+    if (cmnPar?.id || key == 0) {
+      if (key == 2) {
+        if (handleDocuidSubbmit()) {
+          setUidKey(++uidKey)
+        }
+      } else {
+        setUidKey(++uidKey)
+      }
+    } else {
+      toast.current.show({
+        severity: "error",
+        summary: "Action ",
+        detail: `Morate popuniti nosioca transakcije!`,
+        life: 2000,
+      });
     }
   }
 
@@ -481,7 +499,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleRezTicDoc = async () => {
-    console.log("00.0 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log("00.0 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const ticEventattsService = new TicEventattsService()
     const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
 
@@ -490,7 +508,7 @@ const TicProdajaW = forwardRef((props, ref) => {
     let _ticDoc = { ...ticDoc }
     // const endTm = DateFunction.toDatetime(_ticDoc.endtm) + vremeRezervacije
     _ticDoc.endtm = vremeRezervacije
-    console.log("00.1 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", _ticDoc.endtm)
+    // console.log("00.1 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", _ticDoc.endtm)
 
     _ticDoc.reservation = 1
     _ticDoc.status = 1
@@ -520,7 +538,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   /********************************************************************************/
   const handlePayTicDoc = async () => {
     try {
-      console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
+      // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
       const userId = localStorage.getItem('userId')
       setSubmitted(true);
       const ticDocService = new TicDocService();
@@ -600,6 +618,10 @@ const TicProdajaW = forwardRef((props, ref) => {
       });
     }
   };
+  const handleSetCmnParW = (rowData) => {
+    props.handleSetCmnPar(rowData)
+    setCmnPar(rowData)
+  }
 
   return (
     <div key={key}>
@@ -611,16 +633,16 @@ PRVI RED
 *****************************************************/}
           <div className="col-5">
             <div className="grid grid-nogutter">
-              {(uidKey <= 2 || ticDoc.status == 2) && (
+              {(uidKey <= 3 || ticDoc.status == 2) && (
                 <div className="col-3">
                   <Button label={translations[selectedLanguage].Back}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleBackClic(e)}
-                    disabled={uidKey === 0 || ((ticDoc.statuspayment == 1||reservationStatus==1) && uidKey === 1)}
+                    disabled={uidKey === 0 || ((ticDoc.statuspayment == 1 || reservationStatus == 1) && uidKey === 2)}
                   />
                 </div>
               )}
-              {(uidKey == 3 && ticDoc.status != 2) && (
+              {(uidKey == 4 && ticDoc.status != 2) && (
                 <div className="col-3">
                   <Button label={translations[selectedLanguage].Back}
                     severity="success" raised style={{ width: '100%' }}
@@ -628,37 +650,37 @@ PRVI RED
                   />
                 </div>
               )}
-              {((uidKey != 2 && uidKey <= 2) || (ticDoc.status == 2 && uidKey <= 2)) && (
+              {((uidKey != 3 && uidKey <= 3) || (ticDoc.status == 2 && uidKey <= 3)) && (
                 <div className="col-3">
                   <Button label={translations[selectedLanguage].Next}
                     severity="success" raised style={{ width: '100%' }}
                     onClick={(e) => handleNextClic(e, uidKey)}
-                    disabled={uidKey === 3||uidKey === 2&&(ticDoc.statuspayment == 1||reservationStatus==1) }
+                    disabled={uidKey === 4 || uidKey === 4 && (ticDoc.statuspayment == 1 || reservationStatus == 1)}
                   />
 
                 </div>
               )}
-              {(uidKey == 2 && ticDoc.status != 2) && (
-                  <div className="col-3">
-                    <Button label={translations[selectedLanguage].Payment}
-                      severity="warning" raised style={{ width: '100%' }}
-                      onClick={(e) => handlePayTicDoc(e)}
-                      disabled={uidKey === 3}
-                    />
+              {(uidKey == 3 && ticDoc.status != 2) && (
+                <div className="col-3">
+                  <Button label={translations[selectedLanguage].Payment}
+                    severity="warning" raised style={{ width: '100%' }}
+                    onClick={(e) => handlePayTicDoc(e)}
+                    disabled={uidKey === 4}
+                  />
 
-                  </div>
-                )}
-                {(uidKey == 2 && ticDoc.status != 2 && reservationStatus!=1) && (                  
-                  <div className="col-3">
-                    <Button label={translations[selectedLanguage].Rezervacija}
-                      severity="secondary" raised style={{ width: '100%' }}
-                      onClick={(e) => handleRezTicDoc(e)}
-                      disabled={uidKey === 3}
-                    />
-
-                  </div>
+                </div>
               )}
-              {((uidKey == 3 && ticDoc.status != 2) || reservationStatus==1) && (
+              {(uidKey == 3 && ticDoc.status != 2 && reservationStatus != 1) && (
+                <div className="col-3">
+                  <Button label={translations[selectedLanguage].Rezervacija}
+                    severity="secondary" raised style={{ width: '100%' }}
+                    onClick={(e) => handleRezTicDoc(e)}
+                    disabled={uidKey === 4}
+                  />
+
+                </div>
+              )}
+              {((uidKey == 4 && ticDoc.status != 2) || reservationStatus == 1) && (
                 <>
                   <div className="col-3">
                     <Button label={translations[selectedLanguage].ZavrsiKupovinu}
@@ -676,7 +698,7 @@ PRVI RED
                   </div>
                 </>
               )}
-              {(uidKey == 3 && ticDoc.status == 2) && (
+              {((uidKey == 4 || uidKey == 3) && ticDoc.status == 2) && (
                 <>
                   <div className="col-3">
                     <Button label={translations[selectedLanguage].ZavrsiKupovinu}
@@ -736,8 +758,30 @@ DRUGI RED
             </div>
           )}
 
-
           {(!props.expandIframe && uidKey == 1) && (
+            <div className="col-8 fixed-height" style={{ height: 760 }}>
+              <div className="grid" >
+                <div className="col-12 fixed-height" style={{ height: 760 }}>
+                  <TicDocsuidPar
+                    key={ticTransactionsKey}
+                    ref={docsuidRef}
+                    ticDoc={ticDoc}
+                    cmnPar={cmnPar}
+                    propsParent={props}
+                    handleFirstColumnClick={handleFirstColumnClick}
+                    handleAction={handleAction}
+                    setRefresh={handleRefresh}
+                    handleDelivery={props.handleDelivery}
+                    handleAllRefresh={handleAllRefresh}
+                    setAutoParaddressKey1={setAutoParaddressKey1}
+                    handleSetCmnParW={handleSetCmnParW}
+                  />
+                </div>
+              </div>
+            </div>
+
+          )}
+          {(!props.expandIframe && uidKey == 2) && (
             <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 760 }}>
@@ -757,7 +801,7 @@ DRUGI RED
             </div>
 
           )}
-          {(!props.expandIframe && uidKey == 2) && (
+          {(!props.expandIframe && uidKey == 3) && (
             <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 760 }}>
@@ -778,7 +822,7 @@ DRUGI RED
             </div>
 
           )}
-          {(!props.expandIframe && uidKey == 3) && (
+          {(!props.expandIframe && uidKey == 4) && (
             <div className="col-3 fixed-height" style={{ height: 760 }}>
               <div className="grid" >
                 <div className="col-12 fixed-height" style={{ height: 760 }}>
@@ -794,7 +838,7 @@ DRUGI RED
               </div>
             </div>
           )}
-          {(!props.expandIframe && uidKey >= 1) && (
+          {(!props.expandIframe && uidKey >= 2) && (
             <div className={props.expandStavke ? "col-12" : "col-9"}>
               <div className="grid " >
                 <div className="col-12">

@@ -10,9 +10,9 @@ import CmnParL from '../model/cmn/cmnParL';
 import { TicDocService } from "../../service/model/TicDocService";
 
 const AutoParProdaja = (props) => {
-// console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
+    // console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const _ticDoc = {...props.ticDoc}
+    const _ticDoc = { ...props.ticDoc }
     _ticDoc.cpar = props.cmnPar?.code
     _ticDoc.npar = props.cmnPar?.textx
     const [ticDoc, setTicDoc] = useState(_ticDoc);
@@ -20,7 +20,7 @@ const AutoParProdaja = (props) => {
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [parValue, setParValue] = useState(ticDoc?.cpar);
     const [cmnPars, setCmnPars] = useState([]);
-    const [cmnPar, setCmnPar] = useState([]);
+    const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [searchTimeout, setSearchTimeout] = useState(null);
     const [selectedPar, setSelectedPar] = useState(null);
@@ -46,7 +46,7 @@ const AutoParProdaja = (props) => {
             try {
                 const cmnParService = new CmnParService();
                 const data = await cmnParService.getCmnParP(ticDoc.usr);
-                setCmnPar({...data, text:data.textx});
+                setCmnPar({ ...data, text: data.textx });
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -97,8 +97,8 @@ const AutoParProdaja = (props) => {
     }
 
     const handleSelect = async (e) => {
-        let _ticDoc = {... ticDoc}
-        const _cmnPar = {... e.value}
+        let _ticDoc = { ...ticDoc }
+        const _cmnPar = { ...e.value }
         _ticDoc.cpar = _cmnPar.code
         _ticDoc.npar = _cmnPar.textx
         _cmnPar.text = _cmnPar.textx;
@@ -108,9 +108,10 @@ const AutoParProdaja = (props) => {
         setParValue(e.value.code);
         const ticDocService = new TicDocService();
         await ticDocService.putTicDocSet(_ticDoc);
+        console.log(_ticDoc, "APP-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         props.setAutoParaddressKey1(prev => prev + 1)
         props.handleAction(_ticDoc)
-        props.setRefresh(prev => prev + 1)        
+        props.setRefresh(prev => prev + 1)
         props.handleAutoParProdaja(_ticDoc, _cmnPar)
     };
     const handleParLClick = async (e, destination) => {
@@ -133,27 +134,28 @@ const AutoParProdaja = (props) => {
     };
     /************************** */
     const handleCmnParLDialogClose = async (newObj) => {
-        let _ticDoc = {... ticDoc}
-        const _cmnPar = {... newObj}
+        let _ticDoc = { ...ticDoc }
+        const _cmnPar = { ...newObj }
         _cmnPar.text = _cmnPar.textx;
         if (_cmnPar.ctp === 'XFL') {
-            const parts = _cmnPar.text.split(' '); 
-            _cmnPar.first = parts.slice(0, 1)[0]; 
-            _cmnPar.last = parts.slice(1).join(' '); 
+            const parts = _cmnPar.text.split(' ');
+            _cmnPar.first = parts.slice(0, 1)[0];
+            _cmnPar.last = parts.slice(1).join(' ');
         }
-        console.log(_cmnPar, "11111111111111111111111111111-Close-1111111111111111111111111111111111")
+        
         setParValue(_cmnPar.code);
         _ticDoc.usr = _cmnPar.id;
         _ticDoc.npar = _cmnPar.textx;
         _ticDoc.cpar = _cmnPar.code;
-        setCmnPar({..._cmnPar})
+        setCmnPar({ ..._cmnPar })
         setTicDoc(_ticDoc)
         setSelectedPar(newObj.code);
         const ticDocService = new TicDocService();
         await ticDocService.putTicDocSet(_ticDoc);
+        console.log(_ticDoc, "APP0-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         props.setAutoParaddressKey1(prev => prev + 1)
         props.handleAction(_ticDoc)
-        props.setRefresh(prev => prev + 1)        
+        props.setRefresh(prev => prev + 1)
         props.handleAutoParProdaja(_ticDoc, _cmnPar)
         //ticDocs.potrazuje = newObj.cena * ticDocs.output;
         setCmnParLVisible(false);
@@ -188,25 +190,31 @@ const AutoParProdaja = (props) => {
                     <div className="card">
                         <div className="p-fluid formgrid grid"></div> */}
             <div className="p-fluid formgrid grid">
-                <label htmlFor="par">{translations[selectedLanguage].Kupac} *</label>
-
-                <AutoComplete
-                    value={parValue}
-                    suggestions={filteredPars}
-                    completeMethod={() => { }}
-                    onSelect={handleSelect}
-                    onChange={(e) => onInputChange(e, "auto", 'par')}
-                    itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
-                    placeholder="Pretraži"
-                    disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
-                />
-                <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button"  disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}/>
-                <InputText
-                    id="npar"
-                    value={ticDoc.npar}
-                    required
-                    disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
-                />
+                <div className="field col-12 md:col-4">
+                    <label htmlFor="par">{translations[selectedLanguage].Code} *</label>
+                    <div className="p-inputgroup flex-1">
+                        <AutoComplete
+                            value={parValue}
+                            suggestions={filteredPars}
+                            completeMethod={() => { }}
+                            onSelect={handleSelect}
+                            onChange={(e) => onInputChange(e, "auto", 'par')}
+                            itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
+                            placeholder="Pretraži"
+                            disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
+                        />
+                        <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1} />
+                    </div>
+                </div>
+                <div className="field col-12 md:col-7">
+                    <label htmlFor="par">{translations[selectedLanguage].Text}</label>
+                    <InputText
+                        id="npar"
+                        value={ticDoc.npar}
+                        required
+                        disabled={ticDoc.statuspayment == 1 || props.reservationStatus == 1}
+                    />
+                </div>
             </div>
             {/* </div> */}
             {/* </div > */}

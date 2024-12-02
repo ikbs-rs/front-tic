@@ -68,7 +68,7 @@ export class TicEventattsService {
 
         try {
             const response = await axios.get(url, { headers });
-            console.log(objId, par1, par2, "G888888888888888888888888888888888GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", response.data)
+            // console.log(objId, par1, par2, "G888888888888888888888888888888888GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", response.data)
             return response.data.item;
         } catch (error) {
             console.error(error);
@@ -208,7 +208,7 @@ export class TicEventattsService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
+            // console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
             const response = await axios.post(url, { jsonObj }, { headers });
             return response.data.items;
         } catch (error) {
@@ -232,7 +232,7 @@ export class TicEventattsService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
+            // console.log(jsonObj, "***************************postGrpEventatts*******************************", url)
             const response = await axios.post(url, { jsonObj }, { headers });
             return response.data.items;
         } catch (error) {

@@ -897,7 +897,7 @@ export default function TicTransactionFL(props) {
                 scrollable
                 sortField="tm"
                 sortOrder={-1}
-                scrollHeight="730px"
+                scrollHeight="703px"
                 // tableStyle={{ minWidth: "50rem" }}
                 // metaKeySelection={false}
                 paginator

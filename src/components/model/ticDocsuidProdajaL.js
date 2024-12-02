@@ -185,7 +185,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
                 const response = await axios.get(url, { headers });
                 const data = response.data.items || response.data.item;
-                console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+                // console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
                 setTicDocdeliveryterrItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdTicDocdeliveryterrItems(dataDD);
@@ -331,7 +331,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     /**************************** COLOR ************************************ */
     useEffect(() => {
         async function fetchData() {
-            
+
             try {
                 const ticDocdeliveryService = new TicDocdeliveryService();
                 const data = await ticDocdeliveryService.getListaByDocP(props.ticDoc.id);
@@ -535,7 +535,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const handleDeliveryClick = async (item, e) => {
         try {
             e.preventDefault(); // Prevent default action if necessary
-            const _ticDocdelivery = {... ticDocdelivery}
+            const _ticDocdelivery = { ...ticDocdelivery }
             if (valueTA) {
                 emptyTicDocdelivery.adress = valueTA
                 _ticDocdelivery.adress = valueTA
@@ -752,16 +752,18 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             <div className="card">
                 <div className="grid">
                     <div className="field col-12 md:col-12">
+                        <AutoParProdaja
+                            ticDoc={ticDoc}
+                            cmnPar={cmnPar}
+                            handleAutoParProdaja={handleAutoParProdaja}
+                            setAutoParaddressKey1={setAutoParaddressKey1}
+                            handleAction={props.handleAction}
+                            setRefresh={props.setRefresh}
+                            reservationStatus={reservationStatus}
+                        />
+                    </div>
+                    <div className="field col-12 md:col-12">
                         <div className="p-inputgroup flex-1">
-                            <AutoParProdaja
-                                ticDoc={ticDoc}
-                                cmnPar={cmnPar}
-                                handleAutoParProdaja={handleAutoParProdaja}
-                                setAutoParaddressKey1={setAutoParaddressKey1}
-                                handleAction={props.handleAction}
-                                setRefresh={props.setRefresh}
-                                reservationStatus={reservationStatus}
-                            />
                             <Button icon="pi pi-users" onClick={(e) => handleAllParr(e, "ALL")} style={{ width: '35px' }}
                                 raised
                                 tooltip={translations[selectedLanguage].PopuniPodatkeKupcaSveStavke}
@@ -787,7 +789,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     };
     /*********************************************************************************** */
@@ -823,38 +825,38 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                                     />
                                 </div>
-                            {/* </div>
+                                {/* </div>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}> */}
-<div className="field col-12 md:col-12" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-    <div style={{ flex: 1 }}>
-        <label htmlFor="country">{translations[selectedLanguage].Terr} *</label>
-        <Dropdown
-            id="country"
-            value={ddTicDocdeliveryterrItem}
-            options={ddTicDocdeliveryterrItems}
-            onChange={(e) => onInputChange(e, "options", 'country')}
-            required
-            optionLabel="name"
-            placeholder="Select One"
-            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
-            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.country })}
-        />
-        {submitted && !ticDocdelivery.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-    </div>
-    <div>
-        <Button
-            icon="pi pi-truck"
-            className="p-button"
-            style={{ width: '35px' }}
-            raised
-            severity="warning"
-            onClick={(e) => handleDeliveryClick("item", e)}
-            tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
-            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
-        ></Button>
-    </div>
-</div>
+                                <div className="field col-12 md:col-12" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <label htmlFor="country">{translations[selectedLanguage].Terr} *</label>
+                                        <Dropdown
+                                            id="country"
+                                            value={ddTicDocdeliveryterrItem}
+                                            options={ddTicDocdeliveryterrItems}
+                                            onChange={(e) => onInputChange(e, "options", 'country')}
+                                            required
+                                            optionLabel="name"
+                                            placeholder="Select One"
+                                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                                            className={classNames({ 'p-invalid': submitted && !ticDocdelivery.country })}
+                                        />
+                                        {submitted && !ticDocdelivery.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                                    </div>
+                                    <div>
+                                        <Button
+                                            icon="pi pi-truck"
+                                            className="p-button"
+                                            style={{ width: '35px' }}
+                                            raised
+                                            severity="warning"
+                                            onClick={(e) => handleDeliveryClick("item", e)}
+                                            tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
+                                            tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                                        ></Button>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>

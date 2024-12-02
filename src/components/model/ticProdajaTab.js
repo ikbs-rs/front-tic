@@ -34,6 +34,7 @@ import TicProdajaPlacanje from "./ticProdajaPlacanje";
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 
 export default function TicProdajaTab(props) {
+    // console.log(props, "0-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const location = useLocation();
     const { channel } = location.state || {};
     const objEvent = "tic_event"
@@ -294,11 +295,15 @@ export default function TicProdajaTab(props) {
     let ii = 0
     useEffect(() => {
         async function fetchData() {
-            //console.log("0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            
             try {
-                const ticDocService = new TicDocService();
-                const data = await ticDocService.getParByUserIdP();
-                //console.log(data, "0$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                // const ticDocService = new TicDocService();
+                // const data = await ticDocService.getParByUserIdP();
+                // console.log(data[0], "0HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                // setCmnPar(data[0]);
+                const cmnParService = new CmnParService();
+                const data = await cmnParService.getCmnParP(ticDoc.usr||1);
+                // console.log(data[0], "0HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", ticDoc)
                 setCmnPar(data[0]);
             } catch (error) {
                 console.error(error);
@@ -1140,9 +1145,11 @@ export default function TicProdajaTab(props) {
             let _ticDoc = await fachDoc(ticDoc.id)
             if (!ticDoc?.id) {
                 _ticDoc = { ...ticDoc }
-            }
-            // console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-            const _cmnPar = await fachPar(_ticDoc.usr)
+            }     
+            const tmp_cmnPar = await fachPar(_ticDoc.usr)
+            const _cmnPar = tmp_cmnPar[0]
+            // console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", _cmnPar)
+            setCmnPar(_cmnPar)
             _ticDoc.cpar = _cmnPar?.code
             _ticDoc.npar = _cmnPar?.text
             await setTicDoc(_ticDoc)
@@ -1161,7 +1168,10 @@ export default function TicProdajaTab(props) {
                     OK = true
                     // console.log(22, "** KANALI KORISNIKA/EVENT *")
                 } else {
-                    const _cmnPar = await fachPar(ticDocOld.usr)
+                    const tmp_cmnPar = await fachPar(ticDocOld.usr)
+                    const _cmnPar = tmp_cmnPar[0]
+                    // console.log(ticDocOld, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", _cmnPar)
+                    setCmnPar(_cmnPar)
                     ticDocOld.cpar = _cmnPar.code
                     ticDocOld.npar = _cmnPar.text
                     await setTicDoc(ticDocOld)
@@ -1176,7 +1186,9 @@ export default function TicProdajaTab(props) {
         if (OK) {
             // console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
             const _ticDoc = await createDoc(_channel, _ticEvent)
-            const _cmnPar = await fachPar(_ticDoc.usr)
+            const tmp_cmnPar = await fachPar(_ticDoc.usr)
+            const _cmnPar = tmp_cmnPar[0]
+            setCmnPar(_cmnPar)
             _ticDoc.cpar = _cmnPar.code
             _ticDoc.npar = _cmnPar.text
             await setTicDoc(_ticDoc)
@@ -1253,6 +1265,10 @@ export default function TicProdajaTab(props) {
         // console.log(rowData, "TAB-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         setTicDoc(rowData)
     }
+    const handleSetCmnPar = (cmnPar) => {
+        // console.log(cmnPar, "1HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        setCmnPar(cmnPar)
+    }
     return (
         <div>
             <Toast ref={toast} />
@@ -1302,6 +1318,8 @@ export default function TicProdajaTab(props) {
                             ref={ticProdajaWRef}
                             setActiveIndex={setActiveIndex}
                             handleActionTab={handleActionTab}
+                            handleSetCmnPar={handleSetCmnPar}
+                            cmnPar={cmnPar}
                         />
                         <div>
                             {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
