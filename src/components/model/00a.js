@@ -4,69 +4,49 @@ const PDFHtmlDownloader = ({ ticket }) => {
   const iframeRef = useRef(null);
 
   async function downloadAsPDFHtml(ticket) {
+    console.log(iframeRef, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    localStorage.setItem('docsIds', JSON.stringify(['1863706028882137088']));
 
-    // const docsIds = ['17209732844398725920', '17209730534937155468'];
+    // URL za preuzimanje
+    const urlWithToken = `https://188.93.122.138/sal/sal/print-tickets`;
 
-    localStorage.setItem('docsIds', JSON.stringify(['17328143866878232076']));
+    console.log(urlWithToken, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    iframeRef.current.src = urlWithToken;
+    let i = 0
 
-    // window.open('/sal/print-tickets', '_blank');
+    // Provera učitavanja sadržaja
+    const checkContentLoaded = () => {
+      const iframeDocument = iframeRef.current.contentDocument;
+      const ticketList = iframeDocument.querySelector('.ticket-list');
 
+      if (ticketList && !ticketList.innerHTML.trim().includes('Loading...')) {
+        console.log("03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // Kada je sadržaj učitan, otvori u novom prozoru
+        const htmlContent = iframeDocument.documentElement.outerHTML;
+        const newWindow = window.open('', '_blank'); // Otvori novi prozor
+        newWindow.document.write(htmlContent); // Upiši sadržaj u novi prozor
+        newWindow.document.close(); // Zatvori strim i prikaži sadržaj
+      } else {
+        i++
+        console.log("04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // Ako nije učitan, proveri ponovo posle kratkog kašnjenja
+        setTimeout(checkContentLoaded, 100);
+        if (i > 50) return
+      }
+    };
 
-    const urlWithToken = `/sal/print-tickets`;
-
-
-            // Load the content in the iframe
-
-            iframeRef.current.src = urlWithToken;
-
-
-            // Function to check if the content is fully loaded
-
-            const checkContentLoaded = () => {
-
-                const iframeDocument = iframeRef.current.contentDocument;
-
-                const ticketList = iframeDocument.querySelector('.ticket-list');
-
-    
-
-                if (ticketList && !ticketList.innerHTML.trim().includes('Loading...')) {
-
-                    // Content is fully loaded, capture the HTML
-
-                    const htmlContent = iframeDocument.documentElement.outerHTML;
-
-                    console.log("Captured HTML Content:", htmlContent);
-
-    
-
-                } else {
-
-                    // Content is not fully loaded, check again after a short delay
-
-                    setTimeout(checkContentLoaded, 100); // Check every 100ms
-
-                }
-
-            };
-
-    
-
-            // Wait for the iframe to load and then start checking the content
-
-            iframeRef.current.onload = () => {
-
-                setTimeout(checkContentLoaded, 100); // Start checking after a short delay
-
-            };
-
-};
-
+    // Pokretanje provere kada se iframe učita
+    iframeRef.current.onload = async () => {
+      console.log("02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      await setTimeout(checkContentLoaded, 100); // Pokreni proveru nakon kratkog kašnjenja
+      console.log("05-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    };
+  }
 
   return (
     <div>
       <button onClick={() => downloadAsPDFHtml(ticket)}>Preuzmi PDF HTML</button>
-      <iframe ref={iframeRef} style={{ display: 'none' }}></iframe>
+      <iframe ref={iframeRef} style={{ display: 'none' }} ></iframe>
     </div>
   );
 };
