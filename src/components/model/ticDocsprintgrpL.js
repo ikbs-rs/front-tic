@@ -9,7 +9,7 @@ import { translations } from "../../configs/translations";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';
-import { TicDocService } from "../../service/model/TicDocService";
+import { TicDocService,  getPrintgrpLPTX} from "../../service/model/TicDocService";
 import DateFunction from "../../utilities/DateFunction"
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import PDFHtmlDownloader  from './00a'
@@ -177,7 +177,9 @@ export default function TicDocsprintgrpL(props) {
     emptyTicStampa.ticket = JSON.stringify(selectedProducts);
     const ticDocService = new TicDocService();
     if (await ticDocService.getPrinFiskal(ticDoc)) {
-      await ticDocService.getPrintgrpLPT(selectedProducts, emptyTicStampa, _tp);
+      // await ticDocService.getPrintgrpLPTX(selectedProducts, emptyTicStampa, _tp);
+      getPrintgrpLPTX(selectedProducts, emptyTicStampa, _tp);
+
     }
   };
   const clearFilter = () => {

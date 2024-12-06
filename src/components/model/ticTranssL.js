@@ -26,10 +26,9 @@ import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import { TicDocdiscountService } from "../../service/model/TicDocdiscountService";
 
 export default function TicTransactionsL(props) {
-    // console.log(props.ticDoc)
+    // console.log(props, "99999999999999999999999999999999999999999999999999999999999")
     const objectString = String(props.ticDoc);
-
-    // console.log("99999999999999999999999999999999999999999999999999999999999")
+ 
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
 
@@ -100,6 +99,11 @@ export default function TicTransactionsL(props) {
     const handleCancelClick = () => {
         props.setTicDocsLVisible(false);
     };
+
+
+    useEffect(() => {
+        setRefreshKeyN(prev => prev + 1)
+    }, [props.reservationStatus]);
 
     useEffect(() => {
         async function fetchData() {
@@ -659,11 +663,12 @@ export default function TicTransactionsL(props) {
         await handleUpdateNapDoc(_ticDoc)
         // remountStavke();
     };
-    const handleZaUplatu = (iznos) => {
-        // setZaUplatu(iznos);
-    };
+    // const handleZaUplatu = (iznos) => {
+    //     // setZaUplatu(iznos);
+    // };
     const handleKarteIznos = (iznos) => {
         setZaUplatu(iznos + naknadeIznos);
+        props.handleZaUplatu(iznos + naknadeIznos)
     };
 
     const handleNetoIznos = (iznos) => {

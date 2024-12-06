@@ -47,7 +47,7 @@ export default function TicProdajaL(props) {
     const [eventTip, setEventTip] = useState('');
     const [webMapVisible, setWebMapVisible] = useState(false);
     const [eventPregledVVisible, setEventPregledVVisible] = useState(false);
-    
+
 
     let [numberChannell, setNumberChannell] = useState(0)
     let [channells, setChannells] = useState([{}])
@@ -55,7 +55,7 @@ export default function TicProdajaL(props) {
 
 
     const generateImageUrl = (id, relpath, selectedLanguage) => {
-        return `${env.IMG_BACK_URL}/public/tic/${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
+        return `${env.IMG_BACK_URL}/public/tic/l_${id}.jpg/?relpath=${relpath}&sl=${selectedLanguage}`;
     };
 
     useEffect(() => {
@@ -376,7 +376,7 @@ export default function TicProdajaL(props) {
         setEventPregledVVisible(false);
     };
 
-    
+
     //  Dialog -------------------------------------------------------------------------------------------------------->
 
     const header = renderHeader();
@@ -388,18 +388,30 @@ export default function TicProdajaL(props) {
     const pregledTemplate = (rowData) => {
         return (
             <div className="flex flex-wrap gap-1">
-                <Button
-                    type="button"
-                    icon="pi pi-chart-line"
-                    style={{ width: '24px', height: '24px' }}
-                    className="p-button-outlined p-button-danger"
-                    onClick={() => {
-                        handleEventPregledVClick(rowData)
-                    }}
-                    text
-                    raised
-                ></Button>
-            </div>
+                    <Button
+                        type="button"
+                        icon="pi pi-users"
+                        style={{ width: '24px', height: '24px' }}
+                        className="p-button-danger"
+                        onClick={() => {
+                            props.handleEventProdaja(rowData, false, 1)
+                        }}
+                        raised
+                        tooltip={translations[selectedLanguage].MasovnaProdaja}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                    ></Button>
+                    <Button
+                        type="button"
+                        icon="pi pi-chart-line"
+                        style={{ width: '24px', height: '24px' }}
+                        className="p-button-outlined p-button-danger"
+                        onClick={() => {
+                            handleEventPregledVClick(rowData)
+                        }}
+                        text
+                        raised
+                    ></Button>
+                </div>
         );
     };
     const actionTemplate = (rowData) => {
@@ -447,12 +459,24 @@ export default function TicProdajaL(props) {
                     style={{ width: '36px', height: '26px' }}
                     className="p-button-success"
                     onClick={() => {
-                        props.handleEventProdaja(rowData, false)
+                        props.handleEventProdaja(rowData, false, 0)
                     }}
                     raised
                     tooltip={translations[selectedLanguage].DodajDogadja}
                     tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                 ></Button>
+                {/* <Button
+                    type="button"
+                    icon="pi pi-users"
+                    style={{ width: '36px', height: '26px' }}
+                    className="p-button-danger"
+                    onClick={() => {
+                        props.handleEventProdaja(rowData, false)
+                    }}
+                    raised
+                    tooltip={translations[selectedLanguage].MasovnaProdaja}
+                    tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                ></Button> */}
             </div>
         );
     };
@@ -508,8 +532,8 @@ export default function TicProdajaL(props) {
                         //bodyClassName="text-center"
                         body={newTemplate}
                         exportable={false}
-                        headerClassName="w-10rem"
-                        style={{ width: '10%' }}
+                        // headerClassName="w-10rem"
+                        style={{ width: '5%' }}
                     />
                     {/* <Column
                     //bodyClassName="text-center"
@@ -519,22 +543,22 @@ export default function TicProdajaL(props) {
                     style={{ minWidth: '4rem' }}
                 />
  */}
-                    <Column field="text" header={translations[selectedLanguage].event} sortable filter style={{ width: '20%' }}></Column>
-                    <Column field="npar" header={translations[selectedLanguage].Organizer} sortable filter style={{ width: '20%' }}></Column>
-                    <Column field="nloc" header={translations[selectedLanguage].Scena} sortable filter style={{ width: '20%' }}></Column>
-                    <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '10%' }}></Column>
+                    <Column field="text" header={translations[selectedLanguage].event} sortable filter style={{ width: '12%' }}></Column>
+                    <Column field="npar" header={translations[selectedLanguage].Organizer} sortable filter style={{ width: '12%' }}></Column>
+                    <Column field="nloc" header={translations[selectedLanguage].Scena} sortable filter style={{ width: '10%' }}></Column>
+                    <Column body={imageBodyTemplate} header={translations[selectedLanguage].Image} style={{ width: '16%' }}></Column>
                     <Column field="nctg" header={translations[selectedLanguage].ctg} sortable filter style={{ width: '10%' }}></Column>
                     <Column field="ntp" header={translations[selectedLanguage].Type} sortable filter style={{ width: '10%' }}></Column>
                     {/* <Column field="begda" header={translations[selectedLanguage].Begda} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'begda')}></Column> */}
                     <Column field="endda" header={translations[selectedLanguage].DatEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatDateColumn(rowData, 'endda')}></Column>
                     {/* <Column field="begtm" header={translations[selectedLanguage].BegTM} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'begtm')}></Column> */}
-                    <Column field="endtm" header={translations[selectedLanguage].TmEvent} sortable filter style={{ width: '7%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
+                    <Column field="endtm" header={translations[selectedLanguage].TmEvent} sortable filter style={{ width: '5%' }} body={(rowData) => formatTimeColumn(rowData, 'endtm')}></Column>
                     <Column
                         //bodyClassName="text-center"
                         body={pregledTemplate}
                         exportable={false}
-                        headerClassName="w-10rem"
-                        style={{ minWidth: '4rem' }}
+                        // headerClassName="w-20rem"
+                        style={{ width: '6%' }}
                     />
                     {/* <Column
                         //bodyClassName="text-center"

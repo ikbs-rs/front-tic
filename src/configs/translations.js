@@ -838,7 +838,7 @@ export const translations = {
         NaknadeI: "Накнаде износ",
         PopustI: "Попуст износ",
         ZaUplatu: "За уплату",
-        maxkol: "Максимална количина",
+        maxkol: "Максимални капацитет",
         CodeArt: "Шифра Артикла",
         TextArt: "Назив артикла",
         CodeTp: "Шифра Типа",
@@ -943,6 +943,8 @@ export const translations = {
         LokalnePostavke: "Локалне поставке",
         StatusFiskal: "ПрнтФис",
         kolicinaulaz: "Количина улаз",
+        MasovnaProdaja: "Масовна продаја",
+        Masssale: "Масовна",
     }
   };
   

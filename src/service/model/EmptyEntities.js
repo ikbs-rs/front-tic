@@ -272,7 +272,8 @@ const EmptyEntities =
     "nusrsys": "",
     "nchannel": "",
     "nusr": "",
-    "printfiskal": "1"
+    "printfiskal": "1",
+		"masssale": "0"
   },
 	"tic_docb": {
 		"id": null,

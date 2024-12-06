@@ -24,6 +24,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     const [izborMesovito, setIzborMesovito] = useState(false);
     const [checkedPrintfiskal, setCheckedPrintfiskal] = useState(ticDoc?.printfiskal == "1" || false);
     const [reservationStatus, setReservationStatus] = useState(0);
+    const [refresh, setRefresh] = useState(0);
 
     useImperativeHandle(ref, () => ({
         kes,
@@ -43,11 +44,13 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 const ticDocService = new TicDocService();
                 const pId = props.ticDoc?.id ? props.ticDoc.id : ticDoc?.id
                 const _ticDoc = await ticDocService.getTicDocP(pId);
-                // const _ticDoc = await ticDocService.getTicDoc(props.ticDoc.id);
-
                 setTicDoc(_ticDoc);
+                // const ticEventattsService = new TicEventattsService();
+                // const dataAtts = ticEventattsService.getCodeValueListaP()
+                
                 const ticDocpaymentService = new TicDocpaymentService();
                 const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
+                
                 setCategories(data);
 
                 const foundCategory = data.find(category => category.id === _ticDoc.paymenttp);
@@ -62,8 +65,6 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 if (foundCategory) {
                     setSelectedCategory(foundCategory);
                 }
-                // console.log(pId, _ticDoc, "3333333333333LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", data)
-                const iznos = await ticDocService.getDocZbirniiznosP(pId);
                 const stavkePlacanja = await ticDocService.getDocPaymentS(pId);
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
                     return ukupno + parseFloat(stavka.amount || 0);
@@ -84,14 +85,15 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                         setCek(cek.amount)
                     }
                 }
-                setZaUplatu(iznos.iznos);
-                setPreostalo(iznos.iznos - ukupnoPlacanje);
+                setZaUplatu(props.zaUplatu);
+                setPreostalo(props.zaUplatu - ukupnoPlacanje);
+                setCheckedPrintfiskal(_ticDoc.printfiskal==1)
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
         }
         fetchData();
-    }, [props.ticDoc]);
+    }, [props.ticDoc, props.zaUplat, refresh]);
 
     useEffect(() => {
         async function fetchData() {
@@ -137,7 +139,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
 
     const handlePayClic = async (value) => {
         setIzborMesovito(false)
-        // console.log(value, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        console.log(value, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         if (value.code == 'X') {
             let uplaceno = kes + kartica + cek
             setIzborMesovito(true)
@@ -154,11 +156,15 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         const previousValue = ticDoc;
         const _ticDoc = { ...ticDoc };
         _ticDoc.paymenttp = value.id;
+        if (value.code=='FC') {
+            _ticDoc.printfiskal = 0; 
+        } 
         await handleUpdateTicDoc(_ticDoc, previousValue);
         setSelectedCategory(value);
         await props.handlePlacanjetip(_ticDoc.paymenttp);
         setTicDoc(_ticDoc)
         props.handleAllRefresh(prev => prev + 1)
+        setRefresh(prev => prev + 1)
     };
 
     const onInputChange = (e, type, name) => {

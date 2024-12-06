@@ -1,11 +1,145 @@
 import axios from 'axios';
+// import PDFDoc from 'pdfkit';
+// import fs from 'fs';
+import jsPDF from 'jspdf';
 import env from "../../configs/env"
 import Token from "../../utilities/Token";
 import { PDFDocument } from 'pdf-lib';
 import { TicStampaService } from "../../service/model/TicStampaService";
 import { TicEventattsService } from "../../service/model/TicEventattsService";
 import DateFunction from '../../utilities/DateFunction';
-import { PDFHtmlDownloader } from '../../components/model/00a'
+import PDFHtmlDownloader  from '../../components/model/00a'
+
+export const getPrintgrpLPTX = (newObj, ticStampa, tpStampa) =>{
+  const ticketArr = newObj.map(item => item.id);
+  // console.log(newObj, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", ticketArr)
+  // const ticketJsonString = JSON.stringify(ticketArr);
+  // PDFHtmlDownloader(ticketArr)
+}
+
+const generatePdf = (journalContent) => {
+  // console.log("ZURNAL************************************************************************************************")
+  const doc = new jsPDF();
+
+  // Dodavanje sadržaja
+  doc.setFont('courier', 'normal');
+  doc.setFontSize(10);
+  doc.text(journalContent, 10, 10);
+
+  // Preuzimanje PDF-a
+  doc.save('output.pdf');
+};
+
+function generatePDF(textContent, barcodeBase64) {
+  const doc = new jsPDF();
+  const imgWidth = 41; // Širina slike
+  const imgHeight = 41; // Visina slike (proporcije slike)
+  // Dodajte tekst liniju po liniju
+  const lineHeight = 10;
+  let y = 10;
+  textContent.split('\n').forEach(line => {
+    // console.log(line, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    if (line == `======== ОВО НИЈЕ ФИСКАЛНИ РАЧУН =======`) {
+      // console.lof(barcodeBase64, "00B64-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      y += imgHeight
+      doc.addImage(barcodeBase64, 'PNG', 10, y + 10, imgWidth, imgHeight);
+    }
+    doc.text(line, 10, y);
+    y += lineHeight;
+  });
+
+  doc.save('output.pdf');
+}
+function generateHTMLWithDownload(textContent, barcodeBase64) {
+  // Kreiranje HTML sadržaja
+  let i = 0
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="sr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Račun</title>
+      <style>
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          line-height: 1.6;
+          margin: 20px;
+        }
+        p {
+          margin: 0;
+          padding: 0;
+        }
+        .barcode {
+          display: block;
+          margin: 0;
+          padding: 0;
+        }
+        .line {
+          margin-bottom: 5px;
+        }
+      </style>
+    </head>
+    <body>
+    <pre style="font-family: 'Courier New', monospace;">
+      ${textContent.split('\n').map(line => {
+
+    // console.log(line, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    ++i
+    if (line.includes('= ОВО НИЈЕ ФИСКАЛНИ РАЧУН =') && i > 3) {
+
+      // console.log(line, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      return `<img class="barcode" src="data:image/png;base64,${barcodeBase64}" alt="Barcode"><p>${line}</p>`;
+    } else {
+      return `<p>${line}</p>`;
+    }
+  }).join('')}
+      </pre>
+    </body>
+    </html>
+  `;
+
+  // Otvaranje sadržaja u novom prozoru
+  const newWindow = window.open('', '_blank');
+  newWindow.document.write(htmlContent);
+  newWindow.document.close();
+
+  // Dodavanje opcije za preuzimanje
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = 'racun.html';
+  downloadLink.textContent = 'Preuzmite HTML fajl';
+  newWindow.document.body.appendChild(downloadLink);
+
+  // Stilizovanje dugmeta za preuzimanje
+  downloadLink.style.display = 'block';
+  downloadLink.style.marginTop = '20px';
+  downloadLink.style.padding = '10px';
+  downloadLink.style.backgroundColor = '#007BFF';
+  downloadLink.style.color = '#fff';
+  downloadLink.style.textDecoration = 'none';
+  downloadLink.style.borderRadius = '5px';
+  downloadLink.style.textAlign = 'center';
+}
+
+function generateTextWithBarcode(textContent, barcodeBase64) {
+  // Kreiranje sadržaja u txt formatu sa base64 kodom slike
+  const textContentWithBarcode = textContent.split('\n').map(line => {
+    if (line.includes('= ОВО НИЈЕ ФИСКАЛНИ РАЧУН =')) {
+      return `${line}\n[Barcode Image: data:image/png;base64,${barcodeBase64}]`;
+    } else {
+      return line;
+    }
+  }).join('\n');
+
+  // Kreiranje i preuzimanje .txt fajla
+  const blob = new Blob([textContentWithBarcode], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'receipt.txt';
+  link.click();
+}
 
 export class TicDocService {
 
@@ -223,7 +357,7 @@ export class TicDocService {
   }
 
   async getTicListaByItemIdP(view, item, objId) {
-// console.log(view, item, objId, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log(view, item, objId, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.PROD_BACK_URL}/prodaja/?stm=${view}&item=${item}&objid=${objId}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -351,7 +485,7 @@ export class TicDocService {
 
   async postTicDoc(newObj) {
     try {
-      ////console.log(newObj, "@ 00 @@@@ postTicDoc @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (!newObj?.provera && (newObj?.date.broj() === '')) {
         throw new Error(
@@ -366,7 +500,6 @@ export class TicDocService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      ////console.log("###################***response.data.items***********"  , response.data.items, "****************#######################")
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -471,7 +604,7 @@ export class TicDocService {
   }
 
   async getCmnPaymenttps() {
-    console.log( "0000-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log("0000-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/paymenttp/?sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
@@ -514,7 +647,7 @@ export class TicDocService {
     };
 
     try {
-      console.log(url, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHgetIdByItemHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(url, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHgetIdByItemHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.get(url, { headers });
       return response.data.items || response.data.item;
     } catch (error) {
@@ -723,33 +856,46 @@ export class TicDocService {
     const headers = {
       Authorization: tokenLocal.token
     };
-console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+    console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
     try {
       const response = await axios.get(url, { headers });
       // poziv servera za stampu fiskala -- response.data.item
-      
+
       const invoiceRequest = response.data.item;
       const print = false;
       const email = 'bobanmvasiljevic@gmail.com';
-      
+
       const payload = {
         print,
         email,
         invoiceRequest
-    };
-    const fisUrl = `${env.FISC_BACK_URL}fiskalni-racun-esir`
-    console.log(payload, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", fisUrl)
-    // const invoiceResponse = await axios.post(`${process.env.FISC_BACK_URL}/fiskalni-racun-esir`, payload);
-    const invoiceResponse = await axios({
-      method: 'post',
-      url: fisUrl,
-      data: payload,
-      headers: {
-        Authorization: tokenLocal.token,
-        'Content-Type': 'application/json'
-      }
-    });
-    console.log(invoiceResponse, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+      };
+      const fisUrl = `${env.FISC_BACK_URL}fiskalni-racun-esir`
+      console.log(payload, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", fisUrl)
+      // const invoiceResponse = await axios.post(`${process.env.FISC_BACK_URL}/fiskalni-racun-esir`, payload);
+      const invoiceResponse = await axios({
+        method: 'post',
+        url: fisUrl,
+        data: payload,
+        headers: {
+          Authorization: tokenLocal.token,
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log(invoiceResponse.data, "02-SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+      const responseText = invoiceResponse.data.journal
+      const barcodeBase64 = invoiceResponse.data.verificationQRCode
+      generateHTMLWithDownload(responseText, barcodeBase64)
+      // generatePDF(responseText, barcodeBase64)
+      // generateTextWithBarcode(responseText, barcodeBase64)
+      const blob = new Blob([responseText], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "output.txt";
+      document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+      // generatePdf (invoiceResponse.data.journal)
       return true; //response.data.item;
     } catch (error) {
       console.error(error);
@@ -790,12 +936,12 @@ console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 
     const baseUrl = `${env.DOMEN}/sal/print-tickets`;
     const urlWithToken = `${baseUrl}?token=${tokenLocal.token}`;
-    console.log(urlWithToken, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log(urlWithToken, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     try {
       const response = await fetch(urlWithToken);
 
       if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       // Pretpostavljamo da je odgovor URL
@@ -805,7 +951,7 @@ console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
       // Preuzimanje stvarnog sadržaja s datog URL-a
       const contentResponse = await fetch(downloadUrl);
       if (!contentResponse.ok) {
-          throw new Error(`Error fetching content from download URL: ${contentResponse.status}`);
+        throw new Error(`Error fetching content from download URL: ${contentResponse.status}`);
       }
 
       const htmlContent = await contentResponse.text();
@@ -851,6 +997,14 @@ console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
     }
   }
 
+  async getPrintgrpLPTX1(newObj, ticStampa, tpStampa) {
+    const ticketArr = newObj.map(item => item.id);
+    console.log(newObj, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", ticketArr)
+    // const ticketJsonString = JSON.stringify(ticketArr);
+    PDFHtmlDownloader(ticketArr)
+  }
+
+  
   async getPrintgrpLPT(newObj, ticStampa, tpStampa) {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const userObj = localStorage.getItem('user')
@@ -1034,24 +1188,24 @@ console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
       //console.log(docId, "01XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
       const response = await axios.post(url, {}, { headers });
 
-      const data =  response.data.item||response.data.item;
+      const data = response.data.item || response.data.item;
       if (Array.isArray(data)) {
         const ticEventattsService = new TicEventattsService();
         for (const item of data) {
           //console.log(item.event, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
-          const objId = item.event; 
-  
+          const objId = item.event;
+
           const brojKartiLista = await ticEventattsService.getCodeValueListaP(objId, '01.06.');
           const brojKarti = brojKartiLista[0]
           const kupciBrojKarti = await this.getTicDocEventKupacBrojKartiP(objId);
           for (const row of kupciBrojKarti) {
             //console.log(row, "02XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", url)
-            
+
           }
         }
       } else {
         console.error("Data nije niz:", data);
-      }      
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -1074,14 +1228,13 @@ console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 
       const response = await axios.post(url, {}, { headers });
 
-      return response.data.items||response.data.item;
+      return response.data.items || response.data.item;
     } catch (error) {
       console.error(error);
       throw error;
     }
 
   }
-
 
 }
 

@@ -3,7 +3,7 @@ import env from "../configs/env";
 import Token from "../utilities/Token";
 
 class FileService {
-  
+
   async getFile(fileName, relpath) {
     try {
       const selectedLanguage = localStorage.getItem("sl") || "en";
@@ -29,6 +29,15 @@ class FileService {
       const url = `${env.IMG_BACK_URL}/public/tic/upload/?filename=${fileName}&relpath=${relpath}&sl=${selectedLanguage}`;
       const formData = new FormData();
       formData.append("file", file, fileName);
+
+      const resizeOptions = {
+        width: 84, // Širina slike
+        height: null, // Automatski izračunata visina
+        prefix: "l_", // Prefiks za novi fajl
+      };
+      formData.append("resizeOptions", JSON.stringify(resizeOptions));
+
+
       const tokenLocal = await Token.getTokensLS();
       const headers = {
         Authorization: tokenLocal.token,
@@ -36,7 +45,7 @@ class FileService {
       console.log(url, "+++++++++++++++++++++++++++++++++++++++++", formData)
       const response = await axios.post(url, formData, { headers });
 
-      return {status: response.status, message: response.data.message};
+      return { status: response.status, message: response.data.message };
     } catch (error) {
       console.error("Error uploading file:", error);
       throw error;
@@ -60,7 +69,7 @@ class FileService {
       throw error;
     }
   }
-  
+
 }
 
 export default FileService;

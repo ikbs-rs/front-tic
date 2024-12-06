@@ -772,10 +772,15 @@ export default function TicTransactionsL(props) {
             >
                 <Column
                     field="nevent"
-                    // header={translations[selectedLanguage].nevent}
-                    header={newTemplate}
+                    header={translations[selectedLanguage].nevent}
+                    // header={newTemplate}
                     sortable
-                    style={{ width: "15%" }}
+                    style={{
+                        width: "15%",
+                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontSize: "12px",
+                        fontWeight: "normal"
+                      }}
                 ></Column>
                 <Column
                     field="nloc"

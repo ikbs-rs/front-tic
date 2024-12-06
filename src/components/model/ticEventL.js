@@ -27,6 +27,7 @@ import TicEventWL from './ticEventWL';
 import TicEventTmpL from './ticEventTmpL';
 import TicPrintGrpL from './ticPrintGrpL';
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import SaleEvent from './ticSalEvent'
 
 export default function TicEventL(props) {
     console.log(props, '**************************-ticEventL-****************************')
@@ -51,6 +52,8 @@ export default function TicEventL(props) {
     const [ticEventlocLVisible, setTicEventlocLVisible] = useState(false);
     const [ticEventcenatpLVisible, setTicEventcenatpLVisible] = useState(false);
     const [ticEventartLVisible, setTicEventartLVisible] = useState(false);
+    const [drowingVisible, setDrowingVisible] = useState(false);
+
     const [ticEventobjLVisible, setTicEventobjLVisible] = useState(false);
     const [ticEventWLVisible, setTicEventWLVisible] = useState(false);
     const [ticEventTmpLVisible, setTicEventTmpLVisible] = useState(false);
@@ -219,6 +222,10 @@ export default function TicEventL(props) {
         setTicEventartDialog();
     };
 
+    const openDrowing = () => {
+        setDrowingDialog();
+    };
+
     const openEventobj = () => {
         setTicEventobjDialog();
     };
@@ -291,19 +298,22 @@ export default function TicEventL(props) {
                     <Button label={translations[selectedLanguage].Channels} icon="pi pi-map" onClick={openEventobj} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].EventLoc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
+                </div>
+                <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Setings} icon="pi pi-table" onClick={openEventatts} severity="info" text raised disabled={!ticEvent} />
+                </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
+                </div>
+                <div className="flex flex-wrap gap-1">
+                    <Button label={translations[selectedLanguage].drawing} icon="pi pi-palette" onClick={openDrowing} severity="info" raised text disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Agenda} icon="pi pi-shield" onClick={openEventagenda} severity="info" text raised disabled={!ticEvent} />
                 </div>
                 <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Links} icon="pi pi-sitemap" onClick={openEventlink} severity="info" text raised disabled={!ticEvent} />
-                </div>
-                <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].EventLoc} icon="pi pi-building" onClick={openEventloc} severity="info" text raised disabled={!ticEvent} />
-                </div>
-                <div className="flex flex-wrap gap-1">
-                    <Button label={translations[selectedLanguage].Art} icon="pi pi-apple" onClick={openEventart} severity="info" raised text disabled={!ticEvent} />
                 </div>
                 {/* <div className="flex flex-wrap gap-1">
                     <Button label={translations[selectedLanguage].Print} icon="pi pi-print" severity="warning" onClick={openPrintGrpL} text raised />
@@ -415,6 +425,10 @@ export default function TicEventL(props) {
     const setTicEventartDialog = () => {
         setShowMyComponent(true);
         setTicEventartLVisible(true);
+    };
+    const setDrowingDialog = () => {
+        setShowMyComponent(true);
+        setDrowingVisible(true);
     };
 
     const setTicEventobjDialog = () => {
@@ -815,6 +829,34 @@ export default function TicEventL(props) {
                 onConfirm={handleConfirm}
                 uPoruka={'Aktivacija događaja, da li ste sigurni?'}
             />
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setDrowingVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
+                visible={drowingVisible}
+                style={{ width: '98%' }}
+                onHide={() => {
+                    setDrowingVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <SaleEvent key={"II"}
+                        ticEvent={ticEvent}
+                        TabView={true}
+                        dialog={true}
+                        setDrowingVisible={setDrowingVisible}
+                    />
+                )}
+            </Dialog>
         </div>
     );
 }

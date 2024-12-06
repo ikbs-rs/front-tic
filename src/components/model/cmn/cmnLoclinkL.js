@@ -362,7 +362,7 @@ export default function CmnLoclinkL(props) {
     const cmnLocService = new CmnLocService();
     const data = await cmnLocService.getCmnLoc(cmnLoclink.loc1);
     await setCmnLoc({ ...data });
-    console.log(cmnLoc, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHS")
+    // console.log(cmnLoc, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHS")
     setLocTip("CREATE")
     setCmnLoctpId(props.cmnLoctpId)
     // setShowMyComponent(true)

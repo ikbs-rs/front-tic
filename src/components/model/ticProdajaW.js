@@ -25,15 +25,17 @@ const TicProdajaW = forwardRef((props, ref) => {
   // console.log(props, "######2222222222222222222222222222222222222222222222222222222222222222")
   const objName = "tic_docpayment"
   const parName = "cmn_par"
+  const docName = "tic_doc"
   const emptyTicDocpayment = EmptyEntities[objName]
   const emptyCmnPar = EmptyEntities[parName]
   emptyTicDocpayment.doc = props.ticDoc.id
   emptyTicDocpayment.status = 1
+  const emptyTicDoc = EmptyEntities[docName]
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const iframeRef = useRef(null);
   const [key, setKey] = useState(0);
   const [cmnPar, setCmnPar] = useState(props.cmnPar ? (props.cmnPar?.id != 1 ? props.cmnPar : emptyCmnPar) : emptyCmnPar);
-  const [ticDoc, setTicDoc] = useState(props.ticDoc?.id ? props.ticDoc : ticDoc);
+  const [ticDoc, setTicDoc] = useState(props.ticDoc?.id ? props.ticDoc : emptyTicDoc);
   const [ticDocId, setTicDocId] = useState(props.ticDoc?.id);
   const [ticDocpayment, setTicDocpayment] = useState(emptyTicDocpayment);
   const [submitted, setSubmitted] = useState(false);
@@ -60,6 +62,8 @@ const TicProdajaW = forwardRef((props, ref) => {
   const docsuidRef = useRef();
   const [paying, setPaying] = useState(0);
   const [reservationStatus, setReservationStatus] = useState(0);
+  const [zaUplatu, setZaUplatu] = useState(0);
+  // const [reservation, setReservation] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -363,6 +367,10 @@ const TicProdajaW = forwardRef((props, ref) => {
     }
     // alert(`Kliknuo ${rowData.event} ** ${ticEvent.id}`);
   };
+
+  const handleZaUplatu = (iznos) => {
+    setZaUplatu(iznos)
+  }
 
   const handleAction = (rowData) => {
     setTicDoc(rowData)
@@ -814,6 +822,7 @@ DRUGI RED
                     setRefresh={handleRefresh}
                     handleAllRefresh={handleAllRefresh}
                     handlePlacanjetip={handlePlacanjetip}
+                    zaUplatu={zaUplatu}
                     ref={placanjeRef}
                     modal={false}
                   />
@@ -848,6 +857,9 @@ DRUGI RED
                     propsParent={props}
                     handleFirstColumnClick={handleFirstColumnClick}
                     handleAction={handleAction}
+                    handleZaUplatu={handleZaUplatu}
+                    zaUplatu={zaUplatu}
+                    reservationStatus={reservationStatus}
                     mapa={0}
                   />
                   {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
@@ -866,6 +878,9 @@ DRUGI RED
                     propsParent={props}
                     handleFirstColumnClick={handleFirstColumnClick}
                     handleAction={handleAction}
+                    handleZaUplatu={handleZaUplatu}
+                    zaUplatu={zaUplatu}
+                    reservationStatus={reservationStatus}
                     mapa={1}
                   />
                   {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}

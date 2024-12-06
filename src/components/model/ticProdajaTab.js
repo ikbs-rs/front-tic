@@ -82,11 +82,13 @@ export default function TicProdajaTab(props) {
     const [checkedRezervacija, setCheckedRezervacija] = useState(ticDoc?.reservation == "1" || false);
     const [checkedIsporuka, setCheckedIsporuka] = useState(ticDoc?.delivery == "1" || false);
     const [checkedNaknade, setCheckedNaknade] = useState(ticDoc?.services == "1" || false);
+    const [checkedMasssale, setCheckedMasssale] = useState(ticDoc?.masssale == "1" || false);
 
     const [ticDocsprintgrpgrpLVisible, setTicDocsprintgrpgrpLVisible] = useState(false)
 
     const iframeRef = useRef(null);
     const deliveryRef = useRef(null);
+    const masssaleRef = useRef(null);
     let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
     const [ticPaymentLVisible, setTicPaymentLVisible] = useState(false);
     const [ticPayment, setTicPayment] = useState(null);
@@ -124,6 +126,7 @@ export default function TicProdajaTab(props) {
                         setReservationStatus(1);
                     }
                 }
+                setCheckedMasssale(ticDoc.masssale == '1')
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -518,7 +521,7 @@ export default function TicProdajaTab(props) {
             // Obrada greške ako je potrebna
         }
     }
-    const createDoc = async (channel, event) => {
+    const createDoc = async (channel, event, masssale) => {
         try {
             // console.log(event?.id, channel?.id, "** KANALI KORISNIKA/EVENT *  createDoc *****************************************************************************")
             const ticEventattsService = new TicEventattsService()
@@ -537,6 +540,7 @@ export default function TicProdajaTab(props) {
             _ticDoc.year = DateFunction.currYear()
             _ticDoc.usr = 1 //cmnPar.id;
             _ticDoc.docvr = 22;
+            _ticDoc.masssale = masssale;
             _ticDoc.usersys = localStorage.getItem('userId')
             _ticDoc.curr = 1;
             _ticDoc.currrate = 1;
@@ -613,6 +617,15 @@ export default function TicProdajaTab(props) {
                         // disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
                 </div> 
+                <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
+                    <label htmlFor="masssale" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Masssale}</label>
+                    <InputSwitch id="masssale" checked={checkedMasssale} 
+                        ref={masssaleRef}
+                        tooltip={translations[selectedLanguage].MasovnaProdaja}
+                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                        disabled={true}
+                    />
+                </div>                 
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
                     <InputSwitch id="naknade" checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)}
@@ -917,6 +930,10 @@ export default function TicProdajaTab(props) {
         handleChangeIsporuka(newValue); // Ručno pokrenite onChange funkciju
     };
 
+    const handleMasssale = (masssale) => {
+        setCheckedMasssale(masssale); 
+    };
+
     const handleRezervaciju = (checkedRez) => {
         const newValue = checkedRez; // Promenite trenutnu vrednost
         setCheckedRezervacija(newValue); // Ažurirajte stanje
@@ -1122,7 +1139,7 @@ export default function TicProdajaTab(props) {
         }
     }
     /********************************************************************************/
-    const handleEventProdaja = async (newObj, newDoc) => {
+    const handleEventProdaja = async (newObj, newDoc, masssale) => {
         ++ii
         let localChannel = {}
         let timeout = null
@@ -1152,6 +1169,7 @@ export default function TicProdajaTab(props) {
             setCmnPar(_cmnPar)
             _ticDoc.cpar = _cmnPar?.code
             _ticDoc.npar = _cmnPar?.text
+            setCheckedMasssale(_ticDoc.masssale == '1')
             await setTicDoc(_ticDoc)
             //console.log(_channel.id, _ticDoc.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_")
             // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
@@ -1174,6 +1192,7 @@ export default function TicProdajaTab(props) {
                     setCmnPar(_cmnPar)
                     ticDocOld.cpar = _cmnPar.code
                     ticDocOld.npar = _cmnPar.text
+                    setCheckedMasssale(ticDocOld.masssale == '1')
                     await setTicDoc(ticDocOld)
                 }
             } else {
@@ -1185,23 +1204,27 @@ export default function TicProdajaTab(props) {
         // if (OK || newDoc) {
         if (OK) {
             // console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
-            const _ticDoc = await createDoc(_channel, _ticEvent)
+            const _ticDoc = await createDoc(_channel, _ticEvent, masssale)
             const tmp_cmnPar = await fachPar(_ticDoc.usr)
             const _cmnPar = tmp_cmnPar[0]
             setCmnPar(_cmnPar)
             _ticDoc.cpar = _cmnPar.code
             _ticDoc.npar = _cmnPar.text
+            _ticDoc.masssale = masssale;
+            setCheckedMasssale(masssale == '1')
             await setTicDoc(_ticDoc)
         }
         setCheckedRezervacija(ticDoc.reservation == '1')
         setCheckedIsporuka(ticDoc.delivery == '1')
         setCheckedNaknade(ticDoc.services == '1')
+        // setCheckedMasssale(ticDoc.masssale == '1')
         setChannell(localChannel)
         timeout = setTimeout(async () => {
             setActiveIndex(Math.min(totalTabs - 1, activeIndex + 1))
             setCheckedRezervacija(ticDoc.reservation == '1')
             setCheckedIsporuka(ticDoc.delivery == '1')
             setCheckedNaknade(ticDoc.services == '1')
+            // setCheckedMasssale(ticDoc.masssale == '1')
         }, 1000);
     }
     const handleSetActiveIndex = (index) => {

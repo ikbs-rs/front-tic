@@ -943,13 +943,13 @@ export default function TicTransactionFL(props) {
                     // dataType="numeric"
                     style={{ width: "10%" }}
                 ></Column>
-                <Column
+                {/* <Column
                     field="storno"
                     header={translations[selectedLanguage].StornoSkr}
                     sortable
                     // filter
                     style={{ width: "5%" }}
-                ></Column>
+                ></Column> */}
                 <Column
                     field="nchannel"
                     header={translations[selectedLanguage].Kanal}

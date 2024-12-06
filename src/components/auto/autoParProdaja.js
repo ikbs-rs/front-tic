@@ -108,7 +108,7 @@ const AutoParProdaja = (props) => {
         setParValue(e.value.code);
         const ticDocService = new TicDocService();
         await ticDocService.putTicDocSet(_ticDoc);
-        console.log(_ticDoc, "APP-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(_ticDoc, "APP-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         props.setAutoParaddressKey1(prev => prev + 1)
         props.handleAction(_ticDoc)
         props.setRefresh(prev => prev + 1)
@@ -152,7 +152,7 @@ const AutoParProdaja = (props) => {
         setSelectedPar(newObj.code);
         const ticDocService = new TicDocService();
         await ticDocService.putTicDocSet(_ticDoc);
-        console.log(_ticDoc, "APP0-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(_ticDoc, "APP0-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         props.setAutoParaddressKey1(prev => prev + 1)
         props.handleAction(_ticDoc)
         props.setRefresh(prev => prev + 1)

@@ -196,26 +196,30 @@
 /*> **************TOGGLE*********************/
 
 /* FONT */
+html {
+  font-size: 12px !important;
+}
 .p-component {
   /* font-family: system-ui; */
-  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 12px;
+  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
 }
 
 body {
-  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 12px;
+  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif !important;
+  font-size: 12px !important;
   font-weight: 500;
 }
 
 .p-link {
-  font-size: 12px;
-  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
+  font-size: 12px !important;
+  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif !important;
 }
 
 .p-inputtext {
-  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif;
-  font-size: 12px;
+  font-family: 'Helvetica Neue','Segoe UI',Helvetica,Arial,sans-serif !important;
+  font-size: 12px !important;
 }
 
 .p-checkbox .p-checkbox-box {
@@ -255,13 +259,13 @@ body {
 }
 
 body {
-  color: #252529;
-  background-color: #fdfdfd77;
-  background-image: url('./Z.jpg');
-  background-size: cover; 
+  /* color: #252529; */
+  /* background-color: #fdfdfd77; */
+  /* background-image: url('./Z.jpg'); */
+  /* background-size: cover;  */
   background-position: center; 
   background-repeat: no-repeat; 
-  opacity: 0.97; 
+  /* opacity: 0.97;  */
 }
 
 /* body {
@@ -351,7 +355,7 @@ body::before {
   border-radius: 2px; */
 }
 .cardhome {
-  background: #1f1e1eee;
+  /* background: #1f1e1eee; */
   padding: 1rem; 
   box-sizing: border-box;
   margin-bottom: 1rem;

@@ -17,7 +17,7 @@ import DateFunction from "../../../utilities/DateFunction";
 
 
 export default function CmnLocvenueL(props) {
-console.log(props, 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
+// console.log(props, 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
   const objName = "cmn_locvenue"
   const selectedLanguage = localStorage.getItem('sl')||'en'
   const emptyCmnLocvenue = EmptyEntities[objName]

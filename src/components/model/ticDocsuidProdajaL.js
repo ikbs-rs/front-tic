@@ -542,7 +542,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
             emptyTicDocdelivery.note = note
             _ticDocdelivery.note = note
-            console.log(_ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", ticDocdelivery)
+            // console.log(_ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", ticDocdelivery)
 
             const ticDocdeliveryService = new TicDocdeliveryService();
             if (_ticDocdelivery?.id && _ticDocdelivery?.id != null) {
@@ -822,7 +822,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onChange={(e) => setNote(e.target.value)}
                                         rows={3} cols={90}
                                         style={{ paddingTop: 20, width: "100%" }}
-                                        disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                                        disabled={ticDoc.statuspayment == 1 }
                                     />
                                 </div>
                                 {/* </div>
@@ -838,7 +838,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             required
                                             optionLabel="name"
                                             placeholder="Select One"
-                                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                                            disabled={ticDoc.statuspayment == 1 }
                                             className={classNames({ 'p-invalid': submitted && !ticDocdelivery.country })}
                                         />
                                         {submitted && !ticDocdelivery.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -853,7 +853,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             onClick={(e) => handleDeliveryClick("item", e)}
                                             tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
                                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                            disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                                            disabled={ticDoc.statuspayment == 1 }
                                         ></Button>
                                     </div>
                                 </div>
