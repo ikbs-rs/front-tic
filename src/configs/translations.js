@@ -945,6 +945,9 @@ export const translations = {
         kolicinaulaz: "Количина улаз",
         MasovnaProdaja: "Масовна продаја",
         Masssale: "Масовна",
+        Vaucer: "Ваучер",
+        tax: "Порез",
+        EventartlogList: "Артикли лог Листа",
     }
   };
   

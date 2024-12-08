@@ -79,7 +79,7 @@ export default function TicDocsprintgrpL(props) {
       try {
         const ticDocService = new TicDocService();
         const data = await ticDocService.getTicDocP(props.ticDoc?.id);
-        console.log(data, "QQQQ-5555555555555555555555555555555555555555555555555555555555555555555")
+        // console.log(data, "QQQQ-5555555555555555555555555555555555555555555555555555555555555555555")
         // const data = await ticDocService.getTicDoc(props.ticDoc?.id);
         setTicDoc(data);
 
@@ -150,7 +150,7 @@ export default function TicDocsprintgrpL(props) {
 
 
   const handlePrintSt = async (tp) => {
-    console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
+    // console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     emptyTicStampa.valid = tp
     emptyTicStampa.time = DateFunction.currDatetime()
@@ -165,7 +165,7 @@ export default function TicDocsprintgrpL(props) {
   };
 
   const handlePrintCopySt = async (tp) => {
-    console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
+    // console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     let _tp = "DUPLIKAT"
     if (tp == 2) {

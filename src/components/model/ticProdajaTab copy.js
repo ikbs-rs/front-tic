@@ -485,10 +485,10 @@ export default function TicProdajaTab(props) {
     }
     const createDoc = async (channel, event) => {
         try {
-            console.log(event?.id, channel?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            // console.log(event?.id, channel?.id, "$00  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             const ticEventattsService = new TicEventattsService()
             const eventAtt = await ticEventattsService.getEventAttsDD(event?.id, channel?.id, '01.13.');
-            console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            // console.log(eventAtt, "$11  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
             const foundPaymenttp = ddPaymenttpItems.find((item) => item.code == paymenttpId)
             setDdPaymenttpItem(foundPaymenttp);
 
@@ -979,7 +979,7 @@ export default function TicProdajaTab(props) {
         _ticDoc.status = 1
         // _ticDoc.services? _ticDoc.services = 1 : _ticDoc.services = 0
         setTicDoc(_ticDoc)
-        console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
+        // console.log(previousValue, "333333333333333333333333333333333333333333333333333333000", value)
         await handleUpdateRezTicDoc(_ticDoc, previousValue)
         remountStavke();
     };
@@ -990,12 +990,12 @@ export default function TicProdajaTab(props) {
         setCheckedIsporuka(value);
 
         let _ticDoc = { ...ticDoc }
-        console.log(_ticDoc.reservation, "111333333333333333333333333333333333333333333333333333333111", _ticDoc.services)
+        // console.log(_ticDoc.reservation, "111333333333333333333333333333333333333333333333333333333111", _ticDoc.services)
         value ? _ticDoc.delivery = `1` : _ticDoc.delivery = `0`
         // _ticDoc.services ? _ticDoc.services = 1 : _ticDoc.services = 0
         // _ticDoc.reservation ? _ticDoc.reservation = 1 : _ticDoc.reservation = 0
         setTicDoc(_ticDoc)
-        console.log(previousValue, "333333333333333333333333333333333333333333333333333333111", value)
+        // console.log(previousValue, "333333333333333333333333333333333333333333333333333333111", value)
         await handleUpdateIspTicDoc(_ticDoc, previousValue)
         remountStavke();
     };
@@ -1003,7 +1003,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateIspTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 1115555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 1115555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1020,7 +1020,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateRezTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1040,7 +1040,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateCancelTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.setCancelTicDoc(newObj);
         } catch (err) {
@@ -1058,7 +1058,7 @@ export default function TicProdajaTab(props) {
     const handleUpdateNakTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj
         try {
-            console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
+            // console.log(newObj, "handleUpdateTicDoc 0005555555555555555555555555555555555555555555555555555555555", previousValue)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDoc(newObj);
         } catch (err) {
@@ -1186,7 +1186,7 @@ export default function TicProdajaTab(props) {
         const _ticDocpayment = { ...ticDocpayment }
         _ticDocpayment.paymenttp = value
         setTicDocpayment({ ..._ticDocpayment })
-        console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
+        // console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
     }
     const handleRefresh = () => {
     }

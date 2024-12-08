@@ -784,6 +784,34 @@ export class TicDocService {
 
   }
 
+  async setEndsaleTicDoc(newObj) {
+    try {
+      console.log(newObj, "*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      if (newObj.broj.trim() === '' || newObj?.channel === '') {
+        throw new Error(
+          "Items must be filled!"
+        );
+      }
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docsetendsale_s&objId1=${newObj.id}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+
+      ////console.log("*#################", jsonObj, "****************")
+      const response = await axios.post(url, {}, { headers });
+      ////console.log("**************"  , response, "****************")
+      return response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }
+
   async putTicDocSet(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'

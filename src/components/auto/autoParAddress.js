@@ -4,7 +4,7 @@ import { CmnParService } from "../../service/model/cmn/CmnParService";
 import { translations } from "../../configs/translations";
 
 export default function AutoParAddress(props) {
-console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+// console.log(props, "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [items, setItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState(props.ticDocdelivery.adress || null)

@@ -171,7 +171,7 @@ const App = () => {
                     items: [
                         { label: translations[selectedLanguage].Events, icon: 'pi pi-database', to: '/event' },
                         // { label: translations[selectedLanguage].Document, icon: 'pi pi-fw pi-clone', to: '/doc' },
-                        { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-book', to: '/transaction' },
+                        // { label: translations[selectedLanguage].Transaction, icon: 'pi pi-fw pi-book', to: '/transaction' },
                         { label: translations[selectedLanguage].TransactionF, icon: 'pi pi-fw pi-book', to: '/transactionf' },
                         { label: translations[selectedLanguage].Delivery, icon: 'pi pi-fw pi-truck', to: '/delivery' },
                     ]

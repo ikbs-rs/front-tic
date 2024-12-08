@@ -56,7 +56,7 @@ const TicDocsdiscountL = (props) => {
                 if (i < 2) {
                     const ticDocsdiscountService = new TicDocsdiscountService();
                     const data = await ticDocsdiscountService.getTicDocsdiscountLista(props.item.docs);
-                    console.log(data, "555555555555555555555555555555555555555555555555555555555555555555555")
+                    // console.log(data, "555555555555555555555555555555555555555555555555555555555555555555555")
                     setTicDocsdiscounts(data);
                     // initFilters();
                 }
@@ -158,7 +158,7 @@ const TicDocsdiscountL = (props) => {
     //     }
     // };
     const onCellEditComplete = async (e) => {
-        console.log(e.rowData, "55555555555555555555555555555555555555555555555555555")
+        // console.log(e.rowData, "55555555555555555555555555555555555555555555555555555")
         let { rowData, newValue, field } = e;
         if (newValue !== rowData[field]) {
             rowData[field] = newValue;

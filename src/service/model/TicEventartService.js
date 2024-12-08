@@ -53,7 +53,7 @@ export class TicEventartService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(jsonObj, "*555555555555555555555555555555555555555555555555 - postGrpEventatts - 555555555555555555555555555555555555555555555555555555", url)
+            // console.log(jsonObj, "*555555555555555555555555555555555555555555555555 - postGrpEventatts - 555555555555555555555555555555555555555555555555555555", url)
             const response = await axios.post(url, { jsonObj }, { headers });
             return response.data.items;
         } catch (error) {

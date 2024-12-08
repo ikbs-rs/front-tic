@@ -15,6 +15,8 @@ import env from '../../configs/env';
 import axios from 'axios';
 import Token from '../../utilities/Token';
 import TicArtL from './ticArtL';
+import TicEventartlogL from './ticEventartlogL';
+
 import { Dialog } from 'primereact/dialog';
 import { AutoComplete } from "primereact/autocomplete";
 import CustomColorPicker from "../custom/CustomColorPicker.js"
@@ -39,6 +41,8 @@ const TicEventart = (props) => {
     /************************AUTOCOMPLIT**************************** */
     const [ticArtLVisible, setTicArtLVisible] = useState(false);
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
+    const [ticEventartlogLVisible, setTicEventartlogLVisible] = useState(false);
+    
     const [ticArt, setTicArt] = useState(null);
     const [allArt, setAllArts] = useState([]);
     const [artValue, setArtValue] = useState(props.ticEventart.cart);
@@ -139,11 +143,26 @@ const TicEventart = (props) => {
             });
         }
     };
-
+    const handleMaxClick = async (e, destination) => {
+        try {
+            setTicEventartlogDialog();
+        } catch (error) {
+            console.error(error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch ticArt data',
+                life: 3000
+            });
+        }
+    };
     const setTicArtRemoteDialog = () => {
         setTicArtRemoteLVisible(true);
     };
-
+    
+    const setTicEventartlogDialog = () => {
+        setTicEventartlogLVisible(true);
+    };    
     const setTicArtDialog = (destination) => {
         setTicArtLVisible(true);
     };
@@ -163,6 +182,8 @@ const TicEventart = (props) => {
     };
     /**************************AUTOCOMPLIT************************************************ */
 
+    const handleTicEventartlogLDialogClose = (newObj) => {
+    }
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -342,7 +363,7 @@ const TicEventart = (props) => {
         <div className="grid">
             <Toast ref={toast} />
             <div className="col-12">
-                <div className="card">
+                {/* <div className="card"> */}
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
                             <label htmlFor="code">{translations[selectedLanguage].Code}</label>
@@ -353,7 +374,7 @@ const TicEventart = (props) => {
                             <InputText id="text" value={props.ticEvent.text} disabled={true} />
                         </div>
                     </div>
-                </div>
+                {/* </div> */}
             </div>
             <div className="col-12">
                 <div className="card">
@@ -394,7 +415,7 @@ const TicEventart = (props) => {
                                     onChange={onColorChange}
                                 />
                             </div>
-                        </div>                           
+                        </div>
                         {/* <div className="field col-12 md:col-7">
                             <label htmlFor="art">{translations[selectedLanguage].Art} *</label>
                             <Dropdown
@@ -418,15 +439,18 @@ const TicEventart = (props) => {
                         </div>
                         <div className="field col-12 md:col-5">
                             <label htmlFor="maxkol">{translations[selectedLanguage].maxkol} *</label>
-                            <InputText id="maxkol" value={ticEventart.maxkol} onChange={(e) => onInputChange(e, 'text', 'maxkol')}
-                            />
+                            <div className="p-inputgroup flex-1">
+                                <InputText id="maxkol" value={ticEventart.maxkol} onChange={(e) => onInputChange(e, 'text', 'maxkol')}
+                                />
+                                <Button icon="pi pi-search" onClick={(e) => handleMaxClick(e, 'local')} className="p-button" />
+                            </div>
                         </div>
                         <div className="field col-12 md:col-5">
                             <label htmlFor="kolicinaulaz">{translations[selectedLanguage].kolicinaulaz} *</label>
                             <InputText id="kolicinaulaz" value={ticEventart.kolicinaulaz} onChange={(e) => onInputChange(e, 'text', 'kolicinaulaz')}
                             />
-                        </div>                        
-                     
+                        </div>
+
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Description}</label>
                             <InputText id="descript" value={ticEventart.descript} onChange={(e) => onInputChange(e, 'text', 'descript')} />
@@ -507,6 +531,26 @@ const TicEventart = (props) => {
                         lookUp={true}
                     />}
             </Dialog>
+            <Dialog
+                header={translations[selectedLanguage].LogList}
+                visible={ticEventartlogLVisible}
+                style={{ width: '50%', height: '1400px' }}
+                onHide={() => {
+                    setTicEventartlogLVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {ticEventartlogLVisible &&
+                    <TicEventartlogL
+                        parameter={'inputTextValue'}
+                        ticEventart={ticEventart}
+                        ticEvent={props.ticEvent}
+                        handleTicEventartlogLDialogClose={handleTicEventartlogLDialogClose}
+                        setTicEventartlogLVisible={setTicEventartlogLVisible}
+                        dialog={true}
+                        lookUp={true}
+                    />}
+            </Dialog>            
         </div>
     );
 };

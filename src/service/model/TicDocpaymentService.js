@@ -117,7 +117,7 @@ export class TicDocpaymentService {
               'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(newObj, "10.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", jsonObj)
+            // console.log(newObj, "10.1 PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_", jsonObj)
             const response = await axios.post(url, jsonObj, { headers });
       
             return response.data.items;
@@ -143,7 +143,7 @@ export class TicDocpaymentService {
             };
             
             const jsonObj = JSON.stringify(newObj)
-            console.log(jsonObj, "00000LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+            // console.log(jsonObj, "00000LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
             const response = await axios.post(url, jsonObj, { headers });
             return response.data.items;
         } catch (error) {
@@ -167,7 +167,7 @@ export class TicDocpaymentService {
                 'Authorization': tokenLocal.token
             };
             const jsonObj = JSON.stringify(newObj)
-            console.log(newObj, "**********************************newObj*************************************")
+            // console.log(newObj, "**********************************newObj*************************************")
             const response = await axios.put(url, jsonObj, { headers });
             //console.log("**************"  , response, "****************")
             return response.data.items;
@@ -199,7 +199,7 @@ export class TicDocpaymentService {
     
         const selectedLanguage = localStorage.getItem('sl') || 'en'
         const url = `${env.TIC_BACK_URL}/tic/${tab}/_v/${route}/?stm=${view}&item=${item}&id=${objId}&sl=${selectedLanguage}`;
-        console.log(url, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", route)
+        // console.log(url, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", route)
         const tokenLocal = await Token.getTokensLS();
         const headers = {
           Authorization: tokenLocal.token

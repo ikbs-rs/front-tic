@@ -255,7 +255,7 @@ export class TicDocsuidService {
       };
 
       const jsonObj = JSON.stringify(newObj)
-      // console.log(newObj, "5555555555555555555551111******************************", jsonObj)
+      console.log(newObj, "5555555555555555555551111******************************", jsonObj)
       const response = await axios.post(url, jsonObj, { headers });
 
       return response.data.items;

@@ -45,7 +45,7 @@ const TicEventobj = (props) => {
                 const _ticEventobj = { ...ticEventobj}
                 const ticEventobjService = new TicEventobjService();
                 const data = await ticEventobjService.getIdByItem('XPK');
-                console.log(data, "#000#####################################################################################")
+                // console.log(data, "#000#####################################################################################")
                 _ticEventobj.objtp =  data.id
                 setTicEventobj({..._ticEventobj});
             } catch (error) {
@@ -205,7 +205,7 @@ const TicEventobj = (props) => {
     };
 
     const onInputChange = (e, type, name, a) => {
-        console.log(e, type, name, a, "555555555555555555555555555555555555555555555555555555555555555")
+        // console.log(e, type, name, a, "555555555555555555555555555555555555555555555555555555555555555")
         let val = ''
         let foundItem = ''
 

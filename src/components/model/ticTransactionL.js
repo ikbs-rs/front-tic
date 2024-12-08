@@ -330,7 +330,7 @@ export default function TicTransactionL(props) {
         return ticDocs
             .filter((stavka) => {
                 // Proverite da li stavka prolazi kroz sve aktivne filtere
-                return filters.global ? stavka.someField.includes(filters.global.value) : true; // Primer za global filter, zamenite prema potrebi
+                // return filters.global ? stavka.someField.includes(filters.global.value||null) : true; // Primer za global filter, zamenite prema potrebi
             })
             .reduce((total, stavka) => total + (Number(stavka.potrazuje) || 0), 0);
     };
@@ -339,7 +339,7 @@ export default function TicTransactionL(props) {
         return ticDocs
             .filter((stavka) => {
                 // Filtrirajte stavke za prikaz samo onih koji odgovaraju filterima
-                return filters.global ? stavka.someField.includes(filters.global.value) : true;
+                // return filters.global ? stavka.someField.includes(filters.global.value) : true;
             })
             .reduce((total, stavka) => total + (Number(stavka.output) || 0), 0);
     };

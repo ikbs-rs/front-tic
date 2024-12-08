@@ -97,7 +97,7 @@ function TicDocsNaknadeL(props) {
                 ></Column>
                 <Column
                     field="taxrate"
-                    header={translations[selectedLanguage].taxrate}
+                    header={translations[selectedLanguage].tax}
                     sortable
                     //filter
                     style={{ width: "10%" }}

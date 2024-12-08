@@ -6,7 +6,7 @@ onmessage = async function (e) {
 
     switch (action) {
         case 'fetchTicDocsuidData':
-            console.log("00.0 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data)
+            // console.log("00.0 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data)
             const docUidResult = await fetchTicDocsuidData(data.ticDocId, data.par1, data.selectedLanguage, data.token, data.refreshToken);
             postMessage({ action: 'setTicDocsuids', result: docUidResult });
             break;
@@ -31,7 +31,7 @@ async function fetchTicDocsuidData(ticDocId, par1, selectedLanguage, token, refr
     try {
         const workerService = new WorkerService();
         const data = await workerService.getProdajaLista(ticDocId, par1, selectedLanguage, token, refreshToken);
-        console.log("00 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data)
+        // console.log("00 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data)
         const sortedData = data.sort((a, b) => {
             if (a.nevent < b.nevent) return -1;
             if (a.nevent > b.nevent) return 1;
@@ -47,7 +47,7 @@ async function fetchTicDocsuidData(ticDocId, par1, selectedLanguage, token, refr
                 eventatt3: eventatt.filter(e => e.code === "11.03.")
             };
         }));
-        console.log("00.00 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", updatedData)
+        // console.log("00.00 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", updatedData)
         return updatedData; // Samo serijalizovani podaci
     } catch (error) {
         console.error(error);

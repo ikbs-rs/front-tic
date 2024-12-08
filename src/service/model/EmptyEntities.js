@@ -273,7 +273,8 @@ const EmptyEntities =
     "nchannel": "",
     "nusr": "",
     "printfiskal": "1",
-		"masssale": "0"
+		"masssale": "0",
+		"endsale": "0"
   },
 	"tic_docb": {
 		"id": null,
@@ -343,7 +344,9 @@ const EmptyEntities =
 			"total": null,
 			"tm": "",
 			"usr": null,
-			"status": null
+			"status": null,
+			"vrednost": "",
+			"description": ""
 	},  
   "tic_docs": {
     "id": null,

@@ -1171,9 +1171,9 @@ export default function TicProdajaTab(props) {
             _ticDoc.npar = _cmnPar?.text
             setCheckedMasssale(_ticDoc.masssale == '1')
             await setTicDoc(_ticDoc)
-            //console.log(_channel.id, _ticDoc.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_")
+            console.log(_ticDoc.status, _ticDoc.reservation, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_", _ticDoc.endsale, moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()))
             // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
-            if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
+            if ((_ticDoc.status != 0 && _ticDoc.reservation != 1) || _ticDoc.endsale == 1 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                 OK = true
                 // console.log(11, "** KANALI KORISNIKA/EVENT *")
             }

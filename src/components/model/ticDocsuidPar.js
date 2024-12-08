@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { CmnParService } from "../../service/model/cmn/CmnParService";
+// import { proveriJMBG } from "../../service/model/cmn/CmnParService";
 import { CmnPartpService } from "../../service/model/cmn/CmnPartpService";
 import { CmnTerrService } from "../../service/model/cmn/CmnTerrService";
 import './index.css';
@@ -16,7 +17,7 @@ import env from '../../configs/env';
 import AutoParProdaja from '../auto/autoParProdaja';
 
 const TicDocsuidPar = (props) => {
-    console.log(props, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    // console.log(props, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
@@ -32,7 +33,88 @@ const TicDocsuidPar = (props) => {
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar?.begda || DateFunction.currDate())));
     const [endda, setEndda] = useState(new Date(DateFunction.formatJsDate('99991231' || DateFunction.currDate())))
     const [birthday, setBirthday] = useState(props.cmnPar?.birthday ? new Date(DateFunction.formatJsDate(props.cmnPar.birthday)) : null);
+    const [emailError, setEmailError] = useState(false);
+    const [jmbgError, setJmbgError] = useState(false);
 
+    /************************************************************************************************ */
+    const validateEmail = (email) => {
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return regex.test(email);
+    };
+
+    async function isValidDate  (date, format) {
+        const day = parseInt(date.substring(0, 2));
+        const month = parseInt(date.substring(2, 4));
+        const year = parseInt(date.substring(4, 8));
+
+        // Provera datuma (osnovna provera bez dodatnih biblioteka)
+        const dateObj = new Date(year, month - 1, day);
+        return dateObj && (dateObj.getMonth() + 1) === month && dateObj.getDate() === day;
+    }
+
+    const proveriJMBG = async (uJMBG) => {
+        console.log(uJMBG, "00-##############################################################################################################################")
+        if (uJMBG=='3333333333333') {
+            return true
+        }
+        let A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13;
+        let pKontrolniBroj, pIzlaz = false;
+        let pYY;
+
+
+        if (uJMBG != null && uJMBG.length === 13) {
+            console.log(uJMBG, "11-##############################################################################################################################")
+            if (uJMBG.charAt(4) === '0') {
+                pYY = '20';
+            } else {
+                pYY = '1' + uJMBG.charAt(4);
+            }
+            // Validacija datuma (DDMMYYYY)
+            let datum = uJMBG.substring(0, 4) + pYY + uJMBG.substring(5, 7);
+            if ( await isValidDate(datum, 'DDMMYYYY')) {
+                A1 = parseInt(uJMBG.charAt(0));
+                A2 = parseInt(uJMBG.charAt(1));
+                A3 = parseInt(uJMBG.charAt(2));
+                A4 = parseInt(uJMBG.charAt(3));
+                A5 = parseInt(uJMBG.charAt(4));
+                A6 = parseInt(uJMBG.charAt(5));
+                A7 = parseInt(uJMBG.charAt(6));
+                A8 = parseInt(uJMBG.charAt(7));
+                A9 = parseInt(uJMBG.charAt(8));
+                A10 = parseInt(uJMBG.charAt(9));
+                A11 = parseInt(uJMBG.charAt(10));
+                A12 = parseInt(uJMBG.charAt(11));
+                A13 = parseInt(uJMBG.charAt(12));
+
+                pKontrolniBroj = (A1 * 7 + A2 * 6 + A3 * 5 + A4 * 4 + A5 * 3 + A6 * 2 +
+                    A7 * 7 + A8 * 6 + A9 * 5 + A10 * 4 + A11 * 3 + A12 * 2) % 11;
+
+                if (pKontrolniBroj > 1) {
+                    if (11 - pKontrolniBroj === A13) {
+                        pIzlaz = true;
+                    }
+                } else {
+                    if (pKontrolniBroj === A13) {
+                        pIzlaz = true;
+                    }
+                }
+            }
+        }
+        console.log(pIzlaz, "22-##############################################################################################################################")
+        return pIzlaz;
+    }
+    /************************************************************************************************* */
+    const handleEmailChange = async (email) => {
+        const OK = await validateEmail(email)
+        setEmailError(!OK);
+        return OK
+    };
+    const handleJmbgValidate = async (idnum) => {
+        const OK = await proveriJMBG(idnum)
+        setJmbgError(OK);
+        console.log(OK, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+        return OK
+    };
     const calendarRef = useRef(null);
 
     const toast = useRef(null);
@@ -141,18 +223,36 @@ const TicDocsuidPar = (props) => {
             cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
-            const cmnParService = new CmnParService();
+            if (! (await handleEmailChange(cmnPar.email))) {
+                throw new Error(
+                    "Neispravan EMAIL!"
+                );  
+            } else {
+                console.log("00 - EMAIL je ok")
+                if (!(await handleJmbgValidate(cmnPar.idnum)) && cmnPar.tp == 2) {
+                    throw new Error(
+                        "Neispravan JMBG!"
+                    );         
+                } else {
+                    console.log("00 - JMBG je ok")
+                    const cmnParService = new CmnParService();
 
-            await cmnParService.putCmnPar(cmnPar);
-            console.log({ obj: cmnPar, parTip: props.parTip }, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
-            props.handleDialogClose({ obj: cmnPar, parTip: props.parTip });
-            props.setVisible(false);
+                    const data = await cmnParService.putCmnPar(cmnPar);
+        
+                    props.handleUidKey(cmnPar)
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Podatci ažurirani', life: 2000 });
+                }
+            }
+
+
+
         } catch (err) {
+            setSubmitted(true);
             toast.current.show({
                 severity: "error",
                 summary: "CmnPar ",
-                detail: `${err.response.data.error}`,
-                life: 5000,
+                detail: `${err}`,
+                life: 3000,
             });
         }
     };
@@ -270,12 +370,23 @@ const TicDocsuidPar = (props) => {
                             {submitted && !cmnPar.text && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div> */}
 
-                        <div className="field col-12 md:col-8">
+                        <div className="field col-12 md:col-7">
                             <label htmlFor="short">{translations[selectedLanguage].short}</label>
                             <InputText
                                 id="short"
                                 value={cmnPar.short} onChange={(e) => onInputChange(e, "text", 'short')}
                             />
+                        </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="email">{translations[selectedLanguage].email}</label>
+                            <InputText
+                                id="email"
+                                value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
+                                className={classNames({ 'p-invalid': (submitted && !cmnPar.email) || emailError })}
+                            />
+                            {emailError && <small className="p-error">{translations[selectedLanguage].InvalidEmail}</small>}
+                            {submitted && !cmnPar.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+
                         </div>
                         <div className="field col-12 md:col-8">
                             <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
@@ -289,6 +400,7 @@ const TicDocsuidPar = (props) => {
                                 className={classNames({ 'p-invalid': submitted && !cmnPar.tp })}
                             />
                             {submitted && !cmnPar.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+
                         </div>
 
                         <div className="field col-12 md:col-5">
@@ -337,13 +449,6 @@ const TicDocsuidPar = (props) => {
                                 value={cmnPar.tel} onChange={(e) => onInputChange(e, "text", 'tel')}
                             />
                         </div>
-                        <div className="field col-12 md:col-4">
-                            <label htmlFor="email">{translations[selectedLanguage].email}</label>
-                            <InputText
-                                id="email"
-                                value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
-                            />
-                        </div>
                         <div className="field col-12 md:col-6">
                             <label htmlFor="activity">{translations[selectedLanguage].activity}</label>
                             <InputText
@@ -364,7 +469,9 @@ const TicDocsuidPar = (props) => {
                             <InputText
                                 id="idnum"
                                 value={cmnPar.idnum} onChange={(e) => onInputChange(e, "text", 'idnum')}
+                                className={classNames({ 'p-invalid': jmbgError })}
                             />
+                            {jmbgError && <small className="p-error">{translations[selectedLanguage].InvalidJMBG}</small>}
                         </div>
 
                         <div className="field col-12 md:col-6">
@@ -433,15 +540,12 @@ const TicDocsuidPar = (props) => {
                                     outlined
                                 />
                             ) : null} */}
-                            {/* {(props.parTip !== 'CREATE') ? ( */}
-                                {/* <Button
-                                    label={translations[selectedLanguage].Save}
-                                    icon="pi pi-check"
-                                    onClick={handleSaveClick}
-                                    severity="danger"
-                                    // outlined
-                                /> */}
-                            {/* ) : null} */}
+                            <Button
+                                label={translations[selectedLanguage].Save}
+                                icon="pi pi-check"
+                                onClick={handleSaveClick}
+                                severity="danger"
+                            />
                         </div>
                     </div>
 
