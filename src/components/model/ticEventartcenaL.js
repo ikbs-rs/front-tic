@@ -15,6 +15,7 @@ import { Dialog } from 'primereact/dialog';
 import './index.css';
 import { translations } from "../../configs/translations";
 import DateFunction from "../../utilities/DateFunction";
+import TicEventrtlinkL from './ticEventartlinkL';
 
 
 export default function TicEventartcenaL(props) {
@@ -39,6 +40,8 @@ console.log(props, "------------------------------------------------------------
   const [visibleT, setVisibleT] = useState(false);
   const [eventartcenaTip, setEventartcenaTip] = useState('');
   const [eventartcenaTTip, setEventartcenaTTip] = useState('');
+  const [ticEventartlinkLVisible, setTicEventartlinkLVisible] = useState(false);
+  const [refreshForm, setRefreshForm] = useState('');
   let i = 0
   const handleCancelClick = () => {
     props.setTicEventartcenaLVisible(false);
@@ -110,6 +113,18 @@ console.log(props, "------------------------------------------------------------
     setTicEventartcenaTDialog(emptyTicEventartcena);
   };  
 
+  const handleEventartlinkLClick = () => {
+    setTicEventartlinkLDialog();
+  };
+
+  const handleRefresh = (uId) => {
+    setRefreshForm(uId);
+  };
+
+  const setTicEventartlinkLDialog = (destination) => {
+    // setShowMyComponent(true);
+    setTicEventartlinkLVisible(true);
+  };  
   const onRowSelect = (event) => {
     //ticEventartcena.begda = event.data.begda
     toast.current.show({
@@ -173,11 +188,14 @@ console.log(props, "------------------------------------------------------------
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised />
+          <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised disabled={!ticEventartcena}/>
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].CenaT} icon="pi pi-clock" severity="success"  onClick={openNewT} text raised />
-        </div>          
+          <Button label={translations[selectedLanguage].CenaT} icon="pi pi-clock" severity="success"  onClick={openNewT} text raised disabled={!ticEventartcena}/>
+        </div>   
+        <div className="flex flex-wrap gap-1" >
+          <Button label={translations[selectedLanguage].LinkArtGrp} icon="pi pi-paperclip" onClick={handleEventartlinkLClick} severity="warning" raised disabled={!ticEventartcena} />
+        </div>       
         <div className="flex-grow-1"></div>
         <b>{translations[selectedLanguage].EventartcenaList}</b>
         <div className="flex-grow-1"></div>
@@ -433,7 +451,26 @@ console.log(props, "------------------------------------------------------------
           </button>
         </div>
       </Dialog>
-
+      <Dialog
+        header={translations[selectedLanguage].EventartlinkList}
+        visible={ticEventartlinkLVisible}
+        style={{ width: '90%' }}
+        onHide={() => {
+          setTicEventartlinkLVisible(false);
+        }}
+      >
+        {ticEventartlinkLVisible &&
+          <TicEventrtlinkL
+            parameter={'inputTextValue'}
+            ticEventart={ticEventartcena}
+            //setTicArtLVisible={setTicArtLVisible} 
+            setTicEventartlinkLVisible={setTicEventartlinkLVisible}
+            dialog={true}
+            lookUp={true}
+            eventArtcena={true}
+            handleRefresh={handleRefresh}
+          />}
+      </Dialog>
     </div>
   );
 }

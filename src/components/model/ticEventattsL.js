@@ -207,8 +207,13 @@ export default function TicEventattsL(props) {
                 setTicEventatttps(sortedData);
     
                 const dataDD = sortedData.map(({ textx, id }) => ({ name: textx, code: id }));
+                // const dataDD = [
+                //     { code: -99, name: "Izaberi vrednost" },
+                //     ...sortedData.map(({ textx, id }) => ({ name: textx, code: id }))
+                // ];
+                
                 setDdTicEventatttpItems(dataDD);
-                //setDdTicEventatttpItem(dataDD.find((item) => item.code === props.ticEventatt.tp) || null);
+                // setDdTicEventatttpItem(dataDD.find((item) => item.code == -99) || null);
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna

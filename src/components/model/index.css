@@ -211,3 +211,36 @@
   transform: scale(1.2); /* Ikona se povećava za 20% */
   cursor: pointer; /* Ikona pokazuje da je klikabilna */
 }
+
+.custom-table .p-datatable-tbody > tr > td,
+.custom-table .p-datatable-thead > tr > th {
+  border: solid #a8b4a9; /* Debljina i boja linija */
+  color: #0d0d0e
+}
+
+.custom-table .p-datatable-thead > tr > th {
+  background-color: #dfeedf; 
+  font-weight: bold; /* Podebljan tekst u zaglavlju */
+}
+
+.category-cell {
+  display: inline-block; /* Omogućava fleksibilnu širinu i visinu */
+  border: 1px solid #a8b4a9; /* Okvir */
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #f9f9f9; /* Svetla pozadina */
+  font-size: 1rem;
+  /* white-space: nowrap; Sprečava prelamanje teksta */
+}
+
+.category-cell .dropdown-arrow {
+  color: #335c32; /* Boja strelice */
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.category-cell:hover {
+  background-color: #e6f7ff; /* Svetloplava pozadina na hover */
+  cursor: pointer;
+}
+

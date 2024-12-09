@@ -71,6 +71,22 @@ export class TicDocpaymentService {
           throw error;
         }
       }
+      async getChCmnPaymenttpsP(uEvent, uChanel, uAttCode) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.PROD_BACK_URL}/prodaja/?stm=tic_eventattscodechvaluel_v&objid=${uEvent}&par1=${uAttCode}&par2=${uChanel}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+          Authorization: tokenLocal.token
+        };
+    
+        try {
+          const response = await axios.get(url, { headers });
+          return response.data.item //response.data.items;
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
+      }
 
     async getCmnCcards() {
         const selectedLanguage = localStorage.getItem('sl') || 'en'

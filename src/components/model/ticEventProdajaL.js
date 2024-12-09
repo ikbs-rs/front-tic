@@ -24,7 +24,7 @@ import { TicDocService } from "../../service/model/TicDocService";
 
 
 export default function TicEventL(props) {
-    console.log(props, '+++++++++++++++++++++++++++++++++++TicEventL+++++++++++++++++++++++++++++++++++++++++++++++');
+    // console.log(props, '+++++++++++++++++++++++++++++++++++TicEventL+++++++++++++++++++++++++++++++++++++++++++++++');
     let i = 0;
     const objDoc = "tic_docs"
     const userId = localStorage.getItem('userId') || -1

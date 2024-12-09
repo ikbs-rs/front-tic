@@ -46,7 +46,8 @@ const AutoParProdaja = (props) => {
             try {
                 const cmnParService = new CmnParService();
                 const data = await cmnParService.getCmnParP(ticDoc.usr);
-                setCmnPar({ ...data, text: data.textx });
+                // console.log(cmnPar, "08-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", data[0])
+                setCmnPar({ ...data[0], text: data.textx });
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -58,7 +59,7 @@ const AutoParProdaja = (props) => {
     useEffect(() => {
         if (debouncedSearch && selectedPar === null) {
             // Filtrirajte podatke na osnovu trenutnog unosa
-            console.log("9999999999999999999999999debouncedLocSearch9999999999999999999999999999", debouncedSearch, "=============================")
+            // console.log("9999999999999999999999999debouncedLocSearch9999999999999999999999999999", debouncedSearch, "=============================")
             const query = debouncedSearch.toLowerCase();
             const filtered = cmnPars.filter(
                 (item) =>
@@ -78,30 +79,48 @@ const AutoParProdaja = (props) => {
     const onInputChange = (e, type, name) => {
         let val = ''
         let timeout = null
-
-        if (selectedPar === null) {
-            setParValue(e.target.value.textx || e.target.value);
+        if (name == 'par') {
+            if (selectedPar === null) {
+                setParValue(e.target.value.textx || e.target.value);
+            } else {
+                setSelectedPar(null);
+                setParValue(e.target.value.textx || e.target.value.textx);
+            }
+            
+            ticDoc.usr = e.target.value.id
+            cmnPar.npar = e.target.value.textx
+            cmnPar.cpar = e.target.value.code
+            // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
+            clearTimeout(searchTimeout);
+            timeout = setTimeout(() => {
+                setDebouncedSearch(e.target.value);
+            }, 400);
         } else {
-            setSelectedPar(null);
-            setParValue(e.target.value.textx || e.target.value.textx);
+            val = (e.target && e.target.value) || '';
+            console.log(val, "*******************", e.target)
+
+            let _cmnPar = null;
+            if (cmnPar[0]) {
+                _cmnPar = { ...cmnPar[0] };
+            } else {
+                _cmnPar = { ...cmnPar };
+            }
+            _cmnPar.text = val;
+            _cmnPar.textx = val;
+            // console.log(cmnPar, "05-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", _cmnPar, "---", val)
+            setCmnPar({ ..._cmnPar});
+            props.handleAutoParProdaja(ticDoc, { ..._cmnPar})
         }
-        console.log(e.target, "###########################-auto-###########################setDebouncedSearch###", ticDoc)
-        ticDoc.usr = e.target.value.id
-        cmnPar.npar = e.target.value.textx
-        cmnPar.cpar = e.target.value.code
-        // Postavite debouncedSearch nakon 1 sekunde neaktivnosti unosa
-        clearTimeout(searchTimeout);
-        timeout = setTimeout(() => {
-            setDebouncedSearch(e.target.value);
-        }, 400);
     }
 
     const handleSelect = async (e) => {
         let _ticDoc = { ...ticDoc }
+        // console.log(cmnPar, "03-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", _ticDoc)
         const _cmnPar = { ...e.value }
         _ticDoc.cpar = _cmnPar.code
         _ticDoc.npar = _cmnPar.textx
         _cmnPar.text = _cmnPar.textx;
+
         setTicDoc(_ticDoc)
         setCmnPar(e.value)
         setSelectedPar(e.value.code);
@@ -116,7 +135,7 @@ const AutoParProdaja = (props) => {
     };
     const handleParLClick = async (e, destination) => {
         try {
-            console.log(destination, "*********************handleParLClick****************************")
+            // console.log(destination, "*********************handleParLClick****************************")
             if (destination === 'local') setCmnParDialog();
             else setCmnParDialog();
         } catch (error) {
@@ -142,11 +161,12 @@ const AutoParProdaja = (props) => {
             _cmnPar.first = parts.slice(0, 1)[0];
             _cmnPar.last = parts.slice(1).join(' ');
         }
-        
+
         setParValue(_cmnPar.code);
         _ticDoc.usr = _cmnPar.id;
         _ticDoc.npar = _cmnPar.textx;
         _ticDoc.cpar = _cmnPar.code;
+        // console.log(cmnPar, "07-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", _cmnPar)
         setCmnPar({ ..._cmnPar })
         setTicDoc(_ticDoc)
         setSelectedPar(newObj.code);
@@ -203,16 +223,17 @@ const AutoParProdaja = (props) => {
                             placeholder="Pretraži"
                             disabled={ticDoc.statuspayment == 1}
                         />
-                        <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1 } />
+                        <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1} />
                     </div>
                 </div>
                 <div className="field col-12 md:col-7">
-                    <label htmlFor="par">{translations[selectedLanguage].Text}</label>
+                    <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                     <InputText
-                        id="npar"
-                        value={ticDoc.npar}
+                        id="text"
+                        value={cmnPar.textx}
+                        onChange={(e) => onInputChange(e, "auto", 'text')}
                         required
-                        disabled={ticDoc.statuspayment == 1 }
+                        disabled={ticDoc.statuspayment == 1}
                     />
                 </div>
             </div>

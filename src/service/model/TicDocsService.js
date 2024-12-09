@@ -40,23 +40,23 @@ export class TicDocsService {
     }
   }
 
-  async getArtikliListaP(objId) {
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docsartikli_v&objid=${objId}&sl=${selectedLanguage}`;
-    const tokenLocal = await Token.getTokensLS();
-    const headers = {
-      Authorization: tokenLocal.token
-    };
+  // async getArtikliListaP(objId) {
+  //   const selectedLanguage = localStorage.getItem('sl') || 'en'
+  //   const url = `${env.PROD1_BACK_URL}/prodaja/?stm=tic_docsartikli_v&objid=${objId}&sl=${selectedLanguage}`;
+  //   const tokenLocal = await Token.getTokensLS();
+  //   const headers = {
+  //     Authorization: tokenLocal.token
+  //   };
 
-    try {
-      const response = await axios.get(url, { headers });
-      // console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
-      return response.data.item //||response.data.items;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  //   try {
+  //     const response = await axios.get(url, { headers });
+  //     // console.log(response.data, "77777777777777777777777777777getArtikliLista777777777777777777777777777777777777")
+  //     return response.data.item //||response.data.items;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
   async getArtikliListaP(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'

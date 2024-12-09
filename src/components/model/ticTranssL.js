@@ -731,7 +731,7 @@ export default function TicTransactionsL(props) {
                     mapa={props.mapa}
                 />
             </div>
-
+            {(props.uidKey >= 2) && (
             <div className="flex-grow-1">
                 <TicDocsNaknadeL
                     key={refreshKeyN}
@@ -746,6 +746,7 @@ export default function TicTransactionsL(props) {
                     handleNaknadeIznos={handleNaknadeIznos}
                 />
             </div>
+            )}
             {(props.mapa != 1) && (
                 <div className="card">
                     <div className="p-fluid formgrid grid">

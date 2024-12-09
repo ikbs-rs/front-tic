@@ -55,7 +55,7 @@ export default function CmnLoclinkgrpL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-console.log(props.ticDoc[0]?.id, "HHHHHHHHHHHHHHHHHHHHH++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+// console.log(props.ticDoc[0]?.id, "HHHHHHHHHHHHHHHHHHHHH++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
           const ticDocsService = new TicDocsService();
           const data = await ticDocsService.getArtikliStornoListaP(props.ticDoc[0]?.id);
           const sortedData = data.sort((a, b) => {

@@ -14,7 +14,7 @@ export class CmnTerrService {
     
         try {
           const response = await axios.get(url, { headers });
-          console.log(url, "++++++++++++++++++++", response)
+        //   console.log(url, "++++++++++++++++++++", response)
           return response.data.item;
         } catch (error) {
           console.error(error);

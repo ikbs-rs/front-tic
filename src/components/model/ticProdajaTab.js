@@ -552,6 +552,7 @@ export default function TicProdajaTab(props) {
             _ticDoc.services = `1`
             _ticDoc.delivery = 0
             _ticDoc.reservation = 0
+            _ticDoc.dostava = 0
 
             const ticDocService = new TicDocService();
             const row = await ticDocService.postTicDoc(_ticDoc);

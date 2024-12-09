@@ -41,7 +41,7 @@ export default function TicEventattsgrpL(props) {
         ++i
         if (i < 2) {
           const ticEventattService = new TicEventattService();
-          const data = await ticEventattService.getLista(props.ticEvent.id);
+          const data = await ticEventattService.getListag(props.ticEvent.id);
           console.log(data, "************************************TicEventattsgrpL*************************************")
           setTicEventattsgrps(data);
 

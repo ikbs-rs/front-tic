@@ -75,7 +75,7 @@ export default function TicTransactionsL(props) {
 
     const mapa = (props.mapa == 1) ? 5 : 7
     const isSelectable = (data) => data.docstorno != 1;
-    
+
     const isRowSelectable = (event) =>
         event.data ? isSelectable(event.data) : true;
 
@@ -90,7 +90,7 @@ export default function TicTransactionsL(props) {
         return ok
     }
 
-    const rowClassName = (data) => (isDisabled(data) ? "p-disabled" : "" );
+    const rowClassName = (data) => (isDisabled(data) ? "p-disabled" : "");
 
     useEffect(() => {
         // const abortController = new AbortController();
@@ -468,16 +468,30 @@ export default function TicTransactionsL(props) {
     // };  
 
     const valueTemplate = (rowData, name, e) => {
-        // console.log(e, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", name)
+        // console.log(rowData, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", name)
         // const dropdownData = ddTickettpItems
         if (name == 'tickettp') {
             if (ddTickettpItems) {
                 const dropdownValue = ddTickettpItems?.find((item) => item.code == rowData.tickettp);
                 if (dropdownValue) {
-                    return <span>{dropdownValue.name}</span>;
+                    // return <span>{dropdownValue.name}</span>;
+                    return (
+                        <div className="category-cell">
+                            {dropdownValue.name}
+                            {ddTickettpItems.length > 1 && (
+                                <span className="dropdown-arrow">▼</span>
+                            )}
+                        </div>
+                    );
                 }
             }
-            return rowData.tickettp;
+            // return rowData.tickettp;
+            return (
+                <div className="category-cell">
+                    {rowData.tickettp}
+                    <span className="dropdown-arrow">▼</span>
+                </div>
+            );
         } else {
             if (rowData?.id) {
                 const dataDD = ddCenaItems[rowData.id];
@@ -490,11 +504,25 @@ export default function TicTransactionsL(props) {
                     // console.log(JSON.stringify(dropdownValue), "Dropdown value found:", rowData.id);
 
                     if (dropdownValue) {
-                        return <span>{dropdownValue.name}</span>;
+                        // return <span>{dropdownValue.name}</span>;
+                        return (
+                            <div className="category-cell">
+                                {dropdownValue.name}
+                                {dataDD.length > 1 && (
+                                    <span className="dropdown-arrow">▼</span>
+                                )}
+                            </div>
+                        );
                     }
                 }
             }
-            return rowData?.cena;
+            // return rowData?.cena;
+            // return (
+            //     <div className="category-cell">
+            //       {rowData?.cena}
+            //       <span className="dropdown-arrow">▼</span>
+            //     </div>
+            //   );
 
         }
     };
@@ -745,6 +773,14 @@ export default function TicTransactionsL(props) {
             </>
         );
     };
+    const cenaTemplate = (rowData) => {
+        return (
+            <div className="category-cell">
+                {rowData.cena}
+                <span className="dropdown-arrow">▼</span>
+            </div>
+        );
+    };
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -769,6 +805,7 @@ export default function TicTransactionsL(props) {
                 onRowUnselect={onRowUnselect}
                 isDataSelectable={isRowSelectable}
                 rowClassName={rowClassName} 
+                className="custom-table"
             >
                 <Column
                     field="nevent"
@@ -778,9 +815,8 @@ export default function TicTransactionsL(props) {
                     style={{
                         width: "15%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "12px",
-                        fontWeight: "normal"
-                      }}
+                        fontSize: "11px"
+                    }}
                 ></Column>
                 <Column
                     field="nloc"
@@ -796,6 +832,7 @@ export default function TicTransactionsL(props) {
                 ></Column>
                 <Column
                     field="seat"
+                    header={translations[selectedLanguage].seat}
                     style={{ width: "5%" }}
                     sortable
                 ></Column>
@@ -808,9 +845,11 @@ export default function TicTransactionsL(props) {
                 <Column
                     field="cena"
                     header={translations[selectedLanguage].cenatp}
-                    style={{ width: '8%', backgroundColor: '#e6f0e6' }}
+                    // style={{ width: '8%', backgroundColor: '#e6f0e6' }}
+                    style={{ width: '8%'}}
                     editor={(e) => valueEditor(e.rowData, 'cena', e)}
                     body={(rowData) => valueTemplate(rowData, 'cena')}
+                    // body={cenaTemplate}
                     onCellEditComplete={onCellEditComplete}
                 ></Column>
                 {(props.mapa != 1) && (
@@ -835,10 +874,10 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].discount}
                         // sortable
                         style={{ width: "5%" }}
-                        editor={inputEditor}
+                        // editor={inputEditor}
                         // editor={(e) => inputEditor(e.rowData, e.field, e)}
                         // body={discountTemplate}
-                        onCellEditComplete={onCellEditComplete}
+                        // onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
                 <Column
@@ -851,7 +890,7 @@ export default function TicTransactionsL(props) {
                     <Column
                         field="tickettp"
                         header={translations[selectedLanguage].tickettp}
-                        style={{ width: '8%', backgroundColor: '#e6f0e6' }}
+                        style={{ width: '8%'}}
                         editor={(e) => valueEditor(e.rowData, 'tickettp', e)}
                         body={(rowData) =>
 
@@ -866,7 +905,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].print}
                         field="print"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
+                        style={{ width: '1%'}}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `print`)}
                         onCellEditComplete={onCellEditComplete}
@@ -877,7 +916,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].pm}
                         field="pm"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
+                        style={{ width: '1%' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `pm`)}
                         onCellEditComplete={onCellEditComplete}
@@ -888,7 +927,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].delivery}
                         field="delivery"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
+                        style={{ width: '1%'}}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
@@ -899,23 +938,23 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].rez}
                         field="rez"
                         dataType="numeric"
-                        style={{ width: '1%', backgroundColor: '#e6f0e6' }}
+                        style={{ width: '1%'}}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `rez`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
-                {(props.mapa != 1) && (
-                    <Column
-                        // header={translations[selectedLanguage].del}
-                        field="del"
-                        // dataType="numeric"
-                        style={{ width: '1%' }}
-                        bodyClassName="text-center"
-                        body={(e) => delBodyTemplate(e, `del`)}
-                        onCellEditComplete={onCellEditComplete}
-                    ></Column>
-                )}
+                {/* {(props.mapa != 1) && ( */}
+                <Column
+                    // header={translations[selectedLanguage].del}
+                    field="del"
+                    // dataType="numeric"
+                    style={{ width: '1%' }}
+                    bodyClassName="text-center"
+                    body={(e) => delBodyTemplate(e, `del`)}
+                    onCellEditComplete={onCellEditComplete}
+                ></Column>
+                {/* )} */}
 
                 {(props.mapa != 1) && (
                     <Column

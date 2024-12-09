@@ -136,7 +136,7 @@ export async function fetchObjData(...args) {
                         }
                     } else if (`${args[0]}_${args[1]}` == 'tic_event') {
                         url = `${backend}/${args[0]}/x/${args[1]}/_v/lista/?stm=tic_eventattsdds_v&objid=${obj.id}&par1=${args[2]}&sl=${selectedLanguage}`;
-                        console.log("******************* CODE TIC EVENT ***************************", url);
+                        // console.log("******************* CODE TIC EVENT ***************************", url);
                     }
 
                 } else {

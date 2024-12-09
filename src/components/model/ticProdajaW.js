@@ -373,6 +373,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
   
   const handleUidKey = (rowData) => {
+    console.log(rowData, "01-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     setCmnPar(rowData)
     setUidKey(prev => prev + 1)
   }
@@ -666,6 +667,7 @@ const TicProdajaW = forwardRef((props, ref) => {
     }
   };
   const handleSetCmnParW = (rowData) => {
+    console.log(rowData, "00-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     props.handleSetCmnPar(rowData)
     setCmnPar(rowData)
   }
@@ -902,6 +904,7 @@ DRUGI RED
                     zaUplatu={zaUplatu}
                     reservationStatus={reservationStatus}
                     mapa={0}
+                    uidKey={uidKey}
                   />
                   {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
                 </div>
@@ -923,6 +926,7 @@ DRUGI RED
                     zaUplatu={zaUplatu}
                     reservationStatus={reservationStatus}
                     mapa={1}
+                    uidKey={uidKey}
                   />
                   {/* <NavigateTemplate activeIndex={activeIndex} setActiveIndex={setActiveIndex} totalTabs={4} /> */}
                 </div>

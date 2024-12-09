@@ -60,22 +60,35 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 // const dataAtts = ticEventattsService.getCodeValueListaP()
                 
                 const ticDocpaymentService = new TicDocpaymentService();
-                const data = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
-                
+                const dataPT = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
+                const dataCH = await ticDocpaymentService.getChCmnPaymenttpsP(props.propsParent.ticEvent?.id, props.ticDoc?.channel, '03.03')
+                // console.log(dataCH, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', dataPT)
+                let data;
+
+                if (!dataCH || dataCH.length === 0 || (dataCH.length === 1 && !dataCH[0].val2)) {
+                    // Ako dataCH ne postoji, ima 0 elemenata ili ima samo jedan element sa praznim val2
+                    data = [...dataPT];
+                } else {
+                    // Filtriraj na osnovu postojeće logike
+                    data = dataPT.filter(item => 
+                        dataCH.some(chItem => chItem.val2 == String(item.id))
+                    );
+                }
+                console.log(dataCH, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', data)
                 setCategories(data);
 
                 const foundCategory = data.find(category => category.id === _ticDoc.paymenttp);
                 const mixCategory = data.find(category => category.code === 'X');
 
                 const cesCategory = data.find(category => category.code === 'C');
-                setKesTp(cesCategory.id)
+                if (cesCategory)  setKesTp(cesCategory.id)
                 const cardCategory = data.find(category => category.code === 'K');
-                setKarticaTp(cardCategory.id)
+                if(cardCategory) setKarticaTp(cardCategory.id)
                 const cekCategory = data.find(category => category.code === 'CH');
-                setCekTp(cekCategory.id)
+                if(cekCategory) setCekTp(cekCategory.id)
                 const vaucerCategory = data.find(category => category.code === 'V');
-                setVaucerTp(vaucerCategory.id)
-
+                if(cekCategory) setVaucerTp(vaucerCategory.id)                
+                console.log(foundCategory, '00-KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', mixCategory)
                 if (foundCategory) {
                     setSelectedCategory(foundCategory);
                 }
@@ -83,7 +96,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
                     return ukupno + parseFloat(stavka.amount || 0);
                 }, 0);
-                if (mixCategory.id == _ticDoc.paymenttp ) {
+                if (mixCategory && (mixCategory?.id == _ticDoc.paymenttp) ) {
                     setIzborMesovito(true)
                     const ces = stavkePlacanja.find(category => category.code === 'C');
                     if (ces) {
@@ -106,7 +119,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                         setDescription(vaucer.description)
                     }                    
                 }
-                if (vaucerCategory.id == _ticDoc.paymenttp) {
+                if (vaucerCategory && (vaucerCategory?.id == _ticDoc.paymenttp)) {
                     setIzborVaucer(true)
                     const vaucer = stavkePlacanja.find(category => category.code === 'V');
                     if (vaucer) {
@@ -190,10 +203,12 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         }
         const previousValue = ticDoc;
         const _ticDoc = { ...ticDoc };
+        console.log(value, "00-KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", _ticDoc)
         _ticDoc.paymenttp = value.id;
         if (value.code=='FC') {
             _ticDoc.printfiskal = 0; 
         } 
+        console.log()
         await handleUpdateTicDoc(_ticDoc, previousValue);
         setSelectedCategory(value);
         await props.handlePlacanjetip(_ticDoc.paymenttp);
@@ -327,9 +342,9 @@ console.log(val, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
             <div className="card flex justify-content-center">
                 {/* Dodavanje hedera sa naslovom */}
                 <div className="grid grid-nogutter">
-                    <div className="col-12" style={{ backgroundColor: '#f0f0f0', padding: '10px', textAlign: 'center' }}>
+                    {/* <div className="col-12" style={{ backgroundColor: '#f0f0f0', padding: '10px', textAlign: 'center' }}>
                         <h3>{`${translations[selectedLanguage].Select_a_Payment_Option} ... ${preostalo} od ${zaUplatu}`}</h3>
-                    </div>
+                    </div> */}
                     <div className="col-12 flex flex-column gap-3" style={{ paddingTop: '20px' }}>
                         {/* Proverite da li postoje kategorije pre mapiranja */}
                         {categories.length > 0 ? (

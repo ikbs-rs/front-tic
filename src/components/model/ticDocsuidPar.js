@@ -234,7 +234,7 @@ const TicDocsuidPar = (props) => {
                         "Neispravan JMBG!"
                     );         
                 } else {
-                    console.log("00 - JMBG je ok")
+                    console.log("00 - JMBG je ok", cmnPar)
                     const cmnParService = new CmnParService();
 
                     const data = await cmnParService.putCmnPar(cmnPar);
@@ -317,6 +317,7 @@ const TicDocsuidPar = (props) => {
             val = (e.target && e.target.value) || '';
             console.log(val, "*******************", e.target)
         }
+        console.log(cmnPar, "04-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
         let _cmnPar = { ...cmnPar };
         _cmnPar[`${name}`] = val;
         setCmnPar(_cmnPar);
@@ -328,6 +329,7 @@ const TicDocsuidPar = (props) => {
 
     const handleAutoParProdaja = async (ticDoc, cmnPar) => {
         // setTicDoc(ticDoc)
+        console.log(cmnPar, "03-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
         setCmnPar(cmnPar)
         props.handleSetCmnParW(cmnPar)
         // console.log(e, "******* Clicked item details:", item);

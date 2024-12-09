@@ -125,8 +125,8 @@ export class TicDocsdiscountService {
 
       // Dodaj signal u axios get zahtev kako bi mogao biti prekinut
       const response = await axios.get(url, { headers, signal, timeout: 5000 });
-
-      return response.data.item //||response.data.items;
+console.log(response.data, "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+      return response.data.item ||response.data.items;
     } catch (error) {
       if (error.name === 'AbortError') {
         console.log('Previous request aborted');

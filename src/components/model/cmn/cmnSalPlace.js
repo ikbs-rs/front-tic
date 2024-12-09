@@ -3,7 +3,7 @@ import { translations } from '../../../configs/translations';
 import env from '../../../configs/env';
 
 const cmnSalPlace = (props) => {
-    console.log(props, "++++++++++++++++++++++++cmnSalPlace++++++++++++++++++++++++++++++++")
+    // console.log(props, "++++++++++++++++++++++++cmnSalPlace++++++++++++++++++++++++++++++++")
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     return (
         <>

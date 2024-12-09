@@ -4,7 +4,7 @@ import env from '../../configs/env';
 
 const ticSalEvent = (props) => {
 
-    console.log(props, "++++++++++++++++++++++++++ticSalEvent++++++++++++++++++++++++")
+    // console.log(props, "++++++++++++++++++++++++++ticSalEvent++++++++++++++++++++++++")
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     return (
         <>

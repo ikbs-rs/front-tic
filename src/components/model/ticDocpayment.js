@@ -42,9 +42,8 @@ const TicDocpayment = (props) => {
 
                 setCmnPaymenttpItems(data)
                 const pPaymentTp = props.ticDocpayment.paymenttp||props.paymentTip
-                // console.log(pPaymentTp, props.ticDocpayment.paymenttp, props.paymentTip, "H**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                console.log(data,  "H**HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", dataDD)
                 setDdCmnPaymenttpItems(dataDD);
                 setDdCmnPaymenttpItem(dataDD.find((item) => item.code == pPaymentTp) || null);
                 ticDocpayment.paymenttp = props.ticDocpayment.paymenttp||props.paymentTip
@@ -74,9 +73,10 @@ const TicDocpayment = (props) => {
                 const data = await ticDocpaymentService.getCmnCcards();
 
                 setCmnCcardItems(data)
-                console.log("**************33333333333333333333333333333333****", data)
+                
 
-                const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
+                const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
+                console.log(dataDD, "**************33333333333333333333333333333333****", data)
                 setDdCmnCcardItems(dataDD);
                 setDdCmnCcardItem(dataDD.find((item) => item.code === props.ticDocpayment.ccard) || null);
                 if (props.ticDocpayment.ccard) {
@@ -263,8 +263,8 @@ const TicDocpayment = (props) => {
                     {props.paymentTip=='2' ? (
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-12">
-                        <p>AllSecurePaymentJSForm</p>
-                        <AllSecurePaymentJSForm transactionId={props?.ticDoc?.id}/>
+                        {/* <p>AllSecurePaymentJSForm</p> */}
+                        {/* <AllSecurePaymentJSForm transactionId={props?.ticDoc?.id}/> */}
 
                             {/* <label htmlFor="ccard">{translations[selectedLanguage].ccard} *</label>
                             <Dropdown id="ccard"
