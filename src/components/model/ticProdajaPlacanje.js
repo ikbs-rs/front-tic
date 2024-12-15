@@ -22,15 +22,17 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     const [kartica, setKartica] = useState(0);
     const [karticaTp, setKarticaTp] = useState(0);
     const [vaucer, setVaucer] = useState(0);
-    const [vaucerTp, setVaucerTp] = useState(0);    
+    const [vaucerTp, setVaucerTp] = useState(0);
     const [izborMesovito, setIzborMesovito] = useState(false);
     const [izborVaucer, setIzborVaucer] = useState(false);
-    
+
     const [vrednost, setVrednost] = useState("");
     const [description, setDescription] = useState("");
     const [checkedPrintfiskal, setCheckedPrintfiskal] = useState(ticDoc?.printfiskal == "1" || false);
     const [reservationStatus, setReservationStatus] = useState(0);
+    const [uplataRacunStatus, setUplataRacunStatus] = useState(1);
     const [refresh, setRefresh] = useState(0);
+
 
     useImperativeHandle(ref, () => ({
         kes,
@@ -40,7 +42,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         kartica,
         karticaTp,
         vaucer,
-        vaucerTp,        
+        vaucerTp,
         zaUplatu,
         preostalo,
         izborMesovito,
@@ -58,10 +60,12 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 setTicDoc(_ticDoc);
                 // const ticEventattsService = new TicEventattsService();
                 // const dataAtts = ticEventattsService.getCodeValueListaP()
-                
+
                 const ticDocpaymentService = new TicDocpaymentService();
                 const dataPT = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
                 const dataCH = await ticDocpaymentService.getChCmnPaymenttpsP(props.propsParent.ticEvent?.id, props.ticDoc?.channel, '03.03')
+                const dataPTEND = await ticDocpaymentService.getPtCmnPaymenttpsP(props.propsParent.ticEvent?.id, props.ticDoc?.paymenttp, '03.01.')
+                const _dataPTEND = dataPTEND[0]
                 // console.log(dataCH, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', dataPT)
                 let data;
 
@@ -70,25 +74,43 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                     data = [...dataPT];
                 } else {
                     // Filtriraj na osnovu postojeće logike
-                    data = dataPT.filter(item => 
+                    data = dataPT.filter(item =>
                         dataCH.some(chItem => chItem.val2 == String(item.id))
                     );
                 }
-                console.log(dataCH, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', data)
-                setCategories(data);
+                //  console.log(_ticDoc.delivery, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', data)
 
+                if (_ticDoc.delivery != 1) {
+                    data = data.filter(item => item.id != 3);
+                }
+
+                const endDate = moment(ticDoc.endda, 'YYYYMMDD').subtract(_dataPTEND, 'days');
+        
+                const now = moment();
+                let _uplataRacunStatus = uplataRacunStatus
+
+                if (endDate.isAfter(now)) {
+                    setUplataRacunStatus(0);
+                    _uplataRacunStatus = 0
+                }
+                
+                if (_uplataRacunStatus != 1) {
+                    data = data.filter(item => item.id != 4);
+                }
+                
+                setCategories(data);
                 const foundCategory = data.find(category => category.id === _ticDoc.paymenttp);
                 const mixCategory = data.find(category => category.code === 'X');
 
                 const cesCategory = data.find(category => category.code === 'C');
-                if (cesCategory)  setKesTp(cesCategory.id)
+                if (cesCategory) setKesTp(cesCategory.id)
                 const cardCategory = data.find(category => category.code === 'K');
-                if(cardCategory) setKarticaTp(cardCategory.id)
+                if (cardCategory) setKarticaTp(cardCategory.id)
                 const cekCategory = data.find(category => category.code === 'CH');
-                if(cekCategory) setCekTp(cekCategory.id)
+                if (cekCategory) setCekTp(cekCategory.id)
                 const vaucerCategory = data.find(category => category.code === 'V');
-                if(cekCategory) setVaucerTp(vaucerCategory.id)                
-                console.log(foundCategory, '00-KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', mixCategory)
+                if (cekCategory) setVaucerTp(vaucerCategory.id)
+
                 if (foundCategory) {
                     setSelectedCategory(foundCategory);
                 }
@@ -96,7 +118,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                 const ukupnoPlacanje = stavkePlacanja.reduce((ukupno, stavka) => {
                     return ukupno + parseFloat(stavka.amount || 0);
                 }, 0);
-                if (mixCategory && (mixCategory?.id == _ticDoc.paymenttp) ) {
+                if (mixCategory && (mixCategory?.id == _ticDoc.paymenttp)) {
                     setIzborMesovito(true)
                     const ces = stavkePlacanja.find(category => category.code === 'C');
                     if (ces) {
@@ -117,7 +139,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                         setVaucer(vaucer.amount)
                         setVrednost(vaucer.vrednost)
                         setDescription(vaucer.description)
-                    }                    
+                    }
                 }
                 if (vaucerCategory && (vaucerCategory?.id == _ticDoc.paymenttp)) {
                     setIzborVaucer(true)
@@ -126,12 +148,12 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
                         setVaucer(vaucer.amount)
                         setVrednost(vaucer.vrednost)
                         setDescription(vaucer.description)
-                    }                    
+                    }
                 }
 
                 setZaUplatu(props.zaUplatu);
                 setPreostalo(props.zaUplatu - ukupnoPlacanje);
-                setCheckedPrintfiskal(_ticDoc.printfiskal==1)
+                setCheckedPrintfiskal(_ticDoc.printfiskal == 1)
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -143,11 +165,11 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         async function fetchData() {
             try {
                 if (ticDoc.reservation == 1) {
-                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
-                    const now = moment(); 
-                
-                    if (endDate.isAfter(now)) { 
-                        setReservationStatus(1);
+                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss');
+                    const now = moment();
+
+                    if (endDate.isAfter(now)) {
+                        setReservationStatus(0);
                     }
                 }
             } catch (error) {
@@ -157,6 +179,8 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         }
         fetchData();
     }, [ticDoc]);
+
+
 
     const handleUpdateTicDoc = async (newObj, previousValue) => {
         const _ticDoc = newObj;
@@ -184,7 +208,7 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     const handlePayClic = async (value) => {
         setIzborMesovito(false)
         setIzborVaucer(false)
-        
+
         if (value.code == 'X') {
             let uplaceno = kes + kartica + cek + vaucer
             setIzborMesovito(true)
@@ -203,11 +227,11 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
         }
         const previousValue = ticDoc;
         const _ticDoc = { ...ticDoc };
-        console.log(value, "00-KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", _ticDoc)
+        // console.log(value, "00-KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", _ticDoc)
         _ticDoc.paymenttp = value.id;
-        if (value.code=='FC') {
-            _ticDoc.printfiskal = 0; 
-        } 
+        if (value.code == 'FC') {
+            _ticDoc.printfiskal = 0;
+        }
         console.log()
         await handleUpdateTicDoc(_ticDoc, previousValue);
         setSelectedCategory(value);
@@ -218,13 +242,13 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
     };
 
     const onInputChange = (e, type, name) => {
-        let val =""
+        let val = ""
         if (name === "vrednost" || name === "description") {
             val = (e.target && e.target.value) || ""
         } else {
             val = parseFloat((e.target && e.target.value));
-        } 
-console.log(val, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ", e.target)
+        }
+        // console.log(val, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ", e.target)
         if (name === "kes") {
             setKes(val);
             setPreostalo(prev => zaUplatu - val - parseFloat(kartica || 0) - parseFloat(cek || 0) - parseFloat(vaucer || 0));
@@ -252,54 +276,54 @@ console.log(val, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
 
                     <div className="col-12">
                         {/* <div className="card"> */}
-                            <div className="p-fluid formgrid grid">
-                                <div className="field col-12 md:col-4">
-                                    <label htmlFor="kes">{translations[selectedLanguage].Kes}</label>
-                                    <InputText id="kes" autoFocus
-                                        value={kes} onChange={(e) => onInputChange(e, "text", 'kes')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div>
-                                <div className="field col-12 md:col-4">
-                                    <label htmlFor="kartica">{translations[selectedLanguage].Kartica}</label>
-                                    <InputText
-                                        id="kartica"
-                                        value={kartica} onChange={(e) => onInputChange(e, "text", 'kartica')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div>
-                                <div className="field col-12 md:col-4">
-                                    <label htmlFor="cek">{translations[selectedLanguage].Cek}</label>
-                                    <InputText
-                                        id="cek"
-                                        value={cek} onChange={(e) => onInputChange(e, "text", 'cek')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div>
-                                <div className="field col-12 md:col-5">
-                                    <label htmlFor="vaucer">{translations[selectedLanguage].Vaucer}</label>
-                                    <InputText
-                                        id="vaucer"
-                                        value={vaucer} onChange={(e) => onInputChange(e, "text", 'vaucer')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div> 
-                                <div className="field col-12 md:col-7">
-                                    <label htmlFor="vrednost">{translations[selectedLanguage].Code}</label>
-                                    <InputText id="vrednost" 
-                                        value={vrednost} onChange={(e) => onInputChange(e, "text", 'vrednost')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div>
-                                <div className="field col-12 md:col-12">
-                                    <label htmlFor="description">{translations[selectedLanguage].Description}</label>
-                                    <InputText
-                                        id="description"
-                                        value={description} onChange={(e) => onInputChange(e, "text", 'description')}
-                                        disabled={ticDoc.statuspayment == 1}
-                                    />
-                                </div>                                                               
+                        <div className="p-fluid formgrid grid">
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="kes">{translations[selectedLanguage].Kes}</label>
+                                <InputText id="kes" autoFocus
+                                    value={kes} onChange={(e) => onInputChange(e, "text", 'kes')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
                             </div>
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="kartica">{translations[selectedLanguage].Kartica}</label>
+                                <InputText
+                                    id="kartica"
+                                    value={kartica} onChange={(e) => onInputChange(e, "text", 'kartica')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
+                            </div>
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="cek">{translations[selectedLanguage].Cek}</label>
+                                <InputText
+                                    id="cek"
+                                    value={cek} onChange={(e) => onInputChange(e, "text", 'cek')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
+                            </div>
+                            <div className="field col-12 md:col-5">
+                                <label htmlFor="vaucer">{translations[selectedLanguage].Vaucer}</label>
+                                <InputText
+                                    id="vaucer"
+                                    value={vaucer} onChange={(e) => onInputChange(e, "text", 'vaucer')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
+                            </div>
+                            <div className="field col-12 md:col-7">
+                                <label htmlFor="vrednost">{translations[selectedLanguage].Code}</label>
+                                <InputText id="vrednost"
+                                    value={vrednost} onChange={(e) => onInputChange(e, "text", 'vrednost')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
+                            </div>
+                            <div className="field col-12 md:col-12">
+                                <label htmlFor="description">{translations[selectedLanguage].Description}</label>
+                                <InputText
+                                    id="description"
+                                    value={description} onChange={(e) => onInputChange(e, "text", 'description')}
+                                    disabled={ticDoc.statuspayment == 1}
+                                />
+                            </div>
+                        </div>
                         {/* </div> */}
                     </div>
                 </div>
@@ -364,9 +388,9 @@ console.log(val, "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
                                         </div>
                                     );
                                 })}
-                                {izborMesovito ? renderMesovito(): null}
+                                {izborMesovito ? renderMesovito() : null}
                                 {izborVaucer ? renderOpis() : null}
-                                
+
                             </>
                         ) : (
                             <p>No categories available</p> // Opciono: prikaz poruke kada nema kategorija

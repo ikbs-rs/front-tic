@@ -42,7 +42,7 @@ const TicDocsuidPar = (props) => {
         return regex.test(email);
     };
 
-    async function isValidDate  (date, format) {
+    async function isValidDate(date, format) {
         const day = parseInt(date.substring(0, 2));
         const month = parseInt(date.substring(2, 4));
         const year = parseInt(date.substring(4, 8));
@@ -54,7 +54,7 @@ const TicDocsuidPar = (props) => {
 
     const proveriJMBG = async (uJMBG) => {
         console.log(uJMBG, "00-##############################################################################################################################")
-        if (uJMBG=='3333333333333') {
+        if (uJMBG == '3333333333333') {
             return true
         }
         let A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13;
@@ -71,7 +71,7 @@ const TicDocsuidPar = (props) => {
             }
             // Validacija datuma (DDMMYYYY)
             let datum = uJMBG.substring(0, 4) + pYY + uJMBG.substring(5, 7);
-            if ( await isValidDate(datum, 'DDMMYYYY')) {
+            if (await isValidDate(datum, 'DDMMYYYY')) {
                 A1 = parseInt(uJMBG.charAt(0));
                 A2 = parseInt(uJMBG.charAt(1));
                 A3 = parseInt(uJMBG.charAt(2));
@@ -131,9 +131,12 @@ const TicDocsuidPar = (props) => {
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnParItems(dataDD);
-                setDdCmnParItem(dataDD.find((item) => item.code === props.cmnPar.tp) || null);
-                if (props.cmnPar.tp) {
-                    const foundItem = data.find((item) => item.id === props.cmnPar.tp);
+                const tp = props.cmnPar?.tp || "2"
+                console.log(tp, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+                setDdCmnParItem(dataDD.find((item) => item.code == tp) || null);
+
+                if (tp) {
+                    const foundItem = data.find((item) => item.id === tp);
                     setCmnParItem(foundItem || null);
                     cmnPar.ctp = foundItem.code
                     cmnPar.ntp = foundItem.textx
@@ -160,7 +163,7 @@ const TicDocsuidPar = (props) => {
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCountryItems(dataDD);
                 setDdCountryItem(dataDD.find((item) => item.code === props.cmnPar.countryid) || null);
-                if (props.cmnPar.tp) {
+                if (props.cmnPar.countryid) {
                     const foundItem = data.find((item) => item.id === props.cmnPar.countryid);
                     setCmnCounryItem(foundItem || null);
                     cmnPar.ctp = foundItem.code
@@ -223,22 +226,22 @@ const TicDocsuidPar = (props) => {
             cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
-            if (! (await handleEmailChange(cmnPar.email))) {
+            if (!(await handleEmailChange(cmnPar.email))) {
                 throw new Error(
                     "Neispravan EMAIL!"
-                );  
+                );
             } else {
                 console.log("00 - EMAIL je ok")
                 if (!(await handleJmbgValidate(cmnPar.idnum)) && cmnPar.tp == 2) {
                     throw new Error(
                         "Neispravan JMBG!"
-                    );         
+                    );
                 } else {
                     console.log("00 - JMBG je ok", cmnPar)
                     const cmnParService = new CmnParService();
 
                     const data = await cmnParService.putCmnPar(cmnPar);
-        
+
                     props.handleUidKey(cmnPar)
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Podatci ažurirani', life: 2000 });
                 }
@@ -373,24 +376,6 @@ const TicDocsuidPar = (props) => {
                         </div> */}
 
                         <div className="field col-12 md:col-7">
-                            <label htmlFor="short">{translations[selectedLanguage].short}</label>
-                            <InputText
-                                id="short"
-                                value={cmnPar.short} onChange={(e) => onInputChange(e, "text", 'short')}
-                            />
-                        </div>
-                        <div className="field col-12 md:col-5">
-                            <label htmlFor="email">{translations[selectedLanguage].email}</label>
-                            <InputText
-                                id="email"
-                                value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
-                                className={classNames({ 'p-invalid': (submitted && !cmnPar.email) || emailError })}
-                            />
-                            {emailError && <small className="p-error">{translations[selectedLanguage].InvalidEmail}</small>}
-                            {submitted && !cmnPar.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-
-                        </div>
-                        <div className="field col-12 md:col-8">
                             <label htmlFor="tp">{translations[selectedLanguage].Type} *</label>
                             <Dropdown id="tp"
                                 value={ddCmnParItem}
@@ -404,7 +389,25 @@ const TicDocsuidPar = (props) => {
                             {submitted && !cmnPar.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
 
                         </div>
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="email">{translations[selectedLanguage].email}</label>
+                            <InputText
+                                id="email"
+                                value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
+                                className={classNames({ 'p-invalid': (submitted && !cmnPar.email) || emailError })}
+                            />
+                            {emailError && <small className="p-error">{translations[selectedLanguage].InvalidEmail}</small>}
+                            {submitted && !cmnPar.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
 
+                        </div>
+
+                        {/* <div className="field col-12 md:col-7">
+                            <label htmlFor="short">{translations[selectedLanguage].short}</label>
+                            <InputText
+                                id="short"
+                                value={cmnPar.short} onChange={(e) => onInputChange(e, "text", 'short')}
+                            />
+                        </div> */}
                         <div className="field col-12 md:col-5">
                             <label htmlFor="address">{translations[selectedLanguage].address}</label>
                             <InputText
@@ -421,8 +424,14 @@ const TicDocsuidPar = (props) => {
                                 value={cmnPar.place} onChange={(e) => onInputChange(e, "text", 'place')}
                             />
                         </div>
-
                         <div className="field col-12 md:col-3">
+                            <label htmlFor="postcode">{translations[selectedLanguage].postcode}</label>
+                            <InputText
+                                id="postcode"
+                                value={cmnPar.postcode} onChange={(e) => onInputChange(e, "text", 'postcode')}
+                            />
+                        </div>
+                        <div className="field col-12 md:col-4">
                             <label htmlFor="countryid">{translations[selectedLanguage].Country} *</label>
                             <Dropdown id="countryid"
                                 value={ddCountryItem}
@@ -435,13 +444,13 @@ const TicDocsuidPar = (props) => {
                             />
                             {submitted && !cmnPar.countryid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-
-
                         <div className="field col-12 md:col-4">
-                            <label htmlFor="postcode">{translations[selectedLanguage].postcode}</label>
-                            <InputText
-                                id="postcode"
-                                value={cmnPar.postcode} onChange={(e) => onInputChange(e, "text", 'postcode')}
+                            <label htmlFor="birthday">{translations[selectedLanguage].Birthday} *</label>
+                            <Calendar
+                                value={birthday}
+                                onChange={(e) => onInputChange(e, "Calendar", 'birthday')}
+                                showIcon
+                                dateFormat="dd.mm.yy"
                             />
                         </div>
                         <div className="field col-12 md:col-4">
@@ -451,38 +460,46 @@ const TicDocsuidPar = (props) => {
                                 value={cmnPar.tel} onChange={(e) => onInputChange(e, "text", 'tel')}
                             />
                         </div>
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="activity">{translations[selectedLanguage].activity}</label>
-                            <InputText
-                                id="activity"
-                                value={cmnPar.activity} onChange={(e) => onInputChange(e, "text", 'activity')}
-                            />
+                        <div className="col-12">
+                            <div className="p-fluid formgrid grid">
+                                <div className="field col-12 md:col-6">
+                                    <label htmlFor="idnum">{translations[selectedLanguage].idnum}</label>
+                                    <InputText
+                                        id="idnum"
+                                        value={cmnPar.idnum} onChange={(e) => onInputChange(e, "text", 'idnum')}
+                                        className={classNames({ 'p-invalid': jmbgError })}
+                                    />
+                                    {jmbgError && <small className="p-error">{translations[selectedLanguage].InvalidJMBG}</small>}
+                                </div>
+                            </div>
                         </div>
-
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="pib">{translations[selectedLanguage].pib}</label>
-                            <InputText
-                                id="pib"
-                                value={cmnPar.pib} onChange={(e) => onInputChange(e, "text", 'pib')}
-                            />
-                        </div>
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="idnum">{translations[selectedLanguage].idnum}</label>
-                            <InputText
-                                id="idnum"
-                                value={cmnPar.idnum} onChange={(e) => onInputChange(e, "text", 'idnum')}
-                                className={classNames({ 'p-invalid': jmbgError })}
-                            />
-                            {jmbgError && <small className="p-error">{translations[selectedLanguage].InvalidJMBG}</small>}
-                        </div>
-
-                        <div className="field col-12 md:col-6">
-                            <label htmlFor="pdvnum">{translations[selectedLanguage].pdvnum}</label>
-                            <InputText
-                                id="pdvnum"
-                                value={cmnPar.pdvnum} onChange={(e) => onInputChange(e, "text", 'pdvnum')}
-                            />
-                        </div>
+                        {(cmnParItem?.id != 2) && (
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="activity">{translations[selectedLanguage].activity}</label>
+                                <InputText
+                                    id="activity"
+                                    value={cmnPar.activity} onChange={(e) => onInputChange(e, "text", 'activity')}
+                                />
+                            </div>
+                        )}
+                        {(cmnParItem?.id != 2) && (
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="pib">{translations[selectedLanguage].pib}</label>
+                                <InputText
+                                    id="pib"
+                                    value={cmnPar.pib} onChange={(e) => onInputChange(e, "text", 'pib')}
+                                />
+                            </div>
+                        )}
+                        {(cmnParItem?.id != 2) && (
+                            <div className="field col-12 md:col-4">
+                                <label htmlFor="pdvnum">{translations[selectedLanguage].pdvnum}</label>
+                                <InputText
+                                    id="pdvnum"
+                                    value={cmnPar.pdvnum} onChange={(e) => onInputChange(e, "text", 'pdvnum')}
+                                />
+                            </div>
+                        )}
                         <div className="field col-12 md:col-6">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
                             <Calendar
@@ -497,15 +514,6 @@ const TicDocsuidPar = (props) => {
                             <Calendar
                                 value={endda}
                                 onChange={(e) => onInputChange(e, "Calendar", 'endda')}
-                                showIcon
-                                dateFormat="dd.mm.yy"
-                            />
-                        </div>
-                        <div className="field col-12 md:col-4">
-                            <label htmlFor="birthday">{translations[selectedLanguage].Birthday} *</label>
-                            <Calendar
-                                value={birthday}
-                                onChange={(e) => onInputChange(e, "Calendar", 'birthday')}
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />

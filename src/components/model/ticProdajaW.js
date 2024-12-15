@@ -430,6 +430,10 @@ const TicProdajaW = forwardRef((props, ref) => {
   const handlePlacanjetip = async (value) => {
     const _ticDocpayment = { ...ticDocpayment }
     _ticDocpayment.paymenttp = value
+    const _ticDoc = {...ticDoc}
+    _ticDoc.paymenttp = value
+    setTicDoc(_ticDoc)
+    props.handleTabZaglavlje(_ticDoc)
     setTicDocpayment({ ..._ticDocpayment })
     setTicTransactionsKey1((prev) => prev + 1);
     setTicTransactionsKey11((prev) => prev + 1);
@@ -628,10 +632,10 @@ const TicProdajaW = forwardRef((props, ref) => {
             vaucerPayment.paymenttp = placanjeRef.current.vaucerTp
             vaucerPayment.vrednost = placanjeRef.current.vrednost
             vaucerPayment.description = placanjeRef.current.description
-            console.log(vaucerPayment,"00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+            // console.log(vaucerPayment,"00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
             newArray.push(vaucerPayment)
           }  
-          console.log(newArray,"01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")        
+          // console.log(newArray,"01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")        
           const data = await ticDocpaymentService.postTicDocpayments(newArray);
         } else {
           _ticDocpayment.amount = placanjeRef.current.zaUplatu
@@ -787,7 +791,8 @@ DRUGI RED
                       pointerEvents: props.someCondition ? "none" : "auto", // Dinamički onemogućava klikove
                       opacity: props.someCondition ? 0.7 : 1 // Vizuelni efekat
                     }}
-                  ></iframe>
+                  >
+                  </iframe>
                   {/* Overlay sloj za blokiranje interakcije */}
                   {props.someCondition && (
                     <div

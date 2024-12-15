@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { ProgressBar } from 'primereact/progressbar';
 import { classNames } from 'primereact/utils';
 import { TicEventService } from "../../service/model/TicEventService";
 import { TicSeasonService } from "../../service/model/TicSeasonService";
@@ -25,6 +26,7 @@ import CmnParL from './cmn/cmnParL';
 import { Divider } from 'primereact/divider';
 import ConfirmDialog from '../dialog/ConfirmDialog';
 import TicEventWL from './ticEventWL';
+
 
 
 
@@ -69,6 +71,7 @@ const TicEvent = (props) => {
     const [ddSeasonItems, setDdSeasonItems] = useState(null);
     const [ddEventItem, setDdEventItem] = useState(null);
     const [ddEventItems, setDdEventItems] = useState(null);
+    const [loading, setLoading] = useState(false);
     // const [ddOrganizatorItem, setDdOrganizatorItem] = useState(null);
     // const [ddOrganizatorItems, setDdOrganizatorItems] = useState(null);
 
@@ -600,24 +603,30 @@ const TicEvent = (props) => {
 
     const handleConfirm = async () => {
         try {
-            console.log(ticEvent, "***********handleConfirm********************")
+            // console.log(ticEvent, "***********handleConfirm********************")
             setSubmitted(true);
+            setLoading(true)
+            setConfirmDialogVisible(false);
             ticEvent.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
             ticEvent.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             ticEvent.begtm = DateFunction.convertTimeToDBFormat(ticEvent.begtm)
             ticEvent.endtm = DateFunction.convertTimeToDBFormat(ticEvent.endtm)
+            ticEvent.tm = DateFunction.currDatetime()
             const ticEventService = new TicEventService();
-            console.log('*00********************handleCopyClick*************************')
+            
             const pId = await ticEventService.postTicEventCopy(ticEvent);
+            console.log(pId, '*00********************handleCopyClick*************************')
+            setLoading(false)
             const _ticEvent = { ...ticEvent };
             _ticEvent.id = pId;
+            setTicEvent(pId)
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Догађај успешно активиран ?', life: 3000 });
             props.handleDialogClose({ obj: _ticEvent, eventTip: props.eventTip });
-            setConfirmDialogVisible(false);
             setVisible(false);
             props.setVisible(false);
 
         } catch (err) {
+            setLoading(false)
             toast.current.show({
                 severity: "error",
                 summary: "Action ",
@@ -841,6 +850,11 @@ const TicEvent = (props) => {
         <div className="grid">
             <Toast ref={toast} />
             <div className="col-12">
+            {loading ? (
+                    <div className="card">
+                        <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+                    </div>
+                ) : (null)}
                 <div className="card">
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-3">

@@ -226,11 +226,11 @@ const AutoParProdaja = (props) => {
                         <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1} />
                     </div>
                 </div>
-                <div className="field col-12 md:col-7">
+                <div className="field col-12 md:col-8">
                     <label htmlFor="text">{translations[selectedLanguage].Text}</label>
                     <InputText
                         id="text"
-                        value={cmnPar.textx}
+                        value={cmnPar?.text}
                         onChange={(e) => onInputChange(e, "auto", 'text')}
                         required
                         disabled={ticDoc.statuspayment == 1}

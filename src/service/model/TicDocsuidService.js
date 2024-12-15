@@ -185,11 +185,7 @@ export class TicDocsuidService {
   async putTicDocsuid(newObj) {
     try {
       const selectedLanguage = localStorage.getItem('sl') || 'en'
-      if (newObj.curr === null || newObj.art === null || newObj.status === null) {
-        throw new Error(
-          "Items must be filled!"
-        );
-      }
+
       const url = `${env.TIC_BACK_URL}/tic/docsuid/?sl=${selectedLanguage}`;
       const tokenLocal = await Token.getTokensLS();
       const headers = {

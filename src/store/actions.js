@@ -1,7 +1,8 @@
 import {
     SET_LANGUAGE,
     SET_THEME,
-    SET_OBJECT
+    SET_OBJECT,
+    SET_LOGIN_STATUS
 } from './types';
 
 export const setLanguage = (language) => {
@@ -28,3 +29,11 @@ export const setObject = (code, name) => {
         },
     };
 };
+
+export const setLoginStatus = (isLoggedIn) => {
+    return {
+      type: SET_LOGIN_STATUS,
+      payload: isLoggedIn,
+    };
+  };
+  

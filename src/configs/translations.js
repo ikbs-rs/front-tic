@@ -948,6 +948,9 @@ export const translations = {
         Vaucer: "Ваучер",
         tax: "Порез",
         EventartlogList: "Артикли лог Листа",
+        Ulaz: "Улаз",
+        Birthday: "Датум рођења",
+        Country: "Држава",
     }
   };
   

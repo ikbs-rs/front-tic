@@ -364,8 +364,8 @@ export class TicEventService {
       };
       const jsonObj = JSON.stringify(newObj)
       const response = await axios.post(url, jsonObj, { headers });
-      // console.log("**************"  , response.data.item.tic_event_copy, "****************")
-      return response.data.item.tic_event_copy;
+      console.log("**************"  , response.data.item, "****************")
+      return response.data.item;
     } catch (error) {
       console.error(error);
       throw error;

@@ -43,7 +43,14 @@ const AppTopbar = (props) => {
             });
         }
     };
-
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        sessionStorage.setItem('isLoggedIn', 'false');
+        navigate('/login');
+    };
     return (
         <div className="layout-topbar" >
             <button type="button" className="p-link layout-right-panel-button layout-topbar-icon" onClick={props.onRightMenuButtonClick}>
@@ -63,7 +70,7 @@ const AppTopbar = (props) => {
                     {!props.inlineUser && (
                         <button type="button" className="p-link" onClick={(e) => onTopbarItemClick(e, 'profile')}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', "padding-right": "20px", "padding-top": "0px" }}>
-                                <span style={{ color: "#fff" }}>{`${user.firstname} ${user.lastname || ''}`}</span>
+                                <span style={{ color: "#fff" }}>{`${user?.firstname} ${user?.lastname || ''}`}</span>
 
                                 <Avatar size="large" icon="pi pi-user" shape="circle" className="p-overlay-badge" image={slika} >
                                     <Badge value="4" severity="danger" />
@@ -73,7 +80,7 @@ const AppTopbar = (props) => {
                     )}
 
                     <ul className="fadeInDown">
-                        <li role="menuitem">
+                        {/* <li role="menuitem">
                             <button type="button" className="p-link">
                                 <i className="pi pi-fw pi-user"></i>
                                 <span>Profile</span>
@@ -96,7 +103,13 @@ const AppTopbar = (props) => {
                                 <i className="pi pi-fw pi-bell"></i>
                                 <span>Notifications</span>
                             </button>
-                        </li>
+                        </li> */}
+                        <li role="menuitem">
+                            <button type="button" className="p-link" onClick={handleLogout}>
+                                <i className="pi pi-fw pi-sign-out"></i>
+                                <span>Logout</span>
+                            </button>
+                        </li>                        
                     </ul>
                 </li>
             </ul>

@@ -32,7 +32,7 @@ import TicDocDiscountL from './ticDocdiscountL'
 import TicProdajaPlacanje from "./ticProdajaPlacanje";
 
 export default function TicDocdeliveryL(props) {
-  console.log(props, "*22222222222222222222222222222-----------------------------props----------------*-*-*-*-*-*-*-*-*-*")
+  // console.log(props, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ--------props----------*-*-*-*-*-*-*-*-*-*")
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -131,6 +131,26 @@ export default function TicDocdeliveryL(props) {
   const [zbirzbirniiznos, setZbirniiznos] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   /********************************************************************************/
+  /******************************************** */
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const cmnParService = new CmnParService();
+  //       const data = await cmnParService.getCmnParP(props.ticDoc.idpar);
+  //       // console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
+  //       const [firstname, lastname] = data.textx.split(' ');
+  //       const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
+  //       setCmnPar(_cmnPar);
+  //       initFilters();
+  //     } catch (error) {
+  //       console.error(error);
+  //       // Obrada greške ako je potrebna
+  //     }
+  //   }
+  //   fetchData();
+  // }, [parRefresh, refreshKey, props.ticDoc]);
+  /******************************************** */
+
   const handlePayTicDoc = async () => {
     try {
       // console.log("PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_PLACAM_")
@@ -369,28 +389,42 @@ export default function TicDocdeliveryL(props) {
       });
     }
   }
-  //******************************************************************************************************************** */
   //******************************************************************************************************************** */  
-
   useEffect(() => {
     async function fetchData() {
       try {
-        ++i
-        if (i < 2) {
-          const dataT = [];
-          dataT.push({ code: `First name`, value: cmnPar.firstname });
-          dataT.push({ code: `Last name`, value: cmnPar?.lastname });
-          dataT.push({ code: `Customer id`, value: cmnPar?.pib || cmnPar?.idnum });
-          dataT.push({ code: `Email`, value: cmnPar?.email });
-          dataT.push({ code: `Phon`, value: cmnPar?.tel });
-          dataT.push({ code: `Address`, value: cmnPar?.address });
-          dataT.push({ code: `Post number`, value: cmnPar?.postcode });
-          dataT.push({ code: `City`, value: cmnPar?.place });
-          dataT.push({ code: `Country`, value: cmnPar.country });
-          setCmnParInfos(dataT);
+        const cmnParService = new CmnParService();
+        const datas = await cmnParService.getCmnParP(props.ticDoc.idpar);
+        const data = datas[0]
+        // console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
+        const [firstname, lastname] = data.textx.split(' ');
+        const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
+        setCmnPar(_cmnPar);
+        initFilters();
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [parRefresh, refreshKey, props.ticDoc]);
+  /******************************************** */
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const dataT = [];
+        dataT.push({ code: `First name`, value: cmnPar.firstname });
+        dataT.push({ code: `Last name`, value: cmnPar?.lastname });
+        dataT.push({ code: `Customer id`, value: cmnPar?.pib || cmnPar?.idnum });
+        dataT.push({ code: `Email`, value: cmnPar?.email });
+        dataT.push({ code: `Phon`, value: cmnPar?.tel });
+        dataT.push({ code: `Address`, value: cmnPar?.address });
+        dataT.push({ code: `Post number`, value: cmnPar?.postcode });
+        dataT.push({ code: `City`, value: cmnPar?.place });
+        dataT.push({ code: `Country`, value: cmnPar.country });
+        setCmnParInfos(dataT);
 
-          initFilters();
-        }
+        initFilters();
       } catch (error) {
         console.error(error);
         // Obrada greške ako je potrebna
@@ -405,16 +439,16 @@ export default function TicDocdeliveryL(props) {
         ++i
         if (i < 5) {
           const dataO = [];
-          dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
-          dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
-          dataO.push({ code: `Order transaction no`, value: transactionTemplate(props.ticDoc.broj) });
-          dataO.push({ code: `Event`, value: neventTemplate(props.ticDoc) });
-          dataO.push({ code: `Transaction time`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
-          dataO.push({ code: `Number of ticket`, value: karteTemplate(brojIznos, `Iznos:`, netoIznos) });
+          dataO.push({ code: `Sales channel:`, value: props.ticDoc.kanal });
+          dataO.push({ code: `Agent:`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
+          dataO.push({ code: `Order transaction no:`, value: transactionTemplate(props.ticDoc.broj) });
+          dataO.push({ code: `Event:`, value: neventTemplate(props.ticDoc) });
+          dataO.push({ code: `Transaction time:`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
+          dataO.push({ code: `Number of ticket:`, value: karteTemplate(brojIznos, `Iznos:`, karteIznos) });
           dataO.push({ code: `Discount`, value: popustIznos });
-          dataO.push({ code: `Ticket total price`, value: karteIznos });
-          dataO.push({ code: `Fee total price`, value: naknadeIznos });
-          dataO.push({ code: `Order total price`, value: transactionTemplate(zaUplatu) });
+          dataO.push({ code: `Ticket total price:`, value: netoIznos });
+          dataO.push({ code: `Fee total price:`, value: naknadeIznos });
+          dataO.push({ code: `Order total price:`, value: transactionTemplate(zaUplatu) });
           setTicOrderInfos(dataO);
 
           initFilters();
@@ -434,14 +468,14 @@ export default function TicDocdeliveryL(props) {
         const dataO = [];
         dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
         dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
-        dataO.push({ code: `Order transaction no`, value: transactionTemplate(props.ticDoc.broj) });
-        dataO.push({ code: `Event`, value: neventTemplate(props.ticDoc) });
-        dataO.push({ code: `Transaction time`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
-        dataO.push({ code: `Number of ticket`, value: `${brojIznos} **** Iznos: ${netoIznos} ` });
-        dataO.push({ code: `Discount`, value: popustIznos });
-        dataO.push({ code: `Ticket total price`, value: karteIznos });
-        dataO.push({ code: `Fee total price`, value: naknadeIznos });
-        dataO.push({ code: `Order total price`, value: zaUplatu });
+        dataO.push({ code: `Order transaction no:`, value: transactionTemplate(props.ticDoc.broj) });
+        dataO.push({ code: `Event:`, value: neventTemplate(props.ticDoc) });
+        dataO.push({ code: `Transaction time:`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
+        dataO.push({ code: `Number of ticket:`, value: `${brojIznos} **** Iznos: ${karteIznos} ` });
+        dataO.push({ code: `Discount:`, value: popustIznos });
+        dataO.push({ code: `Ticket total price`, value: netoIznos });
+        dataO.push({ code: `Fee total price:`, value: naknadeIznos });
+        dataO.push({ code: `Order total price:`, value: zaUplatu });
         // console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
         setTicTransactionInfos(dataO);
 
@@ -481,25 +515,7 @@ export default function TicDocdeliveryL(props) {
     }
     fetchData();
   }, [props.ticDoc, refreshPrint, refreshPay]);
-  /******************************************** */
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const cmnParService = new CmnParService();
-        const data = await cmnParService.getCmnParP(props.ticDoc.idpar);
-        // console.log(data, "**###$$$%%%***!!!---+++///((({{{}}})))")
-        const [firstname, lastname] = data.textx.split(' ');
-        const _cmnPar = { ...data, firstname: firstname, lastname: lastname }
-        setCmnPar(_cmnPar);
-        initFilters();
-      } catch (error) {
-        console.error(error);
-        // Obrada greške ako je potrebna
-      }
-    }
-    fetchData();
-  }, [parRefresh, refreshKey]);
-  /******************************************** */
+
 
   useEffect(() => {
     async function fetchData() {
@@ -806,7 +822,7 @@ export default function TicDocdeliveryL(props) {
       toast.current.show({ severity: 'success', summary: 'Successful', detail: `{${objName}} ${localObj.newObj.docdeliveryTip}`, life: 3000 });
       setTicDocdeliverys(_ticDocdeliverys);
       setTicDocdelivery(emptyTicDocdelivery);
-      setRefreshDelivery(prev => prev+1)
+      setRefreshDelivery(prev => prev + 1)
     }
   };
 
@@ -1237,25 +1253,29 @@ export default function TicDocdeliveryL(props) {
     // setFormattedZaUplatu(formatNumberAsText(iznos))
   };
   const handleNetoIznos = (iznos) => {
-    setNetoIznos(iznos);
-    handleZaUplatu(karteIznos + naknadeIznos) // - popustIznos)
+    // setNetoIznos(karteIznos - popustIznos);
+    // handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
   };
   const handleKarteIznos = (iznos) => {
     setKarteIznos(iznos);
-    handleZaUplatu(karteIznos + naknadeIznos) // - popustIznos)
+    setNetoIznos(iznos - popustIznos);
+    handleZaUplatu(iznos + naknadeIznos - popustIznos)
   };
   const handleBrojIznos = (iznos) => {
     setBrojIznos(iznos);
-    handleZaUplatu(karteIznos + naknadeIznos) // - popustIznos)
+    setNetoIznos(karteIznos - popustIznos);
+    handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
   };
 
   const handleNaknadeIznos = (iznos) => {
     setNaknadeIznos(iznos);
-    handleZaUplatu(karteIznos + naknadeIznos) //- popustIznos)
+    setNetoIznos(karteIznos - popustIznos);
+    handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
   };
   const handlePopustIznos = (iznos) => {
     setPopustIznos(iznos);
-    handleZaUplatu(karteIznos + naknadeIznos) // - popustIznos)
+    setNetoIznos(karteIznos - iznos);
+    handleZaUplatu(karteIznos + naknadeIznos -iznos)
   };
   /************************************************************************************* */
   const onInputChange = (e, type, name) => {
@@ -1316,7 +1336,7 @@ export default function TicDocdeliveryL(props) {
           <div className="col-5">
             <div class="grid">
               <div className="col-12">
-                <div className="card">
+                <div className="">
                   <DataTable
                     dataKey="id"
                     size={"small"}
@@ -1349,7 +1369,7 @@ export default function TicDocdeliveryL(props) {
             <div class="grid">
               <div className="col-12">
                 {/* II */}
-                <div className="card">
+                <div className="">
                   <DataTable
                     dataKey="id"
                     key={refreshKey}
@@ -1398,7 +1418,7 @@ export default function TicDocdeliveryL(props) {
             <div class="grid">
               <div className="col-12">
                 {/* V */}
-                <div className="card">
+                <div className="">
                   <DataTable
                     dataKey="id"
                     size={"small"}
@@ -1429,7 +1449,7 @@ export default function TicDocdeliveryL(props) {
               </div>
               <div className="col-12">
                 {/* V */}
-                <div className="card">
+                <div className="">
                   <DataTable
                     dataKey="id"
                     size={"small"}
@@ -1527,7 +1547,7 @@ export default function TicDocdeliveryL(props) {
           handleNaknadeIznos={handleNaknadeIznos}
         />
       </div>
-      <div className="card">
+      <div className="">
         <div className="p-fluid formgrid grid">
           <div className="field col-12 md:col-12">
 

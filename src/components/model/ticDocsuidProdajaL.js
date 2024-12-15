@@ -84,6 +84,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const [ddTicDocdeliveryterrItems, setDdTicDocdeliveryterrItems] = useState(null);
     const [ticDocdeliveryterrItem, setTicDocdeliveryterrItem] = useState(null);
     const [ticDocdeliveryterrItems, setTicDocdeliveryterrItems] = useState(null);
+    const [delivryStatus, setDeliveryStatus] = useState(1);
 
     let brojReda = 0
 
@@ -206,6 +207,23 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         fetchData();
     }, [props.ticDoc, refresh, ticDocdelivery]);
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const endDate = moment(ticDoc.endda, 'YYYYMMDD');
+                const now = moment();
+
+                if (endDate.isAfter(now)) {
+                    setDeliveryStatus(0);
+                }
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticDoc]);
+
     const handelUnitSubbmitted = (itemUnit) => {
         //     console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
@@ -239,8 +257,8 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         return true
     }
 
-    const handelSubbmitted = () => {
-        // console.log(requiredFields, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
+    const handelSubbmitted =  () => {
+        console.log(ticDocsuids, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
         // Prođi kroz svaki ID i njegove atribute iz requiredFields
         for (const field of requiredFields) {
@@ -265,6 +283,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     return false; // Zaustavi dalje izvršenje koda
                 }
             }
+        }
+        const ticDocsuidService = new TicDocsuidService();
+        for (const row  of ticDocsuids) {
+            ticDocsuidService.putTicDocsuid(row);
         }
 
         // console.log("Sva polja su popunjena.");
@@ -543,7 +565,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
             emptyTicDocdelivery.note = note
             _ticDocdelivery.note = note
-            // console.log(_ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", ticDocdelivery)
+            // console.log(_ticDocdelivery, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", valueTA)
 
             const ticDocdeliveryService = new TicDocdeliveryService();
             if (_ticDocdelivery?.id && _ticDocdelivery?.id != null) {
@@ -580,7 +602,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         if (!handelUnitSubbmitted(item)) {
             return
         };
-        console.log(item, "H-item-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(item, "H-item-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         e.preventDefault(); // Prevent default action if necessary
         const ticDocsuidService = new TicDocsuidService();
         await ticDocsuidService.postTicDocsuidPosetilac(item, item.docs);
@@ -599,6 +621,47 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         // console.log(e, "******* Clicked item details:", item);
 
     };
+
+    /***************************************************************************************** */
+    const handleChangeKupac = async (item, e) => {
+        try {
+            const updatedKupacValue = item.kupac === 1 ? 0 : 1;
+            const updatedItem = { ...item, kupac: updatedKupacValue };
+            const _cmnPar = {...cmnPar}
+            // console.log(updatedItem, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUkupacUUUUUUUUUUUUUUUUUUUUUUUUU")
+            // Ažuriranje na serveru
+            if (_cmnPar.tp == 2) {
+                const parts = _cmnPar.textx.split(' '); // Podeli string na delove prema razmaku
+                _cmnPar.first = parts.slice(0, 1)[0]; // Prvi deo ide u `first`
+                _cmnPar.last = parts.slice(1).join(' '); // Svi ostali delovi spojeni u `last`
+            }
+            updatedItem.first = updatedKupacValue == 1 ? _cmnPar?.first || _cmnPar?.text || _cmnPar?.textx : item.first
+            updatedItem.last = updatedKupacValue == 1 ? _cmnPar?.last || _cmnPar?.text || _cmnPar?.textx : item.last
+            updatedItem.uid = updatedKupacValue == 1 ? _cmnPar.idnum : item.uid
+            updatedItem.adress = updatedKupacValue == 1 ? _cmnPar?.address : item.adress
+            updatedItem.city = updatedKupacValue == 1 ? _cmnPar?.place : item.city
+            updatedItem.country = updatedKupacValue == 1 ? _cmnPar?.country : item.country
+            updatedItem.phon = updatedKupacValue == 1 ? _cmnPar?.tel : item.phon
+            updatedItem.email = updatedKupacValue == 1 ? _cmnPar?.email : item.email
+            updatedItem.par = updatedKupacValue == 1 ? _cmnPar?.id : item.par
+            updatedItem.birthday = updatedKupacValue == 1 ? _cmnPar?.birthday : item.birthday
+            updatedItem.kupac = updatedKupacValue
+            console.log(updatedItem, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUkupacUUUUUUUUUUUUUUUUUUUUUUUUU", cmnPar)
+            const ticDocsuidService = new TicDocsuidService();
+            await ticDocsuidService.putTicDocsuid(updatedItem);
+
+            // Ažuriranje lokalnog stanja
+            setTicDocsuids((prevState) =>
+                prevState.map((docItem) =>
+                    // docItem.id === item.id ? { ...docItem, kupac: updatedKupacValue } : docItem
+                    docItem.id === item.id ? { ...updatedItem } : docItem
+                )
+            );
+        } catch (error) {
+            console.error("Error updating Kupac value:", error);
+        }
+    };
+    /***************************************************************************************** */
 
     const handleDiscountEventDelete = async (item, e) => {
         const ticDocsdiscountService = new TicDocsdiscountService();
@@ -728,29 +791,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         setTicDocdelivery(_ticDocdelivery);
     };
 
-    /***************************************************************************************** */
-    const handleChangeKupac = async (item, e) => {
-        try {
-            const updatedKupacValue = item.kupac === 1 ? 0 : 1;
-            const updatedItem = { ...item, kupac: updatedKupacValue };
-            // console.log(updatedItem, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUkupacUUUUUUUUUUUUUUUUUUUUUUUUU")
-            // Ažuriranje na serveru
-            const ticDocsuidService = new TicDocsuidService();
-            await ticDocsuidService.putTicDocsuid(updatedItem);
 
-            // Ažuriranje lokalnog stanja
-            setTicDocsuids((prevState) =>
-                prevState.map((docItem) =>
-                    docItem.id === item.id ? { ...docItem, kupac: updatedKupacValue } : docItem
-                )
-            );
-        } catch (error) {
-            console.error("Error updating Kupac value:", error);
-        }
-    };
     const DocZaglavlje = () => {
         return (
-            <div className="card">
+            <>
                 <div className="grid">
                     <div className="field col-12 md:col-12">
                         <AutoParProdaja
@@ -769,13 +813,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                 raised
                                 tooltip={translations[selectedLanguage].PopuniPodatkeKupcaSveStavke}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                disabled={ticDoc.statuspayment == 1 }
+                                disabled={ticDoc.statuspayment == 1}
                             />
                             <Button icon="pi pi-users" onClick={(e) => handleAllNullParr(e, "ALL")} style={{ width: '35px' }}
                                 raised severity="danger"
                                 tooltip={translations[selectedLanguage].ObrisiPodatkePosetilacaTransakcije}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                disabled={ticDoc.statuspayment == 1 }
+                                disabled={ticDoc.statuspayment == 1}
                             />
                             <Button
                                 icon="pi pi-percentage"
@@ -785,25 +829,25 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                 onClick={(e) => handleDiscountDelete(props.ticDoc, e)}
                                 tooltip={translations[selectedLanguage].ObrisiPopusteTransakcije}
                                 tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                disabled={ticDoc.statuspayment == 1 }
+                                disabled={ticDoc.statuspayment == 1}
                             />
                         </div>
                     </div>
                 </div>
-            </div >
+            </>
         );
     };
     /*********************************************************************************** */
     const handleItemSelect = (item) => {
-        // console.log("HhandleItemSelectHHHHHHHHHHHHHHHHHHHHHHHHHHHHHUUUUUUUUUUUHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item)
-        setValueTA(item.adresa);
+        console.log("HhandleItemSelectHHHHHHHHHHHHHHHHHHHHHHHHHHHHHUUUUUUUUUUUHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item)
+        setValueTA(item);
     };
 
     return (
         <>
             <div className="card  scrollable-content" >
                 <Accordion >
-                    <AccordionTab header={translations[selectedLanguage].delivery}>
+                    <AccordionTab header={translations[selectedLanguage].delivery} disabled={delivryStatus==0}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
@@ -813,7 +857,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                     onItemSelect={handleItemSelect}
                                     ticDoc={ticDoc}
                                     ticDocdelivery={ticDocdelivery}
-                                    address={valueTA || ticDocdelivery.address || '333333333'}
+                                    address={valueTA || ticDocdelivery.adress || '333333333'}
                                 />
                                 <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
                                     <label htmlFor="note">{translations[selectedLanguage].note}</label>
@@ -823,7 +867,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onChange={(e) => setNote(e.target.value)}
                                         rows={3} cols={90}
                                         style={{ paddingTop: 20, width: "100%" }}
-                                        disabled={ticDoc.statuspayment == 1 }
+                                        disabled={ticDoc.statuspayment == 1}
                                     />
                                 </div>
                                 {/* </div>
@@ -839,7 +883,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             required
                                             optionLabel="name"
                                             placeholder="Select One"
-                                            disabled={ticDoc.statuspayment == 1 }
+                                            disabled={ticDoc.statuspayment == 1}
                                             className={classNames({ 'p-invalid': submitted && !ticDocdelivery.country })}
                                         />
                                         {submitted && !ticDocdelivery.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -854,7 +898,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             onClick={(e) => handleDeliveryClick("item", e)}
                                             tooltip={translations[selectedLanguage].SnimiAdresuIsporuk}
                                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                            disabled={ticDoc.statuspayment == 1 }
+                                            disabled={ticDoc.statuspayment == 1}
                                         ></Button>
                                     </div>
                                 </div>
@@ -904,7 +948,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.last}
                                                     onChange={(e) => onInputChangeL(e, 'last', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.last })}
                                                 />
                                                 {submitted && !item.last && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -920,7 +964,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.uid}
                                                     onChange={(e) => onInputChangeL(e, 'uid', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.uid })}
                                                 />
                                                 {submitted && !item.uid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -936,7 +980,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.birthday}
                                                     onChange={(e) => onInputChangeL(e, 'birthday', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.birthday })}
                                                 />
                                                 {submitted && !item.birthday && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -952,7 +996,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.adress}
                                                     onChange={(e) => onInputChangeL(e, 'adress', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.adress })}
                                                 />
                                                 {submitted && !item.adress && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -968,7 +1012,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.city}
                                                     onChange={(e) => onInputChangeL(e, 'city', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.city })}
                                                 />
                                                 {submitted && !item.city && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -984,7 +1028,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.zip}
                                                     onChange={(e) => onInputChangeL(e, 'zip', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.zip })}
                                                 />
                                                 {submitted && !item.zip && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -1000,7 +1044,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.country}
                                                     onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.country })}
                                                 />
                                                 {submitted && !item.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -1016,7 +1060,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.phon}
                                                     onChange={(e) => onInputChangeL(e, 'phon', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.phon })}
                                                 />
                                                 {submitted && !item.phon && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -1032,7 +1076,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     value={item.email}
                                                     onChange={(e) => onInputChangeL(e, 'email', item.docsid, item)}
                                                     style={{ width: '100%' }}
-                                                    disabled={ticDoc.statuspayment == 1 }
+                                                    disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.email })}
                                                 />
                                                 {submitted && !item.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -1060,7 +1104,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onChange={(e) => handleChangeKupac(item, e)}
                                         tooltip={translations[selectedLanguage].Kupac}
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        disabled={ticDoc.statuspayment == 1 }
+                                        disabled={ticDoc.statuspayment == 1}
                                     />
                                 </div>
                                 <div className="field col-12 md:col-8"
@@ -1074,9 +1118,9 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onClick={(e) => handlePosetilacClick(item, e)}
                                         tooltip={translations[selectedLanguage].SnimiPodatkePosetioca}
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        disabled={ticDoc.statuspayment == 1 }
+                                        disabled={ticDoc.statuspayment == 1}
                                     ></Button>
-                                    <Button
+                                    {/* <Button
                                         icon="pi pi-user-plus"
                                         className="p-button"
                                         style={{ width: '35px' }}
@@ -1086,7 +1130,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         tooltip={translations[selectedLanguage].SnimiPodatkeKupca}
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                                         disabled={ticDoc.statuspayment == 1}
-                                    ></Button>
+                                    ></Button> */}
                                     <Button
                                         icon="pi pi-user"
                                         className="p-button"
@@ -1096,7 +1140,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onClick={(e) => handleParClickNull(item, e)}
                                         tooltip={translations[selectedLanguage].ObrisiPodatkePosetiocaStavke}
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        disabled={ticDoc.statuspayment == 1 }
+                                        disabled={ticDoc.statuspayment == 1}
                                     ></Button>
                                     <Button
                                         icon="pi pi-percentage"
@@ -1108,7 +1152,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                         onClick={(e) => handleDiscountCreate(item, e)}
                                         tooltip={translations[selectedLanguage].DodajPopustNaStavku}
                                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
-                                        disabled={ticDoc.statuspayment == 1 }
+                                        disabled={ticDoc.statuspayment == 1}
                                     ></Button>
                                     <Button
                                         icon="pi pi-percentage"

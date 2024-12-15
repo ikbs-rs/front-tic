@@ -7,12 +7,14 @@ import { NotFound } from './pages/NotFound';
 import { Access } from './pages/Access';
 import axios from 'axios';
 import env from "./configs/env"
+import { useTokenValidation } from './security/interceptors';
 
 
 const AppWrapper = (props) => {
     let location = useLocation(); 
     const navigate = useNavigate();    
-    let [isLoggedIn, setIsLoggedIn] = useState(true);
+    // let [isLoggedIn, setIsLoggedIn] = useState(false);
+    let isLoggedIn = useTokenValidation();
     const search = window.location.search;
     const params = new URLSearchParams(search);
     const sl = params.get('sl');
@@ -33,10 +35,11 @@ const AppWrapper = (props) => {
         )
          .then((response) => {
            isLoggedIn = response.status === 200; // Ako je status 200, isLoggedIn će biti true
+          //  console.log(isLoggedIn, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ", location)
            if (isLoggedIn) {
              //TODO idi na pocetnu stranicu
-             setIsLoggedIn(true);
-            // navigate('/');
+            //  setIsLoggedIn(true);
+            navigate('/');
            } else {
              //TODO vrati se na login
              navigate('/login');
@@ -48,10 +51,10 @@ const AppWrapper = (props) => {
            //TODO vrati se na login
          }); 
       } else {
-        setIsLoggedIn(false);
+        // setIsLoggedIn(false);
       }
       window.scrollTo(0, 0);
-    }, []);
+    }, [isLoggedIn]);
 
 
 

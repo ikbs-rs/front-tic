@@ -1172,7 +1172,7 @@ export default function TicProdajaTab(props) {
             _ticDoc.npar = _cmnPar?.text
             setCheckedMasssale(_ticDoc.masssale == '1')
             await setTicDoc(_ticDoc)
-            console.log(_ticDoc.status, _ticDoc.reservation, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$_", _ticDoc.endsale, moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()))
+            console.log(_ticDoc, "00 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
             // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
             if ((_ticDoc.status != 0 && _ticDoc.reservation != 1) || _ticDoc.endsale == 1 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                 OK = true
@@ -1181,12 +1181,16 @@ export default function TicProdajaTab(props) {
         } else {
             //console.log(_channel.id, ticDocOld.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
             ticDocOld = await fachUserDoc()
+            console.log(ticDocOld, "01 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
             if (ticDocOld?.id) {
                 // if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
                 if (moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                     OK = true
                     // console.log(22, "** KANALI KORISNIKA/EVENT *")
                 } else {
+                    if ((ticDocOld.status != 0 && ticDocOld.reservation != 1) || ticDocOld.endsale == 1 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
+                        OK = true
+                    }
                     const tmp_cmnPar = await fachPar(ticDocOld.usr)
                     const _cmnPar = tmp_cmnPar[0]
                     // console.log(ticDocOld, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", _cmnPar)

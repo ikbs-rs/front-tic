@@ -73,7 +73,7 @@ export default function TicTransactionsL(props) {
         props.setTicDocsLVisible(false);
     };
 
-    const mapa = (props.mapa == 1) ? 5 : 7
+    const mapa = (props.mapa == 1) ? 7 : 8
     const isSelectable = (data) => data.docstorno != 1;
 
     const isRowSelectable = (event) =>
@@ -123,7 +123,6 @@ export default function TicTransactionsL(props) {
 
                     const updatedData = await Promise.all(promisesDD);
                     /**************************************************************************** */
-                    // console.log(updatedData, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", data)
                     setTicDocss(updatedData);
                     setDdCenaItems(updatedCenaItems);
                     // initFilters();
@@ -338,16 +337,20 @@ export default function TicTransactionsL(props) {
         return popust;
     };
     const footerArtikalGroup = (
-        <ColumnGroup>
-            <Row>
+        <ColumnGroup className="custom-table">
+            <Row className="custom-table"> 
                 <Column footer={translations[selectedLanguage].Total} colSpan={mapa} footerStyle={{ textAlign: 'right' }} />
                 {(props.mapa !== 1) && (
                     <Column footer={brojTotal} />
                 )}
                 {(props.mapa !== 1) && (
-                    <Column footer={discountTotal} />)}
+                    <Column footer={discountTotal} />
+                )}
                 <Column footer={potrazujeTotal} />
-                <Column footer={netoTotal} />
+                {/* <Column footer={netoTotal} />*/}
+                {(props.mapa !== 1) && (
+                    <Column colSpan={7} />
+                )}  
             </Row>
         </ColumnGroup>
     );
@@ -782,7 +785,7 @@ export default function TicTransactionsL(props) {
         );
     };
     return (
-        <div className="card">
+        <>
             <Toast ref={toast} />
             <DataTable
                 dataKey="id"
@@ -804,7 +807,7 @@ export default function TicTransactionsL(props) {
                 onRowSelect={onRowSelect}
                 onRowUnselect={onRowUnselect}
                 isDataSelectable={isRowSelectable}
-                rowClassName={rowClassName} 
+                rowClassName={rowClassName}
                 className="custom-table"
             >
                 <Column
@@ -819,7 +822,13 @@ export default function TicTransactionsL(props) {
                     }}
                 ></Column>
                 <Column
-                    field="nloc"
+                    field="ulaz"
+                    header={translations[selectedLanguage].Ulaz}
+                    style={{ width: "10%" }}
+                    sortable
+                ></Column>
+                <Column
+                    field="sector"
                     header={translations[selectedLanguage].Sector}
                     style={{ width: "10%" }}
                     sortable
@@ -846,7 +855,7 @@ export default function TicTransactionsL(props) {
                     field="cena"
                     header={translations[selectedLanguage].cenatp}
                     // style={{ width: '8%', backgroundColor: '#e6f0e6' }}
-                    style={{ width: '8%'}}
+                    style={{ width: '8%' }}
                     editor={(e) => valueEditor(e.rowData, 'cena', e)}
                     body={(rowData) => valueTemplate(rowData, 'cena')}
                     // body={cenaTemplate}
@@ -874,10 +883,10 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].discount}
                         // sortable
                         style={{ width: "5%" }}
-                        // editor={inputEditor}
-                        // editor={(e) => inputEditor(e.rowData, e.field, e)}
-                        // body={discountTemplate}
-                        // onCellEditComplete={onCellEditComplete}
+                    // editor={inputEditor}
+                    // editor={(e) => inputEditor(e.rowData, e.field, e)}
+                    // body={discountTemplate}
+                    // onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
                 <Column
@@ -890,7 +899,7 @@ export default function TicTransactionsL(props) {
                     <Column
                         field="tickettp"
                         header={translations[selectedLanguage].tickettp}
-                        style={{ width: '8%'}}
+                        style={{ width: '8%' }}
                         editor={(e) => valueEditor(e.rowData, 'tickettp', e)}
                         body={(rowData) =>
 
@@ -905,7 +914,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].print}
                         field="print"
                         dataType="numeric"
-                        style={{ width: '1%'}}
+                        style={{ width: '1%' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `print`)}
                         onCellEditComplete={onCellEditComplete}
@@ -927,7 +936,7 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].delivery}
                         field="delivery"
                         dataType="numeric"
-                        style={{ width: '1%'}}
+                        style={{ width: '1%' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
@@ -938,23 +947,23 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].rez}
                         field="rez"
                         dataType="numeric"
-                        style={{ width: '1%'}}
+                        style={{ width: '1%' }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `rez`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
-                {/* {(props.mapa != 1) && ( */}
-                <Column
-                    // header={translations[selectedLanguage].del}
-                    field="del"
-                    // dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => delBodyTemplate(e, `del`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                {/* )} */}
+                {(props.mapa != 1) && (
+                    <Column
+                        // header={translations[selectedLanguage].del}
+                        field="del"
+                        // dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => delBodyTemplate(e, `del`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                )}
 
                 {(props.mapa != 1) && (
                     <Column
@@ -1021,6 +1030,6 @@ export default function TicTransactionsL(props) {
                 )}
             </Dialog>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
-        </div>
+        </>
     );
 }
