@@ -731,7 +731,7 @@ export default function TicTransactionsL(props) {
                     mapa={props.mapa}
                 />
             </div>
-            {(props.uidKey >= 2) && (
+            {(props.uidKey >= 3) && (
             <div className="flex-grow-1">
                 <TicDocsNaknadeL
                     key={refreshKeyN}

@@ -144,7 +144,10 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   useEffect(() => {
     async function fetchData() {
-      setUrlIframe(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
+      const _url = `${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`
+      console.log(_url, "url-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+      // setUrlIframe(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
+      setUrlIframe(_url)
     }
     fetchData();
   }, [ticEvent?.id, props.ticDoc?.id, props.channell?.id]);
@@ -789,7 +792,8 @@ DRUGI RED
                     frameBorder="0"
                     style={{
                       pointerEvents: props.someCondition ? "none" : "auto", // Dinamički onemogućava klikove
-                      opacity: props.someCondition ? 0.7 : 1 // Vizuelni efekat
+                      opacity: props.someCondition ? 0.7 : 1, // Vizuelni efekat
+                      overflow: window.innerWidth < 700 ? "scroll" : "auto" 
                     }}
                   >
                   </iframe>
