@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useMemo } from 'react';
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
@@ -22,7 +21,7 @@ import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
-    console.log(props, "ADELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDE")
+    // console.log(props.ticDoc, "ADELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDE")
 
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
@@ -37,7 +36,6 @@ export default function TicTransactionsL(props) {
     const [ticDocs, setTicDocs] = useState(emptyTicDocs);
 
     const [ticDoc, setTicDoc] = useState(_doc);
-    const [ticEvent, setTicEvent] = useState(props.ticEvent||{id: "-1"});
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [ticDocItems, setTicDocItems] = useState(null);
 
@@ -634,25 +632,17 @@ export default function TicTransactionsL(props) {
         }
     };
     /*********************************************************************************** */
-    const delBodyTemplate = (rowData, name, mapa) => {
-        // Primer uslova - zamenite sa vašim stvarnim uslovom
-        const shouldShowButton = rowData?.event != ticEvent?.id || ticEvent?.id === '-1' || mapa != 1;
-    
+    const delBodyTemplate = (rowData, name, e) => {
+
         return (
-            <>
-                {shouldShowButton && (
-                    <Button
-                        type="button"
-                        icon="pi pi-trash"
-                        severity="danger"
-                        raised
-                        onClick={(e) => toggleChecked(e, name, rowData)}
-                    ></Button>
-                )}
+            < >
+                <Button type="button" icon="pi pi-trash" severity="danger" raised
+                    onClick={(e) => toggleChecked(e, name, rowData)}
+                ></Button>
             </>
         );
+
     };
-    
     const stornoBodyTemplate = (rowData) => {
         // console.log(rowData, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
         const setParentTdBackground = (element) => {
@@ -803,7 +793,7 @@ export default function TicTransactionsL(props) {
                 <span className="dropdown-arrow">▼</span>
             </div>
         );
-    }; 
+    };
     return (
         <>
             <Toast ref={toast} />
@@ -1001,7 +991,7 @@ export default function TicTransactionsL(props) {
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
-                
+                {(props.mapa != 1) && (
                     <Column
                         // header={translations[selectedLanguage].del}
                         field="del"
@@ -1010,12 +1000,12 @@ export default function TicTransactionsL(props) {
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
                             fontSize: "11px" }}
                         bodyClassName="text-center"
-                        body={(e) => delBodyTemplate(e, `del`, props.mapa)}
+                        body={(e) => delBodyTemplate(e, `del`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
-            
+                )}
 
-                {(ticEvent.id=="-1") && (
+                {(props.mapa != 1) && (
                     <Column
                         header={translations[selectedLanguage].Storno_}
                         field="docstorno"

@@ -48,6 +48,7 @@
         "bdev": "copy .\\src\\configs\\env.bdev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
         "sdev": "copy .\\src\\configs\\env.sdev.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
         "devTic": "cp ./src/configs/env.devTic.local ./src/configs/env.js && export PORT=8354 && react-scripts start /tic/",
+        "devTicT": "cp ./src/configs/env.devTicT.local ./src/configs/env.js && export PORT=8354 && react-scripts start /tic/",
         "sdev1": "copy .\\src\\configs\\env.sdev.local .\\src\\configs\\env.js && set PORT=8354 && concurrently \"react-scripts start /tic/\" \"wait-on http://localhost:8354 && electron ./main/main.js\"",
         "boban": "copy .\\src\\configs\\env.boban.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",
         "prod": "copy .\\src\\configs\\env.prod.local .\\src\\configs\\env.js && set PORT=8354 && react-scripts start /tic/",

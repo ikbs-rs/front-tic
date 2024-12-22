@@ -30,6 +30,9 @@ import TicDocsNaknadeL from "./ticDocsNaknadeL";
 import TicDocsKarteL from "./ticDocsKarteL";
 import TicDocDiscountL from './ticDocdiscountL'
 import TicProdajaPlacanje from "./ticProdajaPlacanje";
+import { TabView, TabPanel } from 'primereact/tabview';
+import TicDocsprintgrpL from './ticDocsprintgrpL'
+
 
 export default function TicDocdeliveryL(props) {
   // console.log(props, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ--------props----------*-*-*-*-*-*-*-*-*-*")
@@ -92,6 +95,7 @@ export default function TicDocdeliveryL(props) {
   const [webMapVisible, setWebMapVisible] = useState(false);
   const [ticDocsuidProdajaLVisible, setTicDocsuidProdajaLVisible] = useState(false);
   let [ticTransactionsKey, setTicTransactionsKey] = useState(0);
+  let [ticTransactionsKey2, setTicTransactionsKey2] = useState(1000);
 
 
   let [numberChannell, setNumberChannell] = useState(0)
@@ -461,32 +465,32 @@ export default function TicDocdeliveryL(props) {
     fetchData();
   }, [zaUplatu]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
 
-        const dataO = [];
-        dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
-        dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
-        dataO.push({ code: `Order transaction no:`, value: transactionTemplate(props.ticDoc.broj) });
-        dataO.push({ code: `Event:`, value: neventTemplate(props.ticDoc) });
-        dataO.push({ code: `Transaction time:`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
-        dataO.push({ code: `Number of ticket:`, value: `${brojIznos} **** Iznos: ${karteIznos} ` });
-        dataO.push({ code: `Discount:`, value: popustIznos });
-        dataO.push({ code: `Ticket total price`, value: netoIznos });
-        dataO.push({ code: `Fee total price:`, value: naknadeIznos });
-        dataO.push({ code: `Order total price:`, value: zaUplatu });
-        // console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
-        setTicTransactionInfos(dataO);
+  //       const dataO = [];
+  //       dataO.push({ code: `Sales channel`, value: props.ticDoc.kanal });
+  //       dataO.push({ code: `Agent`, value: `${props.ticDoc.firstname} ${props.ticDoc.lastname}` });
+  //       dataO.push({ code: `Order transaction no:`, value: transactionTemplate(props.ticDoc.broj) });
+  //       dataO.push({ code: `Event22:`, value: neventTemplate(props.ticDoc) });
+  //       dataO.push({ code: `Transaction time:`, value: DateFunction.formatDatetime(props.ticDoc.tm) });
+  //       dataO.push({ code: `Number of ticket:`, value: `${brojIznos} **** Iznos: ${karteIznos} ` });
+  //       dataO.push({ code: `Discount:`, value: popustIznos });
+  //       dataO.push({ code: `Ticket total price`, value: netoIznos });
+  //       dataO.push({ code: `Fee total price:`, value: naknadeIznos });
+  //       dataO.push({ code: `Order total price:`, value: zaUplatu });
+  //       // console.log(dataO, "%%%%%%%%%%%%%%%%%%%%%%22222222222%%%%%%%%%%%%%%%%%%%%%%")
+  //       setTicTransactionInfos(dataO);
 
-        initFilters();
-      } catch (error) {
-        console.error(error);
-        // Obrada greške ako je potrebna
-      }
-    }
-    fetchData();
-  }, []);
+  //       initFilters();
+  //     } catch (error) {
+  //       console.error(error);
+  //       // Obrada greške ako je potrebna
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
   //******************************************************************************************************************** */
   //******************************************************************************************************************** */
 
@@ -872,13 +876,16 @@ export default function TicDocdeliveryL(props) {
   const getChannell = async (rowData) => {
     try {
       // console.log(rowData, "######################################################################################", userId)
-      const ticEventService = new TicEventService();
-      const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
+      // const ticEventService = new TicEventService();
+      // const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
+      const ticDocService = new TicDocService();
+      const data = await ticDocService.getChannel('XPK');
       // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)
       if (data && data.length > 0) {
         setNumberChannell(data.length);
         setChannells(data);
         const foundItem = data.find((item) => item.id === ticDoc.channel);
+        console.log(foundItem, "010-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", ticDoc.channel)
         setChannell(foundItem);
         // DO - OVDE NE TREBA DA SE KREIRIA DOKUMENT JER DOLAZIM SA TRANSAKCIJE
 
@@ -1275,7 +1282,7 @@ export default function TicDocdeliveryL(props) {
   const handlePopustIznos = (iznos) => {
     setPopustIznos(iznos);
     setNetoIznos(karteIznos - iznos);
-    handleZaUplatu(karteIznos + naknadeIznos -iznos)
+    handleZaUplatu(karteIznos + naknadeIznos - iznos)
   };
   /************************************************************************************* */
   const onInputChange = (e, type, name) => {
@@ -1415,74 +1422,114 @@ export default function TicDocdeliveryL(props) {
 
           {/**** *********************/}
           <div className="col-4">
-            <div class="grid">
-              <div className="col-12">
-                {/* V */}
-                <div className="">
-                  <DataTable
-                    dataKey="id"
-                    size={"small"}
-                    // rowClassName={rowClass}
-                    showHeaders={false}
-                    rowClassName="custom-row-color"
-                    selection={cmnBtnInfo}
-                    value={cmnBtnInfos}
-                    virtualScrollerOptions={{ itemSize: 46 }}
-                    onSelectionChange={(e) => setTicDocdelivery(e.value)}
-                  >
-                    <Column
-                      field="event"
-                      header={translations[selectedLanguage].Action}
-                      style={{ width: "25%" }}
-                    ></Column>
-                    <Column
-                      field="button"
-                      style={{ width: "25%" }}
-                    ></Column>
-                    <Column
-                      field="status"
-                      style={{ width: "50%" }}
-                    ></Column>
-                  </DataTable>
+            <TabView>
+              <TabPanel header="Status">
+                <div class="grid">
+                  <div className="col-12">
+                    {/* V */}
+                    <div className="">
+                      <DataTable
+                        dataKey="id"
+                        size={"small"}
+                        // rowClassName={rowClass}
+                        showHeaders={false}
+                        rowClassName="custom-row-color"
+                        selection={cmnBtnInfo}
+                        value={cmnBtnInfos}
+                        virtualScrollerOptions={{ itemSize: 46 }}
+                        onSelectionChange={(e) => setTicDocdelivery(e.value)}
+                      >
+                        <Column
+                          field="event"
+                          header={translations[selectedLanguage].Action}
+                          style={{ width: "25%" }}
+                        ></Column>
+                        <Column
+                          field="button"
+                          style={{ width: "25%" }}
+                        ></Column>
+                        <Column
+                          field="status"
+                          style={{ width: "50%" }}
+                        ></Column>
+                      </DataTable>
+                    </div>
+
+                  </div>
+                  <div className="col-12">
+                    {/* V */}
+                    <div className="">
+                      <DataTable
+                        dataKey="id"
+                        size={"small"}
+                        // rowClassName={rowClass}
+                        rowClassName="custom-row-color"
+                        selection={cmnBtnAction}
+                        value={cmnBtnActions}
+                        virtualScrollerOptions={{ itemSize: 46 }}
+                        onSelectionChange={(e) => setTicDocdelivery(e.value)}
+                      >
+                        <Column
+                          field="col1"
+                          style={{ width: "30%" }}
+                        ></Column>
+                        <Column
+                          field="col2"
+                          style={{ width: "30%" }}
+                        ></Column>
+                        <Column
+                          field="col3"
+                          style={{ width: "30%" }}
+                        ></Column>
+                      </DataTable>
+                    </div>
+
+                  </div>
+
+                  {/**** *********************/}
+
+                  {/**** *********************/}
                 </div>
-
-              </div>
-              <div className="col-12">
-                {/* V */}
-                <div className="">
-                  <DataTable
-                    dataKey="id"
-                    size={"small"}
-                    // rowClassName={rowClass}
-                    rowClassName="custom-row-color"
-                    selection={cmnBtnAction}
-                    value={cmnBtnActions}
-                    virtualScrollerOptions={{ itemSize: 46 }}
-                    onSelectionChange={(e) => setTicDocdelivery(e.value)}
-                  >
-                    <Column
-                      field="col1"
-                      style={{ width: "30%" }}
-                    ></Column>
-                    <Column
-                      field="col2"
-                      style={{ width: "30%" }}
-                    ></Column>
-                    <Column
-                      field="col3"
-                      style={{ width: "30%" }}
-                    ></Column>
-                  </DataTable>
+              </TabPanel>
+              <TabPanel header="Placanje">
+              <div className="grid" >
+                <div className="col-12 fixed-height" style={{ height: 260 }}>
+                  <TicProdajaPlacanje
+                    key={ticTransactionsKey2}
+                    ticDoc={ticDoc}
+                    propsParent={props}
+                    handleFirstColumnClick={handleFirstColumnClick}
+                    handleAction={handleAction}
+                    setRefresh={handleRefresh}
+                    handleAllRefresh={handleAllRefresh}
+                    handlePlacanjetip={handlePlacanjetip}
+                    zaUplatu={zaUplatu}
+                    ref={placanjeRef}
+                    modal={false}
+                  />
                 </div>
-
-              </div>
-              {/**** *********************/}
-
-              {/**** *********************/}
-            </div>
+              </div>                
+              </TabPanel>
+              <TabPanel header="Stampa">
+              <div className="grid" >
+                <div className="col-12 fixed-height" style={{ height: 360 }}>
+                  <TicDocsprintgrpL
+                    parameter={"inputTextValue"}
+                    ticDoc={props.ticDoc}
+                    // handDocsprintgrpClose={handDocsprintgrpClose}
+                    dialog={false}
+                    akcija={props.akcija}
+                    channel={props.channel}
+                  />
+                </div>
+              </div>                
+              </TabPanel>   
+              <TabPanel header="Fiskal">
+              </TabPanel>                          
+            </TabView>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* <div className="flex-grow-1">
         <TicDocsL
@@ -1752,6 +1799,7 @@ export default function TicDocdeliveryL(props) {
             onTaskComplete={handleWebMapDialogClose}
             numberChannell={numberChannell}
             channells={channells}
+            channel={ticDoc.channel}
             channell={channell}
             activeIndex={1}
           />

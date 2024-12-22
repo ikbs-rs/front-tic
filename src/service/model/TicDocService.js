@@ -143,6 +143,26 @@ function generateTextWithBarcode(textContent, barcodeBase64) {
 
 export class TicDocService {
 
+  async getChannel(objId) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.CMN_BACK_URL}/cmn/x/obj/_v/lista/?stm=cmn_objll_v&objid=${objId}&sl=${selectedLanguage}`;
+    // const url = `${env.CMN_BACK_URL}/cmn/x/obj/_v/lista/?stm=cmn_objbyid_v&objid=${objId}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      //console.log("**********TicDocService*************", url)
+      const response = await axios.get(url, { headers });
+      // console.log(url, "**********TicDocService*******************************************", response.data)
+      return response.data.item||response.data.items;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async getObjTpL(objId) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const url = `${env.CMN_BACK_URL}/cmn/x/obj/_v/lista/?stm=cmn_objtpcode_v&objid=${objId}&sl=${selectedLanguage}`;

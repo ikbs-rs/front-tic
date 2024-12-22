@@ -951,6 +951,11 @@ export const translations = {
         Ulaz: "Улаз",
         Birthday: "Датум рођења",
         Country: "Држава",
+        Dostava_: "ДОС",
+        Stampa_: "ШТ",
+        Storno_: "СТ",
+        Sediste_: "СД",
+        NovaTransakcija_: "НТ",
     }
   };
   

@@ -34,9 +34,11 @@ import TicProdajaPlacanje from "./ticProdajaPlacanje";
 import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 
 export default function TicProdajaTab(props) {
-    // console.log(props, "0-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
     const location = useLocation();
+    
     const { channel } = location.state || {};
+    console.log(props, "011-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, props.channell)
     const objEvent = "tic_event"
     const objDoc = "tic_doc"
     const codeAttInterval = '60'
@@ -117,10 +119,10 @@ export default function TicProdajaTab(props) {
         async function fetchData() {
             try {
                 if (ticDoc.reservation == 1) {
-                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss'); 
-                    const now = moment(); 
-                
-                    if (endDate.isAfter(now)) { 
+                    const endDate = moment(ticDoc.endtm, 'YYYYMMDDHHmmss');
+                    const now = moment();
+
+                    if (endDate.isAfter(now)) {
                         setReservationStatus(0);
                     } else {
                         setReservationStatus(1);
@@ -134,7 +136,7 @@ export default function TicProdajaTab(props) {
         }
         fetchData();
     }, [ticDoc]);
-    
+
     /********************************************************************************/
     const handleTabZaglavlje = (_ticDoc) => {
         // console.log(_ticDoc, "##########################################################################################handleTabZaglavlje########")
@@ -298,14 +300,14 @@ export default function TicProdajaTab(props) {
     let ii = 0
     useEffect(() => {
         async function fetchData() {
-            
+
             try {
                 // const ticDocService = new TicDocService();
                 // const data = await ticDocService.getParByUserIdP();
                 // console.log(data[0], "0HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
                 // setCmnPar(data[0]);
                 const cmnParService = new CmnParService();
-                const data = await cmnParService.getCmnParP(ticDoc.usr||1);
+                const data = await cmnParService.getCmnParP(ticDoc.usr || 1);
                 // console.log(data[0], "0HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", ticDoc)
                 setCmnPar(data[0]);
             } catch (error) {
@@ -385,8 +387,8 @@ export default function TicProdajaTab(props) {
                 const data = await ticDocService.getCmnPaymenttpsP('cmn_paymenttp_p');
 
                 setPaymenttps(data);
-                const foundChannel = data.find((item) => item.id === paymenttp?.id) || data[0]
-                setPaymenttp(foundChannel);
+                const foundPaymenttp = data.find((item) => item.id === paymenttp?.id) || data[0]
+                setPaymenttp(foundPaymenttp);
                 // await createDoc(data[0])
 
                 const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
@@ -418,13 +420,19 @@ export default function TicProdajaTab(props) {
         async function fetchData() {
             try {
 
-                const ticEventService = new TicEventService();
-                const data = await ticEventService.getTicChpermissLP(userId);
+                // const ticEventService = new TicEventService();
+                // const data = await ticEventService.getTicChpermissLP(userId);
+                const ticDocService = new TicDocService();
+                const data = await ticDocService.getChannel('XPK');
+                // console.log(data, "X11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props.channel.id, channel?.id)
                 //console.log(data, "--------------------------------------------------- Permiss ")
                 if (data && data.length > 0) {
                     setNumberChannell(data.length);
                     setChannells(data);
-                    const foundChannel = data.find((item) => item.id === channel?.id) || data[0]
+                    // console.log(foundChannel, "0111-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props.channel.id, channel?.id)
+                    const _channellId = channel?.id||props.channel
+                    const foundChannel = data.find((item) => item.id === _channellId) // || data[0]
+                    // console.log(foundChannel, "1a1a1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props.channel, channel?.id, _channellId, data)
                     setChannell(foundChannel);
                     // TO DO setovati usr.kanal
                     let user = JSON.parse(localStorage.getItem('user'))
@@ -615,18 +623,18 @@ export default function TicProdajaTab(props) {
                         tooltip={translations[selectedLanguage].OmoguciIsporukuKupcu}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         disabled={true}
-                        // disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
+                    // disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                     />
-                </div> 
+                </div>
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="masssale" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Masssale}</label>
-                    <InputSwitch id="masssale" checked={checkedMasssale} 
+                    <InputSwitch id="masssale" checked={checkedMasssale}
                         ref={masssaleRef}
                         tooltip={translations[selectedLanguage].MasovnaProdaja}
                         tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         disabled={true}
                     />
-                </div>                 
+                </div>
                 <div className="flex align-items-center px-3" style={{ cursor: 'pointer' }}>
                     <label htmlFor="naknade" style={{ marginRight: '1em' }}>{translations[selectedLanguage].Naknade}</label>
                     <InputSwitch id="naknade" checked={checkedNaknade} onChange={(e) => handleChangeNaknade(e.value)}
@@ -782,9 +790,9 @@ export default function TicProdajaTab(props) {
                         />
                     </div>
                     <div>
-                        <CountdownTimer 
-                        targetDate={ticDoc?.endtm} 
-                        handleSetActiveIndex={handleSetActiveIndex}
+                        <CountdownTimer
+                            targetDate={ticDoc?.endtm}
+                            handleSetActiveIndex={handleSetActiveIndex}
                         />
                     </div>
                 </>
@@ -932,7 +940,7 @@ export default function TicProdajaTab(props) {
     };
 
     const handleMasssale = (masssale) => {
-        setCheckedMasssale(masssale); 
+        setCheckedMasssale(masssale);
     };
 
     const handleRezervaciju = (checkedRez) => {
@@ -972,40 +980,40 @@ export default function TicProdajaTab(props) {
     // };
     /******************************************************************************** */
 
-    const onInputChange = (e, type, name, a) => {
-        let val = ''
-        if (type === "options") {
-            val = (e.target && e.target.value && e.target.value.code) || '';
-            if (name == "channell") {
-                setDdChannellItem(e.value);
-                const foundItem = channellItems.find((item) => item.id === val);
-                let user = JSON.parse(localStorage.getItem('user'))
+    // const onInputChange = (e, type, name, a) => {
+    //     let val = ''
+    //     if (type === "options") {
+    //         val = (e.target && e.target.value && e.target.value.code) || '';
+    //         if (name == "channell") {
+    //             setDdChannellItem(e.value);
+    //             const foundItem = channellItems.find((item) => item.id === val);
+    //             let user = JSON.parse(localStorage.getItem('user'))
 
-                //console.log(user, "--------------------------------------------------- user = ", localStorage.getItem('user'))
-                user.kanal = foundItem.id
-                localStorage.setItem('user', JSON.stringify(user));
-                setChannellItem(foundItem || null);
-                setChannell(foundItem || null);
-                //   ++iframeKey
-                //   setIframeKey(++iframeKey)
-                // } else {
-                //     setDropdownItem(e.value);
-            } else if (name == "paymenttp") {
-                setDdPaymenttpItem(e.value);
-                const foundItem = paymenttps.find((item) => item.id === val);
-                setPaymenttp(foundItem || null);
+    //             //console.log(user, "--------------------------------------------------- user = ", localStorage.getItem('user'))
+    //             user.kanal = foundItem.id
+    //             localStorage.setItem('user', JSON.stringify(user));
+    //             setChannellItem(foundItem || null);
+    //             setChannell(foundItem || null);
+    //             //   ++iframeKey
+    //             //   setIframeKey(++iframeKey)
+    //             // } else {
+    //             //     setDropdownItem(e.value);
+    //         } else if (name == "paymenttp") {
+    //             setDdPaymenttpItem(e.value);
+    //             const foundItem = paymenttps.find((item) => item.id === val);
+    //             setPaymenttp(foundItem || null);
 
-            }
+    //         }
 
-        } else {
-            val = (e.target && e.target.value) || '';
-            let _ticEvent = { ...ticEvent };
-            _ticEvent[`${name}`] = val;
-            _ticEvent.cevent = val
-            // if (name === `textx`) _ticEvent[`text`] = val;
-            ticEvent(_ticEvent);
-        }
-    };
+    //     } else {
+    //         val = (e.target && e.target.value) || '';
+    //         let _ticEvent = { ...ticEvent };
+    //         _ticEvent[`${name}`] = val;
+    //         _ticEvent.cevent = val
+    //         // if (name === `textx`) _ticEvent[`text`] = val;
+    //         ticEvent(_ticEvent);
+    //     }
+    // };
     /********************************************************************************/
 
     const handleChangeNaknade = async (value) => {
@@ -1151,19 +1159,21 @@ export default function TicProdajaTab(props) {
         setTicEvent(_ticEvent)
         setEventTip('SAL')
         let ticDocOld = { ...emptyTicDoc }
-
+// console.log(channell, "aaaaa11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel)
         if (channell?.id) {
             localChannel = channell
         } else {
-            localChannel = await fachChannell(newObj.id)
+            // localChannel = await fachChannell(newObj.id)
+            localChannel = channel
         }
+console.log(channell, "ooo11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, localChannel)        
         const _channel = channell || localChannel
         let OK = false
         if (ticDoc?.id) {
             let _ticDoc = await fachDoc(ticDoc.id)
             if (!ticDoc?.id) {
                 _ticDoc = { ...ticDoc }
-            }     
+            }
             const tmp_cmnPar = await fachPar(_ticDoc.usr)
             const _cmnPar = tmp_cmnPar[0]
             // console.log(_ticDoc, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL", _cmnPar)
@@ -1172,7 +1182,7 @@ export default function TicProdajaTab(props) {
             _ticDoc.npar = _cmnPar?.text
             setCheckedMasssale(_ticDoc.masssale == '1')
             await setTicDoc(_ticDoc)
-            console.log(_ticDoc, "00 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+            // console.log(_ticDoc, "00 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
             // if (_ticDoc.status != 0 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || _ticDoc.channel != _channel.id) {
             if ((_ticDoc.status != 0 && _ticDoc.reservation != 1) || _ticDoc.endsale == 1 || moment(_ticDoc.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
                 OK = true
@@ -1181,7 +1191,7 @@ export default function TicProdajaTab(props) {
         } else {
             //console.log(_channel.id, ticDocOld.channel, "$  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$OLD")
             ticDocOld = await fachUserDoc()
-            console.log(ticDocOld, "01 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+            // console.log(ticDocOld, "01 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
             if (ticDocOld?.id) {
                 // if (ticDocOld?.status != 0 || moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment()) || ticDocOld.channel != _channel.id) {
                 if (moment(ticDocOld.endtm, 'YYYYMMDDHHmmss').isBefore(moment())) {
@@ -1233,7 +1243,7 @@ export default function TicProdajaTab(props) {
         }, 1000);
     }
     const handleSetActiveIndex = (index) => {
-            // console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+        // console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
         setActiveIndex(index)
     }
     /******************************************************************************************************************************************************************************** */

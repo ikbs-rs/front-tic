@@ -855,7 +855,7 @@ export default function TicTransactionL(props) {
                     </div>
                 }
                 visible={visible}
-                style={{ width: '95%', height: '1400px' }}
+                style={{ width: '100%', height: '1500px' }}
                 onHide={() => {
                     setVisible(false);
                     setShowMyComponent(false);

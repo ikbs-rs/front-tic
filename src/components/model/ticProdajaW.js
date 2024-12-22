@@ -22,7 +22,7 @@ import env from '../../configs/env';
 import moment from "moment";
 
 const TicProdajaW = forwardRef((props, ref) => {
-  // console.log(props, "######2222222222222222222222222222222222222222222222222222222222222222")
+  // console.log(props, "WW11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
   const objName = "tic_docpayment"
   const parName = "cmn_par"
   const docName = "tic_doc"
@@ -144,8 +144,8 @@ const TicProdajaW = forwardRef((props, ref) => {
 
   useEffect(() => {
     async function fetchData() {
-      const _url = `${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`
-      console.log(_url, "url-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+      const _url = `${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id||props.ticDoc?.channel}`
+      // console.log(_url, "url11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props.channell, props.ticDoc?.channel)
       // setUrlIframe(`${env.DOMEN}/sal/buy/card/event/${ticEvent?.id}/${props.ticDoc?.id}?par1=BACKOFFICE&channel=${props.channell?.id}`)
       setUrlIframe(_url)
     }
@@ -411,7 +411,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleNextClic = (e, key) => {
-    console.log(cmnPar, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
+    // console.log(cmnPar, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
     if (cmnPar?.id || key == 0) {
       if (key == 2) {
         if (handleDocuidSubbmit()) {

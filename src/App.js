@@ -214,6 +214,7 @@ const App = () => {
     let userMenuClick;
     let configClick = false;
 
+
     useEffect(() => {      
       if (selectedLanguage) {
         dispatch(setLanguage(selectedLanguage)); // Postavi jezik iz URL-a u globalni store

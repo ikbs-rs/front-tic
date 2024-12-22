@@ -26,7 +26,7 @@ import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import { TicDocdiscountService } from "../../service/model/TicDocdiscountService";
 
 export default function TicTransactionsL(props) {
-    // console.log(props, "99999999999999999999999999999999999999999999999999999999999")
+    // console.log(props.propsParent.ticEvent, "99999999999999999999999999999999999999999999999999999999999")
     const objectString = String(props.ticDoc);
  
     const _doc = { ...props.ticDoc }
@@ -40,6 +40,7 @@ export default function TicTransactionsL(props) {
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticDocss, setTicDocss] = useState([]);
     const [ticDocs, setTicDocs] = useState(emptyTicDocs);
+    const [ticEvent, setTicEvent] = useState(props.propsParent.ticEvent);
 
     const [ticDocsNs, setTicDocsNs] = useState([]);
     const [ticDocsN, setTicDocsN] = useState(emptyTicDocs);
@@ -715,6 +716,7 @@ export default function TicTransactionsL(props) {
                     parameter={"inputTextValue"}
                     ticDoc={ticDoc || props.ticDoc}
                     ticDocs={ticDocs}
+                    ticEvent={ticEvent}
                     cmnPar={cmnPar}
                     setVisible={true}
                     dialog={false}
