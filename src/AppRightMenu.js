@@ -1,63 +1,30 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { classNames } from 'primereact/utils';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { ProgressBar } from 'primereact/progressbar';
+import EmpA from "./components/model/empA"
 
 const AppRightMenu = (props) => {
+    const containerRef = useRef(null);
+    const [containerWidth, setContainerWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            if (containerRef.current) {
+                setContainerWidth(containerRef.current.offsetWidth);
+            }
+        };
+
+        window.addEventListener('resize', updateWidth);
+        updateWidth(); // Poziva se odmah kako bi se dobila početna širina
+
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []); 
     return (
         <div className={classNames('layout-right-panel', { 'layout-right-panel-active': props.rightPanelMenuActive })} onClick={props.onRightMenuClick}>
             <TabView>
-                <TabPanel header="Status">
-                    <div className="status-title">
-                        <span>Datacenter Status</span>
-                        <i className="pi pi-download"></i>
-                    </div>
-                    <div>
-                        <ProgressBar value={88} showValue={false} />
-                    </div>
-                    <div className="status-content">
-                        <span className="percentage-1">65</span>
-                        <span className="percentage-2">/88</span> Servers Online
-                    </div>
-
-                    <div className="status-title">
-                        <span>Performance Status</span>
-                        <i className="pi pi-clock"></i>
-                    </div>
-                    <div>
-                        <ProgressBar value={65} showValue={false} />
-                    </div>
-                    <div className=" status-content">
-                        <span className=" percentage-1">4</span>
-                        <span className=" percentage-2">/5</span>
-                        Active Pipeline
-                    </div>
-
-                    <div className=" status-title">
-                        <span>Drivers on Way</span>
-                        <i className="pi pi-cloud"></i>
-                    </div>
-                    <div>
-                        <ProgressBar value={35} showValue={false} />
-                    </div>
-                    <div className=" status-content">
-                        <span className="percentage-1">12</span>
-                        <span className="percentage-2">/40</span>
-                        Drivers
-                    </div>
-
-                    <div className="status-title">
-                        <span>Datacenter Status</span>
-                        <i className="pi pi-map-marker"></i>
-                    </div>
-                    <div>
-                        <ProgressBar value={85} showValue={false} />
-                    </div>
-                    <div className="status-content">
-                        <span className="percentage-1">65</span>
-                        <span className=" percentage-2">/88</span>
-                        Servers Online
-                    </div>
+                <TabPanel header="Opcije">
+                <EmpA containerWidth={"150"} />
                 </TabPanel>
 
                 <TabPanel header="Messages">

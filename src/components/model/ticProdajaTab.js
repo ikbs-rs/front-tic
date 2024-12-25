@@ -700,10 +700,10 @@ export default function TicProdajaTab(props) {
                             disabled={ticDoc.statuspayment == 1 || reservationStatus == 1}
                         />
                     </div>
-                    {/* <div className="flex flex-wrap gap-1" >
+                    <div className="flex flex-wrap gap-1" >
                         <Button
                             // label={translations[selectedLanguage].KupacNext}
-                            icon="pi pi-user-edit"
+                            icon="pi pi-truck"
                             onClick={handleClickInsideIframe}
                             style={{ width: '40px' }}
                             // icon="pi pi-cog" 
@@ -712,7 +712,7 @@ export default function TicProdajaTab(props) {
                             tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
                         />
 
-                    </div> */}
+                    </div>
                     <div className="flex flex-wrap gap-1" raised>
                         <Button
                             icon="pi pi-euro"
@@ -820,6 +820,7 @@ export default function TicProdajaTab(props) {
     const handleClickInsideIframe = () => {
         if (ticProdajaWRef.current) {
             ticProdajaWRef.current.handleClickInsideIframe();
+            // ticProdajaWRef.current.handleOpenDeliveryTab();
         }
     };
 

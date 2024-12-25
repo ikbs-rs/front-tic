@@ -312,6 +312,13 @@ const TicEventobj = (props) => {
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
+                            <label htmlFor="rbr">{translations[selectedLanguage].rbr} *</label>
+                            <InputText id="rbr" value={ticEventobj.rbr} onChange={(e) => onInputChange(e, 'text', 'rbr')}
+                            />
+                        </div>
+                    </div>  
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
                             <Calendar
                                 value={begda}

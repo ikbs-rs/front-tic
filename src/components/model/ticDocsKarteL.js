@@ -22,7 +22,7 @@ import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 import { InputText } from 'primereact/inputtext';
 
 export default function TicTransactionsL(props) {
-    console.log(props, "ADELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDE")
+    // console.log(props, "ADELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDELDE")
 
     const _doc = { ...props.ticDoc }
     if (_doc.usr == '1') _doc.usr = null
@@ -137,7 +137,7 @@ export default function TicTransactionsL(props) {
                     setTicDocss(updatedData);
                     setDdCenaItems(updatedCenaItems);
                     setDdTickettpItems(updatedTickettpItems);
-                    console.log(updatedTickettpItems, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", updatedCenaItems)
+                    // console.log(updatedTickettpItems, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", updatedCenaItems)
                     // initFilters();
                 }
             } catch (error) {
@@ -413,7 +413,7 @@ export default function TicTransactionsL(props) {
             dataDD = dataDDs.find((row) => row.id === rowData.cena);
             // console.log(dataDD, "11-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY", dataDDs);
         }
-        console.log(e.target, "**", e.target.value, "**", e.target.value?.code, "111-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", tip)
+        // console.log(e.target, "**", e.target.value, "**", e.target.value?.code, "111-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", tip)
         const updatedTicDocss = [...ticDocss];
 
         const rowIndex = await updatedTicDocss.findIndex((row) => row.id === rowData.id);
@@ -427,14 +427,14 @@ export default function TicTransactionsL(props) {
                 updatedTicDocss[rowIndex][`print`] = 0
                 rowData.print = 0
             }
-            console.log(updatedTicDocss[rowIndex], "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", tip)
+            // console.log(updatedTicDocss[rowIndex], "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", tip)
         } else {
             updatedTicDocss[rowIndex][`price`] = dataDD.value
             updatedTicDocss[rowIndex][`potrazuje`] = updatedTicDocss[rowIndex][`output`] * dataDD.value
         }
-        console.log(updatedTicDocss[rowIndex], "11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(updatedTicDocss[rowIndex], "11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         await updateDataInDatabase(updatedTicDocss[rowIndex]);
-        console.log(updatedTicDocss[rowIndex], "10001-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log(updatedTicDocss[rowIndex], "10001-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         setRefesh(++refresh)
         props.remoteRefresh()
         props.remoteRefresh()
@@ -464,7 +464,7 @@ export default function TicTransactionsL(props) {
             selectedOptions = ddCenaItem;
             selectedOption = selectedOptions.find((option) => option.code === rowData.cena);
         }
-        console.log(selectedOption, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", selectedOptions);
+        // console.log(selectedOption, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", selectedOptions);
         return <Dropdown
             id={rowData.id}
             showClear
@@ -612,7 +612,7 @@ export default function TicTransactionsL(props) {
             rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(rowData);
-            console.log(rowData, "00!!-H888HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-!!!")
+            // console.log(rowData, "00!!-H888HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-!!!")
             // Dodatno rukovanje ažuriranim podacima, ako je potrebno          
         } catch (err) {
             console.error('Error updating data:', err);
@@ -865,6 +865,15 @@ export default function TicTransactionsL(props) {
                         fontSize: "11px"}}
                     sortable
                 ></Column>
+{(props.mapa != 1) && (                
+                <Column
+                    field="label"
+                    header={translations[selectedLanguage]._label}
+                    style={{ width: "5%" ,
+                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontSize: "11px"}}
+                ></Column> 
+                    )}               
                 <Column
                     field="seat"
                     header={translations[selectedLanguage].Sediste_}

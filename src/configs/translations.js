@@ -956,6 +956,9 @@ export const translations = {
         Storno_: "СТ",
         Sediste_: "СД",
         NovaTransakcija_: "НТ",
+        rbr: "Редни број",
+        _label: "Лабела",
+        Fiskal: "Фискал",
     }
   };
   

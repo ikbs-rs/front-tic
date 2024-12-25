@@ -15,9 +15,10 @@ export default function EmpA(props) {
     const ORGANIZATOR = 'PK00';
     const navigate = useNavigate();
     const selectedLanguage = localStorage.getItem('sl') || 'en';
+    const [layout, setLayout] = useState('grid');
     const [products, setProducts] = useState([]);
     const [channells, setChannells] = useState([]);
-    const [layout] = useState('grid');
+    // const [layout] = useState('grid');
     const rootDir = '/tic'
 
 
@@ -48,37 +49,48 @@ export default function EmpA(props) {
         {
             id: 2,
             name: 'Продајноместо',
-            image: 'rac.png'
+            image: 'rac.png',
+            link: '/salPM'
         },
         {
             id: 3,
             name: 'Благајна',
-            image: 'prod.jpg'
+            image: 'prod.jpg',
+            link: '/salB'
         }
         ,
         {
             id: 4,
             name: 'Трансакција',
-            image: 'tmp.jpg'
+            image: 'tmp.jpg',
+            link: '/transactionf'
         }
         ,
         {
             id: 5,
             name: 'WEB',
-            image: 'web.jpg'
+            image: 'web.jpg',
+            link: '/sal'
         }
         ,
         {
             id: 6,
             name: 'Организатор',
-            image: 'org.jpg'
+            image: 'org.jpg',
+            link: '/salO'
         }
     ];
 
     useEffect(() => {
         setProducts(localProducts);
     }, []);
-
+    useEffect(() => {
+        if (props.containerWidth < 400) {
+            setLayout('list');
+        } else {
+            setLayout('grid');
+        }
+    }, [props.containerWidth]);
     const f1 = (param) => {
         let _channel = {}
         let user = {}
@@ -114,19 +126,51 @@ export default function EmpA(props) {
         }
     };
 
+    // const gridItem = (product) => {
+    //     return (
+    //         <div className="col-12 sm:col-6 lg:col-12 xl:col-2 p-1 clickable-item" onClick={() => f1(product.id)}
+    //         onContextMenu={(e) => {
+    //             e.preventDefault(); // Sprečava pojavljivanje standardnog kontekstualnog menija
+    //             f1(product.id, true); // Poziva funkciju za otvaranje u novoj kartici
+    //         }}
+    //         >
+    //             <div className="p-4 border-1 surface-border surface-card border-round">
+    //                 <div className="flex flex-column align-items-center gap-1 py-0">
+    //                     <img className="w-9 shadow-2 custom-border-round" src={`${rootDir}/images/${product.image}`} alt={product.name}  />
+    //                     <div className="text-2xl font-bold" style={{ color: "#8b8b90" }}>{translations[selectedLanguage]?.[product.name] || product.name}</div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     );
+    // };
     const gridItem = (product) => {
         return (
-            <div className="col-12 sm:col-6 lg:col-12 xl:col-2 p-1 clickable-item" onClick={() => f1(product.id)}>
-                <div className="p-4 border-1 surface-border surface-card border-round">
-                    <div className="flex flex-column align-items-center gap-1 py-0">
-                        <img className="w-9 shadow-2 custom-border-round" src={`${rootDir}/images/${product.image}`} alt={product.name}  />
-                        <div className="text-2xl font-bold" style={{ color: "#8b8b90" }}>{translations[selectedLanguage]?.[product.name] || product.name}</div>
+            <div className="col-12 sm:col-6 lg:col-12 xl:col-2 p-1 clickable-item">
+                <a 
+                    href={`${rootDir}/?sl=${selectedLanguage}#${product.link}`} 
+                    onClick={(e) => {
+                        e.preventDefault(); // Sprečava defaultnu navigaciju za levi klik
+                        f1(product.id); // Poziva f1 funkciju za normalnu navigaciju
+                    }}
+                    onContextMenu={(e) => {
+                        // Ovim se omogućava standardni kontekstualni meni
+                        // Sa opcijama kao što su "Open in new tab" i "Save link as"
+                    }}
+                    className="p-link layout-topbar-logo"
+                >
+                    <div className="p-4 border-1 surface-border surface-card border-round">
+                        <div className="flex flex-column align-items-center gap-1 py-0">
+                            <img className="w-9 shadow-2 custom-border-round" src={`${rootDir}/images/${product.image}`} alt={product.name} />
+                            <div className="text-2xl font-bold" style={{ color: "#8b8b90" }}>
+                                {translations[selectedLanguage]?.[product.name] || product.name}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         );
     };
-
+    
     const itemTemplate = (product, layout) => {
         if (!product) {
             return;

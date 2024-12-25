@@ -416,7 +416,7 @@ console.log(props, "*********************************props**********************
                             />
                             {submitted && !ticArt.grp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                        <div className="field col-12 md:col-7">
+                        {/* <div className="field col-12 md:col-7">
                             <label htmlFor="event">{translations[selectedLanguage].Event} *</label>
                             <Dropdown id="event"
                                 value={ddTicEventItem}
@@ -428,7 +428,7 @@ console.log(props, "*********************************props**********************
                                 className={classNames({ 'p-invalid': submitted && !ticArt.event })}
                             />
                             {submitted && !ticArt.event && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
-                        </div>
+                        </div> */}
                         <div className="field col-12 md:col-7">
                             <label htmlFor="um">{translations[selectedLanguage].Um} *</label>
                             <Dropdown id="um"
@@ -482,7 +482,7 @@ console.log(props, "*********************************props**********************
                             {submitted && !ticArt.amount && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
                     </div>
-                    <div className="p-fluid formgrid grid">
+                    {/* <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="combining">{translations[selectedLanguage].combining}</label>
                             <Dropdown id="combining"
@@ -496,7 +496,7 @@ console.log(props, "*********************************props**********************
                             />
                             {submitted && !ticArt.combining && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
-                    </div>                    
+                    </div>                     */}
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="valid">{translations[selectedLanguage].Valid}</label>

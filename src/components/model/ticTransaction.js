@@ -35,7 +35,7 @@ import TicDocsprintgrpL from './ticDocsprintgrpL'
 
 
 export default function TicDocdeliveryL(props) {
-  // console.log(props, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ--------props----------*-*-*-*-*-*-*-*-*-*")
+  console.log(props, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
   const objName = "tic_docdelivery"
   const objPar = "cmn_par"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -1493,7 +1493,7 @@ export default function TicDocdeliveryL(props) {
               </TabPanel>
               <TabPanel header="Placanje">
               <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 260 }}>
+                <div className="col-12 fixed-height" style={{ height: 360,  overflowY: 'scroll'  }}>
                   <TicProdajaPlacanje
                     key={ticTransactionsKey2}
                     ticDoc={ticDoc}
@@ -1512,7 +1512,7 @@ export default function TicDocdeliveryL(props) {
               </TabPanel>
               <TabPanel header="Stampa">
               <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 360 }}>
+                <div className="col-12 fixed-height" style={{ height: 360,  overflowY: 'scroll'  }}>
                   <TicDocsprintgrpL
                     parameter={"inputTextValue"}
                     ticDoc={props.ticDoc}

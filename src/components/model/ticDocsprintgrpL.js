@@ -13,6 +13,7 @@ import { TicDocService,  getPrintgrpLPTX} from "../../service/model/TicDocServic
 import DateFunction from "../../utilities/DateFunction"
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import PDFHtmlDownloader  from './00a'
+import env from "../../configs/env"
 
 export default function TicDocsprintgrpL(props) {
   // console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
@@ -199,10 +200,12 @@ export default function TicDocsprintgrpL(props) {
   const renderHeader = () => {
     return (
       <div className="flex card-container">
-
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Print}
-            icon="pi pi-print" onClick={handlePrintClick}
+        <PDFHtmlDownloader ticket={selectedProducts} ticDoc={ticDoc} reservationStatus={reservationStatus}/>
+        </div>        
+        <div className="flex flex-wrap gap-1">
+          <Button label={translations[selectedLanguage].Fiskal}
+            icon="pi pi-book" onClick={handlePrintClick}
             severity="warning"
             // text
             disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
@@ -247,10 +250,66 @@ export default function TicDocsprintgrpL(props) {
             text raised
           />
         </div> */}
-        <PDFHtmlDownloader ticket={[17328143866878232076]} />
+
       </div>
     );
   };
+  const PDFHtmlDownloader1 = ({ ticket }) => {
+    console.log("00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    const iframeRef = useRef(null);
+  
+    async function downloadAsPDFHtml(newObj) {
+      console.log(newObj, "00.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      const ticket = newObj.map(obj => obj.id);
+      console.log(ticket, "00.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      localStorage.setItem('docsIds', JSON.stringify(ticket));
+      // localStorage.setItem('docsIds', JSON.stringify(['17350759440792892731', '17350759455923010679']));
+      console.log(JSON.stringify(ticket), "00.3-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+  
+      // URL za preuzimanje
+      const urlWithToken = `${env.DOMEN}/sal/print-tickets`;
+  
+      iframeRef.current.src = urlWithToken;
+      let i = 0
+      console.log(urlWithToken, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // Provera učitavanja sadržaja
+      const checkContentLoaded = () => {
+        console.log( "01.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        const iframeDocument = iframeRef.current.contentDocument;
+        console.log( "01.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", iframeDocument)
+        const ticketList = iframeDocument.querySelector('.ticket-list');
+        console.log( "02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+  
+        if (ticketList && !ticketList.innerHTML.trim().includes('Loading...')) {
+          
+          // Kada je sadržaj učitan, otvori u novom prozoru
+          const htmlContent = iframeDocument.documentElement.outerHTML;
+          console.log(htmlContent, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+          const newWindow = window.open('', '_blank'); // Otvori novi prozor
+          newWindow.document.write(htmlContent); // Upiši sadržaj u novi prozor
+          // newWindow.document.close(); // Zatvori strim i prikaži sadržaj
+        } else {
+          i++
+          // Ako nije učitan, proveri ponovo posle kratkog kašnjenja
+          setTimeout(checkContentLoaded, 100);
+          if (i > 50) return
+        }
+      };
+  
+      // Pokretanje provere kada se iframe učita
+      iframeRef.current.onload = async () => {
+        await setTimeout(checkContentLoaded, 100); // Pokreni proveru nakon kratkog kašnjenja
+      };
+    }
+    console.log("04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    return (
+      <div>
+        <button onClick={() => downloadAsPDFHtml(ticket)}>Preuzmi PDF!! HTML</button>
+        <iframe ref={iframeRef} title='PrintHtml' style={{ display: 'none' }} ></iframe>
+      </div>
+    );
+  };
+  
 
   const header = renderHeader();
   return (

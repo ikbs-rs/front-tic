@@ -86,12 +86,17 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const [ticDocdeliveryterrItems, setTicDocdeliveryterrItems] = useState(null);
     const [delivryStatus, setDeliveryStatus] = useState(1);
 
+    const [activeIndex, setActiveIndex] = useState(null);
+
     let brojReda = 0
 
     useImperativeHandle(ref, () => ({
         setDocsuidSubmitted: () => handelSubbmitted(),
+        openDeliveryTab,
     }));
-
+    const openDeliveryTab = () => {
+        setActiveIndex(0); 
+    };
     useEffect(() => {
         async function fetchData() {
             try {
@@ -846,7 +851,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     return (
         <>
             <div className="card  scrollable-content" >
-                <Accordion >
+                <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                     <AccordionTab header={translations[selectedLanguage].delivery} disabled={delivryStatus==0}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>

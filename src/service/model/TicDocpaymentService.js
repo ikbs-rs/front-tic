@@ -80,6 +80,7 @@ export class TicDocpaymentService {
         };
     
         try {
+          // console.log(url, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", uEvent, uChanel, uAttCode)
           const response = await axios.get(url, { headers });
           return response.data.item //response.data.items;
         } catch (error) {

@@ -42,7 +42,7 @@ const TicEventart = (props) => {
     const [ticArtLVisible, setTicArtLVisible] = useState(false);
     const [ticArtRemoteLVisible, setTicArtRemoteLVisible] = useState(false);
     const [ticEventartlogLVisible, setTicEventartlogLVisible] = useState(false);
-    
+
     const [ticArt, setTicArt] = useState(null);
     const [allArt, setAllArts] = useState([]);
     const [artValue, setArtValue] = useState(props.ticEventart.cart);
@@ -159,10 +159,10 @@ const TicEventart = (props) => {
     const setTicArtRemoteDialog = () => {
         setTicArtRemoteLVisible(true);
     };
-    
+
     const setTicEventartlogDialog = () => {
         setTicEventartlogLVisible(true);
-    };    
+    };
     const setTicArtDialog = (destination) => {
         setTicArtLVisible(true);
     };
@@ -364,16 +364,16 @@ const TicEventart = (props) => {
             <Toast ref={toast} />
             <div className="col-12">
                 {/* <div className="card"> */}
-                    <div className="p-fluid formgrid grid">
-                        <div className="field col-12 md:col-5">
-                            <label htmlFor="code">{translations[selectedLanguage].Code}</label>
-                            <InputText id="code" value={props.ticEvent.code} disabled={true} />
-                        </div>
-                        <div className="field col-12 md:col-7">
-                            <label htmlFor="text">{translations[selectedLanguage].Text}</label>
-                            <InputText id="text" value={props.ticEvent.text} disabled={true} />
-                        </div>
+                <div className="p-fluid formgrid grid">
+                    <div className="field col-12 md:col-5">
+                        <label htmlFor="code">{translations[selectedLanguage].Code}</label>
+                        <InputText id="code" value={props.ticEvent.code} disabled={true} />
                     </div>
+                    <div className="field col-12 md:col-7">
+                        <label htmlFor="text">{translations[selectedLanguage].Text}</label>
+                        <InputText id="text" value={props.ticEvent.text} disabled={true} />
+                    </div>
+                </div>
                 {/* </div> */}
             </div>
             <div className="col-12">
@@ -430,6 +430,13 @@ const TicEventart = (props) => {
                             />
                             {submitted && !ticEventart.art && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div> */}
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="rbr">{translations[selectedLanguage].rbr} *</label>
+                            <InputText id="rbr" value={ticEventart.rbr} onChange={(e) => onInputChange(e, 'text', 'rbr')}
+                            />
+                        </div>
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
@@ -550,7 +557,7 @@ const TicEventart = (props) => {
                         dialog={true}
                         lookUp={true}
                     />}
-            </Dialog>            
+            </Dialog>
         </div>
     );
 };

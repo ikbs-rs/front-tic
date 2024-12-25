@@ -529,7 +529,8 @@ const EmptyEntities =
   "color": "",
   "icon": "",
   "maxkol": null,
-  "kolicinaulaz": "0"
+  "kolicinaulaz": "0",
+  "rbr": "0"
   },
 	"tic_eventartcena": {
 		"id": null,
@@ -631,7 +632,8 @@ const EmptyEntities =
     "begda": "",
     "endda": "",
     "color": "",
-    "icon": ""
+    "icon": "",
+    "rbr": "0"
   },
   "tic_eventobj": {
 		  "id": null,
@@ -644,7 +646,8 @@ const EmptyEntities =
 		  "begtm": "",
 		  "endtm": "",
       "color": "",
-    "icon": ""
+    "icon": "",
+    "rbr": "0"
 	  },
   "tic_events": {
     "id": null,

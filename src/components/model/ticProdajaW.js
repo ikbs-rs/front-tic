@@ -60,6 +60,7 @@ const TicProdajaW = forwardRef((props, ref) => {
   let [uidKey, setUidKey] = useState(0);
   const placanjeRef = useRef();
   const docsuidRef = useRef();
+  const AdocsuidRef = useRef();
   const [paying, setPaying] = useState(0);
   const [reservationStatus, setReservationStatus] = useState(0);
   const [zaUplatu, setZaUplatu] = useState(0);
@@ -89,11 +90,14 @@ const TicProdajaW = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     handleClickInsideIframe,
     remountComponent,
-    remountStavke
+    remountStavke,
+    // handleOpenDeliveryTab
   }));
 
   const handleDocuidSubbmit = () => {
+    console.log("00-QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ-0000000")
     if (docsuidRef.current) {
+      console.log("01-QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ-0000000")
       return docsuidRef.current.setDocsuidSubmitted()
     }
   };
@@ -223,11 +227,16 @@ const TicProdajaW = forwardRef((props, ref) => {
       // if (buttonInsideIframe) {
       // buttonInsideIframe.click();
       // props.toggleIframeExpansion()
-      setUidKey(1)
+      // setKey(prevKey => prevKey + 1); 
+      setUidKey(2)
+      // AdocsuidRef.current.openDeliveryTab()
       // }
     }
   };
 
+  // const handleOpenDeliveryTab = () => {
+  //   AdocsuidRef.current.openDeliveryTab()
+  // }
   useEffect(() => {
     const handleClick = (event) => {
 
@@ -411,13 +420,18 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleNextClic = (e, key) => {
-    // console.log(cmnPar, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
+    console.log(cmnPar, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
     if (cmnPar?.id || key == 0) {
+      console.log(cmnPar, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
       if (key == 2) {
+        console.log(cmnPar, "02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
         if (handleDocuidSubbmit()) {
+          console.log(cmnPar, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
           setUidKey(++uidKey)
         }
+        // setUidKey(++uidKey)
       } else {
+        console.log(cmnPar, "05-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
         setUidKey(++uidKey)
       }
     } else {
@@ -536,7 +550,8 @@ const TicProdajaW = forwardRef((props, ref) => {
   }
 
   const handleRezTicDoc = async () => {
-    // console.log("00.0 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log(placanjeRef.current, "00.0 REZ_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
     const ticEventattsService = new TicEventattsService()
     const eventAtt = await ticEventattsService.getEventAttsDD(ticEvent?.id, props.channell?.id, '07.01.');
 
@@ -574,6 +589,7 @@ const TicProdajaW = forwardRef((props, ref) => {
         life: 1000,
       });
     }
+
     // console.log("00.1 REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_REZ_")
 
   };

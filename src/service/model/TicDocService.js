@@ -951,26 +951,29 @@ export class TicDocService {
     }
   }
   async getPrintgrpLista(newObj, ticStampa, tpStampa) {
+
+    const ticket = newObj.map(obj => obj.id);
+    // console.log(ticket, "00-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const userObj = localStorage.getItem('user')
     const user = userObj.username
     const tm = DateFunction.currDatetime
-    const ticket = newObj.map(item => ({
-      nevent: item.nevent,
-      nart: item.nart,
-      seat: item.seat,
-      row: item.row,
-      potrazuje: item.potrazuje,
-      user: user,
-      tp: tpStampa,
-      tm: tm
-    }));
+    // const ticket = newObj.map(item => ({
+    //   nevent: item.nevent,
+    //   nart: item.nart,
+    //   seat: item.seat,
+    //   row: item.row,
+    //   potrazuje: item.potrazuje,
+    //   user: user,
+    //   tp: tpStampa,
+    //   tm: tm
+    // }));
     const ticketJsonString = JSON.stringify(ticket);
     ticStampa.tp = tpStampa
     ticStampa.ticket = ticketJsonString
     ticStampa.tmupdate = user
     const par1 = ''
-    console.log(ticket, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    // console.log(ticket, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     /******************************************************************************* */
     const newArr = newObj.map(obj => obj.id);
     localStorage.removeItem('docsIds');
@@ -1006,20 +1009,20 @@ export class TicDocService {
       // console.log(htmlContent, "88888HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       // Send a POST request with the printer name and content
       const printerName = "Microsoft Print to PDF"; // Ovo zamenite pravim imenom štampača
-      const postResponse = await fetch('https://localhost:8650/print', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          printer: printerName,
-          content: htmlContent
-        })
-      });
+      // const postResponse = await fetch('https://localhost:8650/print', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     printer: printerName,
+      //     content: htmlContent
+      //   })
+      // });
 
-      if (!postResponse.ok) {
-        throw new Error(`Error sending print job: ${postResponse.status}`);
-      }
+      // if (!postResponse.ok) {
+      //   throw new Error(`Error sending print job: ${postResponse.status}`);
+      // }
 
       // console.log("Print job sent successfully");
       // // window.open(urlWithToken, '_blank');

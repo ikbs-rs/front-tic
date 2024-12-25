@@ -8,7 +8,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import moment from "moment";
 
 const TicProdajaPlacanje = forwardRef((props, ref) => {
-    // console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+    console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
     const [categories, setCategories] = useState([]); // Inicijalizacija kao prazan niz
     const [selectedCategory, setSelectedCategory] = useState(null);
     const selectedLanguage = localStorage.getItem('sl') || 'en';
@@ -63,10 +63,10 @@ const TicProdajaPlacanje = forwardRef((props, ref) => {
 
                 const ticDocpaymentService = new TicDocpaymentService();
                 const dataPT = await ticDocpaymentService.getCmnPaymenttpsP('cmn_paymenttp_p');
-                const dataCH = await ticDocpaymentService.getChCmnPaymenttpsP(props.propsParent.ticEvent?.id, props.ticDoc?.channel, '03.03')
-                const dataPTEND = await ticDocpaymentService.getPtCmnPaymenttpsP(props.propsParent.ticEvent?.id, props.ticDoc?.paymenttp, '03.01.')
+                const dataCH = await ticDocpaymentService.getChCmnPaymenttpsP(props.propsParent.ticEvent?.id||props.propsParent.ticDoc?.event , props.ticDoc?.channel, '03.03')
+                const dataPTEND = await ticDocpaymentService.getPtCmnPaymenttpsP(props.propsParent.ticEvent?.id||props.propsParent.ticDoc?.event, props.ticDoc?.paymenttp, '03.01.')
                 const _dataPTEND = dataPTEND[0]
-                // console.log(dataCH, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', dataPT)
+                // console.log(dataPT, 'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', dataCH, _dataPTEND)
                 let data;
 
                 if (!dataCH || dataCH.length === 0 || (dataCH.length === 1 && !dataCH[0].val2)) {

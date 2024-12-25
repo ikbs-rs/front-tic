@@ -11,8 +11,10 @@ const AppTopbar = (props) => {
     const navigate = useNavigate();
     let i = 0
     const b =  `${env.DOMEN}/btic/assets/img/zap/1774496601038262272.jpg`
-    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const selectedLanguage = localStorage.getItem('sl') || 'sr_cyr'
     const userId = localStorage.getItem('userId') || -1
+    const link = `/tic/?sl=${selectedLanguage}#/`
+    console.log(link, "#######################################")
     const [user, setUser] = useState({});
     const [slika, setSlika] = useState('');
 
@@ -61,9 +63,27 @@ const AppTopbar = (props) => {
                 <i className="pi pi-bars" style={{ fontSize: 20 }}></i>
             </button>
 
-            <button type="button" className="p-link layout-topbar-logo" onClick={() => navigate('/')}>
+            {/* <button type="button" className="p-link layout-topbar-logo" onClick={() => navigate('/')}>
                 <span className="layout-profile-name" style={{ color: "#ffffff", fontSize: 16 }}>{translations[selectedLanguage].Ticketing_system}</span>
-            </button>
+            </button> */}
+<a
+    href={link}
+    target="_self"
+    className="p-link layout-topbar-logo"
+    onClick={(e) => {
+        e.preventDefault();
+        navigate('/');
+    }}
+    // onContextMenu={(e) => {
+    //     e.preventDefault();
+    //     window.open('/tic', '_blank');
+    // }}
+>
+    <span className="layout-profile-name" style={{ color: "#ffffff", fontSize: 16 }}>
+        {translations[selectedLanguage].Ticketing_system}
+    </span>
+</a>
+
 
             <ul className="topbar-menu" style={{ paddingTop: '9px' }}>
                 <li className={classNames('user-profile', { 'active-topmenuitem fadeInDown': props.activeTopbarItem === 'profile' })}>

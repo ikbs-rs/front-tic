@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { translations } from '../configs/translations';
 import EmpA from "../components/model/empA"
 
 const EmptyPage = () => {
+    const containerRef = useRef(null);
+    const [containerWidth, setContainerWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            if (containerRef.current) {
+                setContainerWidth(containerRef.current.offsetWidth);
+            }
+        };
+
+        window.addEventListener('resize', updateWidth);
+        updateWidth(); // Poziva se odmah kako bi se dobila početna širina
+
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []); 
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     return (
         <>
@@ -15,7 +30,7 @@ const EmptyPage = () => {
                 </div>
             </div>
             <div>
-                <EmpA />
+                <EmpA containerWidth={containerWidth} />
             </div>
         </>
     );
