@@ -135,6 +135,21 @@ export default function TicDocdeliveryL(props) {
   const [zbirzbirniiznos, setZbirniiznos] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   /********************************************************************************/
+
+  const [activeIndex1, setActiveIndex1] = useState(0); // Active tab index
+
+  const handleNext = () => {
+    console.log(activeIndex1, "04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    if (activeIndex1 < 3) {
+      setActiveIndex1(prev => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (activeIndex1 > 0) {
+      setActiveIndex1(prev => prev - 1);
+    }
+  };
   /******************************************** */
   // useEffect(() => {
   //   async function fetchData() {
@@ -219,6 +234,8 @@ export default function TicDocdeliveryL(props) {
         const _ticDoc = { ...ticDoc }
         _ticDoc.status = 2
         setTicDoc(_ticDoc)
+        // setActiveIndex1(prev => prev + 1);
+        // handleNext()
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 2000 });
         // setUidKey(++uidKey)
       }
@@ -1332,9 +1349,19 @@ export default function TicDocdeliveryL(props) {
   const handlePlacanjetip = async (value) => {
     const _ticDocpayment = { ...ticDocpayment }
     _ticDocpayment.paymenttp = value
-    setTicDocpayment({ ..._ticDocpayment })
-    console.log(ticDocpayment, "411111111111111111111 4444444444444444444444444444444444444444444444", _ticDocpayment)
+    const _ticDoc = { ...ticDoc }
+    _ticDoc.paymenttp = value
+    setTicDoc(_ticDoc)
   }
+
+  const setActiveIndex11 = async (index) => {
+    console.log(index, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+    // setActiveIndex1(index)
+
+  }
+  /************************************************************************************** */
+
+  /************************************************************************************** */
   return (
     <>
       <div className="card">
@@ -1422,7 +1449,10 @@ export default function TicDocdeliveryL(props) {
 
           {/**** *********************/}
           <div className="col-4">
-            <TabView>
+            <TabView
+              // activeIndex1={activeIndex1}
+              // onTabChange={(e) => setActiveIndex11(e.index)}
+            >
               <TabPanel header="Status">
                 <div class="grid">
                   <div className="col-12">
@@ -1492,40 +1522,52 @@ export default function TicDocdeliveryL(props) {
                 </div>
               </TabPanel>
               <TabPanel header="Placanje">
-              <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 360,  overflowY: 'scroll'  }}>
-                  <TicProdajaPlacanje
-                    key={ticTransactionsKey2}
-                    ticDoc={ticDoc}
-                    propsParent={props}
-                    handleFirstColumnClick={handleFirstColumnClick}
-                    handleAction={handleAction}
-                    setRefresh={handleRefresh}
-                    handleAllRefresh={handleAllRefresh}
-                    handlePlacanjetip={handlePlacanjetip}
-                    zaUplatu={zaUplatu}
-                    ref={placanjeRef}
-                    modal={false}
-                  />
+
+                <div className="grid" >
+                  <div class="card col-4">
+                    <Button
+                      label={translations[selectedLanguage].Placanje}
+                      icon="pi pi-spin pi-euro"
+                      className="p-button-warning"
+                      onClick={handlePayTicDoc}
+                      severity="danger"
+                      raised
+                    />
+                  </div>
+                  <div className="col-8 fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
+                    <TicProdajaPlacanje
+                      key={ticTransactionsKey2}
+                      ticDoc={ticDoc}
+                      propsParent={props}
+                      handleFirstColumnClick={handleFirstColumnClick}
+                      handleAction={handleAction}
+                      setRefresh={handleRefresh}
+                      handleAllRefresh={handleAllRefresh}
+                      handlePlacanjetip={handlePlacanjetip}
+                      zaUplatu={zaUplatu}
+                      ref={placanjeRef}
+                      modal={false}
+                    />
+                  </div>
+
                 </div>
-              </div>                
               </TabPanel>
               <TabPanel header="Stampa">
-              <div className="grid" >
-                <div className="col-12 fixed-height" style={{ height: 360,  overflowY: 'scroll'  }}>
-                  <TicDocsprintgrpL
-                    parameter={"inputTextValue"}
-                    ticDoc={props.ticDoc}
-                    // handDocsprintgrpClose={handDocsprintgrpClose}
-                    dialog={false}
-                    akcija={props.akcija}
-                    channel={props.channel}
-                  />
+                <div className="grid" >
+                  <div className="col-12 fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
+                    <TicDocsprintgrpL
+                      parameter={"inputTextValue"}
+                      ticDoc={props.ticDoc}
+                      // handDocsprintgrpClose={handDocsprintgrpClose}
+                      dialog={false}
+                      akcija={props.akcija}
+                      channel={props.channel}
+                    />
+                  </div>
                 </div>
-              </div>                
-              </TabPanel>   
+              </TabPanel>
               <TabPanel header="Fiskal">
-              </TabPanel>                          
+              </TabPanel>
             </TabView>
           </div>
         </div>

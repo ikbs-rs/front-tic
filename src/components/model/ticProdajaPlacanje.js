@@ -8,7 +8,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import moment from "moment";
 
 const TicProdajaPlacanje = forwardRef((props, ref) => {
-    console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+    // console.log(props, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
     const [categories, setCategories] = useState([]); // Inicijalizacija kao prazan niz
     const [selectedCategory, setSelectedCategory] = useState(null);
     const selectedLanguage = localStorage.getItem('sl') || 'en';

@@ -682,6 +682,16 @@ export default function TicTransactionsL(props) {
         setNaknadeIznos(iznos);
         // handleZaUplatu(karteIznos + naknadeIznos - popustIznos)
     };
+    const handleFirstColumnClick = (event) => {
+        if (ticEvent.id != event.event) {
+            props.handleFirstColumnClick(event)
+            let _ticEvent = { ...ticEvent }
+            _ticEvent.id = event.event
+            _ticEvent.code = event.cevent
+            _ticEvent.text = event.nevent
+            setTicEvent({ ..._ticEvent })
+        }
+    };    
 
     /*********************************************************************************** */
     return (
@@ -724,7 +734,7 @@ export default function TicTransactionsL(props) {
                     remoteRefresh={remoteRefresh}
                     refresh={refresh}
                     parentC={"BL"}
-                    handleFirstColumnClick={props.handleFirstColumnClick}
+                    handleFirstColumnClick={handleFirstColumnClick}
                     handleKarteIznos={handleKarteIznos}
                     handlePopustIznos={handlePopustIznos}
                     handleNetoIznos={handleNetoIznos}
@@ -733,7 +743,7 @@ export default function TicTransactionsL(props) {
                     mapa={props.mapa}
                 />
             </div>
-            {(props.uidKey >= 3) && (
+            {(props.uidKey >= 3 &&ticDoc?.paymenttp) && (
             <div className="flex-grow-1">
                 <TicDocsNaknadeL
                     key={refreshKeyN}

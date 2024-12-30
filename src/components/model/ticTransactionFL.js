@@ -612,25 +612,25 @@ export default function TicTransactionFL(props) {
         //                                                                                                                     ? 'highlight-row-29'
         return rowData.storno == '1'
             ? 'highlight-row-10'
-            :rowData.statustransakcije == '5'
-            ? 'highlight-row-2'
-            : rowData.statustransakcije == '6'
-                ? 'highlight-row-3'
-                : rowData.statustransakcije == '9'
-                    ? 'highlight-row-4'
-                    : rowData.statustransakcije == '21'
-                        ? 'highlight-row-5'
-                        : rowData.statustransakcije == '20'
-                            ? 'highlight-row-6'
-                            : rowData.statustransakcije == '11'
-                                ? 'highlight-row-7'
-                                : rowData.statustransakcije == '12'
-                                    ? 'highlight-row-8'
-                                    : rowData.statusdelivery == '4'
-                                        ? 'highlight-row-9'
-                                        : rowData.statustransakcije == '0'
-                                            ? 'highlight-row-1'
-                                            : '';
+            : rowData.statustransakcije == '5'
+                ? 'highlight-row-2'
+                : rowData.statustransakcije == '6'
+                    ? 'highlight-row-3'
+                    : rowData.statustransakcije == '9'
+                        ? 'highlight-row-4'
+                        : rowData.statustransakcije == '21'
+                            ? 'highlight-row-5'
+                            : rowData.statustransakcije == '20'
+                                ? 'highlight-row-6'
+                                : rowData.statustransakcije == '11'
+                                    ? 'highlight-row-7'
+                                    : rowData.statustransakcije == '12'
+                                        ? 'highlight-row-8'
+                                        : rowData.statusdelivery == '4'
+                                            ? 'highlight-row-9'
+                                            : rowData.statustransakcije == '0'
+                                                ? 'highlight-row-1'
+                                                : '';
     };
 
     const neventTemplate = (rowData) => {
@@ -754,6 +754,14 @@ export default function TicTransactionFL(props) {
         }
     };
 
+    const paginatorLeft = <Button type="button" icon="pi pi-refresh" text />;
+    const paginatorRight = <Button type="button" icon="pi pi-download" text />;
+    const FirstPageLink = <Button type="button" icon="pi pi-left" text 
+    onClick={async () => {
+        alert("AA")
+    }}
+    />;
+    
     return (
         <div className="card">
             <Toast ref={toast} />
@@ -877,7 +885,7 @@ export default function TicTransactionFL(props) {
                         onChange={(e) => setChecked10(e.value)}
                         className={`${buttonClassCustom10} custom10 w-10rem`}
                     />
-                </div>                
+                </div>
             </div>
 
             <DataTable
@@ -898,9 +906,15 @@ export default function TicTransactionFL(props) {
                 sortField="tm"
                 sortOrder={-1}
                 scrollHeight="703px"
-                // tableStyle={{ minWidth: "50rem" }}
+                tableStyle={{ minWidth: "50rem" }}
                 // metaKeySelection={false}
                 paginator
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                FirstPageLink={FirstPageLink}
+                currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                paginatorLeft={paginatorLeft} paginatorRight={paginatorRight}
+                // lazy 
+                stripedRows 
                 rows={125}
                 rowsPerPageOptions={[125, 150, 200]}
                 onSelectionChange={(e) => {
@@ -1103,7 +1117,7 @@ export default function TicTransactionFL(props) {
                     dataType="numeric"
                     style={{ width: "5%" }}
                     bodyStyle={{ textAlign: 'center' }}
-                ></Column>                
+                ></Column>
             </DataTable>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
             <Dialog

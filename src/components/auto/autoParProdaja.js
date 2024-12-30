@@ -10,7 +10,7 @@ import CmnParL from '../model/cmn/cmnParL';
 import { TicDocService } from "../../service/model/TicDocService";
 
 const AutoParProdaja = (props) => {
-    // console.log(props, "AAAAAAAAAAAAAAAAAAAAA")
+    console.log(props, "a30-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const _ticDoc = { ...props.ticDoc }
     _ticDoc.cpar = props.cmnPar?.code
@@ -86,7 +86,7 @@ const AutoParProdaja = (props) => {
                 setSelectedPar(null);
                 setParValue(e.target.value.textx || e.target.value.textx);
             }
-            
+            console.log(e.target.value, "aa03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
             ticDoc.usr = e.target.value.id
             cmnPar.npar = e.target.value.textx
             cmnPar.cpar = e.target.value.code
@@ -219,9 +219,9 @@ const AutoParProdaja = (props) => {
                             completeMethod={() => { }}
                             onSelect={handleSelect}
                             onChange={(e) => onInputChange(e, "auto", 'par')}
-                            itemTemplate={itemTemplate} // Koristite itemTemplate za prikazivanje objekata
+                            itemTemplate={itemTemplate} 
                             placeholder="Pretraži"
-                            disabled={ticDoc.statuspayment == 1}
+                            disabled={ticDoc.statuspayment == 1||props.parTip=="UPDATE"}
                         />
                         <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1} />
                     </div>
@@ -233,7 +233,7 @@ const AutoParProdaja = (props) => {
                         value={cmnPar?.text}
                         onChange={(e) => onInputChange(e, "auto", 'text')}
                         required
-                        disabled={ticDoc.statuspayment == 1}
+                        disabled={ticDoc.statuspayment == 1||props.parTip=="EDIT"}
                     />
                 </div>
             </div>

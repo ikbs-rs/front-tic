@@ -15,12 +15,15 @@ import { Calendar } from "primereact/calendar";
 import DateFunction from "../../utilities/DateFunction";
 import env from '../../configs/env';
 import AutoParProdaja from '../auto/autoParProdaja';
+import { CardMembershipSharp } from '@mui/icons-material';
+import { TicDocService } from "../../service/model/TicDocService";
 
 const TicDocsuidPar = (props) => {
     // console.log(props, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
+    const [ticDoc, setTicDoc] = useState(props.ticDoc);
     const [submitted, setSubmitted] = useState(false);
     const [ddCmnParItem, setDdCmnParItem] = useState(null);
     const [ddCmnParItems, setDdCmnParItems] = useState(null);
@@ -28,6 +31,7 @@ const TicDocsuidPar = (props) => {
     const [ddCountryItems, setDdCountryItems] = useState(null);
     const [cmnParItem, setCmnParItem] = useState(null);
     const [cmnParItems, setCmnParItems] = useState(null);
+    const [parTip, setParTip] = useState('EDIT');
     const [cmnCounryItem, setCmnCounryItem] = useState(null);
     const [cmnCounryItems, setCmnCounryItems] = useState(null);
     const [begda, setBegda] = useState(new Date(DateFunction.formatJsDate(props.cmnPar?.begda || DateFunction.currDate())));
@@ -35,6 +39,28 @@ const TicDocsuidPar = (props) => {
     const [birthday, setBirthday] = useState(props.cmnPar?.birthday ? new Date(DateFunction.formatJsDate(props.cmnPar.birthday)) : null);
     const [emailError, setEmailError] = useState(false);
     const [jmbgError, setJmbgError] = useState(false);
+    const [keyAutoParProdaja, setKeyAutoParProdaja] = useState(0);
+
+
+    useEffect(() => {
+        if (cmnPar.id == "1" || cmnPar.id == "2") {
+            const _cmnPar = { ...cmnPar }
+            _cmnPar.id = null
+            setCmnPar(_cmnPar)
+        }
+
+    }, [props.cmnPar]);
+
+    useEffect(() => {
+        if (cmnPar.id == "1" || cmnPar.id == "2") {
+            const _cmnPar = { ...cmnPar }
+            _cmnPar.id = null
+            setCmnPar({})
+            setKeyAutoParProdaja(prev => prev + 1)
+            setParTip("EDIT")
+        }
+
+    }, [cmnPar]);
 
     /************************************************************************************************ */
     const validateEmail = (email) => {
@@ -53,7 +79,7 @@ const TicDocsuidPar = (props) => {
     }
 
     const proveriJMBG = async (uJMBG) => {
-        console.log(uJMBG, "00-##############################################################################################################################")
+        // console.log(uJMBG, "00-##############################################################################################################################")
         if (uJMBG == '3333333333333') {
             return true
         }
@@ -63,7 +89,7 @@ const TicDocsuidPar = (props) => {
 
 
         if (uJMBG != null && uJMBG.length === 13) {
-            console.log(uJMBG, "11-##############################################################################################################################")
+            // console.log(uJMBG, "11-##############################################################################################################################")
             if (uJMBG.charAt(4) === '0') {
                 pYY = '20';
             } else {
@@ -100,7 +126,7 @@ const TicDocsuidPar = (props) => {
                 }
             }
         }
-        console.log(pIzlaz, "22-##############################################################################################################################")
+        // console.log(pIzlaz, "22-##############################################################################################################################")
         return pIzlaz;
     }
     /************************************************************************************************* */
@@ -112,7 +138,7 @@ const TicDocsuidPar = (props) => {
     const handleJmbgValidate = async (idnum) => {
         const OK = await proveriJMBG(idnum)
         setJmbgError(OK);
-        console.log(OK, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
+        // console.log(OK, "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
         return OK
     };
     const calendarRef = useRef(null);
@@ -132,7 +158,7 @@ const TicDocsuidPar = (props) => {
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnParItems(dataDD);
                 const tp = props.cmnPar?.tp || "2"
-                console.log(tp, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+                // console.log(tp, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
                 setDdCmnParItem(dataDD.find((item) => item.code == tp) || null);
 
                 if (tp) {
@@ -194,6 +220,20 @@ const TicDocsuidPar = (props) => {
         const parentOrigin = `${env.DOMEN}`; // Promenite ovo na stvarni izvor roditeljskog dokumenta
         window.parent.postMessage(data, parentOrigin);
     }
+    const handleEditClick = async () => {
+        console.log(cmnPar, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        setSubmitted(false);
+        if (cmnPar.id) {
+            if (cmnPar.id != "1" || cmnPar.id != "2") {
+                setParTip("UPDATE")
+            } else if (!cmnPar.code) {
+                setCmnPar({})
+                setParTip("CREATE")
+            }
+        } else {
+            setParTip("CREATE")
+        }
+    }
     const handleCreateClick = async () => {
         try {
             setSubmitted(true);
@@ -202,19 +242,32 @@ const TicDocsuidPar = (props) => {
             cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
             const cmnParService = new CmnParService();
             const data = await cmnParService.postCmnPar(cmnPar);
-            cmnPar.id = data
+            console.log(data, "s03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", )
+            cmnPar.id = data.id
             if (cmnPar.code === null || cmnPar.code === "") {
                 cmnPar.code = cmnPar.id;
             }
-            const newObj = { obj: cmnPar, parTip: props.parTip }
+
+            let _ticDoc = { ...ticDoc }
+            _ticDoc.usr = data.id
+            _ticDoc.cpar = cmnPar.code
+            _ticDoc.npar = cmnPar.textx
+
+            setTicDoc(_ticDoc)
+            const ticDocService = new TicDocService();
+            await ticDocService.putTicDocSet(_ticDoc);
+            props.handleUidKey(cmnPar)
+            setCmnPar(cmnPar)
+            props.handleSetCmnParW(cmnPar)
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Podatci ažurirani', life: 2000 });
             // console.log({ obj: cmnPar, parTip: props.parTip }, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-            props.handleDialogClose({ newObj });
-            props.setVisible(false);
+            // props.handleDialogClose({ newObj });
+            // props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
                 summary: "CmnPar ",
-                detail: `${err.response.data.error}`,
+                detail: `${err}`,
                 life: 5000,
             });
         }
@@ -222,27 +275,32 @@ const TicDocsuidPar = (props) => {
 
     const handleSaveClick = async () => {
         try {
+            let _cmnPar = { ...cmnPar }
             setSubmitted(true);
-            cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
-            cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
-            cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
-            if (!(await handleEmailChange(cmnPar.email))) {
+            if (_cmnPar?.id == 1 || _cmnPar?.id == 2) {
+                _cmnPar.id = null
+            }
+            _cmnPar.begda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(begda));
+            _cmnPar.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
+            _cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
+            if (!(await handleEmailChange(_cmnPar.email))) {
                 throw new Error(
                     "Neispravan EMAIL!"
                 );
             } else {
-                console.log("00 - EMAIL je ok")
-                if (!(await handleJmbgValidate(cmnPar.idnum)) && cmnPar.tp == 2) {
+                // console.log("00 - EMAIL je ok")
+                if (!(await handleJmbgValidate(_cmnPar.idnum)) && cmnPar.tp == 2) {
                     throw new Error(
                         "Neispravan JMBG!"
                     );
                 } else {
-                    console.log("00 - JMBG je ok", cmnPar)
+                    // console.log("00 - JMBG je ok", cmnPar)
                     const cmnParService = new CmnParService();
 
-                    const data = await cmnParService.putCmnPar(cmnPar);
+                    const data = await cmnParService.putCmnPar(_cmnPar);
 
-                    props.handleUidKey(cmnPar)
+                    props.handleUidKey(_cmnPar)
+                    setCmnPar(_cmnPar)
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Podatci ažurirani', life: 2000 });
                 }
             }
@@ -332,12 +390,22 @@ const TicDocsuidPar = (props) => {
 
     const handleAutoParProdaja = async (ticDoc, cmnPar) => {
         // setTicDoc(ticDoc)
-        console.log(cmnPar, "03-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-        setCmnPar(cmnPar)
+        const _cmnPar = { ...cmnPar }
+        setCmnPar(_cmnPar)
         props.handleSetCmnParW(cmnPar)
+        if (cmnPar.id == "1" || cmnPar.id == "2") {
+            if (parTip == "CREATE") {
+                _cmnPar.id = null
+            } else {
+                setParTip("EDIT")
+                const _cmnPar = {}
+                setCmnPar(_cmnPar)
+            }
+        }
         // console.log(e, "******* Clicked item details:", item);
 
     };
+
     return (
         <div className="grid">
             <Toast ref={toast} />
@@ -346,12 +414,14 @@ const TicDocsuidPar = (props) => {
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-12">
                             <AutoParProdaja
+                                key={keyAutoParProdaja}
                                 ticDoc={props.ticDoc}
                                 cmnPar={cmnPar}
                                 handleAutoParProdaja={handleAutoParProdaja}
                                 setAutoParaddressKey1={props.setAutoParaddressKey1}
                                 handleAction={props.handleAction}
                                 setRefresh={props.setRefresh}
+                                parTip={parTip}
                             // reservationStatus={reservationStatus}
                             />
                         </div>
@@ -385,6 +455,7 @@ const TicDocsuidPar = (props) => {
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !cmnPar.tp })}
+                                disabled={parTip == "EDIT"}
                             />
                             {submitted && !cmnPar.tp && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
 
@@ -395,6 +466,7 @@ const TicDocsuidPar = (props) => {
                                 id="email"
                                 value={cmnPar.email} onChange={(e) => onInputChange(e, "text", 'email')}
                                 className={classNames({ 'p-invalid': (submitted && !cmnPar.email) || emailError })}
+                                disabled={parTip == "EDIT"}
                             />
                             {emailError && <small className="p-error">{translations[selectedLanguage].InvalidEmail}</small>}
                             {submitted && !cmnPar.email && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
@@ -413,6 +485,7 @@ const TicDocsuidPar = (props) => {
                             <InputText
                                 id="address"
                                 value={cmnPar.address} onChange={(e) => onInputChange(e, "text", 'address')}
+                                disabled={parTip == "EDIT"}
                             />
 
                         </div>
@@ -422,6 +495,7 @@ const TicDocsuidPar = (props) => {
                             <InputText
                                 id="place"
                                 value={cmnPar.place} onChange={(e) => onInputChange(e, "text", 'place')}
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                         <div className="field col-12 md:col-3">
@@ -429,6 +503,7 @@ const TicDocsuidPar = (props) => {
                             <InputText
                                 id="postcode"
                                 value={cmnPar.postcode} onChange={(e) => onInputChange(e, "text", 'postcode')}
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                         <div className="field col-12 md:col-4">
@@ -441,6 +516,7 @@ const TicDocsuidPar = (props) => {
                                 optionLabel="name"
                                 placeholder="Select One"
                                 className={classNames({ 'p-invalid': submitted && !cmnPar.countryid })}
+                                disabled={parTip == "EDIT"}
                             />
                             {submitted && !cmnPar.countryid && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                         </div>
@@ -451,6 +527,7 @@ const TicDocsuidPar = (props) => {
                                 onChange={(e) => onInputChange(e, "Calendar", 'birthday')}
                                 showIcon
                                 dateFormat="dd.mm.yy"
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                         <div className="field col-12 md:col-4">
@@ -458,6 +535,7 @@ const TicDocsuidPar = (props) => {
                             <InputText
                                 id="tel"
                                 value={cmnPar.tel} onChange={(e) => onInputChange(e, "text", 'tel')}
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                         <div className="col-12">
@@ -468,6 +546,7 @@ const TicDocsuidPar = (props) => {
                                         id="idnum"
                                         value={cmnPar.idnum} onChange={(e) => onInputChange(e, "text", 'idnum')}
                                         className={classNames({ 'p-invalid': jmbgError })}
+                                        disabled={parTip == "EDIT"}
                                     />
                                     {jmbgError && <small className="p-error">{translations[selectedLanguage].InvalidJMBG}</small>}
                                 </div>
@@ -479,6 +558,7 @@ const TicDocsuidPar = (props) => {
                                 <InputText
                                     id="activity"
                                     value={cmnPar.activity} onChange={(e) => onInputChange(e, "text", 'activity')}
+                                    disabled={parTip == "EDIT"}
                                 />
                             </div>
                         )}
@@ -488,6 +568,7 @@ const TicDocsuidPar = (props) => {
                                 <InputText
                                     id="pib"
                                     value={cmnPar.pib} onChange={(e) => onInputChange(e, "text", 'pib')}
+                                    disabled={parTip == "EDIT"}
                                 />
                             </div>
                         )}
@@ -497,6 +578,7 @@ const TicDocsuidPar = (props) => {
                                 <InputText
                                     id="pdvnum"
                                     value={cmnPar.pdvnum} onChange={(e) => onInputChange(e, "text", 'pdvnum')}
+                                    disabled={parTip == "EDIT"}
                                 />
                             </div>
                         )}
@@ -507,6 +589,7 @@ const TicDocsuidPar = (props) => {
                                 onChange={(e) => onInputChange(e, "Calendar", 'begda', this)}
                                 showIcon
                                 dateFormat="dd.mm.yy"
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                         <div className="field col-12 md:col-6">
@@ -516,6 +599,7 @@ const TicDocsuidPar = (props) => {
                                 onChange={(e) => onInputChange(e, "Calendar", 'endda')}
                                 showIcon
                                 dateFormat="dd.mm.yy"
+                                disabled={parTip == "EDIT"}
                             />
                         </div>
                     </div>
@@ -532,7 +616,7 @@ const TicDocsuidPar = (props) => {
 
                         <div className="flex-grow-1"></div>
                         <div className="flex flex-wrap gap-1">
-                            {/* {(props.parTip === 'CREATE') ? (
+                            {(parTip === 'CREATE') ? (
                                 <Button
                                     label={translations[selectedLanguage].Create}
                                     icon="pi pi-check"
@@ -540,22 +624,28 @@ const TicDocsuidPar = (props) => {
                                     severity="success"
                                     outlined
                                 />
-                            ) : null} */}
-                            {/* {(props.parTip !== 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Delete}
-                                    icon="pi pi-trash"
-                                    onClick={showDeleteDialog}
-                                    className="p-button-outlined p-button-danger"
-                                    outlined
-                                />
-                            ) : null} */}
-                            <Button
-                                label={translations[selectedLanguage].Save}
-                                icon="pi pi-check"
-                                onClick={handleSaveClick}
-                                severity="danger"
-                            />
+                            ) : null}
+                            {(parTip == 'UPDATE') ?
+                                (
+                                    <Button
+                                        label={translations[selectedLanguage].Save}
+                                        icon="pi pi-check"
+                                        onClick={handleSaveClick}
+                                        severity="danger"
+                                    />
+                                )
+                                : null}
+
+                            {(parTip == 'EDIT') ?
+                                (
+                                    <Button
+                                        label={translations[selectedLanguage].Edit}
+                                        icon="pi pi-check"
+                                        onClick={handleEditClick}
+                                        severity="danger"
+                                    />
+                                )
+                                : null}
                         </div>
                     </div>
 

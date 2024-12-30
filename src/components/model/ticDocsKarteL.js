@@ -37,7 +37,7 @@ export default function TicTransactionsL(props) {
     const [ticDocs, setTicDocs] = useState(emptyTicDocs);
 
     const [ticDoc, setTicDoc] = useState(_doc);
-    const [ticEvent, setTicEvent] = useState(props.ticEvent||{id: "-1"});
+    const [ticEvent, setTicEvent] = useState(props.ticEvent || { id: "-1" });
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
     const [ticDocItems, setTicDocItems] = useState(null);
 
@@ -121,7 +121,7 @@ export default function TicTransactionsL(props) {
                         // const dataDD = await ticDocsService.getEventartcenasP(row.id, abortController.signal);
                         const dataDD = await ticDocsService.getEventartcenasP(row.id);
                         const dataCT = await ticDocsService.getCmnObjByTpCodeP('t.code', 'XTCTP');
-                        
+
                         updatedCenaItems[row.id] = dataDD;
                         updatedTickettpItems[row.id] = dataCT;
                         return { ...row, isUploadPending: false };
@@ -129,7 +129,7 @@ export default function TicTransactionsL(props) {
 
                     const updatedData = await Promise.all(promisesDD);
 
-                    /**************************************************************************** */      
+                    /**************************************************************************** */
                     // setCmnTickettps(data);
                     // const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                     /**************************************************************************** */
@@ -354,7 +354,7 @@ export default function TicTransactionsL(props) {
             <Row className="custom-table">
                 <Column footer={translations[selectedLanguage].Total} colSpan={mapa} footerStyle={{ textAlign: 'right' }} />
                 {/* {(props.mapa !== 1) && ( */}
-                    <Column footer={brojTotal} />
+                <Column footer={brojTotal} />
                 {/* )} */}
                 {(props.mapa !== 1) && (
                     <Column footer={discountTotal} />
@@ -400,10 +400,10 @@ export default function TicTransactionsL(props) {
         if (name == 'tickettp') {
             rowData.tickettp = e.value?.code;
             val = (e.target && e.target.value && e.target.value?.code) || '';
-            tip = e.value?.name.slice(0, 1)  
+            tip = e.value?.name.slice(0, 1)
             await setDdTickettpItem(e.value);
             dataDDs = ddTickettpItems[rowData.id];
-            dataDD = dataDDs.find((row) => row.id === rowData.tickettp);            
+            dataDD = dataDDs.find((row) => row.id === rowData.tickettp);
         } else {
             rowData.cena = e.value?.code;
             val = (e.target && e.target.value && e.target.value?.code) || '';
@@ -453,7 +453,7 @@ export default function TicTransactionsL(props) {
         let selectedOption = {}
         if (name == 'tickettp') {
             const dataDD = ddTickettpItems[rowData.id];
-            const ddTickettpItem = dataDD.map(({ text, id }) => ({ name: text, code: id }));            
+            const ddTickettpItem = dataDD.map(({ text, id }) => ({ name: text, code: id }));
             // console.log(JSON.stringify(ddTickettpItems), "XXXXXXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", rowData);
             selectedOptions = ddTickettpItem;
             selectedOption = selectedOptions.find((option) => option.code === rowData.tickettp);
@@ -608,7 +608,7 @@ export default function TicTransactionsL(props) {
 
     const updateDataInDatabase = async (rowData) => {
         try {
-            
+
             rowData.vreme = null;
             const ticDocsService = new TicDocsService();
             await ticDocsService.putTicDocs(rowData);
@@ -637,9 +637,9 @@ export default function TicTransactionsL(props) {
     const delBodyTemplate = (rowData, name, mapa) => {
         // Primer uslova - zamenite sa vašim stvarnim uslovom
         const shouldShowButton = rowData?.event != ticEvent?.id || ticEvent?.id === '-1' || mapa != 1;
-    
+
         return (
-            <>
+            <div style={{ pointerEvents: "auto" }}>
                 {shouldShowButton && (
                     <Button
                         type="button"
@@ -649,10 +649,10 @@ export default function TicTransactionsL(props) {
                         onClick={(e) => toggleChecked(e, name, rowData)}
                     ></Button>
                 )}
-            </>
+            </div>
         );
     };
-    
+
     const stornoBodyTemplate = (rowData) => {
         // console.log(rowData, "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
         const setParentTdBackground = (element) => {
@@ -779,7 +779,14 @@ export default function TicTransactionsL(props) {
     const header = renderHeader()
     /*********************************************************************************** */
     const onRowSelect = (event) => {
-        props.handleFirstColumnClick(event.data)
+        if (ticEvent.id != event.data.event) {
+            props.handleFirstColumnClick(event.data)            
+            let _ticEvent = { ...ticEvent }
+            _ticEvent.id = event.data.event
+            _ticEvent.code = event.data.cevent
+            _ticEvent.text = event.data.nevent
+            setTicEvent({ ..._ticEvent })
+        }
     };
 
     const onRowUnselect = (event) => {
@@ -803,7 +810,7 @@ export default function TicTransactionsL(props) {
                 <span className="dropdown-arrow">▼</span>
             </div>
         );
-    }; 
+    };
     return (
         <>
             <Toast ref={toast} />
@@ -844,59 +851,73 @@ export default function TicTransactionsL(props) {
                 <Column
                     field="ulaz"
                     header={translations[selectedLanguage].Ulaz}
-                    style={{ width: "10%",
+                    style={{
+                        width: "10%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px" }}
+                        fontSize: "11px"
+                    }}
                     sortable
                 ></Column>
                 <Column
                     field="sector"
                     header={translations[selectedLanguage].Sector}
-                    style={{ width: "10%" ,
+                    style={{
+                        width: "10%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px"}}
+                        fontSize: "11px"
+                    }}
                     sortable
                 ></Column>
                 <Column
                     field="row"
                     header={translations[selectedLanguage].red}
-                    style={{ width: "5%" ,
+                    style={{
+                        width: "5%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px"}}
+                        fontSize: "11px"
+                    }}
                     sortable
                 ></Column>
-{(props.mapa != 1) && (                
-                <Column
-                    field="label"
-                    header={translations[selectedLanguage]._label}
-                    style={{ width: "5%" ,
-                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px"}}
-                ></Column> 
-                    )}               
+                {(props.mapa != 1) && (
+                    <Column
+                        field="label"
+                        header={translations[selectedLanguage]._label}
+                        style={{
+                            width: "5%",
+                            fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                            fontSize: "11px"
+                        }}
+                    ></Column>
+                )}
                 <Column
                     field="seat"
                     header={translations[selectedLanguage].Sediste_}
-                    style={{ width: "5%" ,
+                    style={{
+                        width: "5%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px"}}
+                        fontSize: "11px"
+                    }}
                     sortable
                 ></Column>
                 <Column
                     field="nart"
                     header={translations[selectedLanguage].nart}
                     sortable
-                    style={{ width: "15%" ,
+                    style={{
+                        width: "15%",
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px"}}
+                        fontSize: "11px"
+                    }}
                 ></Column>
                 <Column
                     field="cena"
                     header={translations[selectedLanguage].cenatp}
                     // style={{ width: '8%', backgroundColor: '#e6f0e6' }}
-                    style={{ width: '8%',
+                    style={{
+                        width: '8%',
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                        fontSize: "11px" }}
+                        fontSize: "11px"
+                    }}
                     editor={(e) => valueEditor(e.rowData, 'cena', e)}
                     body={(rowData) => valueTemplate(rowData, 'cena')}
                     // body={cenaTemplate}
@@ -907,29 +928,35 @@ export default function TicTransactionsL(props) {
                         field="price"
                         header={translations[selectedLanguage].price}
                         sortable
-                        style={{ width: "7%" ,
+                        style={{
+                            width: "7%",
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px"}}
+                            fontSize: "11px"
+                        }}
                     ></Column>
                 )}
                 {/* {(props.mapa != 1) && ( */}
-                    <Column
-                        field="output"
-                        header={translations[selectedLanguage].outputL}
-                        // sortable
-                        style={{ width: "5%",
-                            fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px" }}
-                    ></Column>
+                <Column
+                    field="output"
+                    header={translations[selectedLanguage].outputL}
+                    // sortable
+                    style={{
+                        width: "5%",
+                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontSize: "11px"
+                    }}
+                ></Column>
                 {/* )} */}
                 {(props.mapa != 1) && (
                     <Column
                         field="discount"
                         header={translations[selectedLanguage].discount}
                         // sortable
-                        style={{ width: "5%" ,
+                        style={{
+                            width: "5%",
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px"}}
+                            fontSize: "11px"
+                        }}
                     // editor={inputEditor}
                     // editor={(e) => inputEditor(e.rowData, e.field, e)}
                     // body={discountTemplate}
@@ -946,9 +973,11 @@ export default function TicTransactionsL(props) {
                     <Column
                         field="tickettp"
                         header={translations[selectedLanguage].tickettp}
-                        style={{ width: '8%',
+                        style={{
+                            width: '8%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px" }}
+                            fontSize: "11px"
+                        }}
                         editor={(e) => valueEditor(e.rowData, 'tickettp', e)}
                         body={(rowData) =>
 
@@ -963,9 +992,11 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].Stampa_}
                         field="print"
                         dataType="numeric"
-                        style={{ width: '1%',
+                        style={{
+                            width: '1%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px"}}
+                            fontSize: "11px"
+                        }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `print`)}
                         onCellEditComplete={onCellEditComplete}
@@ -976,9 +1007,11 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].NovaTransakcija_}
                         field="pm"
                         dataType="numeric"
-                        style={{ width: '1%',
+                        style={{
+                            width: '1%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px" }}
+                            fontSize: "11px"
+                        }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `pm`)}
                         onCellEditComplete={onCellEditComplete}
@@ -989,9 +1022,11 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].Dostava_}
                         field="delivery"
                         dataType="numeric"
-                        style={{ width: '1%' ,
+                        style={{
+                            width: '1%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px"}}
+                            fontSize: "11px"
+                        }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `delivery`)}
                         onCellEditComplete={onCellEditComplete}
@@ -1002,36 +1037,39 @@ export default function TicTransactionsL(props) {
                         header={translations[selectedLanguage].rez}
                         field="rez"
                         dataType="numeric"
-                        style={{ width: '1%',
+                        style={{
+                            width: '1%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px" }}
+                            fontSize: "11px"
+                        }}
                         bodyClassName="text-center"
                         body={(e) => toggleBodyTemplate(e, `rez`)}
                         onCellEditComplete={onCellEditComplete}
                     ></Column>
                 )}
-                
-                    <Column
-                        // header={translations[selectedLanguage].del}
-                        field="del"
-                        // dataType="numeric"
-                        style={{ width: '1%',
-                            fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px" }}
-                        bodyClassName="text-center"
-                        body={(e) => delBodyTemplate(e, `del`, props.mapa)}
-                        onCellEditComplete={onCellEditComplete}
-                    ></Column>
-            
+                <Column
+                    field="del"
+                    style={{
+                        width: '1%',
+                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontSize: "11px",
+                        pointerEvents: "none"
+                    }} // Onemogućava sve događaje na nivou kolone
+                    bodyClassName="text-center"
+                    body={(e) => delBodyTemplate(e, `del`, props.mapa)}
+                    onCellEditComplete={null} // Uklanja događaje editovanja
+                ></Column>
 
-                {(ticEvent.id=="-1") && (
+                {(ticEvent.id == "-1") && (
                     <Column
                         header={translations[selectedLanguage].Storno_}
                         field="docstorno"
                         // dataType="numeric"
-                        style={{ width: '1%' ,
+                        style={{
+                            width: '1%',
                             fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
-                            fontSize: "11px"}}
+                            fontSize: "11px"
+                        }}
                         bodyClassName="text-center"
                         body={stornoBodyTemplate}
                     ></Column>

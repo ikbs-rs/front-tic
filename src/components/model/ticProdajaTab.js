@@ -1298,7 +1298,14 @@ console.log(channell, "ooo11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
     }
     const handleRefresh = () => {
     }
-    const handleFirstColumnClick = () => {
+    const handleFirstColumnClick = (event) => {
+        if (ticEvent.id != event.event) {
+            let _ticEvent = { ...ticEvent }
+            _ticEvent.id = event.event
+            _ticEvent.code = event.cevent
+            _ticEvent.text = event.nevent
+            setTicEvent({ ..._ticEvent })
+        }
     }
     const handleActionTab = (rowData) => {
         // console.log(rowData, "TAB-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
@@ -1358,6 +1365,7 @@ console.log(channell, "ooo11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
                             setActiveIndex={setActiveIndex}
                             handleActionTab={handleActionTab}
                             handleSetCmnPar={handleSetCmnPar}
+                            handleFirstColumnClick={handleFirstColumnClick}
                             cmnPar={cmnPar}
                         />
                         <div>

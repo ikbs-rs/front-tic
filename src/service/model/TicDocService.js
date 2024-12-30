@@ -843,8 +843,9 @@ export class TicDocService {
         'Authorization': tokenLocal.token
       };
       const jsonObj = JSON.stringify(newObj)
+      console.log(newObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.post(url, jsonObj, { headers });
-      // console.log("5555555555555555555551111**************", response, "****************")
+      
       return response.data.items;
     } catch (error) {
       console.error(error);

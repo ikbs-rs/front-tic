@@ -959,6 +959,7 @@ export const translations = {
         rbr: "Редни број",
         _label: "Лабела",
         Fiskal: "Фискал",
+        Edit: "Едитовање",
     }
   };
   
