@@ -103,7 +103,7 @@
 
 .toggle-button-checked.custom1,
 .toggle-button-unchecked.custom1 {
-  background-color: rgb(162, 129, 184) !important;
+  background-color: #a281b8 !important;
   font-size: 12px !important;
   border-color: none !important;
   color:black;
@@ -111,7 +111,7 @@
 
 .toggle-button-checked.custom2,
 .toggle-button-unchecked.custom2 {
-  background-color: rgb(130, 132, 134) !important; 
+  background-color: #828486 !important; 
   
   border-color: none !important;
   color:black;
@@ -119,56 +119,56 @@
 
 .toggle-button-checked.custom3,
 .toggle-button-unchecked.custom3 {
-  background-color: rgb(241, 239, 144) !important; /* Zelena za uključeno stanje */
+  background-color: #f1ef90 !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom4,
 .toggle-button-unchecked.custom4 {
-  background-color: rgb(216, 123, 154) !important; /* Zelena za uključeno stanje */
+  background-color: #d87b9ad3 !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom5,
 .toggle-button-unchecked.custom5 {
-  background-color: rgb(160, 99, 20) !important; /* Zelena za uključeno stanje */
+  background-color: #a06314 !important; /* Zelena za uključeno stanje */
   font-size: 12px !important;
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom6,
 .toggle-button-unchecked.custom6 {
-  background-color: rgb(93, 206, 181) !important; /* Zelena za uključeno stanje */
+  background-color: #5dceb5 !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom7,
 .toggle-button-unchecked.custom7 {
-  background-color: rgb(252, 252, 252) !important; /* Zelena za uključeno stanje */
+  background-color: #fcfcfc !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom8,
 .toggle-button-unchecked.custom8 {
-  background-color: rgb(216, 63, 71) !important; /* Zelena za uključeno stanje */
+  background-color: #e4656b !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom9,
 .toggle-button-unchecked.custom9 {
-  background-color: rgb(1, 20, 129) !important; /* Zelena za uključeno stanje */
+  background-color: #2441e9cb !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
 }
 .toggle-button-checked.custom10,
 .toggle-button-unchecked.custom10 {
-  background-color: rgb(186, 201, 53) !important; /* Zelena za uključeno stanje */
+  background-color: #bac935 !important; /* Zelena za uključeno stanje */
   
   border-color: none !important;
   color:black;
@@ -439,6 +439,9 @@ body::before {
   background: #5558; /* Boja skrola prilikom prelaska mišem */
 }
 
+html, body {
+  overflow-x: hidden; /* Sprečava horizontalno skrolovanje */
+}
 /**********************************************************/
 .layout-footer {
   background-color: #ffffff30;
@@ -461,7 +464,9 @@ body::before {
   padding-left: 5px;
   padding-right: 5px;
 }
-
+.layout-wrapper .layout-menu-horizontal {
+  display: none; /* Sakriva horizontalni meni */
+}
 
 /********************СЛОВА МЕНИЈА***********************************/
 .layout-wrapper.layout-menu-dark .layout-menu-container .layout-menu li.layout-root-menuitem > .layout-menuitem-root-text {
@@ -505,6 +510,38 @@ body::before {
 .layout-menuitem-active-text {
   color: yellow; /* boja kada je stavka aktivna */
 }
+
+@media (max-width: 700px) {
+  .toggle-button-sidebar {
+    width: 220px !important; 
+    height: 45px !important;
+  }
+}
+@media (min-width: 701px) and (max-width: 1400px) {
+  .toggle-button-small {
+    width: 3rem !important; /* Širina dugmeta */
+    height: 3rem !important; /* Visina dugmeta */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+  }
+  .w-9rem {
+    width: 3rem !important;
+  }
+  .toggle-button-small .p-button-label {
+    display: none; /* Sakrij tekst */
+    width: 34px !important; /* Širina dugmeta */
+    height: 34px !important; /* Visina dugmeta */
+  }
+
+  .toggle-button-small .p-button-icon {
+    font-size: 1.5rem !important; /* Prilagodi veličinu ikone */
+  }
+}
+
+
+
 
 
 

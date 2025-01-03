@@ -312,14 +312,14 @@ export default function TicPrivilegeL(props) {
         showGridlines
         removableSort
         filters={filters}
-        scrollable
+        scrollable      
         scrollHeight="730px"
         virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
-        rows={100}
-        rowsPerPageOptions={[100, 250, 500]}
+        rows={10}
+        rowsPerPageOptions={[10, 25, 50]}
         onSelectionChange={(e) => setTicPrivilege(e.value)}
         onRowSelect={onRowSelect}
         onRowUnselect={onRowUnselect}

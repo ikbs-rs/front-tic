@@ -25,36 +25,36 @@
 
 
 .highlight-row-1 {
-  background-color: rgb(114, 2, 189) !important; 
+  background-color: #7202bd !important; 
 }
 
 .highlight-row-2 {
-  background-color: rgb(130, 132, 134) !important; 
+  background-color: #828486 !important; 
 }
 
 .highlight-row-3 {
-  background-color: rgb(241, 239, 144) !important; 
+  background-color: #f1ef90 !important; 
 }
 
 .highlight-row-4 {
-  background-color: rgb(216, 123, 154) !important; 
+  background-color: #d87b9a !important; 
 }
 
 .highlight-row-5 {
-  background-color: rgb(160, 99, 20) !important; 
+  background-color: #a06314 !important; 
 }
 
 .highlight-row-6 {
-  background-color: rgb(93, 206, 181) !important; 
+  background-color: #5dceb5 !important; 
 }
 
 .highlight-row-7 {
-  background-color: rgb(252, 252, 252) !important; 
+  background-color: #fcfcfc !important; 
   color: rgb(41, 95, 17) !important;
 }
 
 .highlight-row-8 {
-  background-color: rgb(216, 63, 71) !important; 
+  background-color: #e4656b !important; 
   color: white !important;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .highlight-row-10 {
-  background-color: rgb(186, 201, 53) !important; 
+  background-color: #bac935 !important; 
 }
 
 .highlight-row-11 {
@@ -95,7 +95,7 @@
 }
 
 .highlight-row-17 {
-  background-color: rgba(216, 99, 204, 0.594) !important; 
+  background-color: #d863cc97 !important; 
 }
 
 .highlight-row-18 {
@@ -244,3 +244,81 @@
   cursor: pointer;
 }
 
+/* Padajući meni za ToggleButton-e ispod 700px */
+@media (max-width: 700px) {
+  .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    z-index: 99999;
+    width: 80%;
+    max-width: 80px;
+  }
+
+  .dropdown-toggle {
+    display: block !important;
+  }
+
+  .toggle-buttons-container {
+    display: none;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #26292cec;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  padding-top: 72px !important;
+  gap: 1rem;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* Div koji se pomera sa Sidebar-om */
+.sidebar-content {
+  margin-right: 0; /* Početno stanje kada je sidebar zatvoren */
+  transition: margin-right 0.3s ease-in-out;
+}
+
+.sidebar-content-open {
+  margin-right: 250px; /* Pomera se sa Sidebar-om */
+}
+
+/* Sakrij standardne ToggleButton-e na malim ekranima */
+@media (max-width: 700px) {
+  .toggle-buttons-container {
+    display: none;
+  }
+}
+
+/* Dugme za Sidebar - Donji desni ugao */
+.sidebar-toggle-btn {
+  background: 'transparent';
+  background-color: #26292c4d;
+  border: 'none';
+  color: '#fff';
+  font-size: '1.5rem';
+  cursor: 'pointer';
+  width: 45px;
+  height: 45px;
+}

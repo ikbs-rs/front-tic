@@ -17,7 +17,7 @@ import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
 import { TicDocService } from "../../service/model/TicDocService";
 
 export default function CmnLoclinkgrpL(props) {
-  // console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props)
+  console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", props)
   const emptyCmnloclink = "cmn_loclink"
 
   //const [products, setProducts] = useState([]);
@@ -57,7 +57,7 @@ export default function CmnLoclinkgrpL(props) {
       try {
 // console.log(props.ticDoc[0]?.id, "HHHHHHHHHHHHHHHHHHHHH++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
           const ticDocsService = new TicDocsService();
-          const data = await ticDocsService.getArtikliStornoListaP(props.ticDoc[0]?.id);
+          const data = await ticDocsService.getArtikliStornoListaP(props.ticDoc?.id);
           const sortedData = data.sort((a, b) => {
             if (a.nevent !== b.nevent) {
               return a.nevent.localeCompare(b.nevent);
@@ -124,7 +124,7 @@ export default function CmnLoclinkgrpL(props) {
     console.log(selectedProducts, "@DOC@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     const ticDocService = new TicDocService();
-    await ticDocService.postDocStorno( ticDocss, props.ticDoc[0], 'DOC');
+    await ticDocService.postDocStorno( ticDocss, props.ticDoc, 'DOC');
 
     props.handleStornoClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
@@ -136,7 +136,7 @@ export default function CmnLoclinkgrpL(props) {
     console.log(selectedProducts, "@ST@@@@@@@@@@@@***********handleConfirm********************@@@@@@@@@@@")
     setSubmitted(true);
     const ticDocService = new TicDocService();
-    await ticDocService.postDocStorno( selectedProducts, props.ticDoc[0], 'ST');
+    await ticDocService.postDocStorno( selectedProducts, props.ticDoc, 'ST');
 
     props.handleStornoClose({ obj: props.ticEvent });
     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Локације успешно копиране ?', life: 3000 });
@@ -235,7 +235,7 @@ export default function CmnLoclinkgrpL(props) {
             <div className="field col-12 md:col-3">
               <label htmlFor="id">{translations[selectedLanguage].Id}</label>
               <InputText id="id"
-                value={props.ticDoc[0].id}
+                value={props.ticDoc.id}
                 disabled={true}
               />
             </div>
@@ -243,7 +243,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
               <InputText
                 id="broj"
-                value={props.ticDoc[0].broj}
+                value={props.ticDoc.broj}
                 disabled={true}
               />
             </div>
@@ -251,7 +251,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="kanal">{translations[selectedLanguage].Kanal}</label>
               <InputText
                 id="kanal"
-                value={props.ticDoc[0].kanal}
+                value={props.ticDoc.kanal}
                 disabled={true}
               />
             </div>
@@ -267,7 +267,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="text">{translations[selectedLanguage].Event}</label>
               <InputText
                 id="text"
-                value={props.ticDoc[0].text}
+                value={props.ticDoc.text}
                 disabled={true}
               />
             </div>
@@ -275,7 +275,7 @@ export default function CmnLoclinkgrpL(props) {
               <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
               <InputText
                 id="npar"
-                value={props.ticDoc[0].npar}
+                value={props.ticDoc.npar}
                 disabled={true}
               />
             </div>
