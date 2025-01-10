@@ -3,7 +3,38 @@ import env from "../../configs/env"
 import Token from "../../utilities/Token";
 
 export class TicEventattsService {
+    async getCLSZGR(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventclszgr_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
 
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+    async getDocsCLSZ(objId) {
+        const selectedLanguage = localStorage.getItem('sl') || 'en'
+        const url = `${env.TIC_BACK_URL}/tic/eventatts/_v/lista/?stm=tic_eventdocsclsz_v&objid=${objId}&sl=${selectedLanguage}`;
+        const tokenLocal = await Token.getTokensLS();
+        const headers = {
+            Authorization: tokenLocal.token
+        };
+
+        try {
+            const response = await axios.get(url, { headers });
+            return response.data.item;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
     async getLista(objId, par1) {
         // console.log(objId, par1, "+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
         const selectedLanguage = localStorage.getItem('sl') || 'en'

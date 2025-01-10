@@ -21,7 +21,7 @@ import TicArtlinkgrpL from "./ticArlinkgrpL"
 import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 export default function TicEventartL(props) {
-
+console.log(props, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
   const objName = "tic_eventart"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicEventart = EmptyEntities[objName]
@@ -358,7 +358,7 @@ export default function TicEventartL(props) {
           <table className="p-datatable" style={{ minWidth: "20rem" }}>
             <tbody>
               {rowData.products.map((product) => (
-                <tr key={product.id}>
+                <tr key={`pc-${product?.ncena}`}>
                   <td style={{ width: '50%' }}>{product.ncena}</td>
                   <td style={{ width: '30%' }}>{product.value}</td>
                   <td style={{ width: '20%' }}>{DateFunction.formatDate(product.begda)}</td>
@@ -439,6 +439,13 @@ export default function TicEventartL(props) {
           headerClassName="w-10rem"
           style={{ minWidth: '4rem' }}
         />
+        <Column
+          field="rbr"
+          header={translations[selectedLanguage].rbr}
+          sortable
+          filter
+          style={{ width: "5%" }}
+        ></Column>        
         <Column
           field="nart"
           header={translations[selectedLanguage].Text}

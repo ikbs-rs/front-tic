@@ -67,13 +67,54 @@ const TicProdajaW = forwardRef((props, ref) => {
   const [zaUplatu, setZaUplatu] = useState(0);
   const [cmnParVisible, setCmnParVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [eventUslov, setEventUslov] = useState({});
   // const [reservation, setReservation] = useState(0);
 
   useEffect(() => {
     // if (props.visible === 'D') {
-      setCmnParVisible(true);
+    setCmnParVisible(true);
     // }
   }, [props.visible]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (props.ticEvent?.id) {
+          const _eventUslov = {
+            "cl": 0,
+            "sz": 0,
+            "clvalue": -1,
+            "szvalue": -1
+          }
+          const ticEventattsService = new TicEventattsService();
+          const data = await ticEventattsService.getCLSZGR(props.ticEvent.id);
+          
+          const clData = data.find(item => item.code == '10.01.');
+          const szData = data.find(item => item.code == '10.02.');
+          const clDataValue = data.find(item => item.code == '00.00.');
+          const szDataValue = data.find(item => item.code == '00.01.');
+          
+          if (clData) {
+            _eventUslov.cl = 1
+          } 
+          if (clDataValue) {
+            _eventUslov.clvalue = clDataValue.value
+          }           
+          if (szData) {
+            _eventUslov.sz = 1
+          }
+          if (szDataValue) {
+            _eventUslov.szvalue = szDataValue.value
+          }   
+          setEventUslov(_eventUslov)
+          console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _eventUslov)        
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchData();
+  }, [props.ticEvent?.id]);
 
   useEffect(() => {
     async function fetchData() {
@@ -429,10 +470,14 @@ const TicProdajaW = forwardRef((props, ref) => {
     setZaUplatu(iznos)
   }
 
-  const handleUidKey = (rowData) => {
+  const handleUidKey = (rowData, modal) => {
     console.log(rowData, "01-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     setCmnPar(rowData)
-    setUidKey(prev => prev + 1)
+    if (modal == 1) {
+      setCmnParVisible(false);
+    } else {
+      setUidKey(prev => prev + 1)
+    }
   }
 
   const handleAction = (rowData) => {
@@ -753,7 +798,14 @@ const TicProdajaW = forwardRef((props, ref) => {
     setTicDoc(_ticDoc)
     props.handleTabZaglavlje(_ticDoc)
   }
-
+  const handleParCancel = () => {
+    props.setActiveIndex(prev => prev-1)
+    setCmnParVisible(false);
+  }
+  const handleParClose = () => {
+    // props.setActiveIndex(prev => prev-1)
+    setCmnParVisible(false);
+  }
   return (
     <div key={key}>
       <Toast ref={toast} />
@@ -909,6 +961,9 @@ DRUGI RED
                     setAutoParaddressKey1={setAutoParaddressKey1}
                     handleSetCmnParW={handleSetCmnParW}
                     handleUidKey={handleUidKey}
+                    modal={0}
+                    ticEvent={ticEvent}
+                    eventUslov={eventUslov}
                   />
                 </div>
               </div>
@@ -1042,52 +1097,57 @@ DRUGI RED
             lookUp={true}
           />}
       </Dialog> */}
+      { ((eventUslov.cl==1||eventUslov.sz==1)) &&
+        <Dialog
+          header={
+            <div className="grid" style={{ paddingTop: 0, paddingBottom: 0 }}>
+              <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                <Button
+                  label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                  onClick={() => {
+                    handleParCancel()
 
-      <Dialog
-        header={
-          <div className="grid" style={{ paddingTop: 0, paddingBottom: 0 }}>
-            <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
-              <Button
-                label={translations[selectedLanguage].Cancel} icon="pi pi-times"
-                onClick={() => {
-                  setCmnParVisible(false);
-                }}
-                severity="secondary" raised
-              />
+                  }}
+                  severity="secondary" raised
+                />
+              </div>
+              <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                <span>{translations[selectedLanguage].Par}</span>
+              </div>
             </div>
-            <div className="field col-12 md:col-5" style={{ paddingTop: 0, paddingBottom: 0 }}>
-              <span>{translations[selectedLanguage].Par}</span>
-            </div>
-          </div>
-        }
-        visible={cmnParVisible}
-        style={{ width: '60%' }}
-        onHide={() => {
-          setCmnParVisible(false);
-          setVisible(false);
-          setShowMyComponent(false);
-        }}
-      >
-        {cmnParVisible && (
-          <TicDocsuidPar
-            parameter={"inputTextValue"}
-            ticDoc={ticDoc}
-            cmnPar={cmnPar}
-            key={ticTransactionsKey11}
-            ref={docsuidRef}
-            propsParent={props}
-            handleFirstColumnClick={handleFirstColumnClick}
-            handleAction={handleAction}
-            setRefresh={handleRefresh}
-            handleDelivery={props.handleDelivery}
-            handleAllRefresh={handleAllRefresh}
-            setAutoParaddressKey1={setAutoParaddressKey1}
-            handleSetCmnParW={handleSetCmnParW}
-            handleUidKey={handleUidKey}
-          />
-        )}
-      </Dialog>
-
+          }
+          visible={cmnParVisible}
+          style={{ width: '60%' }}
+          onHide={() => {
+            setCmnParVisible(false);
+            setVisible(false);
+            setShowMyComponent(false);
+          }}
+        >
+          {(cmnParVisible) && (
+            <TicDocsuidPar
+              parameter={"inputTextValue"}
+              ticDoc={ticDoc}
+              cmnPar={cmnPar}
+              key={ticTransactionsKey11}
+              ref={docsuidRef}
+              propsParent={props}
+              handleFirstColumnClick={handleFirstColumnClick}
+              handleAction={handleAction}
+              setRefresh={handleRefresh}
+              handleDelivery={props.handleDelivery}
+              handleAllRefresh={handleAllRefresh}
+              setAutoParaddressKey1={setAutoParaddressKey1}
+              handleSetCmnParW={handleSetCmnParW}
+              handleUidKey={handleUidKey}
+              modal={1}
+              ticEvent={ticEvent}
+              eventUslov={eventUslov}
+              handleParClose={handleParClose}
+            />
+          )}
+        </Dialog>
+      }
     </div >
   );
 })

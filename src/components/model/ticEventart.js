@@ -22,6 +22,7 @@ import { AutoComplete } from "primereact/autocomplete";
 import CustomColorPicker from "../custom/CustomColorPicker.js"
 
 const TicEventart = (props) => {
+    // console.log(props, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventart, setTicEventart] = useState(props.ticEventart);
@@ -440,11 +441,6 @@ const TicEventart = (props) => {
                     </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
-                            <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
-                            <InputText id="discount" value={ticEventart.discount} onChange={(e) => onInputChange(e, 'text', 'discount')}
-                            />
-                        </div>
-                        <div className="field col-12 md:col-5">
                             <label htmlFor="maxkol">{translations[selectedLanguage].maxkol} *</label>
                             <div className="p-inputgroup flex-1">
                                 <InputText id="maxkol" value={ticEventart.maxkol} onChange={(e) => onInputChange(e, 'text', 'maxkol')}
@@ -457,7 +453,11 @@ const TicEventart = (props) => {
                             <InputText id="kolicinaulaz" value={ticEventart.kolicinaulaz} onChange={(e) => onInputChange(e, 'text', 'kolicinaulaz')}
                             />
                         </div>
-
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="discount">{translations[selectedLanguage].discount} *</label>
+                            <InputText id="discount" value={ticEventart.discount} onChange={(e) => onInputChange(e, 'text', 'discount')}
+                            />
+                        </div>
                         <div className="field col-12 md:col-12">
                             <label htmlFor="descript">{translations[selectedLanguage].Description}</label>
                             <InputText id="descript" value={ticEventart.descript} onChange={(e) => onInputChange(e, 'text', 'descript')} />

@@ -838,7 +838,7 @@ export const translations = {
         NaknadeI: "Накнаде износ",
         PopustI: "Попуст износ",
         ZaUplatu: "За уплату",
-        maxkol: "Максимални капацитет",
+        maxkol: "Капацитет",
         CodeArt: "Шифра Артикла",
         TextArt: "Назив артикла",
         CodeTp: "Шифра Типа",
@@ -960,6 +960,8 @@ export const translations = {
         _label: "Лабела",
         Fiskal: "Фискал",
         Edit: "Едитовање",
+        clkarta: "Чланска карта",
+        szkarta: "Сезонска карта",
     }
   };
   

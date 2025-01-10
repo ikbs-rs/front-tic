@@ -116,7 +116,8 @@ export default function TicDocdeliveryL(props) {
   const [naknadeIznos, setNaknadeIznos] = useState(0);
   const [popustIznos, setPopustIznos] = useState(0);
   // const [formattedZaUplatu, setFormattedZaUplatu] = useState(0);
-  const [activeIndex, setActiveIndex] = useState('-1')
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex2, setActiveIndex2] = useState(-1)
   const [countPrint, setCountPrint] = useState(0);
   const [lastPrinter, setLastPrinter] = useState(null);
   const [refreshPrint, setRefreshPrint] = useState(0);
@@ -136,18 +137,16 @@ export default function TicDocdeliveryL(props) {
   const [submitted, setSubmitted] = useState(false);
   /********************************************************************************/
 
-  const [activeIndex1, setActiveIndex1] = useState(0); // Active tab index
-
   const handleNext = () => {
-    console.log(activeIndex1, "04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-    if (activeIndex1 < 3) {
-      setActiveIndex1(prev => prev + 1);
+    console.log(activeIndex, "04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    if (activeIndex < 3) {
+      setActiveIndex(prev => prev + 1);
     }
   };
 
   const handleBack = () => {
-    if (activeIndex1 > 0) {
-      setActiveIndex1(prev => prev - 1);
+    if (activeIndex > 0) {
+      setActiveIndex(prev => prev - 1);
     }
   };
   /******************************************** */
@@ -233,8 +232,11 @@ export default function TicDocdeliveryL(props) {
         // ticDocpayment.id = data
         const _ticDoc = { ...ticDoc }
         _ticDoc.status = 2
+        _ticDoc.statuspayment = 1
         setTicDoc(_ticDoc)
-        // setActiveIndex1(prev => prev + 1);
+        ticDoc.status = 2
+        ticDoc.statuspayment = 1
+        setActiveIndex(prev => prev + 1);
         // handleNext()
         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Placanje izvrseno', life: 2000 });
         // setUidKey(++uidKey)
@@ -1355,7 +1357,7 @@ export default function TicDocdeliveryL(props) {
   }
 
   const setActiveIndex11 = async (index) => {
-    console.log(index, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+    // console.log(index, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
     // setActiveIndex1(index)
 
   }
@@ -1450,8 +1452,11 @@ export default function TicDocdeliveryL(props) {
           {/**** *********************/}
           <div className="col-4">
             <TabView
-              // activeIndex1={activeIndex1}
-              // onTabChange={(e) => setActiveIndex11(e.index)}
+              activeIndex={activeIndex}
+              onTabChange={(e) => {
+                console.log(e, "TTTTTTTTTTTT");
+                setActiveIndex(e.index);
+              }}
             >
               <TabPanel header="Status">
                 <div class="grid">
@@ -1532,6 +1537,7 @@ export default function TicDocdeliveryL(props) {
                       onClick={handlePayTicDoc}
                       severity="danger"
                       raised
+                      disabled={props.ticDoc?.status == 2}
                     />
                   </div>
                   <div className="col-8 fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
@@ -1718,7 +1724,7 @@ export default function TicDocdeliveryL(props) {
             setTicPaymentLVisible={setTicPaymentLVisible}
             dialog={true}
             lookUp={true}
-            setActiveIndex={setActiveIndex}
+            setActiveIndex={setActiveIndex2}
           />
         )}
       </Dialog>

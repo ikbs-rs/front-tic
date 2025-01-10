@@ -9,8 +9,9 @@ import { Dialog } from 'primereact/dialog';
 import CmnParL from '../model/cmn/cmnParL';
 import { TicDocService } from "../../service/model/TicDocService";
 
+
 const AutoParProdaja = (props) => {
-    console.log(props, "a30-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log(props, "a30-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const _ticDoc = { ...props.ticDoc }
     _ticDoc.cpar = props.cmnPar?.code
@@ -40,6 +41,8 @@ const AutoParProdaja = (props) => {
         }
         fetchData();
     }, []);
+
+
 
     useEffect(() => {
         async function fetchData() {
@@ -108,8 +111,8 @@ const AutoParProdaja = (props) => {
             _cmnPar.text = val;
             _cmnPar.textx = val;
             // console.log(cmnPar, "05-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", _cmnPar, "---", val)
-            setCmnPar({ ..._cmnPar});
-            props.handleAutoParProdaja(ticDoc, { ..._cmnPar})
+            setCmnPar({ ..._cmnPar });
+            props.handleAutoParProdaja(ticDoc, { ..._cmnPar })
         }
     }
 
@@ -219,9 +222,9 @@ const AutoParProdaja = (props) => {
                             completeMethod={() => { }}
                             onSelect={handleSelect}
                             onChange={(e) => onInputChange(e, "auto", 'par')}
-                            itemTemplate={itemTemplate} 
+                            itemTemplate={itemTemplate}
                             placeholder="Pretraži"
-                            disabled={ticDoc.statuspayment == 1||props.parTip=="UPDATE"}
+                            disabled={ticDoc.statuspayment == 1 || props.parTip == "UPDATE"}
                         />
                         <Button icon="pi pi-search" onClick={(e) => handleParLClick(e, "local")} className="p-button" disabled={ticDoc.statuspayment == 1} />
                     </div>
@@ -233,7 +236,7 @@ const AutoParProdaja = (props) => {
                         value={cmnPar?.text}
                         onChange={(e) => onInputChange(e, "auto", 'text')}
                         required
-                        disabled={ticDoc.statuspayment == 1||props.parTip=="EDIT"}
+                        disabled={ticDoc.statuspayment == 1 || props.parTip == "EDIT"}
                     />
                 </div>
             </div>

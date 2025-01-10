@@ -38,7 +38,7 @@ export default function TicProdajaTab(props) {
     const location = useLocation();
     
     const { channel } = location.state || {};
-    console.log(props, "011-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, props.channell)
+    // console.log(props, "011-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, props.channell)
     const objEvent = "tic_event"
     const objDoc = "tic_doc"
     const codeAttInterval = '60'
@@ -1167,7 +1167,7 @@ export default function TicProdajaTab(props) {
             // localChannel = await fachChannell(newObj.id)
             localChannel = channel
         }
-console.log(channell, "ooo11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, localChannel)        
+// console.log(channell, "ooo11-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", channel, localChannel)        
         const _channel = channell || localChannel
         let OK = false
         if (ticDoc?.id) {

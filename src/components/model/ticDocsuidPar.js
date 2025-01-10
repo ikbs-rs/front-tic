@@ -6,6 +6,7 @@ import { CmnPartpService } from "../../service/model/cmn/CmnPartpService";
 import { CmnTerrService } from "../../service/model/cmn/CmnTerrService";
 import './index.css';
 import { InputText } from 'primereact/inputtext';
+import { InputSwitch } from "primereact/inputswitch";
 import { Button } from 'primereact/button';
 import { Toast } from "primereact/toast";
 import DeleteDialog from '../dialog/DeleteDialog';
@@ -17,9 +18,11 @@ import env from '../../configs/env';
 import AutoParProdaja from '../auto/autoParProdaja';
 import { CardMembershipSharp } from '@mui/icons-material';
 import { TicDocService } from "../../service/model/TicDocService";
+import { TicEventattsService } from '../../service/model/TicEventattsService';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 const TicDocsuidPar = (props) => {
-    // console.log(props, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    console.log(props, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [cmnPar, setCmnPar] = useState(props.cmnPar);
@@ -40,6 +43,51 @@ const TicDocsuidPar = (props) => {
     const [emailError, setEmailError] = useState(false);
     const [jmbgError, setJmbgError] = useState(false);
     const [keyAutoParProdaja, setKeyAutoParProdaja] = useState(0);
+    const [checkedCL, setCheckedCL] = useState(false);
+    const [checkedSZ, setCheckedSZ] = useState(false);
+    const [btnNext, setBtnNext] = useState(false);
+
+
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                if (props.ticEvent?.id) {
+                    const _eventUslov = {
+                        "cl": 0,
+                        "sz": 0,
+                        "clvalue": -1,
+                        "szvalue": -1
+                    }
+                    const ticEventattsService = new TicEventattsService();
+                    const data = await ticEventattsService.getDocsCLSZ(props.ticEvent.id);
+
+                    const clData = data.find(item => item.code == '10.01.');
+                    const szData = data.find(item => item.code == '10.02.');
+                    const clDataValue = data.find(item => item.code == '00.00.');
+                    const szDataValue = data.find(item => item.code == '00.01.');
+
+                    if (clData) {
+                        _eventUslov.cl = 1
+                    }
+                    if (clDataValue) {
+                        _eventUslov.clvalue = clDataValue.value
+                    }
+                    if (szData) {
+                        _eventUslov.sz = 1
+                    }
+                    if (szDataValue) {
+                        _eventUslov.szvalue = szDataValue.value
+                    }
+                    //   setEventUslov(_eventUslov)
+                    console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _eventUslov)
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        fetchData();
+    }, [props.ticEvent?.id]);
 
 
     useEffect(() => {
@@ -60,6 +108,58 @@ const TicDocsuidPar = (props) => {
             setParTip("EDIT")
         }
 
+    }, [cmnPar]);
+
+    useEffect(() => {
+        async function fetchData() {
+            let _cl = false
+            let _sz = false
+            if (props.modal == 1) {
+                const ticEventattsService = new TicEventattsService();
+                const dataCL = await ticEventattsService.getDocsCLSZ(props.ticEvent.id);
+                console.log(dataCL, "CLCLCLCLCLCLCLCLCLCLCLCLCLCL")
+
+
+
+
+
+                if (props.eventUslov.cl == 1) {
+                    // Filtriranje za code == '00.00.'
+                    const filteredData00 = dataCL.filter(item => item.code === '00.00.');
+
+                    // Provera za email ili uid u filteredData00
+                    const match00 = filteredData00.some(item =>
+                        item.email === cmnPar.email || item.uid === cmnPar.uid
+                    );
+                    if (match00) {
+                        setCheckedCL(true)
+                        _cl = true
+                    }
+                } else {
+                    _cl = true
+                }
+
+                if (props.eventUslov.sz == 1) {
+                    // Filtriranje za code == '00.01.'
+                    const filteredData01 = dataCL.filter(item => item.code === '00.01.');
+
+                    // Provera za email ili uid u filteredData01
+                    const match01 = filteredData01.some(item =>
+                        item.email === cmnPar.email || item.uid === cmnPar.uid
+                    );
+                    if (match01) {
+                        setCheckedSZ(true)
+                        _sz = true
+                    }
+                } else {
+                    _sz = true
+                }
+            }
+            if (_cl && _sz) {
+                setBtnNext(true)
+            }
+        }
+        fetchData();
     }, [cmnPar]);
 
     /************************************************************************************************ */
@@ -242,11 +342,12 @@ const TicDocsuidPar = (props) => {
             cmnPar.birthday = birthday ? DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(birthday)) : null;
             const cmnParService = new CmnParService();
             const data = await cmnParService.postCmnPar(cmnPar);
-            console.log(data, "s03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", )
+            // console.log(data, "s03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", )
             cmnPar.id = data.id
-            if (cmnPar.code === null || cmnPar.code === "") {
-                cmnPar.code = cmnPar.id;
-            }
+            cmnPar.code = data.code
+            // if (cmnPar.code === null || cmnPar.code === "") {
+            //     cmnPar.code = cmnPar.id;
+            // }
 
             let _ticDoc = { ...ticDoc }
             _ticDoc.usr = data.id
@@ -256,7 +357,7 @@ const TicDocsuidPar = (props) => {
             setTicDoc(_ticDoc)
             const ticDocService = new TicDocService();
             await ticDocService.putTicDocSet(_ticDoc);
-            props.handleUidKey(cmnPar)
+            props.handleUidKey(cmnPar, props.modal)
             setCmnPar(cmnPar)
             props.handleSetCmnParW(cmnPar)
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Podatci ažurirani', life: 2000 });
@@ -383,6 +484,20 @@ const TicDocsuidPar = (props) => {
         _cmnPar[`${name}`] = val;
         setCmnPar(_cmnPar);
     };
+    const onDocInputChange = (e, type, name, a) => {
+        let val = ''
+        if (type === "options") {
+
+        } else if (type === "Calendar") {
+
+        } else {
+            val = (e.target && e.target.value) || '';
+            console.log(val, "*******************", e.target)
+        }
+        let _ticDoc = { ...ticDoc };
+        _ticDoc[`${name}`] = val;
+        setTicDoc(_ticDoc);
+    };
 
     const hideDeleteDialog = () => {
         setDeleteDialogVisible(false);
@@ -405,7 +520,37 @@ const TicDocsuidPar = (props) => {
         // console.log(e, "******* Clicked item details:", item);
 
     };
+    const handleNapomenaClick = async (e) => {
+        // console.log(ticDoc, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", e)
 
+        let _ticDoc = { ...ticDoc || props.ticDoc }
+        setTicDoc(_ticDoc)
+        props.handleAction(_ticDoc)
+        await handleUpdateNapDoc(_ticDoc)
+        props.handleParClose()
+    };
+    const handleNextClick = async (e) => {
+        props.handleParClose()
+    };
+    const handleUpdateNapDoc = async (newObj) => {
+        try {
+            // console.log(newObj, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            const ticDocService = new TicDocService();
+            await ticDocService.postTicDocSetValue('tic_doc', 'opis', newObj.opis, newObj.id);
+        } catch (err) {
+            // console.log(newObj, "ERRRRORRR ** 00 ***************************************************####################")
+            const _ticDoc = { ...newObj }
+            _ticDoc.opis = newObj.opis
+            setTicDoc(_ticDoc)
+
+            toast.current.show({
+                severity: "error",
+                summary: "Action ",
+                detail: `${err.response.data.error}`,
+                life: 1000,
+            });
+        }
+    }
     return (
         <div className="grid">
             <Toast ref={toast} />
@@ -636,7 +781,7 @@ const TicDocsuidPar = (props) => {
                                 )
                                 : null}
 
-                            {(parTip == 'EDIT') ?
+                            {(parTip == 'EDIT' && props.modal == 0) ?
                                 (
                                     <Button
                                         label={translations[selectedLanguage].Edit}
@@ -648,8 +793,69 @@ const TicDocsuidPar = (props) => {
                                 : null}
                         </div>
                     </div>
-
                 </div>
+
+                {(props.modal == 1) && (
+                    <div className="card">
+                        <div className="p-fluid formgrid grid">
+                            {(props.eventUslov.cl == 1) && (
+                                <div className="col-12 md:col-6" style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                                    <label style={{ marginBottom: '0.5rem' }} htmlFor="cl">{translations[selectedLanguage].clkarta}</label>
+                                    <InputSwitch id="cl" checked={checkedCL}
+                                        // onChange={(e) => handleChangeNaknade(e.value)}
+                                        // onChange={(e) => onInputChange(e, "text", 'cl')}
+                                        tooltip={translations[selectedLanguage].PosedujeClanskuKartu}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={true}
+                                    />
+                                </div>
+                            )}
+                            {(props.eventUslov.sz == 1) && (
+                                <div className="col-12 md:col-6" style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                                    <label style={{ marginBottom: '0.5rem' }} htmlFor="sz">{translations[selectedLanguage].szkarta}</label>
+                                    <InputSwitch id="sz" checked={checkedSZ}
+                                        // onChange={(e) => handleChangeNaknade(e.value)}
+                                        // onChange={(e) => onInputChange(e, "text", 'sz')}
+                                        tooltip={translations[selectedLanguage].PosedujeClanskuKartu}
+                                        tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }}
+                                        disabled={true}
+                                    />
+                                </div>
+                            )}
+                            {(btnNext) && (
+                                <div className="field col-12 md:col-12">
+                                    <Button
+                                        icon="pi pi-next "
+                                        label={translations[selectedLanguage].Next}
+                                        onClick={handleNextClick}
+                                        className="p-button" />
+                                </div>
+                            )}
+                        </div>
+                        {(!btnNext) && (
+                            <div className="field col-12 md:col-12">
+
+                                <label htmlFor="napomena">{translations[selectedLanguage].Napomena}</label>
+                                <InputTextarea
+                                    id="opis"
+                                    rows={3}
+                                    autoResize
+                                    style={{ width: '100%' }}
+                                    // cols={100}
+                                    value={ticDoc?.opis}
+                                    onChange={(e) => onDocInputChange(e, 'text', 'opis')}
+                                />
+                                <Button
+                                    icon="pi pi-save "
+                                    label={translations[selectedLanguage].SaveNext}
+                                    onClick={handleNapomenaClick}
+                                    severity="danger"
+                                    className="p-button" />
+                            </div>
+                        )}
+                    </div>
+                )
+                }
             </div>
             <DeleteDialog
                 visible={deleteDialogVisible}
