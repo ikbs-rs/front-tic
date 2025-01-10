@@ -1367,9 +1367,20 @@ export default function TicDocdeliveryL(props) {
   return (
     <>
       <div className="card">
-        <div className="grid p-fluid formgrid nested-grid">
+        {/* <div className="grid p-fluid formgrid nested-grid"> */}
+        <div
+          class="grid"
+          style={{
+            display: 'flex',
+            // flexDirection: 'column',
+            flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+          }}
+        >
           <Toast ref={toast} />
-          <div className="col-5">
+          <div id="1"
+            // className= "col-5"
+            class="sm:col-12 md:col-4 lg:col-4"
+          >
             <div class="grid">
               <div className="col-12">
                 <div className="">
@@ -1401,7 +1412,10 @@ export default function TicDocdeliveryL(props) {
           {/**** *********************/}
 
           {/**** *********************/}
-          <div className="col-3">
+          <div id="2"
+            // className= "col-3"
+            class="sm:col-12 md:col-3 lg:col-3"
+          >
             <div class="grid">
               <div className="col-12">
                 {/* II */}
@@ -1450,7 +1464,10 @@ export default function TicDocdeliveryL(props) {
           {/**** *********************/}
 
           {/**** *********************/}
-          <div className="col-4">
+          <div id="3"
+            // className= "col-4"
+            class="sm:col-12 md:col-4 lg:col-4"
+          >
             <TabView
               activeIndex={activeIndex}
               onTabChange={(e) => {
@@ -1459,7 +1476,13 @@ export default function TicDocdeliveryL(props) {
               }}
             >
               <TabPanel header="Status">
-                <div class="grid">
+                <div class="grid"
+                  style={{
+                    display: 'flex',
+                    // flexDirection: 'column',
+                    flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+                  }}
+                >
                   <div className="col-12">
                     {/* V */}
                     <div className="">
@@ -1529,7 +1552,7 @@ export default function TicDocdeliveryL(props) {
               <TabPanel header="Placanje">
 
                 <div className="grid" >
-                  <div class="card col-4">
+                  <div class="card sm:col-2 md:col-4 lg:col-4">
                     <Button
                       label={translations[selectedLanguage].Placanje}
                       icon="pi pi-spin pi-euro"
@@ -1540,7 +1563,7 @@ export default function TicDocdeliveryL(props) {
                       disabled={props.ticDoc?.status == 2}
                     />
                   </div>
-                  <div className="col-8 fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
+                  <div class="sm:col-5 md:col-7 lg:col-7  fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
                     <TicProdajaPlacanje
                       key={ticTransactionsKey2}
                       ticDoc={ticDoc}

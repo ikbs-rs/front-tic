@@ -779,7 +779,7 @@ export default function TicPrivilegeL(props) {
             closeSidebar();
           }}
           severity="warning"
-          outlined
+          // outlined
           disabled={!ticDoc}
           className={`${isSmallScreen ? 'toggle-button-small' : 'toggle-button-sidebar'}`} />
 
@@ -790,7 +790,7 @@ export default function TicPrivilegeL(props) {
             closeSidebar();
           }}
           severity="warning"
-          outlined
+          // outlined
           disabled={!ticDoc}
           className={`${isSmallScreen ? 'toggle-button-small' : 'toggle-button-sidebar'}`} />
 
@@ -801,7 +801,7 @@ export default function TicPrivilegeL(props) {
             closeSidebar();
           }}
           severity="danger"
-          outlined
+          // outlined
           disabled={!ticDoc}
           className={`${isSmallScreen ? 'toggle-button-small' : 'toggle-button-sidebar'}`} />
 

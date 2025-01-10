@@ -1221,7 +1221,7 @@ export default function TicProdajaTab(props) {
         if (OK) {
             // console.log(_channel, _ticEvent, "** KANALI KORISNIKA/EVENT *  POZIV CREATE_DOC *****************************************************************************")
             const _ticDoc = await createDoc(_channel, _ticEvent, masssale)
-            const tmp_cmnPar = await fachPar(_ticDoc.usr)
+            const tmp_cmnPar = await fachPar(_ticDoc?.usr)
             const _cmnPar = tmp_cmnPar[0]
             setCmnPar(_cmnPar)
             _ticDoc.cpar = _cmnPar.code

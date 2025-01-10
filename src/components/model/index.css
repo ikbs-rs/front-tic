@@ -277,7 +277,7 @@
   right: 0;
   width: 250px;
   height: 100%;
-  background-color: #26292cec;
+  background-color: #0214798a;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow-y: auto;
@@ -322,3 +322,26 @@
   width: 45px;
   height: 45px;
 }
+
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; /* Razmak između elemenata */
+}
+
+.col-5, .col-3, .col-4 {
+  flex: 1; /* Defaultna širina */
+}
+
+@media (max-width: 768px) {
+  .grid {
+      flex-direction: column; /* Vertikalno raspoređivanje */
+  }
+
+  .col-5, .col-3, .col-4 {
+      flex: none; /* Poništavanje defaultne širine */
+      width: 100%; /* Puna širina */
+  }
+}
+
