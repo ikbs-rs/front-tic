@@ -1552,7 +1552,7 @@ export default function TicDocdeliveryL(props) {
               <TabPanel header="Placanje">
 
                 <div className="grid" >
-                  <div class="card sm:col-2 md:col-4 lg:col-4">
+                  <div class="card sm:col-4 md:col-4 lg:col-4">
                     <Button
                       label={translations[selectedLanguage].Placanje}
                       icon="pi pi-spin pi-euro"
@@ -1563,7 +1563,7 @@ export default function TicDocdeliveryL(props) {
                       disabled={props.ticDoc?.status == 2}
                     />
                   </div>
-                  <div class="sm:col-5 md:col-7 lg:col-7  fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
+                  <div class="sm:col-6 md:col-7 lg:col-7  fixed-height" style={{ height: 360, overflowY: 'scroll' }}>
                     <TicProdajaPlacanje
                       key={ticTransactionsKey2}
                       ticDoc={ticDoc}

@@ -324,24 +324,24 @@
 }
 
 
-.grid {
+/* .grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem; /* Razmak između elemenata */
+  gap: 1rem; 
 }
 
 .col-5, .col-3, .col-4 {
-  flex: 1; /* Defaultna širina */
-}
-
+  flex: 1; 
+} */
+/* 
 @media (max-width: 768px) {
   .grid {
-      flex-direction: column; /* Vertikalno raspoređivanje */
+      flex-direction: column; 
   }
 
   .col-5, .col-3, .col-4 {
-      flex: none; /* Poništavanje defaultne širine */
-      width: 100%; /* Puna širina */
+      flex: none; 
+      width: 100%; 
   }
-}
+} */
 
