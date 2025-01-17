@@ -8,9 +8,9 @@ import { PDFDocument } from 'pdf-lib';
 import { TicStampaService } from "../../service/model/TicStampaService";
 import { TicEventattsService } from "../../service/model/TicEventattsService";
 import DateFunction from '../../utilities/DateFunction';
-import PDFHtmlDownloader  from '../../components/model/00a'
+import PDFHtmlDownloader from '../../components/model/00a'
 
-export const getPrintgrpLPTX = (newObj, ticStampa, tpStampa) =>{
+export const getPrintgrpLPTX = (newObj, ticStampa, tpStampa) => {
   const ticketArr = newObj.map(item => item.id);
   // console.log(newObj, "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO", ticketArr)
   // const ticketJsonString = JSON.stringify(ticketArr);
@@ -73,11 +73,14 @@ function generateHTMLWithDownload(textContent, barcodeBase64) {
         .barcode {
           display: block;
           margin: 0;
+          margin-top: 0;
+          margin-bottom: 0;          
           padding: 0;
         }
         .line {
           margin-bottom: 5px;
         }
+        }          
       </style>
     </head>
     <body>
@@ -104,23 +107,23 @@ function generateHTMLWithDownload(textContent, barcodeBase64) {
   newWindow.document.write(htmlContent);
   newWindow.document.close();
 
-  // Dodavanje opcije za preuzimanje
-  const blob = new Blob([htmlContent], { type: 'text/html' });
-  const downloadLink = document.createElement('a');
-  downloadLink.href = URL.createObjectURL(blob);
-  downloadLink.download = 'racun.html';
-  downloadLink.textContent = 'Preuzmite HTML fajl';
-  newWindow.document.body.appendChild(downloadLink);
+  // // Dodavanje opcije za preuzimanje
+  // const blob = new Blob([htmlContent], { type: 'text/html' });
+  // const downloadLink = document.createElement('a');
+  // downloadLink.href = URL.createObjectURL(blob);
+  // downloadLink.download = 'racun.html';
+  // downloadLink.textContent = 'Preuzmite HTML fajl';
+  // newWindow.document.body.appendChild(downloadLink);
 
-  // Stilizovanje dugmeta za preuzimanje
-  downloadLink.style.display = 'block';
-  downloadLink.style.marginTop = '20px';
-  downloadLink.style.padding = '10px';
-  downloadLink.style.backgroundColor = '#007BFF';
-  downloadLink.style.color = '#fff';
-  downloadLink.style.textDecoration = 'none';
-  downloadLink.style.borderRadius = '5px';
-  downloadLink.style.textAlign = 'center';
+  // // Stilizovanje dugmeta za preuzimanje
+  // downloadLink.style.display = 'block';
+  // downloadLink.style.marginTop = '20px';
+  // downloadLink.style.padding = '10px';
+  // downloadLink.style.backgroundColor = '#007BFF';
+  // downloadLink.style.color = '#fff';
+  // downloadLink.style.textDecoration = 'none';
+  // downloadLink.style.borderRadius = '5px';
+  // downloadLink.style.textAlign = 'center';
 }
 
 function generateTextWithBarcode(textContent, barcodeBase64) {
@@ -156,7 +159,7 @@ export class TicDocService {
       //console.log("**********TicDocService*************", url)
       const response = await axios.get(url, { headers });
       // console.log(url, "**********TicDocService*******************************************", response.data)
-      return response.data.item||response.data.items;
+      return response.data.item || response.data.items;
     } catch (error) {
       console.error(error);
       throw error;
@@ -505,7 +508,7 @@ export class TicDocService {
 
   async postTicDoc(newObj) {
     try {
-      
+
       const selectedLanguage = localStorage.getItem('sl') || 'en'
       if (!newObj?.provera && (newObj?.date.broj() === '')) {
         throw new Error(
@@ -845,7 +848,7 @@ export class TicDocService {
       const jsonObj = JSON.stringify(newObj)
       console.log(newObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const response = await axios.post(url, jsonObj, { headers });
-      
+
       return response.data.items;
     } catch (error) {
       console.error(error);
@@ -938,6 +941,7 @@ export class TicDocService {
       // generatePDF(responseText, barcodeBase64)
       // generateTextWithBarcode(responseText, barcodeBase64)
       const blob = new Blob([responseText], { type: "text/plain" });
+      console.log(blob, "03-SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "output.txt";
@@ -1056,7 +1060,7 @@ export class TicDocService {
     PDFHtmlDownloader(ticketArr)
   }
 
-  
+
   async getPrintgrpLPT(newObj, ticStampa, tpStampa) {
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const userObj = localStorage.getItem('user')

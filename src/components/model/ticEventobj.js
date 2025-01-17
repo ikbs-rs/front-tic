@@ -141,15 +141,19 @@ const TicEventobj = (props) => {
             ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
             const ticEventobjService = new TicEventobjService();
             const newTicEventobj = { ...ticEventobj, id: null };
-            const data = await ticEventobjService.postTicEventobj(newTicEventobj);
-            //ticEventobj.id = data
-            props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
+            const id = await ticEventobjService.postTicEventobj(newTicEventobj);
+            const _ticEventobj = {...ticEventobj, id: id}
+            
+            // _ticEventobj.id = id
+            setTicEventobj (_ticEventobj)
+            // console.log(id, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", _ticEventobj)
+            props.handleDialogClose({ obj: _ticEventobj, eventobjTip: props.eventobjTip });
             //props.setVisible(false);
         } catch (err) {
             toast.current.show({
                 severity: "error",
                 summary: "TicEventobj ",
-                detail: `${err.response.data.error}`,
+                detail: `${err}`,
                 life: 1000,
             });
         }
