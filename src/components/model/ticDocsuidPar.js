@@ -46,40 +46,35 @@ const TicDocsuidPar = (props) => {
     const [checkedCL, setCheckedCL] = useState(false);
     const [checkedSZ, setCheckedSZ] = useState(false);
     const [btnNext, setBtnNext] = useState(false);
+    const [eventUslov, setEventUslov] = useState({});
 
 
 
     useEffect(() => {
+        // Dovlacim ID od clanse i sezonske karte ako postoje, odnosno njihov barkod
         async function fetchData() {
             try {
                 if (props.ticEvent?.id) {
                     const _eventUslov = {
-                        "cl": 0,
-                        "sz": 0,
                         "clvalue": -1,
                         "szvalue": -1
                     }
                     const ticEventattsService = new TicEventattsService();
                     const data = await ticEventattsService.getDocsCLSZ(props.ticEvent.id);
 
-                    const clData = data.find(item => item.code == '10.01.');
-                    const szData = data.find(item => item.code == '10.02.');
                     const clDataValue = data.find(item => item.code == '00.00.');
                     const szDataValue = data.find(item => item.code == '00.01.');
 
-                    if (clData) {
-                        _eventUslov.cl = 1
-                    }
+                    console.log(`W-clD WWWW-szD  WWWWWWWWWWW-clDV ${clDataValue} WWWWWWWWWWWWW-szDV ${szDataValue} WWWWWWWWWWWWWWWWWWWWWWWWWWWWW`, data)
+
                     if (clDataValue) {
                         _eventUslov.clvalue = clDataValue.value
                     }
-                    if (szData) {
-                        _eventUslov.sz = 1
-                    }
+
                     if (szDataValue) {
                         _eventUslov.szvalue = szDataValue.value
                     }
-                    //   setEventUslov(_eventUslov)
+                    setEventUslov(_eventUslov)
                     console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _eventUslov)
                 }
             } catch (error) {
@@ -799,6 +794,7 @@ const TicDocsuidPar = (props) => {
                     <div className="card">
                         <div className="p-fluid formgrid grid">
                             {(props.eventUslov.cl == 1) && (
+
                                 <div className="col-12 md:col-6" style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
                                     <label style={{ marginBottom: '0.5rem' }} htmlFor="cl">{translations[selectedLanguage].clkarta}</label>
                                     <InputSwitch id="cl" checked={checkedCL}
@@ -809,6 +805,7 @@ const TicDocsuidPar = (props) => {
                                         disabled={true}
                                     />
                                 </div>
+
                             )}
                             {(props.eventUslov.sz == 1) && (
                                 <div className="col-12 md:col-6" style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>

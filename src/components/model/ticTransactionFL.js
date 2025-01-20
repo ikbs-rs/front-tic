@@ -32,6 +32,7 @@ import { TicDocService } from "../../service/model/TicDocService";
 import { Button } from "primereact/button";
 import { Dialog } from 'primereact/dialog';
 import TicTransaction from './ticTransaction';
+import TicDocsprintgrpL from './ticDocsprintgrpL'
 import TicTransactiostornogrpL from "./ticTransactiostornogrpL"
 
 export default function TicPrivilegeL(props) {
@@ -89,11 +90,30 @@ export default function TicPrivilegeL(props) {
   const [isSmallScreen7, setIsSmallScreen7] = useState(window.innerWidth <= 700);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [ticDocsprintgrpgrpLVisible, setTicDocsprintgrpgrpLVisible] = useState(false)
+  const [channell, setChannell] = useState(null)
+  const [printOriginal, setPrintOriginal] = useState(false)
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const ticDocService = new TicDocService();
+        const data = await ticDocService.getObjTpL('XPK');
+        const foundChannel = data.find((item) => item.id === props.ticDoc?.channel) || data[0]
+        setChannell(foundChannel);
+      } catch (error) {
+        console.error(error);
+        // Obrada greške ako je potrebna
+      }
+    }
+    fetchData();
+  }, [props.ticDoc]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -176,9 +196,26 @@ export default function TicPrivilegeL(props) {
     return index;
   };
 
-  const handleDialogClose = (newObj) => {
-    const localObj = { newObj };
+  const handPrintOriginal = () => {
+    setPrintOriginal(true)
+  }
 
+  const handDocsprintgrpClose = (newObj) => {
+    const _ticDoc = {}
+    _ticDoc.obj = newObj
+    _ticDoc.docTip = "UPDATE"
+
+    if (printOriginal) {
+      _ticDoc.obj.statusstampa = "1"
+    }
+
+    handleDialogClose(_ticDoc)
+    setTicDocsprintgrpgrpLVisible(false);
+  }
+
+  const handleDialogClose = (newObj) => {
+    const localObj = {};
+    localObj.newObj = newObj;
     let _ticDocs = [...ticDocs];
     let _ticDoc = { ...localObj.newObj.obj };
 
@@ -186,7 +223,9 @@ export default function TicPrivilegeL(props) {
     if (localObj.newObj.docTip === "CREATE") {
       _ticDocs.push(_ticDoc);
     } else if (localObj.newObj.docTip === "UPDATE") {
+      console.log(localObj.newObj.docTip, "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", localObj)
       const index = findIndexById(localObj.newObj.obj.id);
+      console.log(index, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", _ticDoc)
       _ticDocs[index] = _ticDoc;
     } else if ((localObj.newObj.docTip === "DELETE")) {
       _ticDocs = ticDocs.filter((val) => val.id !== localObj.newObj.obj.id);
@@ -282,6 +321,45 @@ export default function TicPrivilegeL(props) {
             height="30"
             className="delivery-icon"
             onClick={handleClick} // Povezivanje funkcije sa klikom
+          />
+        ) : null}
+      </div>
+    );
+  };
+
+
+  const statusstampaBodyTemplate = (rowData) => {
+    let printIcon = 'printer1.png'
+    if (rowData.statusstampa == 0) {
+      printIcon = 'printer0.png'
+    }
+    const setParentTdBackground = (element) => {
+      const parentTd = element?.parentNode;
+      if (parentTd) {
+        // parentTd.style.backgroundColor = "white"; 
+      }
+    };
+
+    const handleClick = async (rowDoc) => {
+      await setTicDoc({ ...rowDoc });
+      setTicDocsprintgrpgrpLVisible(true);
+      // Ovde možeš dodati bilo koju akciju koju želiš pokrenuti
+    };
+
+    return (
+      <div ref={(el) => setParentTdBackground(el)}>
+        {rowData.statustransakcije != 12 ? (
+          <img
+            src={`./images/${printIcon}`}
+            alt="Storno"
+            width="30"
+            height="30"
+            className="delivery-icon"
+            onClick={async () => {
+              const rowDoc = await fetchDoc(rowData)
+              console.log(rowData, "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS", rowDoc)
+              handleClick(rowDoc)
+            }} // Povezivanje funkcije sa klikom
           />
         ) : null}
       </div>
@@ -568,6 +646,29 @@ export default function TicPrivilegeL(props) {
           height: 'auto', width: '5%'
         }
       }
+    },
+    {
+      accessorKey: 'statusstampa', // Ključ za pristup vrednosti u podacima
+      header: translations[selectedLanguage].Print, size: '3%', // Naslov kolone
+      muiTableHeadCellProps: {
+        sx: {
+          wordWrap: 'break-word',
+          wordBreak: 'break-word',
+          whiteSpace: 'normal',
+          textAlign: 'center',
+          height: 'auto', width: '3%'
+        } // Stil zaglavlja
+      },
+      muiTableBodyCellProps: {
+        sx: {
+          wordWrap: 'break-word',
+          wordBreak: 'break-word',
+          whiteSpace: 'normal',
+          textAlign: 'center',
+          height: 'auto', width: '3%'
+        } // Stil sadržaja ćelije
+      },
+      Cell: ({ row }) => statusstampaBodyTemplate(row.original) // Pozivanje funkcije za renderovanje
     },
     {
       accessorKey: 'docstorno', // Ključ za pristup vrednosti u podacima
@@ -1154,6 +1255,38 @@ export default function TicPrivilegeL(props) {
             handleStornoClose={handleStornoClose}
             dialog={true}
             akcija={akcija}
+          />
+        )}
+      </Dialog>
+      <Dialog
+        header={
+          <div className="dialog-header">
+            <Button
+              label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+              onClick={() => {
+                // setRefresh(prev => prev + 1)
+                handDocsprintgrpClose(ticDoc)
+              }}
+              severity="secondary" raised
+            />
+          </div>
+        }
+        visible={ticDocsprintgrpgrpLVisible}
+        style={{ width: '80%' }}
+        onHide={() => {
+          setTicDocsprintgrpgrpLVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {showMyComponent && (
+          <TicDocsprintgrpL
+            parameter={"inputTextValue"}
+            ticDoc={ticDoc}
+            handDocsprintgrpClose={handDocsprintgrpClose}
+            dialog={true}
+            handPrintOriginal={handPrintOriginal}
+            // akcija={akcija}
+            channel={channell}
           />
         )}
       </Dialog>

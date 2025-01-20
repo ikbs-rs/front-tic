@@ -9,6 +9,7 @@ import { TicStampaService } from "../../service/model/TicStampaService";
 import { TicEventattsService } from "../../service/model/TicEventattsService";
 import DateFunction from '../../utilities/DateFunction';
 import PDFHtmlDownloader from '../../components/model/00a'
+import { Buffer } from "buffer";
 
 export const getPrintgrpLPTX = (newObj, ticStampa, tpStampa) => {
   const ticketArr = newObj.map(item => item.id);
@@ -908,7 +909,7 @@ export class TicDocService {
     const headers = {
       Authorization: tokenLocal.token
     };
-    console.log(url, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+    // console.log(url, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
     try {
       const response = await axios.get(url, { headers });
       // poziv servera za stampu fiskala -- response.data.item
@@ -916,10 +917,14 @@ export class TicDocService {
       const invoiceRequest = response.data.item;
       const print = false;
       const email = 'bobanmvasiljevic@gmail.com';
+      const renderReceiptImage = true
+      const receiptImageFormat = 'Png'
 
       const payload = {
         print,
         email,
+        renderReceiptImage,
+        receiptImageFormat,
         invoiceRequest
       };
       const fisUrl = `${env.FISC_BACK_URL}fiskalni-racun-esir`
@@ -934,17 +939,35 @@ export class TicDocService {
           'Content-Type': 'application/json'
         }
       });
+
       console.log(invoiceResponse.data, "02-SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
       const responseText = invoiceResponse.data.journal
       const barcodeBase64 = invoiceResponse.data.verificationQRCode
+
+      const binaryData = Buffer.from(invoiceResponse.data.invoiceImagePngBase64, "base64");
+      // const base64Image = `data:image/png;base64,${binaryData.toString("base64")}`;
+      const emptyTicDocb = {
+        id: null,
+        site: null,
+        doc: ticDoc.id,
+        tp: "FS",
+        bcontent: binaryData,
+        vreme: DateFunction.currDatetime(),
+        event: null,
+        ceventatt: "",
+        vrednost: "",
+        napomena: ""
+      }
+      const ok = this.postTicDocB(emptyTicDocb)
       generateHTMLWithDownload(responseText, barcodeBase64)
       // generatePDF(responseText, barcodeBase64)
       // generateTextWithBarcode(responseText, barcodeBase64)
+      
       const blob = new Blob([responseText], { type: "text/plain" });
-      console.log(blob, "03-SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+      // console.log(blob, "03-SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "output.txt";
+      link.download = `fis${ticDoc.id}.txt`;
       document.body.appendChild(link);
       // link.click();
       // document.body.removeChild(link);
@@ -955,6 +978,9 @@ export class TicDocService {
       throw error;
     }
   }
+  
+  /*********************************************************************************************************************************************************** */
+
   async getPrintgrpLista(newObj, ticStampa, tpStampa) {
 
     const ticket = newObj.map(obj => obj.id);
@@ -1292,5 +1318,50 @@ export class TicDocService {
 
   }
 
+  async postStampKopija(newObj, emptyTicStampa) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_stampakopija_s&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const combinedObj = { "ticDocs": newObj, "ticStampa": emptyTicStampa };
+      const jsonObj = JSON.stringify(combinedObj)
+      // console.log(combinedObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+      const response = await axios.post(url, jsonObj, { headers });
+      return response.data.items||response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
+
+  async postTicDocB(newObj) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+
+      const url = `${env.TIC_BACK_URL}/tic/doc/_s/param/?stm=tic_docb_s&objId1=${newObj.id}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+  
+      const jsonObj = JSON.stringify(newObj)
+      // console.log(jsonObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
+      const response = await axios.post(url, jsonObj, { headers });
+      return true
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
 }
 

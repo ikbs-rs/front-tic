@@ -107,7 +107,7 @@ const TicProdajaW = forwardRef((props, ref) => {
             _eventUslov.szvalue = szDataValue.value
           }   
           setEventUslov(_eventUslov)
-          console.log(data, "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _eventUslov)        
+          console.log(data, "W-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", _eventUslov)        
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -806,6 +806,11 @@ const TicProdajaW = forwardRef((props, ref) => {
     // props.setActiveIndex(prev => prev-1)
     setCmnParVisible(false);
   }
+  
+  const handPrintOriginal= () => {
+
+  }
+
   return (
     <div key={key}>
       <Toast ref={toast} />
@@ -1024,6 +1029,7 @@ DRUGI RED
                     dialog={false}
                     akcija={props.akcija}
                     channel={props.channel}
+                    handPrintOriginal={handPrintOriginal}
                   />
                 </div>
               </div>

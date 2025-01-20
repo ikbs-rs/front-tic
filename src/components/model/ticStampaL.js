@@ -19,7 +19,7 @@ import { TicDocService } from '../../service/model/TicDocService';
 
 
 export default function TicStampaL(props) {
-
+  console.log(props, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
   const objName = "tic_eventlink"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
   const emptyTicStampa = EmptyEntities[objName]
@@ -50,6 +50,7 @@ export default function TicStampaL(props) {
 
         const ticStampaService = new TicStampaService();
         const data = await ticStampaService.getLista(props.ticDoc.id);
+        
         setTicStampas(data);
 
         initFilters();
@@ -259,10 +260,11 @@ export default function TicStampaL(props) {
               {nizObjekata.map((item) => (
                 <tr >
                   <td style={{ width: '30%' }}>{item.nevent}</td>
-                  <td style={{ width: '40%' }}>{item.nart}</td>
-                  <td style={{ width: '30%' }}>{item.row}</td>
-                  <td style={{ width: '40%' }}>{item.potrazuje}</td>
-                  <td style={{ width: '40%' }}>{item.tp}</td>
+                  <td style={{ width: '20%' }}>{item.nart}</td>
+                  <td style={{ width: '5%' }}>{item.row}</td>
+                  <td style={{ width: '20%' }}>{item.potrazuje}</td>
+                  <td style={{ width: '10%' }}>{item.tp}</td>
+                  <td style={{ width: '15%' }}>{item.barcode}</td>
                 </tr>
               ))}
             </table>
@@ -271,6 +273,9 @@ export default function TicStampaL(props) {
         )
       }
     // }
+  }
+  const handPrintOriginal= () => {
+
   }
   return (
     <div className="card">
@@ -307,8 +312,9 @@ export default function TicStampaL(props) {
         removableSort
         filters={filters}
         scrollable
+        sortField="time" sortOrder={-1}
         scrollHeight="550px"
-        virtualScrollerOptions={{ itemSize: 46 }}
+        // virtualScrollerOptions={{ itemSize: 46 }}
         tableStyle={{ minWidth: "50rem" }}
         metaKeySelection={false}
         paginator
@@ -337,14 +343,14 @@ export default function TicStampaL(props) {
           header={translations[selectedLanguage].Tp}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="time"
           header={translations[selectedLanguage].tm}
           sortable
           filter
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
           body={(rowData) => formatDateColumn(rowData, "time")}
         ></Column>
         <Column
@@ -353,7 +359,7 @@ export default function TicStampaL(props) {
           header={translations[selectedLanguage].Ticket}
           sortable
           filter
-          style={{ width: "45%" }}
+          style={{ width: "65%" }}
         ></Column>
 
       </DataTable>
@@ -383,6 +389,7 @@ export default function TicStampaL(props) {
             parameter={"inputTextValue"}
             ticDoc={props.ticDoc}
             handDocsprintgrpClose={handDocsprintgrpClose}
+            handPrintOriginal={handPrintOriginal}
             dialog={true}
             // akcija={akcija}
             channel={channell}

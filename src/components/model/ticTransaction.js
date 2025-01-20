@@ -1362,7 +1362,9 @@ export default function TicDocdeliveryL(props) {
 
   }
   /************************************************************************************** */
+  const handPrintOriginal= () => {
 
+  }
   /************************************************************************************** */
   return (
     <>
@@ -1466,13 +1468,13 @@ export default function TicDocdeliveryL(props) {
           {/**** *********************/}
           <div id="3"
             // className= "col-4"
-            class="sm:col-12 md:col-4 lg:col-4"
+            class="sm:col-12 md:col-5 lg:col-5"
           >
             <TabView
               activeIndex={activeIndex}
               onTabChange={(e) => {
-                console.log(e, "TTTTTTTTTTTT");
                 setActiveIndex(e.index);
+                setRefreshPrint(prev => prev + 1)
               }}
             >
               <TabPanel header="Status">
@@ -1591,12 +1593,13 @@ export default function TicDocdeliveryL(props) {
                       dialog={false}
                       akcija={props.akcija}
                       channel={props.channel}
+                      handPrintOriginal={handPrintOriginal}
                     />
                   </div>
                 </div>
               </TabPanel>
-              <TabPanel header="Fiskal">
-              </TabPanel>
+              {/* <TabPanel header="Fiskal">
+              </TabPanel> */}
             </TabView>
           </div>
         </div>

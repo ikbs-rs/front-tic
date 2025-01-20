@@ -962,6 +962,10 @@ export const translations = {
         Edit: "Едитовање",
         clkarta: "Чланска карта",
         szkarta: "Сезонска карта",
+        ORIGINAL: "Оригинал",
+        KOPIJA: "Копија",
+        DUPLIKAT: "Дупликат",
+        barcode: "Баркод",
     }
   };
   

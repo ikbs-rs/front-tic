@@ -9,14 +9,14 @@ import { translations } from "../../configs/translations";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';
-import { TicDocService,  getPrintgrpLPTX} from "../../service/model/TicDocService";
+import { TicDocService, getPrintgrpLPTX } from "../../service/model/TicDocService";
 import DateFunction from "../../utilities/DateFunction"
 import { EmptyEntities } from '../../service/model/EmptyEntities';
-import PDFHtmlDownloader  from './00a'
+import PDFHtmlDownloader from './00a'
 import env from "../../configs/env"
 
 export default function TicDocsprintgrpL(props) {
-  // console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
+  console.log("***** props *************####### TicDocsprintgrpL ################### props ######", props)
 
   const objName = "tic_stampa"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -42,6 +42,7 @@ export default function TicDocsprintgrpL(props) {
   const [reservationStatus, setReservationStatus] = useState(0);
 
   const [refCode, setRefCode] = useState(props.loctpCode || -1);
+
 
   let i = 0
   useEffect(() => {
@@ -159,9 +160,10 @@ export default function TicDocsprintgrpL(props) {
 
 
     const ticDocService = new TicDocService();
-    if (await ticDocService.getPrinFiskal(ticDoc)) {
-      await ticDocService.getPrintgrpLista(selectedProducts, emptyTicStampa, 'ORIGINAL');
-    }
+    const OK = await ticDocService.getPrinFiskal(ticDoc)
+    // if (await ticDocService.getPrinFiskal(ticDoc)) {
+    //   await ticDocService.getPrintgrpLista(selectedProducts, emptyTicStampa, 'ORIGINAL');
+    // }
 
   };
 
@@ -195,96 +197,92 @@ export default function TicDocsprintgrpL(props) {
 
     setFilters(_filters);
     setGlobalFilterValue(value1);
+
   };
 
+  const handleDFFHtmlClose = async (printId, tp) => {
+    setComponentKey(printId)
+    if (tp == "ORIGINAL") {
+      props.handPrintOriginal()
+    }
+  };
   const renderHeader = () => {
     return (
       <div className="flex card-container">
         <div className="flex flex-wrap gap-1">
-        <PDFHtmlDownloader ticket={selectedProducts} ticDoc={ticDoc} reservationStatus={reservationStatus}/>
-        </div>        
+          <PDFHtmlDownloader
+            ticket={selectedProducts}
+            ticDoc={ticDoc}
+            reservationStatus={reservationStatus}
+            ticStampa={emptyTicStampa}
+            tpStampa='ORIGINAL'
+            tp='1'
+            handleDFFHtmlClose={handleDFFHtmlClose}
+          />
+        </div>
         <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].Fiskal}
             icon="pi pi-book" onClick={handlePrintClick}
             severity="warning"
             // text
-            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
+            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false : true}
 
             raised />
         </div>
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].PrintCopy}
-            icon="pi pi-print" onClick={handlePrintCopyClick}
-            severity="success"
-            // text
-            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
-            raised />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].Print2}
-            icon="pi pi-print" onClick={handlePrint2Click}
-            severity="success"
-            // text
-            disabled={(ticDoc?.statuspayment == 1 || reservationStatus == 1 || ticDoc?.delivery == 1) ? false :  true }
-            raised />
-        </div>
-        {/* <div className="flex-grow-1"></div>
-        <b>{translations[selectedLanguage].StampKarti}</b>
-        <div className="flex-grow-1"></div> */}
-
-        {/* <div className="flex flex-wrap gap-1">
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-              value={globalFilterValue}
-              onChange={onGlobalFilterChange}
-              placeholder={translations[selectedLanguage].KeywordSearch}
-            />
-          </span>
-          <Button
-            type="button"
-            icon="pi pi-filter-slash"
-            label={translations[selectedLanguage].Clear}
-            outlined
-            onClick={clearFilter}
-            text raised
+          <PDFHtmlDownloader
+            ticket={selectedProducts}
+            ticDoc={ticDoc}
+            reservationStatus={reservationStatus}
+            ticStampa={emptyTicStampa}
+            tpStampa='KOPIJA'
+            tp='2'
+            handleDFFHtmlClose={handleDFFHtmlClose}
           />
-        </div> */}
-
+        </div>
+        <PDFHtmlDownloader
+          ticket={selectedProducts}
+          ticDoc={ticDoc}
+          reservationStatus={reservationStatus}
+          ticStampa={emptyTicStampa}
+          tpStampa='DUPLIKAT'
+          tp='3'
+          handleDFFHtmlClose={handleDFFHtmlClose}
+        />
       </div>
     );
   };
   const PDFHtmlDownloader1 = ({ ticket }) => {
-    console.log("00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log("00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const iframeRef = useRef(null);
-  
+
     async function downloadAsPDFHtml(newObj) {
-      console.log(newObj, "00.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(newObj, "00.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       const ticket = newObj.map(obj => obj.id);
-      console.log(ticket, "00.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(ticket, "00.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       localStorage.setItem('docsIds', JSON.stringify(ticket));
       // localStorage.setItem('docsIds', JSON.stringify(['17350759440792892731', '17350759455923010679']));
-      console.log(JSON.stringify(ticket), "00.3-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-  
+      // console.log(JSON.stringify(ticket), "00.3-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
       // URL za preuzimanje
       const urlWithToken = `${env.DOMEN}/sal/print-tickets`;
-  
+
       iframeRef.current.src = urlWithToken;
       let i = 0
-      console.log(urlWithToken, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      // console.log(urlWithToken, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
       // Provera učitavanja sadržaja
       const checkContentLoaded = () => {
-        console.log( "01.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        // console.log("01.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         const iframeDocument = iframeRef.current.contentDocument;
-        console.log( "01.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", iframeDocument)
+        // console.log("01.2-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", iframeDocument)
         const ticketList = iframeDocument.querySelector('.ticket-list');
-        console.log( "02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
-  
+        // console.log("02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+
         if (ticketList && !ticketList.innerHTML.trim().includes('Loading...')) {
-          
+
           // Kada je sadržaj učitan, otvori u novom prozoru
           const htmlContent = iframeDocument.documentElement.outerHTML;
-          console.log(htmlContent, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+          // console.log(htmlContent, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
           const newWindow = window.open('', '_blank'); // Otvori novi prozor
           newWindow.document.write(htmlContent); // Upiši sadržaj u novi prozor
           // newWindow.document.close(); // Zatvori strim i prikaži sadržaj
@@ -295,13 +293,13 @@ export default function TicDocsprintgrpL(props) {
           if (i > 50) return
         }
       };
-  
+
       // Pokretanje provere kada se iframe učita
       iframeRef.current.onload = async () => {
         await setTimeout(checkContentLoaded, 100); // Pokreni proveru nakon kratkog kašnjenja
       };
     }
-    console.log("04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    // console.log("04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     return (
       <div>
         <button onClick={() => downloadAsPDFHtml(ticket)}>Preuzmi PDF!! HTML</button>
@@ -309,77 +307,25 @@ export default function TicDocsprintgrpL(props) {
       </div>
     );
   };
-  
+
 
   const header = renderHeader();
   return (
-    <div className="">
+    <div key={componentKey} className="">
       <Toast ref={toast} />
       <div className="col-12">
-        {/* <div className="">
-          <div className="p-fluid formgrid grid">
-            <div className="field col-12 md:col-3">
-              <label htmlFor="id">{translations[selectedLanguage].Id}</label>
-              <InputText id="id"
-                value={props.ticDoc.id}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-3">
-              <label htmlFor="broj">{translations[selectedLanguage].Broj}</label>
-              <InputText
-                id="broj"
-                value={ticDoc.broj}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-3">
-              <label htmlFor="kanal">{translations[selectedLanguage].Kanal}</label>
-              <InputText
-                id="kanal"
-                value={props.channel?.text}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-2">
-              <label htmlFor="date">{translations[selectedLanguage].Datum}</label>
-              <InputText
-                id="date"
-                value={props.ticDoc.date ? DateFunction.formatDate(props.ticDoc.date) : ''}
-                
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-4">
-              <label htmlFor="cpar">{translations[selectedLanguage].cpar}</label>
-              <InputText
-                id="cpar"
-                value={props.ticDoc.cpar}
-                disabled={true}
-              />
-            </div>
-            <div className="field col-12 md:col-4">
-              <label htmlFor="npar">{translations[selectedLanguage].npar}</label>
-              <InputText
-                id="npar"
-                value={props.ticDoc.npar}
-                disabled={true}
-              />
-            </div>
-          </div>
-        </div> */}
       </div>
       <DataTable
-        key={componentKey}
+        // key={componentKey}
         value={ticDocss}
         selectionMode={rowClick ? null : "checkbox"}
         selection={selectedProducts}
         onSelectionChange={(e) => setSelectedProducts(e.value)}
         dataKey="id"
         // tableStyle={{ minWidth: "50rem" }}
-        sortField="code" sortOrder={1}
         header={header}
         scrollable
+        sortField="code" sortOrder={1}
         scrollHeight="650px"
         showGridlines
         removableSort
@@ -399,44 +345,26 @@ export default function TicDocsprintgrpL(props) {
         <Column
           field="row"
           header={translations[selectedLanguage].red}
-          style={{ width: "15%" }}
+          style={{ width: "10%" }}
           sortable
         ></Column>
         <Column
           field="seat"
-          style={{ width: "15%" }}
+          style={{ width: "10%" }}
           sortable
         ></Column>
         <Column
           field="nart"
           header={translations[selectedLanguage].nart}
           sortable
-          style={{ width: "35%" }}
-        ></Column>
-        {/* <Column
-          field="price"
-          header={translations[selectedLanguage].price}
-          sortable
-          style={{ width: "7%" }}
+          style={{ width: "30%" }}
         ></Column>
         <Column
-          field="output"
-          header={translations[selectedLanguage].outputL}
+          field="barcode"
+          header={translations[selectedLanguage].barcode}
           sortable
-          style={{ width: "5%" }}
+          style={{ width: "15%" }}
         ></Column>
-        <Column
-          field="discount"
-          header={translations[selectedLanguage].discount}
-          sortable
-          style={{ width: "5%" }}
-        ></Column>
-        <Column
-          field="potrazuje"
-          header={translations[selectedLanguage].potrazuje}
-          sortable
-          style={{ width: "8%" }}
-        ></Column> */}
       </DataTable>
       {selectedRowsData.length > 0 && (
         <div className="">

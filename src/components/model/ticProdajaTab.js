@@ -1315,6 +1315,9 @@ export default function TicProdajaTab(props) {
         // console.log(cmnPar, "1HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         setCmnPar(cmnPar)
     }
+    const handPrintOriginal= () => {
+
+    }
     return (
         <div>
             <Toast ref={toast} />
@@ -1439,6 +1442,7 @@ export default function TicProdajaTab(props) {
                         dialog={false}
                         akcija={akcija}
                         channel={channel}
+                        handPrintOriginal={handPrintOriginal}
                     />
                 )}
             </Dialog>
