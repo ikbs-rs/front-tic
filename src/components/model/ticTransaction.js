@@ -32,6 +32,7 @@ import TicDocDiscountL from './ticDocdiscountL'
 import TicProdajaPlacanje from "./ticProdajaPlacanje";
 import { TabView, TabPanel } from 'primereact/tabview';
 import TicDocsprintgrpL from './ticDocsprintgrpL'
+import ConfirmDialog from '../dialog/ConfirmDialog';
 
 
 export default function TicDocdeliveryL(props) {
@@ -136,6 +137,7 @@ export default function TicDocdeliveryL(props) {
   const [zbirzbirniiznos, setZbirniiznos] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   /********************************************************************************/
+  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
 
   const handleNext = () => {
     console.log(activeIndex, "04-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
@@ -680,25 +682,19 @@ export default function TicDocdeliveryL(props) {
         status: admUser?.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser?.firstname} ${admUser?.lastname}` : ''
       },
       {
-        event: "Fiscal receipt", button: (
+        event: "Fiscal receipt", 
+        button: (
           <Button
-            label={translations[selectedLanguage].Fiscal}
-            icon="pi pi-dollar"
+            label={translations[selectedLanguage].SendFiscalReceipt}
+            icon="pi pi-send"
             className="p-button-warning"
-            onClick={handleDocdeliveryClick}
+            onClick={handleActivationClick}
             severity="success"
             raised
           />
         ),
         status: (
-          <Button
-            label={translations[selectedLanguage].SendFiscalReceipt}
-            icon="pi pi-send"
-            className="p-button-warning"
-            onClick={handleDocdeliveryClick}
-            severity="success"
-            raised
-          />
+          null
         )
       }
     ];
@@ -846,6 +842,35 @@ export default function TicDocdeliveryL(props) {
       setTicDocdeliverys(_ticDocdeliverys);
       setTicDocdelivery(emptyTicDocdelivery);
       setRefreshDelivery(prev => prev + 1)
+    }
+  };
+  
+
+  const handleActivationClick = () => {
+    
+      setConfirmDialogVisible(true);
+
+  };
+  const handleSendFiscalReceiptClick = async (e) => {
+
+    try {
+      setConfirmDialogVisible(false);
+      const sendFiscal = await sendFiscalReceipt()
+      console.log("Pošta uspešno prosledjena.");
+      toast.current.show({
+        severity: "success",
+        summary: "Successful",
+        detail: "Pošta uspešno prosledjena.",
+        life: 3000,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to fetch cmnPar data",
+        life: 3000,
+      });
     }
   };
 
@@ -1014,6 +1039,17 @@ export default function TicDocdeliveryL(props) {
     setCmnParVisible(false)
   };
 
+  async function sendFiscalReceipt() {
+    try {
+      const ticDocService = new TicDocService();
+      const ok = await ticDocService.sendFiscalReceipt( props.ticDoc);
+      return ok;
+    } catch (error) {
+      console.error(error);
+      // Obrada greške ako je potrebna
+    }
+  }
+
   async function fetchDocdelivery() {
     try {
       const ticDocService = new TicDocService();
@@ -1034,6 +1070,7 @@ export default function TicDocdeliveryL(props) {
       // Obrada greške ako je potrebna
     }
   }
+
   const handleTicDocdeliveryDialogClose = (newObj) => {
     setTicDocdelivery(newObj);
     setTicDocdeliveryVisible(false)
@@ -1913,6 +1950,12 @@ export default function TicDocdeliveryL(props) {
           />
         )}
       </Dialog>
+      <ConfirmDialog
+        visible={confirmDialogVisible}
+        onHide={() => setConfirmDialogVisible(false)}
+        onConfirm={() => handleSendFiscalReceiptClick(ticDoc)}
+        uPoruka={`Слање фискалног рачуна, да ли сте сигурни?`}
+      />
 
     </>
 

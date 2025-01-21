@@ -1362,6 +1362,29 @@ export class TicDocService {
       throw error;
     }
 
-  }  
+  } 
+  
+  async sendFiscalReceipt(ticDoc) {
+    try {
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+
+      const url = `${env.TIC_BACK_URL}/tic/email/fiskal/?objId1=${ticDoc.id}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+  
+      const jsonObj = JSON.stringify(ticDoc)
+      console.log(jsonObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", url)
+
+      const response = await axios.post(url, jsonObj, { headers });
+      return true
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }   
 }
 
