@@ -966,6 +966,8 @@ export const translations = {
         KOPIJA: "Копија",
         DUPLIKAT: "Дупликат",
         barcode: "Баркод",
+        brojcl: "Чланска карта",
+        brojsz: "Сезонска карта",
     }
   };
   

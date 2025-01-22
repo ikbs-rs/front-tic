@@ -87,6 +87,9 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     const [delivryStatus, setDeliveryStatus] = useState(1);
 
     const [activeIndex, setActiveIndex] = useState(null);
+    const [eventUslov, setEventUslov] = useState({});
+    const [checkedCL, setCheckedCL] = useState(false);
+    const [checkedSZ, setCheckedSZ] = useState(false);
 
     let brojReda = 0
 
@@ -95,7 +98,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         openDeliveryTab,
     }));
     const openDeliveryTab = () => {
-        setActiveIndex(0); 
+        setActiveIndex(0);
     };
     useEffect(() => {
         async function fetchData() {
@@ -119,6 +122,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     useEffect(() => {
         async function fetchData() {
             try {
+                const cmnParService = new CmnParService();
+                const dataPar = await cmnParService.getCmnParP(ticDoc.usr);
+                // let _cmnPar = {...cmnPar}
+                let _cmnPar = {...dataPar[0]};
                 const ticDocsuidService = new TicDocsuidService();
                 const data = await ticDocsuidService.getProdajaListaP(props.ticDoc.id);
                 // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
@@ -146,16 +153,91 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     const eventatt1 = eventatt.filter(e => e.code === "11.01.");
                     const eventatt2 = eventatt.filter(e => e.code === "11.02.");
                     const eventatt3 = eventatt.filter(e => e.code === "11.03.");
+                    /***************************************************************************************************************** */
+                    /*************************************************************************** */
+                    const _eventUslov = {
+                        "cl": 0,
+                        "sz": 0,
+                    }
+                    const ticEventatts0Service = new TicEventattsService();
+                    const dataE = await ticEventatts0Service.getCLSZGR(item.event);
+
+                    const clData = dataE.find(item => item.code == '10.01.');
+                    const szData = dataE.find(item => item.code == '10.02.');
+
+                    if (clData) {
+                        _eventUslov.cl = 1
+                    }
+                    if (szData) {
+                        _eventUslov.sz = 1
+                    }
+                    setEventUslov(_eventUslov)
+
+                    /*************************************************************************** */
+                    const _eventUslovValue = {
+                        "cl": false,
+                        "clvalue": "",
+                        "sz": false,
+                        "szvalue": ""
+                    }
+                    const ticEventattsServiceA = new TicEventattsService();
+                    const _dataCL = await ticEventattsServiceA.getDocsCLSZ(item.event);
+                    const dataCL = _dataCL || []
+                    
+
+                    if (_eventUslov.cl == 1) {
+                        // Filtriranje za code == '00.00.'
+                        const filteredData00 = dataCL.filter(item => item.code === '00.00.');
+                        
+                        // if (dataCL.code === '00.00.') {
+                            // Provera za email ili uid u filteredData00
+                            const match00 = filteredData00.find(item =>
+                                item.email === _cmnPar.email || item.uid === _cmnPar.uid
+                            );
+
+                            // console.log(match00, "qqqWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _cmnPar)
+                            if (match00) {
+                                console.log(match00, "aaaaWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", item)
+                                _eventUslovValue.cl = true
+                                _eventUslovValue.clvalue = match00.barcodevalue||'BK'
+                                item.brojcl = item.brojcl||_eventUslovValue.clvalue
+                            }
+                        // }
+                    } else {
+                        _eventUslovValue.cl = true
+                    }
+
+                    if (_eventUslov.sz == 1) {
+                        // Filtriranje za code == '00.01.'
+                        const filteredData01 = dataCL.filter(item => item.code === '00.01.');
+
+                        // Provera za email ili uid u filteredData01
+                        const match01 = filteredData01.find(item =>
+                            item.email === _cmnPar.email || item.uid === _cmnPar.uid
+                        );
+                        if (match01) {
+                            _eventUslovValue.sz = true
+                            _eventUslovValue.szvalue = match01.barcodevalue||'BK'
+                            item.brojsz = item.brojsz||_eventUslovValue.szvalue
+                        }
+                    } else {
+                        _eventUslovValue.sz = true
+                    }
+
+                    /*************************************************************************** */
+                    /***************************************************************************************************************** */
 
                     return {
                         ...item,
                         show: 'no',
                         eventatt1: eventatt1,  // dodaj podniz eventatt1
                         eventatt2: eventatt2,  // dodaj podniz eventatt2
-                        eventatt3: eventatt3   // dodaj podniz eventatt3
+                        eventatt3: eventatt3,  // dodaj podniz eventatt3
+                        eventUslov: _eventUslov,
+                        eventUslovValue: _eventUslovValue
                     };
                 }));
-                // console.log(updatedData, "#01HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+                // console.log(updatedData, "#01HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHaa")
                 setTicDocsuids(updatedData)
                 set_ticDocsuids(updatedData)
                 await assignColorsToEvents(updatedData);
@@ -173,12 +255,14 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     [item.id]: item.tickettp
                 }), {})
 
+
+
             } catch (error) {
                 console.error(error);
             }
         }
         fetchData();
-    }, [props.ticDoc.id, refresh]);
+    }, [props.ticDoc.id, ticDoc.usr, refresh]);
 
     useEffect(() => {
         async function fetchData() {
@@ -262,8 +346,8 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         return true
     }
 
-    const handelSubbmitted =  () => {
-        console.log(ticDocsuids, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
+    const handelSubbmitted = () => {
+        // console.log(ticDocsuids, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
 
         // Prođi kroz svaki ID i njegove atribute iz requiredFields
         for (const field of requiredFields) {
@@ -290,7 +374,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
         }
         const ticDocsuidService = new TicDocsuidService();
-        for (const row  of ticDocsuids) {
+        for (const row of ticDocsuids) {
             ticDocsuidService.putTicDocsuid(row);
         }
 
@@ -302,7 +386,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
     useEffect(() => {
         const fieldsToUpdate = ticDocsuids.map(item => {
-            // console.log(item, "000HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item.kupac)
+            console.log(item, "000HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item.kupac)
             const attributes = [];
             if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "first") : item.eventatt2.some(att => att.nvalue === "first"))) {
                 attributes.push("first");
@@ -333,6 +417,12 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
             if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) {
                 attributes.push("email");
+            }
+            if (item.eventUslov.cl==1) {
+                attributes.push("brojcl");
+            }
+            if (item.eventUslov.sz==1) {
+                attributes.push("brojsz");
             }
             return { id: item.id, attributes };
         });
@@ -632,7 +722,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         try {
             const updatedKupacValue = item.kupac === 1 ? 0 : 1;
             const updatedItem = { ...item, kupac: updatedKupacValue };
-            const _cmnPar = {...cmnPar}
+            const _cmnPar = { ...cmnPar }
             // console.log(updatedItem, "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUkupacUUUUUUUUUUUUUUUUUUUUUUUUU")
             // Ažuriranje na serveru
             if (_cmnPar.tp == 2) {
@@ -852,7 +942,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         <>
             <div className="card  scrollable-content" >
                 <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                    <AccordionTab header={translations[selectedLanguage].delivery} disabled={delivryStatus==0}>
+                    <AccordionTab header={translations[selectedLanguage].delivery} disabled={delivryStatus == 0}>
 
                         <div className="grid" style={{ paddingTop: 0, width: "100%" }}>
                             <div className="field col-12 md:col-12" style={{ paddingTop: 0, paddingBottom: 5 }}>
@@ -1089,6 +1179,22 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             </span>
                                         </div>
                                     ) : null}
+                                    {(item.eventUslov.cl == 1 ) ? (
+                                        <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                            <span className="p-float-label">
+                                                <InputText
+                                                    id={`brojcl-${item.id}`}
+                                                    value={item.brojcl}
+                                                    onChange={(e) => onInputChangeL(e, 'brojcl', item.docsid, item)}
+                                                    style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.brojcl })}
+                                                />
+                                                {submitted && !item.brojcl && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                                                <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].brojcl}</label>
+                                            </span>
+                                        </div>
+                                    ) : null}                                    
                                 </div>
                             </div>
                             <div

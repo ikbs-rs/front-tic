@@ -468,7 +468,11 @@ const EmptyEntities =
     "email": "",
     "par": null,
     "birthday": "",
-    "kupac": null
+    "kupac": null,
+    "brojcl": "",
+    "linkcl": "",
+    "brojsz": "",
+    "linksz": ""
   },
   "tic_docvr": {
     "id": null,
