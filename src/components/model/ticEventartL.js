@@ -461,8 +461,8 @@ console.log(props, "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
           style={{ width: "10%" }}
         ></Column>
         <Column
-          field="discount"
-          header={translations[selectedLanguage].Discount}
+          field="maxkol"
+          header={translations[selectedLanguage].maxkol}
           sortable
           filter
           style={{ width: "20%" }}

@@ -1194,7 +1194,23 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                 <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].brojcl}</label>
                                             </span>
                                         </div>
-                                    ) : null}                                    
+                                    ) : null}    
+                                    {(item.eventUslov.sz == 1 ) ? (
+                                        <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                            <span className="p-float-label">
+                                                <InputText
+                                                    id={`brojsz-${item.id}`}
+                                                    value={item.brojsz}
+                                                    onChange={(e) => onInputChangeL(e, 'brojsz', item.docsid, item)}
+                                                    style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.brojsz })}
+                                                />
+                                                {submitted && !item.brojsz && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
+                                                <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].brojsz}</label>
+                                            </span>
+                                        </div>
+                                    ) : null}                                                                     
                                 </div>
                             </div>
                             <div

@@ -120,7 +120,7 @@ const TicDocsdiscountL = (props) => {
         let val = (e.target && e.target.value) || '';
         let _ticDocsdiscount = emptyTicDocsdiscount
         setTicDocsdiscounts([...ticDocsdiscounts]);
-        console.log(rowData, `**********`, val, `# 00 ## 00 ################################################################################`, _ticDocsdiscount)
+        // console.log(rowData, `**********`, val, `# 00 ## 00 ################################################################################`, _ticDocsdiscount)
         if (name == 'eksternibroj') {
             rowData.eksternibroj = val;
         } else if (name == 'procenat') {

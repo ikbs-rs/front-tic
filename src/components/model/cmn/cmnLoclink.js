@@ -54,7 +54,7 @@ const CmnLoclink = (props) => {
                 const loctpID = props.cmnLoclink.loctp1 == null ? props.cmnLoctpId : props.cmnLoclink.loctp1
                 setCmnLoctp1Items(data);
                 const _cmnLoctp1 = data.find((item) => item.id === loctpID) || null
-                console.log(_cmnLoctp1,"####################################################################################", data)
+                // console.log(_cmnLoctp1,"####################################################################################", data)
                 setCmnLoctp1Item(_cmnLoctp1);
 
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));

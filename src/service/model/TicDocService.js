@@ -916,7 +916,7 @@ export class TicDocService {
 
       const invoiceRequest = response.data.item;
       const print = false;
-      const email = 'bobanmvasiljevic@gmail.com';
+      const email = 'bobanmvasiljevic@gmail.com'
       const renderReceiptImage = true
       const receiptImageFormat = 'Png'
 
@@ -945,6 +945,7 @@ export class TicDocService {
       const barcodeBase64 = invoiceResponse.data.verificationQRCode
 
       const binaryData = Buffer.from(invoiceResponse.data.invoiceImagePngBase64, "base64");
+      const base64Image = `data:image/png;base64,${invoiceResponse.data.invoiceImagePngBase64}`;
       // const base64Image = `data:image/png;base64,${binaryData.toString("base64")}`;
       const emptyTicDocb = {
         id: null,
@@ -955,7 +956,7 @@ export class TicDocService {
         vreme: DateFunction.currDatetime(),
         event: null,
         ceventatt: "",
-        vrednost: "",
+        vrednost: base64Image,
         napomena: ""
       }
       const ok = this.postTicDocB(emptyTicDocb)
@@ -1124,7 +1125,7 @@ export class TicDocService {
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none'; // Skrivamo iframe
     iframe.src = urlWithToken;
-    console.log(urlWithToken, "########################################################################################################")
+    // console.log(urlWithToken, "########################################################################################################")
     fetchAndPrintPdf2(urlWithToken)
 
     const ticStampaService = new TicStampaService();
@@ -1353,7 +1354,7 @@ export class TicDocService {
       };
   
       const jsonObj = JSON.stringify(newObj)
-      // console.log(jsonObj, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+      console.log(newObj.vrednost, "s103-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
 
       const response = await axios.post(url, jsonObj, { headers });
       return true

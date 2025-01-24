@@ -19,7 +19,7 @@ function TicProdajaEventVL(props) {
             setLoading(true);
             try {
                 const ticEventService = new TicEventService();
-                const data = await ticEventService.getEventPregledVLista(props.ticEvent.id);
+                const data = await ticEventService.getEventPregledVLista(props.ticEvent);
                 // if (data) {
                     data.sort((a, b) => {
                         if (a.nevent === b.nevent) {

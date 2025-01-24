@@ -54,7 +54,7 @@ console.log(props, "------------------------------------------------------------
         if (i < 2) {
           const ticEventartcenaService = new TicEventartcenaService();
           const data = await ticEventartcenaService.getLista(props.ticEventart.id);
-          console.log(data, "############################################")
+          // console.log(data, "############################################")
           setTicEventartcenas(data);
 
           initFilters();
@@ -187,11 +187,11 @@ console.log(props, "------------------------------------------------------------
         <div className="flex flex-wrap gap-1" />
         <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised
         />
-        <div className="flex flex-wrap gap-1">
+        {/* <div className="flex flex-wrap gap-1">
           <Button label={translations[selectedLanguage].New} icon="pi pi-plus" severity="success" onClick={openNew} text raised disabled={!ticEventartcena}/>
-        </div>
+        </div> */}
         <div className="flex flex-wrap gap-1">
-          <Button label={translations[selectedLanguage].CenaT} icon="pi pi-clock" severity="success"  onClick={openNewT} text raised disabled={!ticEventartcena}/>
+          <Button label={translations[selectedLanguage].New} icon="pi pi-clock" severity="success"  onClick={openNewT} text raised disabled={!ticEventartcena}/> {/* Cenat*/}
         </div>   
         <div className="flex flex-wrap gap-1" >
           <Button label={translations[selectedLanguage].LinkArtGrp} icon="pi pi-paperclip" onClick={handleEventartlinkLClick} severity="warning" raised disabled={!ticEventartcena} />

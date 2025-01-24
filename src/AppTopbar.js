@@ -14,7 +14,7 @@ const AppTopbar = (props) => {
     const selectedLanguage = localStorage.getItem('sl') || 'sr_cyr'
     const userId = localStorage.getItem('userId') || -1
     const link = `/tic/?sl=${selectedLanguage}#/`
-    console.log(link, "#######################################")
+    // console.log(link, "#######################################")
     const [user, setUser] = useState({});
     const [slika, setSlika] = useState('');
 

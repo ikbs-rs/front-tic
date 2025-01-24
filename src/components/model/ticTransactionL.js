@@ -590,7 +590,7 @@ export default function TicTransactionL(props) {
         const setParentTdBackground = (element, paid) => {
             const parentTd = element?.parentNode;
             if (parentTd) {
-                console.log(paid, "######################################################################")
+                // console.log(paid, "######################################################################")
                 if (paid == false) {
                     parentTd.style.backgroundColor = "red";
                 } else {

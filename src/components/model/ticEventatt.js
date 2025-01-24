@@ -121,7 +121,7 @@ const TicEventatt = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                if (linktpItem.code != '0') {
+                if (linktpItem?.code != '0') {
                     console.log(linktpItem.code, "############################linktpItem###############################")
                     let data
                     if (linktpItem.code == '1') {
@@ -137,7 +137,7 @@ const TicEventatt = (props) => {
                     setDdCmnLinks(data);
                     const dataDD = data.map(({ text, id }) => ({ name: text, code: id }));
                     setDdCmnLinkItems(dataDD);
-                    setDdCmnLinkItem(dataDD.find((item) => item.code === props.ticEventatt.link) || null);
+                    setDdCmnLinkItem(dataDD.find((item) => item?.code === props.ticEventatt.link) || null);
                     // if (props.ticEventatt.att) {
                     //     const foundItem = data.find((item) => item.id === props.ticEventatt.inputtp);
                     //     setCmnInputtpItem(foundItem || null);

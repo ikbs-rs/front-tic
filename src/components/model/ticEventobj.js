@@ -117,8 +117,9 @@ const TicEventobj = (props) => {
             ticEventobj.endda = DateFunction.formatDateToDBFormat(DateFunction.dateGetValue(endda));
             ticEventobj.begtm = DateFunction.convertTimeToDBFormat(ticEventobj.begtm)
             ticEventobj.endtm = DateFunction.convertTimeToDBFormat(ticEventobj.endtm)
+            const newTicEventobj = { ...ticEventobj, id: null };
             const ticEventobjService = new TicEventobjService();
-            const data = await ticEventobjService.postTicEventobj(ticEventobj);
+            const data = await ticEventobjService.postTicEventobj(newTicEventobj);
             ticEventobj.id = data
             props.handleDialogClose({ obj: ticEventobj, eventobjTip: props.eventobjTip });
             props.setVisible(false);

@@ -41,6 +41,7 @@ import Event from './components/model/ticEventL';
 import EventProdaja from './components/model/ticEventProdajaL';
 import Transaction from './components/model/ticTransactionL';
 import TransactionF from './components/model/ticTransactionFL';
+import TransactionFD from './components/model/ticTransaction';
 import Delivery from './components/model/ticDocdeliveryL';
 import EmptyPage from './pages/EmptyPage';
 import ObjW from './components/model/ticCmnW';
@@ -564,6 +565,7 @@ const App = () => {
                         <Route path="/docvr" element={<DocVr />} />
                         <Route path="/transaction" element={<Transaction />} />
                         <Route path="/transactionf" element={<TransactionF />} />
+                        <Route path="/transactionfd" element={<TransactionFD />} />
                         <Route path="/delivery" element={<Delivery />} />
 
                         <Route path="/salW" element={<ProdajaTab />} />

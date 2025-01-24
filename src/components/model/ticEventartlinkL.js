@@ -45,7 +45,7 @@ console.log(props, "------------------------------------------------------------
         if (i < 2) {
           const ticEventartlinkService = new TicEventartlinkService();
           const data = await ticEventartlinkService.getLista(props.ticEventart.id);
-          console.log(data, "############################################")
+          // console.log(data, "############################################")
           setTicEventartlinks(data);
 
           initFilters();

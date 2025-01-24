@@ -297,7 +297,7 @@ export default function TicEventL(props) {
 
     const getChannell = async (rowData) => {
         try {
-            console.log(rowData, "######################################################################################", userId)
+            // console.log(rowData, "######################################################################################", userId)
             const ticEventService = new TicEventService();
             const data = await ticEventService.getTicEventchpermissL(rowData.id, userId);
             // console.log(data, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", userId)

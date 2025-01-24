@@ -554,9 +554,9 @@ export class TicEventService {
     }
   }
 
-  async getEventPregledVLista(objId) {
+  async getEventPregledVLista(ticEvent) {
     const selectedLanguage = localStorage.getItem('sl') || 'en'
-    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventpregledv_v&objid=${objId}&sl=${selectedLanguage}`;
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventpregledv_v&objid=${ticEvent.id}&sl=${selectedLanguage}`;
     const tokenLocal = await Token.getTokensLS();
     const headers = {
       Authorization: tokenLocal.token

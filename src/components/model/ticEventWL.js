@@ -50,7 +50,7 @@ export default function TicEventWL(props) {
   };
 
   useEffect(() => {
-    console.log("##########################################useEffect activated with ticEvent:", props.ticEvent);
+    // console.log("##########################################useEffect activated with ticEvent:", props.ticEvent);
     async function fetchData() {
       try {
         const cmnLocService = new CmnLocService();
