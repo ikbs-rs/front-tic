@@ -46,6 +46,8 @@ import Delivery from './components/model/ticDocdeliveryL';
 import EmptyPage from './pages/EmptyPage';
 import ObjW from './components/model/ticCmnW';
 
+import Osnovni1Izv from './components/model/ticOsnovni1Izv';
+
 import PrimeReact from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
 
@@ -187,16 +189,19 @@ const App = () => {
                     label: translations[selectedLanguage].Reports,
                     icon: 'pi pi-file-pdf',
                     items: [
-                        { label: translations[selectedLanguage].Test, icon: 'pi pi-database', to: '/atest' }
+                        { label: translations[selectedLanguage].Osnovni1, icon: 'pi pi-database', to: '/osnovni1' },
+                        { label: translations[selectedLanguage].Osnovni2, icon: 'pi pi-database', to: '/osnovni1' },
+                        { label: translations[selectedLanguage].OsnovniZavrsni1, icon: 'pi pi-database', to: '/osnovni1' },
+                        { label: translations[selectedLanguage].OsnovniZavrsni2, icon: 'pi pi-database', to: '/osnovni1' },
                     ]
                 },
-                {
-                    label: translations[selectedLanguage].View,
-                    icon: 'pi pi-chart-bar',
-                    items: [
-                        { label: translations[selectedLanguage].Report, icon: 'pi pi-chart-bar', to: '/izv2' }
-                    ]
-                }
+                // {
+                //     label: translations[selectedLanguage].View,
+                //     icon: 'pi pi-chart-bar',
+                //     items: [
+                //         { label: translations[selectedLanguage].Report, icon: 'pi pi-chart-bar', to: '/izv2' }
+                //     ]
+                // }
             ]
         },        
         {
@@ -576,6 +581,8 @@ const App = () => {
                         <Route path="/atest" element={<Atest />} />
                         <Route path="/sal" element={<Sal />} />
                         <Route path="/prodajatab" element={<ProdajaTab />} />
+
+                        <Route path="/osnovni1" element={<Osnovni1Izv />} />
                     </Routes>
                 </div>
 

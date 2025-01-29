@@ -968,6 +968,10 @@ export const translations = {
         barcode: "Баркод",
         brojcl: "Чланска карта",
         brojsz: "Сезонска карта",
+        Osnovni1: "Основни агента",
+        Osnovni2: "Основни по догађају",
+        OsnovniZavrsni1: "Основни - Завршни 1",
+        OsnovniZavrsni1: "Основни - Завршни 2",
     }
   };
   

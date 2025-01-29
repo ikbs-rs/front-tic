@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { translations } from "../../configs/translations";
 import { TicStampaService } from "../../service/model/TicStampaService";
 import { TicDocService } from "../../service/model/TicDocService";
-import { TicDocsService } from "../../service/model/TicDocsService";
+import { TicDocpaymentService } from "../../service/model/TicDocpaymentService";
 import DateFunction from "../../utilities/DateFunction"
 import ConfirmDialog from '../dialog/ConfirmDialog';
 
@@ -17,11 +17,22 @@ const PDFHtmlDownloader = (props) => {
   const [countPrint, setCountPrint] = useState(0);
   const [brojStampe, setBrojStampe] = useState(0);
   const [notDisabledButton, setNotDisabledButton] = useState(false);
+  const [disabledTpButton, setDisabledTpButton] = useState(false);
+
 
   useEffect(() => {
     async function fetchData() {
       try {
+        if (props.ticDoc?.paymenttp && 
+          (props.ticDoc.paymenttp == "1865524634976653312"
+          || props.ticDoc.paymenttp == "6"
+          || props.ticDoc.paymenttp == "5"
+          || props.ticDoc.paymenttp == "4")
+        ) {
+          setDisabledTpButton(true)
+        }
         const ticDocService = new TicDocService();
+        console.log(props.ticDoc, "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
         const data = await ticDocService.getDocCountPrint(props.ticDoc?.id || -1);
         setCountPrint(data.broj);
         if (props.tpStampa == 'ORIGINAL') {
@@ -45,6 +56,8 @@ const PDFHtmlDownloader = (props) => {
     fetchData();
   }, [props.ticDoc, brojStampe]);
 
+
+
   async function downloadAsPDFHtml(newObj) {
     console.log(newObj, "1.1-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
     const emptyTicStampa = { ...ticStampa }
@@ -63,7 +76,7 @@ const PDFHtmlDownloader = (props) => {
       user: userObj.username,
       tp: props.tpStampa,
       tm: emptyTicStampa.tmupdate,
-      barcode: item.barcode||'QQQ'
+      barcode: item.barcode || 'QQQ'
     }));
     emptyTicStampa.ticket = JSON.stringify(stampaTicket);
     emptyTicStampa.usr = userObj.id
@@ -121,7 +134,7 @@ const PDFHtmlDownloader = (props) => {
   }
 
   const handleActivationClick = () => {
-    
+
     if (props.tpStampa == "ORIGINAL") {
       // setConfirmDialogVisible(true);
       downloadAsPDFHtml(props.ticket)
@@ -138,7 +151,7 @@ const PDFHtmlDownloader = (props) => {
           icon="pi pi-print" onClick={handleActivationClick}
           // severity="warning"
           // text
-          disabled={((props.ticDoc?.statuspayment == 1 || props.reservationStatus == 1 || props.ticDoc?.delivery == 1) && notDisabledButton) ? false : true}
+          disabled={((props.ticDoc?.statuspayment == 1 || (props.reservationStatus == 1 && disabledTpButton) || props.ticDoc?.delivery == 1) && notDisabledButton) ? false : true}
           raised />
         <iframe ref={iframeRef} style={{ display: 'none' }} ></iframe>
       </div>
