@@ -972,6 +972,11 @@ export const translations = {
         Osnovni2: "Основни по догађају",
         OsnovniZavrsni1: "Основни - Завршни 1",
         OsnovniZavrsni1: "Основни - Завршни 2",
+        brtrans: "Број трансакција",
+        brkarti: "Број карти",
+        reztrans: "Број резервација",
+        rezkarti: "Број рез. карти",
+        reziznos: "Износ резервисаних карти",
     }
   };
   

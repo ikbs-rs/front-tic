@@ -853,7 +853,7 @@ PRVI RED
                   <Button label={translations[selectedLanguage].Payment}
                     severity="warning" raised style={{ width: '100%' }}
                     onClick={(e) => handlePayTicDoc(e)}
-                    disabled={uidKey === 4}
+                    disabled={uidKey === 4 || ticDoc.paymenttp == 4}
                   />
 
                 </div>
