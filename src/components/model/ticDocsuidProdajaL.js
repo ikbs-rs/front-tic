@@ -16,6 +16,7 @@ import { TicDocsService } from '../../service/model/TicDocsService';
 import { translations } from "../../configs/translations";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { InputTextarea } from "primereact/inputtextarea";
+import { AutoComplete } from "primereact/autocomplete";
 import { CmnParService } from "../../service/model/cmn/CmnParService";
 import { TicDocService } from "../../service/model/TicDocService";
 import TicDocsdiscountL from "./ticDocsdiscountL";
@@ -125,7 +126,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                 const cmnParService = new CmnParService();
                 const dataPar = await cmnParService.getCmnParP(ticDoc.usr);
                 // let _cmnPar = {...cmnPar}
-                let _cmnPar = {...dataPar[0]};
+                let _cmnPar = { ...dataPar[0] };
                 const ticDocsuidService = new TicDocsuidService();
                 const data = await ticDocsuidService.getProdajaListaP(props.ticDoc.id);
                 // console.log(data, "H 0.0.0 HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
@@ -183,25 +184,25 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                     const ticEventattsServiceA = new TicEventattsService();
                     const _dataCL = await ticEventattsServiceA.getDocsCLSZ(item.event);
                     const dataCL = _dataCL || []
-                    
+
 
                     if (_eventUslov.cl == 1) {
                         // Filtriranje za code == '00.00.'
                         const filteredData00 = dataCL.filter(item => item.code === '00.00.');
-                        
-                        // if (dataCL.code === '00.00.') {
-                            // Provera za email ili uid u filteredData00
-                            const match00 = filteredData00.find(item =>
-                                item.email === _cmnPar.email || item.uid === _cmnPar.uid
-                            );
 
-                            // console.log(match00, "qqqWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _cmnPar)
-                            if (match00) {
-                                console.log(match00, "aaaaWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", item)
-                                _eventUslovValue.cl = true
-                                _eventUslovValue.clvalue = match00.barcodevalue||'BK'
-                                item.brojcl = item.brojcl||_eventUslovValue.clvalue
-                            }
+                        // if (dataCL.code === '00.00.') {
+                        // Provera za email ili uid u filteredData00
+                        const match00 = filteredData00.find(item =>
+                            item.email === _cmnPar.email || item.uid === _cmnPar.uid
+                        );
+
+                        // console.log(match00, "qqqWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _cmnPar)
+                        if (match00) {
+                            console.log(match00, "aaaaWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", item)
+                            _eventUslovValue.cl = true
+                            _eventUslovValue.clvalue = match00.barcodevalue || 'BK'
+                            item.brojcl = item.brojcl || _eventUslovValue.clvalue
+                        }
                         // }
                     } else {
                         _eventUslovValue.cl = true
@@ -217,8 +218,8 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                         );
                         if (match01) {
                             _eventUslovValue.sz = true
-                            _eventUslovValue.szvalue = match01.barcodevalue||'BK'
-                            item.brojsz = item.brojsz||_eventUslovValue.szvalue
+                            _eventUslovValue.szvalue = match01.barcodevalue || 'BK'
+                            item.brojsz = item.brojsz || _eventUslovValue.szvalue
                         }
                     } else {
                         _eventUslovValue.sz = true
@@ -418,10 +419,10 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             if (item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "email") : item.eventatt2.some(att => att.nvalue === "email"))) {
                 attributes.push("email");
             }
-            if (item.eventUslov.cl==1) {
+            if (item.eventUslov.cl == 1) {
                 attributes.push("brojcl");
             }
-            if (item.eventUslov.sz==1) {
+            if (item.eventUslov.sz == 1) {
                 attributes.push("brojsz");
             }
             return { id: item.id, attributes };
@@ -937,7 +938,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         console.log("HhandleItemSelectHHHHHHHHHHHHHHHHHHHHHHHHHHHHHUUUUUUUUUUUHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item)
         setValueTA(item);
     };
-
+    
     return (
         <>
             <div className="card  scrollable-content" >
@@ -1007,6 +1008,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                 {ticDocsuids.map((item) => {
                     brojReda = ++brojReda
                     const backgroundColor = eventColors[item.event] || "#ffffff";
+
                     return (
                         <>
                             <div key={item.id} style={{ paddingTop: 15, paddingBottom: 0, backgroundColor: item.id === highlightedId ? '#b7dfb7' : 'transparent' }}>
@@ -1142,6 +1144,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                     disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.country })}
                                                 />
+ 
                                                 {submitted && !item.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`country-${item.id}`}>{translations[selectedLanguage].country}</label>
                                             </span>
@@ -1179,7 +1182,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                             </span>
                                         </div>
                                     ) : null}
-                                    {(item.eventUslov.cl == 1 ) ? (
+                                    {(item.eventUslov.cl == 1) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -1194,8 +1197,8 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                 <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].brojcl}</label>
                                             </span>
                                         </div>
-                                    ) : null}    
-                                    {(item.eventUslov.sz == 1 ) ? (
+                                    ) : null}
+                                    {(item.eventUslov.sz == 1) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
                                                 <InputText
@@ -1210,7 +1213,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                                 <label htmlFor={`email-${item.id}`}>{translations[selectedLanguage].brojsz}</label>
                                             </span>
                                         </div>
-                                    ) : null}                                                                     
+                                    ) : null}
                                 </div>
                             </div>
                             <div

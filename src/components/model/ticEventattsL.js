@@ -35,19 +35,24 @@ import { Calendar } from 'primereact/calendar';
 import DateFunction from "../../utilities/DateFunction";
 import TicEventattsgrpL from './ticEventattsgrpL';
 import { TicEventatttpService } from '../../service/model/TicEventatttpService';
+import { TicEventService } from '../../service/model/TicEventService';
 import TicEventTmpL from './ticEventTmpL';
 import { Tooltip } from 'primereact/tooltip';
 import { ToggleButton } from 'primereact/togglebutton';
 
 export default function TicEventattsL(props) {
     const objName = 'tic_eventatts';
+    const objNameEventview = 'tic_eventview'
     const selectedLanguage = localStorage.getItem('sl') || 'en';
     const [submitted, setSubmitted] = useState(false);
     const emptyTicEventatts = EmptyEntities[objName];
+    const emptyTicEventview = EmptyEntities[objNameEventview];
     emptyTicEventatts.event = props.ticEvent.id;
+    emptyTicEventview.event = props.ticEvent.id;
     const [showMyComponent, setShowMyComponent] = useState(true);
     const [ticEventattss, setTicEventattss] = useState([]);
     const [ticEventatts, setTicEventatts] = useState(emptyTicEventatts);
+    const [ticEventview, setTicEventview] = useState(emptyTicEventview);
     const [filters, setFilters] = useState('');
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [loading, setLoading] = useState(true);
@@ -74,9 +79,337 @@ export default function TicEventattsL(props) {
 
     let i = 0;
 
-    const handleCancelClick = () => {
+    const handleCancelClick =  () => {
         props.setTicEventattsLVisible(false);
     };
+
+    const tableRef = useRef(null);
+
+    // Funkcija za prikaz HTML-a u novom prozoru
+    const openTableInNewWindow = async () => {
+        if (!tableRef.current) return;
+
+        // Dohvatanje HTML-a tabele
+        const tableElement = tableRef.current.querySelector('.p-datatable-table.p-datatable-scrollable-table');
+        if (!tableElement) {
+            console.error("Tabela nije pronađena!");
+            return;
+        }
+
+        let tableHtml = tableElement.outerHTML;
+        // **Kreiramo privremeni div da manipulišemo DOM-om**
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = tableHtml;
+
+        // Pronalazimo sve redove tabele
+        let rows = tempDiv.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            // Ako red sadrži dugme sa traženom klasom, uklanjamo ga
+            // if (row.querySelector('.p-button.p-togglebutton.p-component.p-button-icon-only.toggle-button-unchecked')) {
+            //     row.remove();
+            //     return;
+            // }
+
+            // Pronalazimo sve ćelije (kolone) u redu
+            let cells = row.querySelectorAll('th, td');
+
+            if (cells.length > 3) {
+                // Brišemo **prvu, pretposlednju i poslednju kolonu**
+                cells[0].remove(); // Prva kolona
+                cells[cells.length - 1].remove(); // Poslednja kolona
+                // cells[cells.length - 2].remove(); // Pretposlednja kolona
+            }
+        });
+
+        // Ažuriramo `tableHtml` sa filtriranim podacima
+        tableHtml = tempDiv.innerHTML;
+
+        // **Dodavanje stilova za horizontalni i vertikalni scroll**
+        const tableStyle = `
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .table-container {
+                    overflow-x: auto; /* Horizontalni scroll */
+                    overflow-y: auto; 
+                    max-width: 100%;
+                    max-height: 700px; 
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                }
+                table { 
+                    border: 1px solid #ccc; 
+                    border-collapse: collapse;
+                    white-space: nowrap; /* Sprečava lomljenje teksta */
+                }
+                th, td { 
+                    border: 1px solid #ddd; 
+                    padding: 8px;
+                    text-align: left;
+                    font-size: 11px;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        `;
+
+        // const newWindow = window.open('', '_blank');
+
+
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map(style => style.outerHTML)
+            .join('\n');
+        const htmlInner = `
+                <html>
+                    <head>
+                        <title>Pregled Tabele</title>
+                        ${styles}
+                        ${tableStyle}
+                    </head>
+                    <body>
+                        <div class="table-container">
+                            ${tableHtml}
+                        </div>
+                    </body>
+                </html>
+            `
+        const _ticEventview = { ...ticEventview }
+        _ticEventview.long = htmlInner
+        // console.log("LONG", _ticEventview.long)
+        return _ticEventview
+        // if (newWindow) {
+        //     newWindow.document.write(htmlInner);
+        //     newWindow.document.close();
+        // }
+
+        await openTableInNewWindow2()
+    };
+
+    // const openTableInNewWindow1 = () => {
+    //     if (!tableRef.current) return;
+
+    //     // Dohvatanje HTML-a tabele
+    //     const tableElement = tableRef.current.querySelector('.p-datatable-table.p-datatable-scrollable-table');
+    //     if (!tableElement) {
+    //         console.error("Tabela nije pronađena!");
+    //         return;
+    //     }
+
+    //     let tableHtml = tableElement.outerHTML;
+
+    //     // **Filtriranje redova koji sadrže dugme sa specifičnom klasom**
+    //     let tempDiv = document.createElement('div');
+    //     tempDiv.innerHTML = tableHtml;
+
+    //     // Pronalazimo sve redove tabele
+    //     let rows = tempDiv.querySelectorAll('tr');
+
+    //     rows.forEach(row => {
+    //         // Ako red sadrži dugme sa traženom klasom, uklanjamo ga
+    //         if (row.querySelector('.p-button.p-togglebutton.p-component.p-button-icon-only.toggle-button-unchecked')) {
+    //             row.remove();
+    //         }
+    //     });
+
+    //     // Ažuriramo `tableHtml` sa filtriranim redovima
+    //     tableHtml = tempDiv.innerHTML;
+
+    //     // **Dodavanje stilova za skrolovanje + font 11px**
+    //     const tableStyle = `
+    //         <style>
+    //             body { font-family: Arial, sans-serif; padding: 20px; }
+    //             .table-container {
+    //                 overflow-x: auto; /* Horizontalni scroll */
+    //                 overflow-y: auto; /* Vertikalni scroll */
+    //                 max-width: 100%;
+    //                 max-height: 700px; /* Visina tabele */
+    //                 border: 1px solid #ccc;
+    //                 padding: 10px;
+    //             }
+    //             table { 
+    //                 border: 1px solid #ccc; 
+    //                 border-collapse: collapse;
+    //                 white-space: nowrap; /* Sprečava lomljenje teksta */
+    //                 font-size: 11px; /* Postavlja font size na 11px */
+    //             }
+    //             th, td { 
+    //                 border: 1px solid #ddd; 
+    //                 padding: 8px;
+    //                 text-align: left;
+    //                 font-size: 11px; /* Postavlja font size na 11px za sav tekst */
+    //             }
+    //             th {
+    //                 background-color: #f2f2f2;
+    //             }
+    //         </style>
+    //     `;
+
+    //     const newWindow = window.open('', '_blank');
+
+    //     if (newWindow) {
+    //         const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+    //             .map(style => style.outerHTML)
+    //             .join('\n');
+    //         console.log(`
+    //                 <html>
+    //                     <head>
+    //                         <title>Pregled Tabele</title>
+    //                         ${styles}
+    //                         ${tableStyle}
+    //                     </head>
+    //                     <body>
+    //                         <div class="table-container">
+    //                             ${tableHtml}
+    //                         </div>
+    //                     </body>
+    //                 </html>
+    //             `)
+
+    //         newWindow.document.write(`
+    //             <html>
+    //                 <head>
+    //                     <title>Pregled Tabele</title>
+    //                     ${styles}
+    //                     ${tableStyle}
+    //                 </head>
+    //                 <body>
+    //                     <div class="table-container">
+    //                         ${tableHtml}
+    //                     </div>
+    //                 </body>
+    //             </html>
+    //         `);
+    //         newWindow.document.close();
+    //     }
+    // };
+
+
+    const openTableInNewWindow2 = async (objData) => {
+        if (!tableRef.current) return;
+
+        // Dohvatanje HTML-a tabele
+        const tableElement = tableRef.current.querySelector('.p-datatable-table.p-datatable-scrollable-table');
+        if (!tableElement) {
+            console.error("Tabela nije pronađena!");
+            return;
+        }
+
+        let tableHtml = tableElement.outerHTML;
+
+        // **Kreiramo privremeni div da manipulišemo DOM-om**
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = tableHtml;
+
+        // Pronalazimo sve redove tabele
+        let rows = tempDiv.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            // Ako red sadrži dugme sa traženom klasom, uklanjamo ga
+            if (row.querySelector('.p-button.p-togglebutton.p-component.p-button-icon-only.toggle-button-unchecked')) {
+                row.remove();
+                return;
+            }
+
+            // Pronalazimo sve ćelije (kolone) u redu
+            let cells = row.querySelectorAll('th, td');
+
+            if (cells.length > 3) {
+                // Brišemo **prvu, pretposlednju i poslednju kolonu**
+                cells[0].remove(); // Prva kolona
+                cells[cells.length - 1].remove(); // Poslednja kolona
+                cells[cells.length - 2].remove(); // Pretposlednja kolona
+            }
+        });
+
+        // Ažuriramo `tableHtml` sa filtriranim podacima
+        tableHtml = tempDiv.innerHTML;
+
+        // **Dodavanje stilova za skrolovanje + font 11px**
+        const tableStyle = `
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .table-container {
+                    overflow-x: auto; /* Horizontalni scroll */
+                    overflow-y: auto; /* Vertikalni scroll */
+                    max-width: 100%;
+                    max-height: 700px; /* Visina tabele */
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                }
+                table { 
+                    border: 1px solid #ccc; 
+                    border-collapse: collapse;
+                    white-space: nowrap; /* Sprečava lomljenje teksta */
+                    font-size: 11px; /* Postavlja font size na 11px */
+                }
+                th, td { 
+                    border: 1px solid #ddd; 
+                    padding: 8px;
+                    text-align: left;
+                    font-size: 11px; /* Postavlja font size na 11px za sav tekst */
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        `;
+
+
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map(style => style.outerHTML)
+            .join('\n');
+
+        const htmlInner = `
+                    <html>
+                        <head>
+                            <title>Pregled Tabele</title>
+                            ${styles}
+                            ${tableStyle}
+                        </head>
+                        <body>
+                            <div class="table-container">
+                                ${tableHtml}
+                            </div>
+                        </body>
+                    </html>
+                `
+        const _ticEventview = { ...objData }
+        _ticEventview.short = htmlInner
+        
+        setTicEventview(_ticEventview)
+        return _ticEventview
+    };
+
+    const handleTableInNewWindow = async () => {
+        try {
+            // 1. Pokreni funkcije asinhrono i sačekaj rezultate
+            const _ticEventview = await openTableInNewWindow();
+            const _ticEventview2 = await openTableInNewWindow2(_ticEventview);
+    
+            console.log("222222222222", _ticEventview2.long); // Proveri da li sadrži validan HTML
+    
+            // 2. Otvori novi prozor pre asinhronih operacija
+            const newWindow = window.open('', '_blank');
+            if (!newWindow) {
+                console.error("Pretraživač blokira otvaranje prozora!");
+                return;
+            }
+    
+            // 3. Osiguraj da sadržaj postoji pre nego što ga ispišemo
+            if (!_ticEventview2 || !_ticEventview2.long) {
+                newWindow.document.write("<h2>Greška: Nema sadržaja za prikaz!</h2>");
+            } else {
+                newWindow.document.write(_ticEventview2.long);
+            }
+    
+            newWindow.document.close();
+            const ticEventService = new TicEventService();
+            await ticEventService.postEventview(_ticEventview2);            
+        } catch (error) {
+            console.error("Došlo je do greške:", error);
+        }
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -84,98 +417,99 @@ export default function TicEventattsL(props) {
             try {
                 setLoading(true);
                 // console.log('Učitavanje je započeto!!!!!');
-                ++i;
-                if (i < 2) {
-                    const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
-                    // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
-                    const ticEventattsService = new TicEventattsService();
-                    const data = await ticEventattsService.getListaP(props.ticEvent.id, pTp);
+                // ++i;
+                // if (i < 2) {
+                const pTp = ticEventatttp ? ticEventatttp.id || "-1" : "-1";
+                // console.log(ticEventatttp, "*********************emptyTicEventatts**************************", pTp)
+                const ticEventattsService = new TicEventattsService();
+                const data = await ticEventattsService.getListaP(props.ticEvent.id, pTp);
 
-                    // console.log(data, "*********************data**************************#####################", pTp)
-                    const updatedDropdownItems = { ...dropdownAllItems };
+                // console.log(data, "*********************data**************************#####################", pTp)
+                const updatedDropdownItems = { ...dropdownAllItems };
 
-                    // const promisesDD = data.map(async (row) => {
-                    //     if (row.inputtp === '3' && row.ddlist) {
-                    //         const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
-                    //         let apsTabela = modul + `_` + tabela;
-                    //         if (code) {
-                    //             apsTabela = apsTabela + `_${code}`
-                    //         }
-                    //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
-                    //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
+                // const promisesDD = data.map(async (row) => {
+                //     if (row.inputtp === '3' && row.ddlist) {
+                //         const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
+                //         let apsTabela = modul + `_` + tabela;
+                //         if (code) {
+                //             apsTabela = apsTabela + `_${code}`
+                //         }
+                //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
 
-                    //     }
-                    //     if (row.inputtp === '6' && row.ddlist) {
-                    //         const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
-                    //         let apsTabela = modul + `_` + tabela;
-                    //         if (code) {
-                    //             apsTabela = apsTabela + `_${code}`
-                    //         }
-                    //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
-                    //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
+                //     }
+                //     if (row.inputtp === '6' && row.ddlist) {
+                //         const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
+                //         let apsTabela = modul + `_` + tabela;
+                //         if (code) {
+                //             apsTabela = apsTabela + `_${code}`
+                //         }
+                //         const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                //         updatedDropdownItems[apsTabela] = dataDD.ddItems;
 
-                    //         if (modul1) {
-                    //             let apsTabela1 = modul1 + `_` + table1;
-                    //             if (code1) {
-                    //                 apsTabela1 = apsTabela1 + `_${code1}`
-                    //             }
-                    //             const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
-                    //             updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
-                    //         }
-                    //     }
-                    //     return { ...row, isUploadPending: false };
-                    // });
+                //         if (modul1) {
+                //             let apsTabela1 = modul1 + `_` + table1;
+                //             if (code1) {
+                //                 apsTabela1 = apsTabela1 + `_${code1}`
+                //             }
+                //             const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
+                //             updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
+                //         }
+                //     }
+                //     return { ...row, isUploadPending: false };
+                // });
 
-                    const updatedData = []; // Низ за чување ажурираних података
+                const updatedData = []; // Низ за чување ажурираних података
 
-                    for (const row of data) {
-                        if (row.inputtp === '3' && row.ddlist) {
-                            const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
-                            let apsTabela = modul + `_` + tabela;
-                            if (code) {
-                                apsTabela = apsTabela + `_${code}`;
-                            }
-                            const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
-                            updatedDropdownItems[apsTabela] = dataDD.ddItems;
+                for (const row of data) {
+                    if (row.inputtp === '3' && row.ddlist) {
+                        const [modul, tabela, code, modul1, tabela1, code1] = row.ddlist.split(',');
+                        let apsTabela = modul + `_` + tabela;
+                        if (code) {
+                            apsTabela = apsTabela + `_${code}`;
                         }
-
-                        if (row.inputtp === '6' && row.ddlist) {
-                            const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
-                            let apsTabela = modul + `_` + tabela;
-                            if (code) {
-                                apsTabela = apsTabela + `_${code}`;
-                            }
-                            const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
-                            updatedDropdownItems[apsTabela] = dataDD.ddItems;
-
-                            if (modul1) {
-                                let apsTabela1 = modul1 + `_` + table1;
-                                if (code1) {
-                                    apsTabela1 = apsTabela1 + `_${code1}`;
-                                }
-                                const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
-                                updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
-                            }
-                        }
-
-                        // Ажурирање реда и додавање у updatedData
-                        const updatedRow = { ...row, isUploadPending: false };
-                        updatedData.push(updatedRow);
+                        const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                        updatedDropdownItems[apsTabela] = dataDD.ddItems;
                     }
 
-                    setTicEventattss(updatedData); // Постављање ажурираних података у state
-                    setDropdownAllItems(updatedDropdownItems); // Постављање ажурираних података за dropdown
+                    if (row.inputtp === '6' && row.ddlist) {
+                        const [modul, tabela, code, modul1, table1, code1] = row.ddlist.split(',');
+                        let apsTabela = modul + `_` + tabela;
+                        if (code) {
+                            apsTabela = apsTabela + `_${code}`;
+                        }
+                        const dataDD = await fetchObjData(modul, tabela, code, props.ticEvent);
+                        updatedDropdownItems[apsTabela] = dataDD.ddItems;
 
+                        if (modul1) {
+                            let apsTabela1 = modul1 + `_` + table1;
+                            if (code1) {
+                                apsTabela1 = apsTabela1 + `_${code1}`;
+                            }
+                            const dataDD1 = await fetchObjData(modul1, table1, code1, props.ticEvent);
+                            updatedDropdownItems[apsTabela1] = dataDD1.ddItems;
+                        }
+                    }
 
-                    // const updatedData = await Promise.all(promisesDD);
-                    // setTicEventattss(updatedData);
-                    // setDropdownAllItems(updatedDropdownItems);
-
-                    initFilters();
-                    console.log('Učitavanje je završeno!!!!');
-                    setLoading(false);
+                    // Ажурирање реда и додавање у updatedData
+                    const updatedRow = { ...row, isUploadPending: false };
+                    updatedData.push(updatedRow);
                 }
-                
+
+                setTicEventattss(updatedData); // Постављање ажурираних података у state
+                setDropdownAllItems(updatedDropdownItems); // Постављање ажурираних података за dropdown
+
+
+                // const updatedData = await Promise.all(promisesDD);
+                // setTicEventattss(updatedData);
+                // setDropdownAllItems(updatedDropdownItems);
+
+                initFilters();
+                console.log('Učitavanje je završeno!!!!');
+                setLoading(false);
+                console.log(ticEventattss)
+                // }
+
             } catch (error) {
                 console.error(error);
                 // Obrada greške ako je potrebna
@@ -205,13 +539,13 @@ export default function TicEventattsL(props) {
                 const sortedData = data.sort((a, b) => a.textx.localeCompare(b.textx));
 
                 setTicEventatttps(sortedData);
-    
+
                 const dataDD = sortedData.map(({ textx, id }) => ({ name: textx, code: id }));
                 // const dataDD = [
                 //     { code: -99, name: "Izaberi vrednost" },
                 //     ...sortedData.map(({ textx, id }) => ({ name: textx, code: id }))
                 // ];
-                
+
                 setDdTicEventatttpItems(dataDD);
                 // setDdTicEventatttpItem(dataDD.find((item) => item.code == -99) || null);
             } catch (error) {
@@ -221,6 +555,18 @@ export default function TicEventattsL(props) {
         }
         fetchData();
     }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                console.log(ticEventattss, "QQQQQ", dropdownAllItems)
+            } catch (error) {
+                console.error(error);
+                // Obrada greške ako je potrebna
+            }
+        }
+        fetchData();
+    }, [ticEventattss]);
 
     const openEventattsgrp = () => {
         setTicEventattsgrpDialog();
@@ -556,6 +902,7 @@ export default function TicEventattsL(props) {
     const renderHeader = () => {
         return (
             <div className="flex card-container">
+                <Button label="Snimi tabelu" icon="pi pi-external-link" onClick={handleTableInNewWindow} />
                 <div className="flex flex-wrap gap-1" />
                 <Button label={translations[selectedLanguage].Cancel} icon="pi pi-times" onClick={handleCancelClick} text raised />
                 <div className="flex flex-wrap gap-1">
@@ -779,11 +1126,11 @@ export default function TicEventattsL(props) {
                 // console.log(selectedOptions, '******************selectedOptions11111*******', apsTabela, '*********WWWWW******');
                 setDropdownItems(selectedOptions);
 
-                    // const selectedOption = selectedOptions.find((option) => option.code === rowData.value);
-                    const selectedOption = selectedOptions.length > 0 
+                // const selectedOption = selectedOptions.find((option) => option.code === rowData.value);
+                const selectedOption = selectedOptions.length > 0
                     ? selectedOptions.find((option) => option.code === rowData.value)
                     : null;
-                    setDropdownItem(selectedOption);
+                setDropdownItem(selectedOption);
                 // console.log(selectedOption, selectedOptions, rowData, apsTabela, "*****555555********")
                 return <Dropdown
                     id={rowData.id}
@@ -1019,100 +1366,101 @@ export default function TicEventattsL(props) {
                     </div>
                 ) : (null)}
             </div>
-            <DataTable
-                key={componentKey}
-                dataKey="id"
-                size={"small"}
-                selectionMode="single"
-                selection={ticEventatts}
-                loading={loading}
-                loadingIcon="pi pi-spin pi-spinner"
-                value={ticEventattss}
-                header={header}
-                showGridlines
-                sortField="ctp" sortOrder={1}
-                removableSort
-                //editMode="cell"
-                //rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
-                rowClassName={(rowData) => {
-                    const isEditing = rowData === ticEventatts;
-                    const customClass = rowClass(rowData);
+            <div ref={tableRef}>
+                <DataTable
+                    key={componentKey}
+                    dataKey="id"
+                    size={"small"}
+                    selectionMode="single"
+                    selection={ticEventatts}
+                    loading={loading}
+                    loadingIcon="pi pi-spin pi-spinner"
+                    value={ticEventattss}
+                    header={header}
+                    showGridlines
+                    sortField="ctp" sortOrder={1}
+                    removableSort
+                    //editMode="cell"
+                    //rowClassName={(rowData) => ({ 'editing-row': rowData === ticEventatts })}
+                    rowClassName={(rowData) => {
+                        const isEditing = rowData === ticEventatts;
+                        const customClass = rowClass(rowData);
 
-                    return {
-                        'editing-row': isEditing,
-                        [customClass]: customClass !== '',
-                    };
-                }}
+                        return {
+                            'editing-row': isEditing,
+                            [customClass]: customClass !== '',
+                        };
+                    }}
 
-                filters={filters}
-                scrollable
-                scrollHeight="550px"
-                //virtualScrollerOptions={{ itemSize: 46 }}
-                tableStyle={{ minWidth: '50rem' }}
-                //metaKeySelection={false}
-                paginator
-                rows={125}
-                rowsPerPageOptions={[125, 150, 200]}
-                onSelectionChange={(e) => setTicEventatts(e.value)}
-                onRowSelect={onRowSelect}
-                onRowUnselect={onRowUnselect}
-            >
-                <Column
-                    //bodyClassName="text-center"
-                    body={eventattsTemplate}
-                    exportable={false}
-                    headerClassName="w-10rem"
-                    style={{ minWidth: '4rem' }}
-                />
-                <Column field="ctp" header={translations[selectedLanguage].Code} sortable style={{ width: '10%' }}></Column>
-                <Column field="ntp" header={translations[selectedLanguage].Text} sortable style={{ width: '25%' }}></Column>
-                <Column field="nttp" header={translations[selectedLanguage].ntp} sortable style={{ width: '25%' }}></Column>
-                <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable style={{ width: '10%' }}></Column>
-                <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable style={{ width: '10%' }}></Column>
-                <Column
-                    field="value"
-                    header={translations[selectedLanguage].condition1}
-                    sortable
+                    filters={filters}
+                    scrollable
+                    scrollHeight="550px"
+                    //virtualScrollerOptions={{ itemSize: 46 }}
+                    tableStyle={{ minWidth: '50rem' }}
+                    //metaKeySelection={false}
+                    paginator
+                    rows={125}
+                    rowsPerPageOptions={[125, 150, 200]}
+                    onSelectionChange={(e) => setTicEventatts(e.value)}
+                    onRowSelect={onRowSelect}
+                    onRowUnselect={onRowUnselect}
+                >
+                    <Column
+                        //bodyClassName="text-center"
+                        body={eventattsTemplate}
+                        exportable={false}
+                        headerClassName="w-10rem"
+                        style={{ minWidth: '4rem' }}
+                    />
+                    <Column field="ctp" header={translations[selectedLanguage].Code} sortable style={{ width: '10%' }}></Column>
+                    <Column field="ntp" header={translations[selectedLanguage].Text} sortable style={{ width: '25%' }}></Column>
+                    <Column field="nttp" header={translations[selectedLanguage].ntp} sortable style={{ width: '25%' }}></Column>
+                    <Column field="ninputtp" header={translations[selectedLanguage].inputtp} sortable style={{ width: '10%' }}></Column>
+                    <Column field="ddlist" header={translations[selectedLanguage].ddlist} sortable style={{ width: '10%' }}></Column>
+                    <Column
+                        field="value"
+                        header={translations[selectedLanguage].condition1}
+                        sortable
 
-                    style={{ width: '20%' }}
-                    editor={(e) => valueEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
-                    body={valueTemplate}
-                    onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
-                ></Column>
-                <Column
-                    field="text"
-                    header={translations[selectedLanguage].condition2}
-                    sortable
+                        style={{ width: '20%' }}
+                        editor={(e) => valueEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                        body={valueTemplate}
+                        onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
+                    ></Column>
+                    <Column
+                        field="text"
+                        header={translations[selectedLanguage].condition2}
+                        sortable
 
-                    style={{ width: '10%' }}
-                    //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
-                    editor={(e) => textEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
-                    body={textTemplate}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                <Column
-                    field="condition"
-                    header={translations[selectedLanguage].condition3}
-                    sortable
+                        style={{ width: '10%' }}
+                        //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                        editor={(e) => textEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                        body={textTemplate}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                    <Column
+                        field="condition"
+                        header={translations[selectedLanguage].condition3}
+                        sortable
 
-                    style={{ width: '10%' }}
-                    //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
-                    editor={(e) => conditionEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
-                    //body={conditionTemplate}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                <Column
-                    field="minfee"
-                    header={translations[selectedLanguage].minfee}
-                    sortable
+                        style={{ width: '10%' }}
+                        //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                        editor={(e) => conditionEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                        //body={conditionTemplate}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                    <Column
+                        field="minfee"
+                        header={translations[selectedLanguage].minfee}
+                        sortable
 
-                    style={{ width: '10%' }}
-                    //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
-                    editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
-                    //body={conditionTemplate}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                {/* <Column
+                        style={{ width: '10%' }}
+                        //editor={(props) => textEditor(props.rowData, props.field)} // Koristimo textEditor za editiranje teksta
+                        editor={(e) => minfeeEditor(e.rowData, e.field, e)} // Dodali smo editor za editiranje value
+                        //body={conditionTemplate}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                    {/* <Column
                     field="valid"
                     filterField="valid"
                     dataType="numeric"
@@ -1126,23 +1474,24 @@ export default function TicEventattsL(props) {
                     editor={(props) => validEditor(props.rowData, props.field)} // Dodali smo editor za editiranje validnosti
                     onCellEditComplete={onCellEditComplete} // Dodali smo onCellEditComplete za validaciju
                 ></Column> */}
-                <Column
-                    header={translations[selectedLanguage].Valid}
-                    field="valid"
-                    dataType="numeric"
-                    style={{ width: '1%' }}
-                    bodyClassName="text-center"
-                    body={(e) => toggleBodyTemplate(e, `valid`)}
-                    onCellEditComplete={onCellEditComplete}
-                ></Column>
-                <Column
-                    //header={translations[selectedLanguage].Valid}
-                    style={{ width: '5%' }}
-                    bodyClassName="text-center"
-                    body={cmdBodyTemplate}
-                ></Column>
+                    <Column
+                        header={translations[selectedLanguage].Valid}
+                        field="valid"
+                        dataType="numeric"
+                        style={{ width: '1%' }}
+                        bodyClassName="text-center"
+                        body={(e) => toggleBodyTemplate(e, `valid`)}
+                        onCellEditComplete={onCellEditComplete}
+                    ></Column>
+                    <Column
+                        //header={translations[selectedLanguage].Valid}
+                        style={{ width: '5%' }}
+                        bodyClassName="text-center"
+                        body={cmdBodyTemplate}
+                    ></Column>
 
-            </DataTable>
+                </DataTable>
+            </div>
 
             <Dialog
                 header={translations[selectedLanguage].Link}

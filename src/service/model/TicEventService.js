@@ -572,5 +572,46 @@ export class TicEventService {
       throw error;
     }
   }
+
+  async postEventview(newObj) {
+    try {
+      console.log("*00*************************postTicEventCopy***************************")
+      const selectedLanguage = localStorage.getItem('sl') || 'en'
+      // const url = `${env.TIC_BACK_URL}/tic/x/event/?sl=${selectedLanguage}`;
+      const url = `${env.TIC_BACK_URL}/tic/x/event/_s/param/?stm=tic_eventview_s&objId1=${newObj.event}&sl=${selectedLanguage}`;
+      const tokenLocal = await Token.getTokensLS();
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': tokenLocal.token
+      };
+      const jsonObj = JSON.stringify(newObj)
+      const response = await axios.post(url, jsonObj, { headers });
+      console.log("**************"  , response.data.item, "****************")
+      return response.data.item.id;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+  }  
+
+  async getEventView(objId, tp) {
+    const selectedLanguage = localStorage.getItem('sl') || 'en'
+    const url = `${env.TIC_BACK_URL}/tic/x/event/_v/lista/?stm=tic_eventview_v&objid=${objId}&par1=${tp}&sl=${selectedLanguage}`;
+    const tokenLocal = await Token.getTokensLS();
+    const headers = {
+      Authorization: tokenLocal.token
+    };
+
+    try {
+      // console.log(url, "******************************getTicEventchpermissL*********************************")
+      const response = await axios.get(url, { headers });
+      
+      return response.data.item;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 }
 

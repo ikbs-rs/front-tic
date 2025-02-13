@@ -6,6 +6,7 @@ import { Toast } from "primereact/toast";
 import { TicDocService } from "../../service/model/TicDocService";
 import { TicDocsService } from "../../service/model/TicDocsService";
 import TicDocs from './ticDocs';
+import TicEventview from './ticEventview';
 import { EmptyEntities } from '../../service/model/EmptyEntities';
 import { Dialog } from 'primereact/dialog';
 import './index.css';
@@ -69,6 +70,9 @@ export default function TicTransactionsL(props) {
     const [delRefresh, setDelRefresh] = useState(0);
     const [ticTransactiostornogrpLVisible, setTicTransactiostornogrpLVisible] = useState(false)
     const [akcija, setAkcija] = useState('RAZ');
+
+    const [ticEventViewVisible, setTicEventViewVisible] = useState(false);
+    const [selectedEventData, setSelectedEventData] = useState(null);
 
     let i = 0
     const handleCancelClick = () => {
@@ -780,7 +784,7 @@ export default function TicTransactionsL(props) {
     /*********************************************************************************** */
     const onRowSelect = (event) => {
         if (ticEvent.id != event.data.event) {
-            props.handleFirstColumnClick(event.data)            
+            props.handleFirstColumnClick(event.data)
             let _ticEvent = { ...ticEvent }
             _ticEvent.id = event.data.event
             _ticEvent.code = event.data.cevent
@@ -811,6 +815,11 @@ export default function TicTransactionsL(props) {
             </div>
         );
     };
+    const handleEventClick = (event, rowData) => {
+        event.preventDefault(); 
+        setSelectedEventData(rowData); // Čuvamo podatke reda
+        setTicEventViewVisible(true);  // Otvaramo modal
+    };    
     return (
         <>
             <Toast ref={toast} />
@@ -837,7 +846,7 @@ export default function TicTransactionsL(props) {
                 rowClassName={rowClassName}
                 className="custom-table"
             >
-                <Column
+                {/* <Column
                     field="nevent"
                     header={translations[selectedLanguage].nevent}
                     // header={newTemplate}
@@ -847,7 +856,25 @@ export default function TicTransactionsL(props) {
                         fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
                         fontSize: "11px"
                     }}
-                ></Column>
+                ></Column> */}
+                <Column
+                    field="nevent"
+                    header={translations[selectedLanguage].nevent}
+                    sortable
+                    style={{
+                        width: "15%",
+                        fontFamily: "'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontSize: "11px",
+                        cursor: "pointer", // Vizuelni indikator da je klikabilno
+                        // color: "#4EA279",   
+                        textDecoration: "underline"
+                    }}
+                    body={(rowData) => (
+                        <span onClick={(event) => handleEventClick(event, rowData)}>
+                            {rowData.nevent}
+                        </span>
+                    )}
+                />
                 <Column
                     field="ulaz"
                     header={translations[selectedLanguage].Ulaz}
@@ -1127,6 +1154,24 @@ export default function TicTransactionsL(props) {
                         akcija={akcija}
                     />
                 )}
+            </Dialog>
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                      <Button
+                        label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                        onClick={() => {
+                          setTicEventViewVisible(false);
+                        }}
+                        severity="secondary" raised
+                      />
+                    </div>
+                  }                
+                visible={ticEventViewVisible}
+                style={{ width: '98%' }}
+                onHide={() => setTicEventViewVisible(false)}
+            >
+                {ticEventViewVisible && <TicEventview eventData={selectedEventData} />}
             </Dialog>
             <DeleteDialog visible={deleteDialogVisible} inAction="delete" onHide={hideDeleteDialog} />
         </>

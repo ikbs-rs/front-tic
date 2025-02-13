@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Dialog } from 'primereact/dialog';
 import { classNames } from 'primereact/utils';
 import { TicEventlocService } from "../../service/model/TicEventlocService";
 import { CmnLoctpService } from "../../service/model/cmn/CmnLoctpService";
@@ -16,9 +17,10 @@ import env from "../../configs/env"
 import axios from 'axios';
 import Token from "../../utilities/Token";
 import CustomColorPicker from "../custom/CustomColorPicker.js"
+import TicDoc_logL from './ticDoc_logL';
 
 const TicEventloc = (props) => {
-    console.log(props, "####################### TicEventloc ##########################")
+    // console.log(props, "####################### TicEventloc ##########################")
     const selectedLanguage = localStorage.getItem('sl') || 'en'
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [ticEventloc, setTicEventloc] = useState(props.ticEventloc);
@@ -34,6 +36,8 @@ const TicEventloc = (props) => {
     const [ddCmnLoctpItems, setDdCmnLoctpItems] = useState(null);
     const [cmnLoctpItem, setCmnLoctpItem] = useState(null);
     const [cmnLoctpItems, setCmnLoctpItems] = useState(null);
+    const [showMyComponent, setShowMyComponent] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     const calendarRef = useRef(null);
 
@@ -48,18 +52,18 @@ const TicEventloc = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                console.log(ticEventloc.loctp, "@@@@@@@@@@@@@@ticEventloc.loctp!!!!!!!!!")
+                // console.log(ticEventloc.loctp, "@@@@@@@@@@@@@@ticEventloc.loctp!!!!!!!!!")
                 const cmnLoctpService = new CmnLoctpService();
                 const data = await cmnLoctpService.getCmnLoctps('loctp');
                 setCmnLoctpItems(data)
                 const dataDD = data.map(({ textx, id }) => ({ name: textx, code: id }));
                 setDdCmnLoctpItems(dataDD);
-                setDdCmnLoctpItem(dataDD.find((item) => item.code === ticEventloc.loctp) || null);
+                setDdCmnLoctpItem(dataDD.find((item) => item?.code === ticEventloc.loctp) || null);
                 if (ticEventloc.loctp) {
-                    const foundItem = data.find((item) => item.id === ticEventloc.loctp);
+                    const foundItem = data.find((item) => item?.id === ticEventloc.loctp);
                     setCmnLoctpItem(foundItem || null);
-                    ticEventloc.cloctp = foundItem.code
-                    ticEventloc.nloctp = foundItem.textx
+                    ticEventloc.cloctp = foundItem?.code
+                    ticEventloc.nloctp = foundItem?.textx
                 }
 
             } catch (error) {
@@ -73,7 +77,7 @@ const TicEventloc = (props) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                console.log(ticEventloc.loctp, "**********@@@@@@@@@@@@@@getCmnObjXcsDDLista@@@@@@@@@@@@@@@******************", props.ticEventloc)
+                // console.log(ticEventloc.loctp, "**********@@@@@@@@@@@@@@getCmnObjXcsDDLista@@@@@@@@@@@@@@@******************", props.ticEventloc)
                 const ticEventService = new TicEventService();
                 const data = await ticEventService.getCmnObjXcsDDLista(props.ticEvent.id, ticEventloc.loctp);
                 setTicEventlocItems(data)
@@ -95,6 +99,10 @@ const TicEventloc = (props) => {
         fetchData();
     }, [ticEventloc.loctp || props.tpId]);
     // Autocomplit>
+
+    const handleDialogClose = (newObj) => {
+        const localObj = { newObj };
+    }
 
     const handleCancelClick = () => {
         props.setVisible(false);
@@ -140,6 +148,11 @@ const TicEventloc = (props) => {
         }
     };
 
+    const handleSavedKapacitetClick = () => {
+        setVisible(true)
+    };
+
+
     const showDeleteDialog = () => {
         setDeleteDialogVisible(true);
     };
@@ -164,7 +177,7 @@ const TicEventloc = (props) => {
 
     const onColorChange = (newColor) => {
         const updatedTicEventloc = { ...ticEventloc, color: newColor };
-        setTicEventloc(updatedTicEventloc); 
+        setTicEventloc(updatedTicEventloc);
     };
 
     const onInputChange = (e, type, name, a) => {
@@ -185,7 +198,7 @@ const TicEventloc = (props) => {
                     setDdTicEventlocItem(e.value);
                     foundItem = ticEventlocItems.find((item) => item.id === val);
                     const foundTpItem = cmnLoctpItems.find((item) => item.id === foundItem.tp);
-                    console.log(foundTpItem, "**********foundTpItem******************")
+                    // console.log(foundTpItem, "**********foundTpItem******************")
                     setTicEventlocItem(foundItem || null);
                     ticEventloc.nloc = e.value.name
                     ticEventloc.cloc = foundItem.code
@@ -282,7 +295,14 @@ const TicEventloc = (props) => {
                             <InputText id="rbr" value={ticEventloc.rbr} onChange={(e) => onInputChange(e, 'text', 'rbr')}
                             />
                         </div>
-                    </div>                    
+                    </div>
+                    <div className="p-fluid formgrid grid">
+                        <div className="field col-12 md:col-5">
+                            <label htmlFor="kapacitet">{translations[selectedLanguage].kapacitet} *</label>
+                            <InputText id="kapacitet" value={ticEventloc.kapacitet} onChange={(e) => onInputChange(e, 'text', 'kapacitet')}
+                            />
+                        </div>
+                    </div>
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-5">
                             <label htmlFor="begda">{translations[selectedLanguage].Begda} *</label>
@@ -347,13 +367,21 @@ const TicEventloc = (props) => {
                                 />
                             ) : null}
                             {(props.eventlocTip !== 'CREATE') ? (
-                                <Button
-                                    label={translations[selectedLanguage].Save}
-                                    icon="pi pi-check"
-                                    onClick={handleSaveClick}
-                                    severity="success"
-                                    outlined
-                                />
+                                <>
+                                    <Button
+                                        label={translations[selectedLanguage].Save}
+                                        icon="pi pi-check"
+                                        onClick={handleSaveClick}
+                                        severity="success"
+                                        outlined
+                                    />
+                                    <Button
+                                        label={translations[selectedLanguage].SavedKapacitet}
+                                        icon="pi pi-check"
+                                        onClick={handleSavedKapacitetClick}
+                                        severity="warning"
+                                    />
+                                </>
                             ) : null}
                         </div>
                     </div>
@@ -366,6 +394,37 @@ const TicEventloc = (props) => {
                 onHide={hideDeleteDialog}
                 onDelete={handleDeleteClick}
             />
+            <Dialog
+                header={
+                    <div className="dialog-header">
+                        <Button
+                            label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+                            onClick={() => {
+                                setVisible(false);
+                            }}
+                            severity="secondary" raised
+                        />
+                    </div>
+                }
+                visible={visible}
+                style={{ width: '80%' }}
+                onHide={() => {
+                    setVisible(false);
+                    setShowMyComponent(false);
+                }}
+            >
+                {showMyComponent && (
+                    <TicDoc_logL
+                        parameter={"inputTextValue"}
+                        tableid={ticEventloc.id}
+                        handleDialogClose={handleDialogClose}
+                        setVisible={setVisible}
+                        dialog={true}
+                        table1={'tic_eventloc'}
+                        table2={''}
+                    />
+                )}
+            </Dialog>
         </div>
     );
 };

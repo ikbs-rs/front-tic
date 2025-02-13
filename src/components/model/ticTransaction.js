@@ -33,6 +33,7 @@ import TicProdajaPlacanje from "./ticProdajaPlacanje";
 import { TabView, TabPanel } from 'primereact/tabview';
 import TicDocsprintgrpL from './ticDocsprintgrpL'
 import ConfirmDialog from '../dialog/ConfirmDialog';
+import TicDoc_logL from './ticDoc_logL';
 
 
 export default function TicDocdeliveryL(props) {
@@ -82,6 +83,7 @@ export default function TicDocdeliveryL(props) {
   const [cmnBtnAction, setCmnBtnAction] = useState('');
 
   const [ticStampaLVisible, setTicStampaLVisible] = useState(false);
+  const [logVisible, setLogVisible] = useState(false);
   const [openDialog, setOpenDialog] = useState('');
   const [parRefresh, setparRefresh] = useState(0);
 
@@ -682,7 +684,7 @@ export default function TicDocdeliveryL(props) {
         status: admUser?.firstname ? `${DateFunction.formatDate(ticDocdelivery.dat)} ${admUser?.firstname} ${admUser?.lastname}` : ''
       },
       {
-        event: "Fiscal receipt", 
+        event: "Fiscal receipt",
         button: (
           <Button
             label={translations[selectedLanguage].SendFiscalReceipt}
@@ -753,7 +755,7 @@ export default function TicDocdeliveryL(props) {
           <Button
             label={translations[selectedLanguage].Logovi}
             icon="pi pi-history"
-            onClick={openStampa}
+            onClick={openLog}
             severity="success"
             raised
           />
@@ -844,11 +846,11 @@ export default function TicDocdeliveryL(props) {
       setRefreshDelivery(prev => prev + 1)
     }
   };
-  
+
 
   const handleActivationClick = () => {
-    
-      setConfirmDialogVisible(true);
+
+    setConfirmDialogVisible(true);
 
   };
   const handleSendFiscalReceiptClick = async (e) => {
@@ -1042,7 +1044,7 @@ export default function TicDocdeliveryL(props) {
   async function sendFiscalReceipt() {
     try {
       const ticDocService = new TicDocService();
-      const ok = await ticDocService.sendFiscalReceipt( props.ticDoc);
+      const ok = await ticDocService.sendFiscalReceipt(props.ticDoc);
       return ok;
     } catch (error) {
       console.error(error);
@@ -1106,6 +1108,15 @@ export default function TicDocdeliveryL(props) {
   const setTicStampaDialog = () => {
     setShowMyComponent(true);
     setTicStampaLVisible(true);
+  };
+
+  const openLog = () => {
+    setLogDialog();
+  };
+
+  const setLogDialog = () => {
+    setShowMyComponent(true);
+    setLogVisible(true);
   };
 
   const onRowSelect = (event) => {
@@ -1399,7 +1410,7 @@ export default function TicDocdeliveryL(props) {
 
   }
   /************************************************************************************** */
-  const handPrintOriginal= () => {
+  const handPrintOriginal = () => {
 
   }
   /************************************************************************************** */
@@ -1947,6 +1958,37 @@ export default function TicDocdeliveryL(props) {
             // handleRefresh={handleRefresh}
             setRefresh={handleRefresh}
             handleAllRefresh={handleAllRefresh}
+          />
+        )}
+      </Dialog>
+      <Dialog
+        header={
+          <div className="dialog-header">
+            <Button
+              label={translations[selectedLanguage].Cancel} icon="pi pi-times"
+              onClick={() => {
+                setLogVisible(false);
+              }}
+              severity="secondary" raised
+            />
+          </div>
+        }
+        visible={logVisible}
+        style={{ width: '80%' }}
+        onHide={() => {
+          setLogVisible(false);
+          setShowMyComponent(false);
+        }}
+      >
+        {logVisible && (
+          <TicDoc_logL
+            parameter={"inputTextValue"}
+            tableid={ticDoc.id}
+            handleDialogClose={handleDialogClose}
+            setLogVisible={setLogVisible}
+            dialog={true}
+            table1={'tic_doc'}
+            table2={'tic_docs'}
           />
         )}
       </Dialog>

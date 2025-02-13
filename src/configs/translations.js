@@ -977,6 +977,8 @@ export const translations = {
         reztrans: "Број резервација",
         rezkarti: "Број рез. карти",
         reziznos: "Износ резервисаних карти",
+        kapacitet: "Капацитет",
+        SavedKapacitet: "Измене капацитета",
     }
   };
   

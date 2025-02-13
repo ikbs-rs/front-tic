@@ -23,7 +23,7 @@ import ColorPickerWrapper from './cmn/ColorPickerWrapper';
 
 
 export default function TicEventlocL(props) {
-  console.log(props, "@@@@@@@@@@@@@@@@@@@@@@@@@@@ TicEventlocL - props @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+  // console.log(props, "@@@@@@@@@@@@@@@@@@@@@@@@@@@ TicEventlocL - props @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   const objName = "tic_eventloc"
   const LOCATION_CODE = "-1"
   const selectedLanguage = localStorage.getItem('sl') || 'en'
@@ -60,7 +60,7 @@ export default function TicEventlocL(props) {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log(props.ticEvent.id, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticLoctp?.id || -1, "###########")
+        // console.log(props.ticEvent.id, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", ticLoctp?.id || -1, "###########")
         ++i
         if (i < 2) {
           const ticEventlocService = new TicEventlocService();
@@ -438,15 +438,22 @@ export default function TicEventlocL(props) {
           header={translations[selectedLanguage].Text}
           sortable
           filter
-          style={{ width: "30%" }}
+          style={{ width: "25%" }}
         ></Column>
         <Column
           field="nloctp"
           header={translations[selectedLanguage].ntp}
           sortable
           filter
-          style={{ width: "30%" }}
+          style={{ width: "25%" }}
         ></Column>
+        <Column
+          field="kapacitet"
+          header={translations[selectedLanguage].kapacitet}
+          sortable
+          filter
+          style={{ width: "10%" }}
+        ></Column>        
         <Column
           field="begda"
           header={translations[selectedLanguage].Begda}

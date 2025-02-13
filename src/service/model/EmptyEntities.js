@@ -637,7 +637,8 @@ const EmptyEntities =
     "endda": "",
     "color": "",
     "icon": "",
-    "rbr": "0"
+    "rbr": "0",
+    "kapacitet": "0"
   },
   "tic_eventobj": {
 		  "id": null,
@@ -1051,6 +1052,14 @@ const EmptyEntities =
     "text": "",
     "valid": "1"
   },
+	"tic_eventview": {
+			"id": null,
+			"site": null,
+			"tp": "",
+			"event": null,
+			"short": "",
+			"long": ""
+	}
 }
 
 export  {
