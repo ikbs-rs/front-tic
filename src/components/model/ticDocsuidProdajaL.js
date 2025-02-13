@@ -13,6 +13,7 @@ import { Divider } from 'primereact/divider';
 import { Toast } from "primereact/toast";
 import { RadioButton } from "primereact/radiobutton";
 import { TicDocsService } from '../../service/model/TicDocsService';
+import { CmnTerrService } from '../../service/model/cmn/CmnTerrService';
 import { translations } from "../../configs/translations";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { InputTextarea } from "primereact/inputtextarea";
@@ -327,9 +328,26 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
             }
 
             // Provera za svaki atribut
+            // for (const attribute of field.attributes) {
+            //     if (!item[attribute] || item[attribute].trim() === "") {
+            //         setSubmitted(true)
+            //         console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
+            //         toast.current.show({
+            //             severity: "error",
+            //             summary: "Validacija greška",
+            //             detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
+            //             life: 3000,
+            //         });
+
+            //         return false; // Zaustavi dalje izvršenje koda
+            //     }
+            // }
             for (const attribute of field.attributes) {
-                if (!item[attribute] || item[attribute].trim() === "") {
-                    setSubmitted(true)
+                let value = item[attribute];
+
+                // **Osiguramo da `value` bude string pre trim()**
+                if (value === undefined || value === null || (typeof value !== "string" && typeof value !== "number")) {
+                    setSubmitted(true);
                     console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
                     toast.current.show({
                         severity: "error",
@@ -337,8 +355,24 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                         detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
                         life: 3000,
                     });
+                    return false;
+                }
 
-                    return false; // Zaustavi dalje izvršenje koda
+                // **Ako je broj, konvertuj u string**
+                if (typeof value === "number") {
+                    value = value.toString();
+                }
+
+                if (value.trim() === "") {
+                    setSubmitted(true);
+                    console.error(`Polje "${attribute}" za ID ${field.id} nije popunjeno.`);
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Validacija greška",
+                        detail: `Polje "${attribute}" za stavku ${field.id} nije popunjeno.`,
+                        life: 3000,
+                    });
+                    return false;
                 }
             }
         }
@@ -935,8 +969,45 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
     };
     /*********************************************************************************** */
     const handleItemSelect = (item) => {
-        console.log("HhandleItemSelectHHHHHHHHHHHHHHHHHHHHHHHHHHHHHUUUUUUUUUUUHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item)
+        // console.log("HhandleItemSelectHHHHHHHHHHHHHHHHHHHHHHHHHHHHHUUUUUUUUUUUHHHHHHHHHHHHHHHHHHHHHHHHHHHH", item)
         setValueTA(item);
+    };
+    const [filteredTerrs, setFilteredTerrs] = useState([]);
+    const [terrs, setTerrs] = useState([]);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const cmnTerrService = new CmnTerrService();
+                const data = await cmnTerrService.getTpLista('2');
+
+                // Izvlačenje samo `text` vrednosti u novi niz
+                const textValues = data.map(item => ({ name: item.text }));
+                console.log(data, "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", textValues);
+                // Postavljanje filtriranih podataka u state
+                setTerrs(textValues);
+
+            } catch (error) {
+                console.error("Greška pri učitavanju podataka iz baze:", error);
+            }
+        }
+
+        fetchData();
+    }, []);
+    const searchTerrs = (event) => {
+        let query = event.query ? event.query.toLowerCase() : ''; // Proveravamo da nije undefined
+
+        let filtered = terrs.filter(t => t.name.toLowerCase().includes(query)); // Proveravamo i t
+
+        setFilteredTerrs(filtered);
+    };
+    const handleAutoCompleteSelect = (e, selectedItem) => {
+        const selectedCountry = e.value.name; // Uzimamo ime zemlje
+    
+        setTicDocsuids((prev) =>
+            prev.map((item) =>
+                item.id === selectedItem.id ? { ...item, country: selectedCountry } : item
+            )
+        );
     };
     
     return (
@@ -1136,15 +1207,26 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                                     {(item.eventatt2 && (item.kupac == 1 ? item.eventatt1.some(att => att.nvalue === "country") : item.eventatt2.some(att => att.nvalue === "country"))) ? (
                                         <div className="field col-12 md:col-6" style={{ paddingTop: 0, paddingBottom: 0 }}>
                                             <span className="p-float-label">
-                                                <InputText
+                                                {/* <InputText
                                                     id={`country-${item.id}`}
                                                     value={item.country}
                                                     onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
                                                     style={{ width: '100%' }}
                                                     disabled={ticDoc.statuspayment == 1}
                                                     className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.country })}
+                                                /> */}
+                                                <AutoComplete
+                                                    id={`country-${item.id}`}
+                                                    value={item.country}
+                                                    suggestions={filteredTerrs}
+                                                    completeMethod={searchTerrs}
+                                                    field="name"
+                                                    onChange={(e) => onInputChangeL(e, 'country', item.docsid, item)}
+                                                    onSelect={(e) => handleAutoCompleteSelect(e, item)} 
+                                                    style={{ width: '100%' }}
+                                                    disabled={ticDoc.statuspayment == 1}
+                                                    className={classNames('p-inputtext-sm', { 'p-invalid': submitted && !item.country })}
                                                 />
- 
                                                 {submitted && !item.country && <small className="p-error">{translations[selectedLanguage].Requiredfield}</small>}
                                                 <label htmlFor={`country-${item.id}`}>{translations[selectedLanguage].country}</label>
                                             </span>
