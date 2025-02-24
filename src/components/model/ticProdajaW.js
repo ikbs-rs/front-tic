@@ -511,19 +511,19 @@ const TicProdajaW = forwardRef((props, ref) => {
     setUidKey(--uidKey)
   }
 
+  const handleDocsuidProdaja = (rowData) => {
+      return true
+  }
+
+
   const handleNextClic = (e, key) => {
-    console.log(cmnPar, "00-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
+
     if (cmnPar?.id || key == 0) {
-      console.log(cmnPar, "01-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
       if (key == 2) {
-        console.log(cmnPar, "02-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
         if (handleDocuidSubbmit()) {
-          console.log(cmnPar, "03-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
           setUidKey(++uidKey)
         }
-        // setUidKey(++uidKey)
       } else {
-        console.log(cmnPar, "05-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", key)
         setUidKey(++uidKey)
       }
     } else {
@@ -534,6 +534,7 @@ const TicProdajaW = forwardRef((props, ref) => {
         life: 2000,
       });
     }
+    
   }
 
   const handlePlacanjetip = async (value) => {
@@ -990,6 +991,7 @@ DRUGI RED
                     setRefresh={handleRefresh}
                     handleDelivery={props.handleDelivery}
                     handleAllRefresh={handleAllRefresh}
+                    handleDocsuidProdaja={handleDocsuidProdaja}
                   />
                 </div>
               </div>

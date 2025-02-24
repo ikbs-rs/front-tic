@@ -199,7 +199,7 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
 
                         // console.log(match00, "qqqWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", _cmnPar)
                         if (match00) {
-                            console.log(match00, "aaaaWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", item)
+                            // console.log(match00, "aaaaWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", item)
                             _eventUslovValue.cl = true
                             _eventUslovValue.clvalue = match00.barcodevalue || 'BK'
                             item.brojcl = item.brojcl || _eventUslovValue.clvalue
@@ -315,12 +315,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
         fetchData();
     }, [ticDoc]);
 
+    const proveriTapkarosa = async (itemUnit) => {
+        console.log(itemUnit.eventatt3, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        return props.handleDocsuidProdaja(itemUnit)
+    }
     const handelUnitSubbmitted = (itemUnit) => {
-        //     console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH-Provera da li su sva polja popunjena...");
-
         // Prođi kroz svaki ID i njegove atribute iz requiredFields
         for (const field of requiredFields) {
-            // console.log(field, "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", itemUnit)
             const item = ticDocsuids.find(doc => doc.id === field.id); // Nađi odgovarajući dokument u ticDocsuids
             if (!item || itemUnit.id != field.id) {
                 console.error(`ID ${field.id} ne postoji u ticDocsuids.`);
@@ -376,9 +377,13 @@ const TicDocsuidProdajaL = forwardRef((props, ref) => {
                 }
             }
         }
-        // console.log("Sva polja su popunjena.");
-        setSubmitted(true);
-        return true
+
+        if (proveriTapkarosa (itemUnit)) {
+            setSubmitted(true);
+            return true
+        }
+        return false;
+
     }
 
     const handelSubbmitted = () => {
